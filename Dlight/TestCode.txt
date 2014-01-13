@@ -2,6 +2,9 @@
 
 stdout := "Hallo World"; // おはよう。
 
+/*
+ * 古典的プログラミング。 
+ */
 class FizzBuzz
 {
 	function output(num1:Integer32, num2:Integer32)

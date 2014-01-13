@@ -8,44 +8,31 @@ namespace Dlight
 {
     class LexicalAnalysis : IEnumerable<Token>
     {
-        private static readonly char[] whiteSpace = { '\u0009', '\u000B', '\u000C', '\u0020' };
-        private static readonly char[] lineTerminator = { '\u0000', '\u000A', '\u000D' };
-        private static readonly char[] stringSeparator = { '"', '\'', '`' };
-        private static readonly string[] punctuator1 = { "!", "#", "$", "%", "&", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "]", "^", "{", "|", "}", "~" };
-        private static readonly string[] punctuator2 = { "!(", "++", "--", "..", "::", "<=", ">=", "!=", "||", "&&", "<<", ">>", ":=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=" };
-        private static readonly string[] punctuator3 = { "<<=", ">>=", "..." };
+        private string Code;
+        private string File;
+        private int Line;
+        private int LineAdd;
+        private TokenType Type;
 
-        private string current;
-        private string file;
-        private int line;
-
-        public LexicalAnalysis(string text, string filename)
+        public LexicalAnalysis(string code, string file)
         {
-            current = text;
-            file = filename;
-            line = 1;
+            Code = code + "\0";
+            File = file;
+            Line = 1;
+            LineAdd = 0;
+            Type = TokenType.Unknoun;
         }
 
         public IEnumerator<Token> GetEnumerator()
         {
-            Func<Token?>[] lexer = new Func<Token?>[] { LexerNumber, LexerString, LexerIdentifier, LexerComment, LexerPunctuator };
-            while(MoveNextToken())
+            while (Code != string.Empty)
             {
-                Token? v = null;
-                foreach(Func<Token?> f in lexer)
-                {
-                    v = f();
-                    if(v.HasValue)
-                    {
-                        yield return v.Value;
-                        break;
-                    }
-                }
-                if (!v.HasValue)
-                {
-                    LexerError("'{0}'は使用出来ない文字です。", current[0]);
-                    current = current.Substring(1);
-                }
+                LexicalIterator it = new LexicalIterator(Code);
+                int? length = Root(it);
+                yield return TakeToken(length.GetValueOrDefault(Code.Length));
+                Line += LineAdd;
+                LineAdd = 0;
+                Type = TokenType.Unknoun;
             }
         }
 
@@ -54,170 +41,402 @@ namespace Dlight
             return GetEnumerator();
         }
 
-        private Token LexerToken()
+        private Token TakeToken(int length)
         {
-            return LexerToken();
+            string value = Code.Substring(0, length);
+            Code = Code.Substring(length);
+            return new Token(value, Type, File, Line);
         }
 
-        private bool MoveNextToken()
+        private int? Root(LexicalIterator it)
         {
-            for(int i = 0; i < current.Length; i++)
+            char c = it.Current;
+            if (c.Match("\x00\x1A"))
             {
-                char c = current[i];
-                if(IsLineTerminator(c))
-                {
-                    line++;
-                }
-                if(!IsWhiteSpace(c) && !IsLineTerminator(c))
-                {
-                    current = current.Substring(i);
-                    return current != string.Empty;
-                }
-            }
-            return false;
-        }
-
-        private string TakeToken(int startIndex)
-        {
-            string result = current.Substring(0, startIndex);
-            current = current.Substring(startIndex);
-            return result;
-        }
-
-        private Token? LexerNumber()
-        {
-            for (int i = 0; i < current.Length; i++)
-            {
-                char c = current[i];
-                if (!IsDigit(c))
-                {
-                    return i == 0 ? null : (Token?)new Token { Value = TakeToken(i), File = file, Line = line };
-                }
-            }
-            return null;
-        }
-
-        private Token? LexerString()
-        {
-            char sep = current[0];
-            if(!stringSeparator.Any(v => v == sep))
-            {
+                Type = TokenType.EndOfFile;
                 return null;
             }
-            for (int i = 1; i < current.Length; i++)
+            if (c.Match("\x0A\x0D"))
             {
-                char c = current[i];
-                if (c == sep)
-                {
-                    return new Token { Value = TakeToken(i + 1), File = file, Line = line };
-                }
+                Type = TokenType.EndOfLine;
+                return EndOfLine(it.Next, c);
             }
-            LexerError("文字列リテラル中にファイルの終端に到達しました。");
+            if (c.Match('\x00', '\x20') || c.Match("\\\x7F"))
+            {
+                Type = TokenType.Space;
+                return Space(it.Next);
+            }
+            if (c.Match('a', 'z') || c.Match('A', 'Z') || c == '_')
+            {
+                Type = TokenType.Identifier;
+                return Identifier(it.Next);
+            }
+            if (c.Match("\'\"`"))
+            {
+                Type = TokenType.String;
+                return StringLiteral(it.Next, c);
+            }
+            if (c.Match('0', '9'))
+            {
+                Type = TokenType.Number;
+                return NumberLiteral(it.Next);
+            }
+            switch(c)
+            {
+                case ';': Type = TokenType.EndOfExpression; return 1;
+                case ':': Type = TokenType.Pear; return Pear(it.Next) ?? 1;
+                case ',': Type = TokenType.List; return 1;
+                case '.': Type = TokenType.Access; return Access(it.Next) ?? 1;
+                case '#': Type = TokenType.Wild; return Wild(it.Next) ?? 1;
+                case '@': Type = TokenType.Annotation; return Annotation(it.Next) ?? 1;
+                case '$': Type = TokenType.Lambda; return 1;
+                case '?': Type = TokenType.Conditional; return Conditional(it.Next) ?? 1;
+                case '|': Type = TokenType.Or; return Or(it.Next) ?? 1;
+                case '&': Type = TokenType.And; return And(it.Next) ?? 1;
+                case '^': Type = TokenType.Xor; return Xor(it.Next) ?? 1;
+                case '!': Type = TokenType.Not; return 1;
+                case '=': Type = TokenType.Equal; return Equal(it.Next) ?? 1;
+                case '<': Type = TokenType.LessThan; return LessThan(it.Next) ?? 1;
+                case '>': Type = TokenType.GreaterThan; return GreaterThan(it.Next) ?? 1;
+                case '+': Type = TokenType.Plus; return Plus(it.Next) ?? 1;
+                case '-': Type = TokenType.Minus; return Minus(it.Next) ?? 1;
+                case '~': Type = TokenType.Combine; return Combine(it.Next) ?? 1;
+                case '*': Type = TokenType.Multiply; return Multiply(it.Next) ?? 1;
+                case '/': Type = TokenType.Divide; return Divide(it.Next) ?? 1;
+                case '%': Type = TokenType.Modulo; return Modulo(it.Next) ?? 1;
+                case '(': Type = TokenType.LeftParenthesis; return 1;
+                case ')': Type = TokenType.RightParenthesis; return 1;
+                case '[': Type = TokenType.LeftBracket; return 1;
+                case ']': Type = TokenType.RightBracket; return 1;
+                case '{': Type = TokenType.LeftBrace; return 1;
+                case '}': Type = TokenType.RightBrace; return 1;
+            }
+            return Error(it.Next);
+        }
+
+        private int? EndOfLine(LexicalIterator it, char prev)
+        {
+            char c = it.Current;
+            LineAdd++;
+            switch (prev)
+            {
+                case '\u000A': return c == '\u000D' ? 2 : 1;
+                case '\u000D': return c == '\u000A' ? 2 : 1;
+            }
             return null;
         }
 
-        private Token? LexerComment()
+        private int? Space(LexicalIterator it)
         {
-            if(current.Length < 2)
+            char c = it.Current;
+            while (c.Match('\x00', '\x20') || c == '\x7F')
             {
-                return null;
-            }
-            string temp = current.Substring(0, 2);
-            if(temp == "/*")
-            {
-                for (int i = 2; i < current.Length; i++)
+                if (c.Match("\x00\x1A\x0A\x0D"))
                 {
-                    char c1 = current[i], c2 = current[i + 1];
-                    if (c1 == '*' && c2 == '/')
+                    return it.Index;
+                }
+                it = it.Next;
+                c = it.Current;
+            }
+            return it.Index;
+        }
+
+        private int? Identifier(LexicalIterator it)
+        {
+            char c = it.Current;
+            while (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match('0', '9') || c.Match("\\\x7F"))
+            {
+                it = it.Next;
+                c = it.Current;
+            }
+            return it.Index;
+        }
+
+        private int? StringLiteral(LexicalIterator it, char sep)
+        {
+            char c = it.Current, p = '\0';
+            while (c != sep || p == '\\')
+            {
+                if (c.Match("\x00\x1A\x0A\x0D"))
+                {
+                    return it.Index;
+                }
+                p = c;
+                it = it.Next;
+                c = it.Current;
+            }
+            return it.Index + 1;
+        }
+
+        private int? NumberLiteral(LexicalIterator it)
+        {
+            char c = it.Current;
+            while (c.Match('0', '9'))
+            {
+                it = it.Next;
+                c = it.Current;
+            }
+            return it.Index;
+        }
+
+        private int? BlockComment(LexicalIterator it)
+        {
+            char c = it.Current, p = '\0';
+            while (c != '/' || p != '*')
+            {
+                if (c.Match("\x00\x1A"))
+                {
+                    return it.Index;
+                }
+                if (c.Match("\x0A\x0D"))
+                {
+                    if(EndOfLine(it.Next, c).GetValueOrDefault() == 2)
                     {
-                        return new Token { Value = TakeToken(i + 2), File = file, Line = line };
+                        it = it.Next;
+                        c = it.Current;
                     }
                 }
+                p = c;
+                it = it.Next;
+                c = it.Current;
             }
-            else if(temp == "//" || temp == "#!")
+            return it.Index + 1;
+        }
+
+        private int? LinerComment(LexicalIterator it)
+        {
+            char c = it.Current;
+            while (!c.Match("\x00\x1A\x0A\x0D"))
             {
-                for (int i = 2; i < current.Length; i++)
-                {
-                    char c = current[i];
-                    if (IsLineTerminator(c))
-                    {
-                        return new Token { Value = TakeToken(i), File = file, Line = line };
-                    }
-                }
-                return new Token { Value = TakeToken(current.Length), File = file, Line = line };
+                it = it.Next;
+                c = it.Current;
+            }
+            return it.Index;
+        }
+
+        private int? Error(LexicalIterator it)
+        {
+            char c = it.Current;
+            while (!c.Match('\x00', '\x7F'))
+            {
+                it = it.Next;
+                c = it.Current;
+            }
+            return it.Index;
+        }
+
+        private int? Pear(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch(c)
+            {
+                case ':': Type = TokenType.Separator; return 2;
+                case '=': Type = TokenType.LeftAssign; return 2;
             }
             return null;
         }
 
-        private Token? LexerPunctuator()
+        private int? Access(LexicalIterator it)
         {
-            if (current.Length >= 3)
+            char c = it.Current;
+            switch (c)
             {
-                string temp = current.Substring(0, 3);
-                if (punctuator3.Any(v => v == temp))
-                {
-                    return new Token { Value = TakeToken(3), File = file, Line = line };
-                }
-            }
-            if (current.Length >= 2)
-            {
-                string temp = current.Substring(0, 2);
-                if (punctuator2.Any(v => v == temp))
-                {
-                    return new Token { Value = TakeToken(2), File = file, Line = line };
-                }
-            }
-            if (current.Length >= 1)
-            {
-                string temp = current.Substring(0, 1);
-                if (punctuator1.Any(v => v == temp))
-                {
-                    return new Token { Value = TakeToken(1), File = file, Line = line };
-                }
+                case '.': Type = TokenType.Range; return 2;
             }
             return null;
         }
 
-        private Token? LexerIdentifier()
+        private int? Wild(LexicalIterator it)
         {
-            for (int i = 0; i < current.Length; i++)
+            char c = it.Current;
+            switch (c)
             {
-                char c = current[i];
-                if (!IsLetter(c) && !IsDigit(c))
-                {
-                    return i == 0 ? null : (Token?)new Token { Value = TakeToken(i), File = file, Line = line };
-                }
+                case '!': Type = TokenType.ScriptComment; return LinerComment(it.Next);
             }
             return null;
         }
 
-        private void LexerError(string format, params object[] args)
+        private int? Annotation(LexicalIterator it)
         {
-            Common.CompileError(string.Format(format, args), file, line);
+            char c = it.Current;
+            switch (c)
+            {
+                case '@': Type = TokenType.Pragma; return 2;
+            }
+            return null;
         }
 
-        public static bool IsWhiteSpace(char c)
+        private int? Conditional(LexicalIterator it)
         {
-            return whiteSpace.Any(v => v == c);
+            char c = it.Current;
+            switch (c)
+            {
+                case '?': Type = TokenType.Coalesce; return 2;
+            }
+            return null;
         }
 
-        public static bool IsLineTerminator(char c)
+        private int? Or(LexicalIterator it)
         {
-            return lineTerminator.Any(v => v == c);
+            char c = it.Current;
+            switch (c)
+            {
+                case '|': Type = TokenType.OrElse; return 2;
+                case '=': Type = TokenType.OrLeftAssign; return 2;
+            }
+            return null;
         }
 
-        public static bool IsDigit(char c)
+        private int? And(LexicalIterator it)
         {
-            if ('0' <= c && c <= '9') return true;
-            return false;
+            char c = it.Current;
+            switch (c)
+            {
+                case '&': Type = TokenType.AndElse; return 2;
+                case '=': Type = TokenType.AndLeftAssign; return 2;
+            }
+            return null;
         }
 
-        public static bool IsLetter(char c)
+        private int? Xor(LexicalIterator it)
         {
-            if ('a' <= c && c <= 'z') return true;
-            if ('A' <= c && c <= 'Z') return true;
-            if (c == '_') return true;
-            return false;
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.XorLeftAssign; return 2;
+            }
+            return null;
+        }
+
+        private int? Equal(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case ':': Type = TokenType.RightAssign; return 2;
+                case '|': Type = TokenType.OrRightAssign; return 2;
+                case '&': Type = TokenType.AndRightAssign; return 2;
+                case '^': Type = TokenType.XorRightAssign; return 2;
+                case '+': Type = TokenType.PlusRightAssign; return 2;
+                case '-': Type = TokenType.MinusRightAssign; return 2;
+                case '~': Type = TokenType.CombineRightAssign; return 2;
+                case '*': Type = TokenType.MultiplyRightAssign; return 2;
+                case '/': Type = TokenType.DivideRightAssign; return 2;
+                case '%': Type = TokenType.ModuloRightAssign; return 2;
+                case '<': Type = TokenType.LessThanOrEqual; return 2;
+                case '>': Type = TokenType.GreaterThanOrEqual; return 2;
+            }
+            return null;
+        }
+
+        private int? LessThan(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.LessThanOrEqual; return 2;
+                case '<': Type = TokenType.LeftShift; return 2;
+                case '>': Type = TokenType.NotEqual; return 2;
+            }
+            return null;
+        }
+
+        private int? GreaterThan(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.GreaterThanOrEqual; return 2;
+                case '<': Type = TokenType.NotEqual; return 2;
+                case '>': Type = TokenType.RightShift; return 2;
+            }
+            return null;
+        }
+
+        private int? Plus(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.PlusLeftAssign; return 2;
+                case '+': Type = TokenType.Increment; return 2;
+            }
+            return null;
+        }
+
+        private int? Minus(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.MinusLeftAssign; return 2;
+                case '-': Type = TokenType.Decrement; return 2;
+            }
+            return null;
+        }
+
+        private int? Combine(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.CombineLeftAssign; return 2;
+            }
+            return null;
+        }
+
+        private int? Multiply(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.MultiplyLeftAssign; return 2;
+            }
+            return null;
+        }
+
+        private int? Divide(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.DivideLeftAssign; return 2;
+                case '*': Type = TokenType.BlockComment; return BlockComment(it.Next);
+                case '/': Type = TokenType.LineComment; return LinerComment(it.Next);
+            }
+            return null;
+        }
+
+        private int? Modulo(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.ModuloLeftAssign; return 2;
+            }
+            return null;
+        }
+
+        private struct LexicalIterator
+        {
+            public readonly string Value;
+            public readonly int Index;
+
+            public LexicalIterator(string value, int index = 0)
+            {
+                Value = value;
+                Index = index;
+            }
+
+            public LexicalIterator Next
+            {
+                get { return new LexicalIterator(Value, Index + 1); }
+            }
+
+            public char Current
+            {
+                get { return Value[Index]; }
+            }
         }
     }
 }
