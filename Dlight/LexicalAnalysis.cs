@@ -14,7 +14,7 @@ namespace Dlight
         private int LineAdd;
         private TokenType TokenT;
         private LexerMode LexerM;
-        private NumberType NumberT;
+        private char StrSep;
 
         public LexicalAnalysis(string code, string file)
         {
@@ -24,7 +24,7 @@ namespace Dlight
             LineAdd = 0;
             TokenT = TokenType.Unknoun;
             LexerM = LexerMode.Normal;
-            NumberT = NumberType.Decimal;
+            StrSep = '\0';
         }
 
         public IEnumerator<Token> GetEnumerator()
@@ -55,6 +55,23 @@ namespace Dlight
         private int? Root(LexicalIterator it)
         {
             char c = it.Current;
+            switch (LexerM)
+            {
+                case LexerMode.Normal: 
+                case LexerMode.BuiltIn:
+                    return Normal(it);
+                case LexerMode.String: return String(it);
+                case LexerMode.BuiltInStart: TokenT = TokenType.BuiltIn; LexerM = LexerMode.BuiltIn; return 1;
+                case LexerMode.Integer: LexerM = LexerMode.RadixPoint; return Number(it);
+                case LexerMode.RadixPoint: LexerM = LexerMode.Fraction; return RadixPoint(it);
+                case LexerMode.Fraction: LexerM = LexerMode.Normal; return Number(it);
+            }
+            return null;
+        }
+
+        private int? Normal(LexicalIterator it)
+        {
+            char c = it.Current;
             if (c.Match("\x00\x1A"))
             {
                 TokenT = TokenType.EndOfFile;
@@ -70,59 +87,9 @@ namespace Dlight
                 TokenT = TokenType.Space;
                 return Space(it.Next);
             }
-            switch(LexerM)
-            {
-                case LexerMode.Normal: return Normal(it);
-                case LexerMode.Integer:
-                    LexerM = LexerMode.RadixPoint;
-                    switch(NumberT)
-                    {
-                        case NumberType.Binary: return BinaryNumber(it);
-                        case NumberType.Octal: return OctalNumber(it);
-                        case NumberType.Decimal: return DecimalNumber(it);
-                        case NumberType.Hex: return HexNumber(it);
-                    }
-                    return null;
-                case LexerMode.RadixPoint: LexerM = LexerMode.Fraction; return RadixPoint(it);
-                case LexerMode.Fraction:
-                    LexerM = LexerMode.ExponentPrefix;
-                    switch (NumberT)
-                    {
-                        case NumberType.Binary: return BinaryNumber(it);
-                        case NumberType.Octal: return OctalNumber(it);
-                        case NumberType.Decimal: return DecimalNumber(it);
-                        case NumberType.Hex: return HexNumber(it);
-                    }
-                    return null;
-                case LexerMode.ExponentPrefix:
-                    LexerM = LexerMode.Exponent;
-                    switch(NumberT)
-                    {
-                        case NumberType.Binary: return DecimalExponent(it);
-                        case NumberType.Octal: return DecimalExponent(it);
-                        case NumberType.Decimal: return DecimalExponent(it);
-                        case NumberType.Hex: return HexExponent(it);
-                    }
-                    return null;
-                case LexerMode.Exponent:
-                    LexerM = LexerMode.Normal;
-                    switch (NumberT)
-                    {
-                        case NumberType.Binary: return BinaryNumber(it);
-                        case NumberType.Octal: return OctalNumber(it);
-                        case NumberType.Decimal: return DecimalNumber(it);
-                        case NumberType.Hex: return HexNumber(it);
-                    }
-                    return null;
-            }
-            return Error(it.Next);
-        }
-
-        private int? Normal(LexicalIterator it)
-        {
-            char c = it.Current;
             if (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match("\\_"))
             {
+                TokenT = TokenType.Identifier;
                 return Identifier(it.Next);
             }
             if (c.Match("\'\"`"))
@@ -130,16 +97,10 @@ namespace Dlight
                 TokenT = TokenType.String;
                 return StringLiteral(it.Next, c);
             }
-            if (c.Match("0"))
+            if (c.Match('0', '9'))
             {
                 LexerM = LexerMode.Integer;
                 return NumberPrefix(it.Next);
-            }
-            if (c.Match('1', '9'))
-            {
-                LexerM = LexerMode.RadixPoint;
-                NumberT = NumberType.Decimal;
-                return DecimalNumber(it.Next);
             }
             switch (c)
             {
@@ -171,7 +132,7 @@ namespace Dlight
                 case '{': TokenT = TokenType.LeftBrace; return 1;
                 case '}': TokenT = TokenType.RightBrace; return 1;
             }
-            return null;
+            return Error(it.Next);
         }
 
         private int? EndOfLine(LexicalIterator it, char prev)
@@ -204,7 +165,6 @@ namespace Dlight
         private int? Identifier(LexicalIterator it)
         {
             char c = it.Current;
-            TokenT = TokenType.Identifier;
             while (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match('0', '9') || c.Match("\\_"))
             {
                 it = it.Next;
@@ -218,7 +178,7 @@ namespace Dlight
             char c = it.Current, p = '\0';
             while (c != sep || p == '\\')
             {
-                if (c.Match("\x00\x1A\x0A\x0D"))
+                if (c.Match("\x00\x1A"))
                 {
                     return it.Index;
                 }
@@ -229,6 +189,27 @@ namespace Dlight
             return it.Index + 1;
         }
 
+        private int? String(LexicalIterator it)
+        {
+            char c = it.Current, p = '\0';
+            while (c != StrSep || p == '\\')
+            {
+                if (c.Match("\x00\x1A"))
+                {
+                    return it.Index;
+                }
+                if (c.Match("$"))
+                {
+                    LexerM = LexerMode.BuiltInStart;
+                    return it.Index;
+                }
+                p = c;
+                it = it.Next;
+                c = it.Current;
+            }
+            return it.Index;
+        }
+
         private int? NumberPrefix(LexicalIterator it)
         {
             char c = it.Current;
@@ -237,134 +218,46 @@ namespace Dlight
                 case 'b':
                 case 'B':
                     TokenT = TokenType.BinaryPrefix;
-                    NumberT = NumberType.Binary;
                     return 2;
                 case 'o':
                 case 'O':
                     TokenT = TokenType.OctalPrefix;
-                    NumberT = NumberType.Octal;
                     return 2;
                 case 'd':
                 case 'D':
                     TokenT = TokenType.DecimalPrefix;
-                    NumberT = NumberType.Decimal;
                     return 2;
                 case 'h':
                 case 'H':
                     TokenT = TokenType.HexPrefix;
-                    NumberT = NumberType.Hex;
                     return 2;
                 case 'x':
                 case 'X':
                     TokenT = TokenType.HexPrefix;
-                    NumberT = NumberType.Hex;
                     return 2;
             }
-            return DecimalNumber(it);
+            LexerM = LexerMode.RadixPoint;
+            return Number(it);
         }
 
-        private int? BinaryNumber(LexicalIterator it)
+        private int? Number(LexicalIterator it)
         {
             char c = it.Current;
-            TokenT = TokenType.BinaryNumber;
-            while (c.Match('0', '1') || c.Match("_"))
+            TokenT = TokenType.Number;
+            while (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match('0', '9') || c.Match("_"))
             {
                 it = it.Next;
                 c = it.Current;
             }
-            return it.Index > 0 ? it.Index : Normal(it);
-        }
-
-        private int? OctalNumber(LexicalIterator it)
-        {
-            char c = it.Current;
-            TokenT = TokenType.OctalNumber;
-            while (c.Match('0', '7') || c.Match("_"))
-            {
-                it = it.Next;
-                c = it.Current;
-            }
-            if (it.Index == 0)
-            {
-                LexerM = LexerMode.Normal;
-            }
-            return it.Index > 0 ? it.Index : Normal(it);
-        }
-
-        private int? DecimalNumber(LexicalIterator it)
-        {
-            char c = it.Current;
-            TokenT = TokenType.DecimalNumber;
-            while (c.Match('0', '9') || c.Match("_"))
-            {
-                it = it.Next;
-                c = it.Current;
-            }
-            if (it.Index == 0)
-            {
-                LexerM = LexerMode.Normal;
-            }
-            return it.Index > 0 ? it.Index : Normal(it);
-        }
-
-        private int? HexNumber(LexicalIterator it)
-        {
-            char c = it.Current;
-            TokenT = TokenType.HexNumber;
-            while (c.Match('0', '9') || c.Match('a', 'f') || c.Match('A', 'F') || c.Match("_"))
-            {
-                it = it.Next;
-                c = it.Current;
-            }
-            if (it.Index == 0)
-            {
-                LexerM = LexerMode.Normal;
-            }
-            return it.Index > 0 ? it.Index : Normal(it);
+            return it.Index;
         }
 
         private int? RadixPoint(LexicalIterator it)
         {
-            char c = it.Current;
+            char c1 = it.Current, c2 = it.Next.Current;
             TokenT = TokenType.RadixPoint;
-            switch (c)
+            if(c1 == '.' && c2 != '.')
             {
-                case '.': return 1;
-            }
-            return Normal(it);
-        }
-
-        private int? DecimalExponent(LexicalIterator it)
-        {
-            char c = it.Current;
-            if (c.Match("eE"))
-            {
-                it = it.Next;
-                c = it.Current;
-                switch(c)
-                {
-                    case '+': TokenT = TokenType.DecimalPlusExponentPrefix; return 2;
-                    case '-': TokenT = TokenType.DecimalMinusExponentPrefix; return 2;
-                }
-                TokenT = TokenType.DecimalExponentPrefix;
-                return 1;
-            }
-            return Normal(it);
-        }
-
-        private int? HexExponent(LexicalIterator it)
-        {
-            char c = it.Current;
-            if (c.Match("pP"))
-            {
-                it = it.Next;
-                c = it.Current;
-                switch (c)
-                {
-                    case '+': TokenT = TokenType.HexPlusExponentPrefix; return 2;
-                    case '-': TokenT = TokenType.HexMinusExponentPrefix; return 2;
-                }
-                TokenT = TokenType.HexExponentPrefix;
                 return 1;
             }
             return Normal(it);
@@ -394,7 +287,7 @@ namespace Dlight
             return it.Index + 1;
         }
 
-        private int? LinerComment(LexicalIterator it)
+        private int? LineComment(LexicalIterator it)
         {
             char c = it.Current;
             while (!c.Match("\x00\x1A\x0A\x0D"))
@@ -442,7 +335,7 @@ namespace Dlight
             char c = it.Current;
             switch (c)
             {
-                case '!': TokenT = TokenType.ScriptComment; return LinerComment(it.Next);
+                case '!': TokenT = TokenType.LineComment; return LineComment(it.Next);
             }
             return null;
         }
@@ -511,7 +404,7 @@ namespace Dlight
                 case '+': TokenT = TokenType.PlusRightAssign; return 2;
                 case '-': TokenT = TokenType.MinusRightAssign; return 2;
                 case '~': TokenT = TokenType.CombineRightAssign; return 2;
-                case '*': TokenT = TokenType.MultiplyRightAssign; return 2;
+                case '*': TokenT = TokenType.MultiplyRightAssign; return Equal4(it.Next) ?? 2;
                 case '/': TokenT = TokenType.DivideRightAssign; return 2;
                 case '%': TokenT = TokenType.ModuloRightAssign; return 2;
                 case '<': TokenT = TokenType.LessThanOrEqual; return Equal2(it.Next) ?? 2;
@@ -538,6 +431,16 @@ namespace Dlight
                 case '>': TokenT = TokenType.RightShiftRightAssign; return 3;
             }
             return Incompare(it, '<') ?? null;
+        }
+
+        private int? Equal4(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '*': TokenT = TokenType.PowerRightAssign; return 3;
+            }
+            return null;
         }
 
         private int? LessThan(LexicalIterator it)
@@ -633,6 +536,17 @@ namespace Dlight
             switch (c)
             {
                 case '=': TokenT = TokenType.MultiplyLeftAssign; return 2;
+                case '+': TokenT = TokenType.Power; return Power(it.Next) ?? 2;
+            }
+            return null;
+        }
+
+        private int? Power(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': TokenT = TokenType.PowerLeftAssign; return 3;
             }
             return null;
         }
@@ -644,7 +558,7 @@ namespace Dlight
             {
                 case '=': TokenT = TokenType.DivideLeftAssign; return 2;
                 case '*': TokenT = TokenType.BlockComment; return BlockComment(it.Next);
-                case '/': TokenT = TokenType.LineComment; return LinerComment(it.Next);
+                case '/': TokenT = TokenType.LineComment; return LineComment(it.Next);
             }
             return null;
         }
@@ -665,16 +579,9 @@ namespace Dlight
             Integer,
             RadixPoint,
             Fraction,
-            ExponentPrefix,
-            Exponent,
-        }
-
-        private enum NumberType
-        {
-            Binary,
-            Octal,
-            Decimal,
-            Hex,
+            String,
+            BuiltInStart,
+            BuiltIn,
         }
 
         private struct LexicalIterator
