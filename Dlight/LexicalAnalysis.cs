@@ -61,12 +61,12 @@ namespace Dlight
                 Type = TokenType.EndOfLine;
                 return EndOfLine(it.Next, c);
             }
-            if (c.Match('\x00', '\x20') || c.Match("\\\x7F"))
+            if (c.Match('\x00', '\x20') || c.Match("\x7F"))
             {
                 Type = TokenType.Space;
                 return Space(it.Next);
             }
-            if (c.Match('a', 'z') || c.Match('A', 'Z') || c == '_')
+            if (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match("\\_"))
             {
                 Type = TokenType.Identifier;
                 return Identifier(it.Next);
@@ -144,7 +144,7 @@ namespace Dlight
         private int? Identifier(LexicalIterator it)
         {
             char c = it.Current;
-            while (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match('0', '9') || c.Match("\\\x7F"))
+            while (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match('0', '9') || c.Match("\\_"))
             {
                 it = it.Next;
                 c = it.Current;
@@ -171,7 +171,7 @@ namespace Dlight
         private int? NumberLiteral(LexicalIterator it)
         {
             char c = it.Current;
-            while (c.Match('0', '9'))
+            while (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match('0', '9') || c.Match("._"))
             {
                 it = it.Next;
                 c = it.Current;
@@ -323,10 +323,30 @@ namespace Dlight
                 case '*': Type = TokenType.MultiplyRightAssign; return 2;
                 case '/': Type = TokenType.DivideRightAssign; return 2;
                 case '%': Type = TokenType.ModuloRightAssign; return 2;
-                case '<': Type = TokenType.LessThanOrEqual; return 2;
-                case '>': Type = TokenType.GreaterThanOrEqual; return 2;
+                case '<': Type = TokenType.LessThanOrEqual; return Equal2(it.Next) ?? 2;
+                case '>': Type = TokenType.GreaterThanOrEqual; return Equal3(it.Next) ?? 2;
             }
             return null;
+        }
+
+        private int? Equal2(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '<': Type = TokenType.LeftShiftRightAssign; return 3;
+            }
+            return Incompare(it, '>') ?? null;
+        }
+
+        private int? Equal3(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '>': Type = TokenType.RightShiftRightAssign; return 3;
+            }
+            return Incompare(it, '<') ?? null;
         }
 
         private int? LessThan(LexicalIterator it)
@@ -334,9 +354,19 @@ namespace Dlight
             char c = it.Current;
             switch (c)
             {
-                case '=': Type = TokenType.LessThanOrEqual; return 2;
-                case '<': Type = TokenType.LeftShift; return 2;
-                case '>': Type = TokenType.NotEqual; return 2;
+                case '=': Type = TokenType.LessThanOrEqual; return Incompare(it.Next, '>') ?? 2;
+                case '<': Type = TokenType.LeftShift; return LeftShift(it.Next) ?? 2;
+                case '>': Type = TokenType.NotEqual; return Incompare(it.Next, '=') ?? 2;
+            }
+            return null;
+        }
+
+        private int? LeftShift(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.LeftShiftLeftAssign; return 3;
             }
             return null;
         }
@@ -346,9 +376,30 @@ namespace Dlight
             char c = it.Current;
             switch (c)
             {
-                case '=': Type = TokenType.GreaterThanOrEqual; return 2;
-                case '<': Type = TokenType.NotEqual; return 2;
-                case '>': Type = TokenType.RightShift; return 2;
+                case '=': Type = TokenType.GreaterThanOrEqual; return Incompare(it.Next, '<') ?? 2;
+                case '<': Type = TokenType.NotEqual; return Incompare(it.Next, '=') ?? 2;
+                case '>': Type = TokenType.RightShift; return RightShift(it.Next) ?? 2;
+            }
+            return null;
+        }
+
+        private int? RightShift(LexicalIterator it)
+        {
+            char c = it.Current;
+            switch (c)
+            {
+                case '=': Type = TokenType.RightShiftLeftAssign; return 3;
+            }
+            return null;
+        }
+
+        private int? Incompare(LexicalIterator it, char need)
+        {
+            char c = it.Current;
+            if(c == need)
+            {
+                Type = TokenType.Incompare;
+                return 3;
             }
             return null;
         }
