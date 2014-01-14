@@ -58,10 +58,11 @@ namespace Dlight
             switch (LexerM)
             {
                 case LexerMode.Normal: 
+                case LexerMode.PostString:
                 case LexerMode.BuiltIn:
                     return Normal(it);
+                case LexerMode.PreBuiltIn: LexerM = LexerMode.BuiltIn; return Normal(it);
                 case LexerMode.String: return String(it);
-                case LexerMode.BuiltInStart: TokenT = TokenType.BuiltIn; LexerM = LexerMode.BuiltIn; return 1;
                 case LexerMode.Integer: LexerM = LexerMode.RadixPoint; return Number(it);
                 case LexerMode.RadixPoint: LexerM = LexerMode.Fraction; return RadixPoint(it);
                 case LexerMode.Fraction: LexerM = LexerMode.Normal; return Number(it);
@@ -94,8 +95,19 @@ namespace Dlight
             }
             if (c.Match("\'\"`"))
             {
-                TokenT = TokenType.String;
-                return StringLiteral(it.Next, c);
+                switch (LexerM)
+                {
+                    case LexerMode.BuiltIn:
+                    case LexerMode.PostString:
+                        LexerM = LexerMode.Normal; 
+                        TokenT = TokenType.EndString; 
+                        return 1;
+                    default:
+                        LexerM = LexerMode.String;
+                        TokenT = TokenType.StartString;
+                        StrSep = c;
+                        return 1;
+                }
             }
             if (c.Match('0', '9'))
             {
@@ -129,8 +141,8 @@ namespace Dlight
                 case ')': TokenT = TokenType.RightParenthesis; return 1;
                 case '[': TokenT = TokenType.LeftBracket; return 1;
                 case ']': TokenT = TokenType.RightBracket; return 1;
-                case '{': TokenT = TokenType.LeftBrace; return 1;
-                case '}': TokenT = TokenType.RightBrace; return 1;
+                case '{': TokenT = (LexerM == LexerMode.BuiltIn ? TokenType.StartBuiltIn : TokenType.LeftBrace); return 1;
+                case '}': TokenT = (LexerM == LexerMode.BuiltIn ? TokenType.EndBuiltIn : TokenType.RightBrace); return 1;
             }
             return Error(it.Next);
         }
@@ -173,40 +185,26 @@ namespace Dlight
             return it.Index;
         }
 
-        private int? StringLiteral(LexicalIterator it, char sep)
-        {
-            char c = it.Current, p = '\0';
-            while (c != sep || p == '\\')
-            {
-                if (c.Match("\x00\x1A"))
-                {
-                    return it.Index;
-                }
-                p = c;
-                it = it.Next;
-                c = it.Current;
-            }
-            return it.Index + 1;
-        }
-
         private int? String(LexicalIterator it)
         {
             char c = it.Current, p = '\0';
+            TokenT = TokenType.String;
             while (c != StrSep || p == '\\')
             {
-                if (c.Match("\x00\x1A"))
+                if (c.Match("{"))
                 {
+                    LexerM = LexerMode.PreBuiltIn;
                     return it.Index;
                 }
-                if (c.Match("$"))
+                if (c.Match("\x00\x1A"))
                 {
-                    LexerM = LexerMode.BuiltInStart;
-                    return it.Index;
+                    break;
                 }
                 p = c;
                 it = it.Next;
                 c = it.Current;
             }
+            LexerM = LexerMode.PostString;
             return it.Index;
         }
 
@@ -580,7 +578,8 @@ namespace Dlight
             RadixPoint,
             Fraction,
             String,
-            BuiltInStart,
+            PostString,
+            PreBuiltIn,
             BuiltIn,
         }
 

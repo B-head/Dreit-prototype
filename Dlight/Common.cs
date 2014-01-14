@@ -70,6 +70,8 @@ namespace Dlight
         StartString,
         EndString,
         BuiltIn,
+        StartBuiltIn,
+        EndBuiltIn,
         BlockComment,
         LineComment,
         Escape,

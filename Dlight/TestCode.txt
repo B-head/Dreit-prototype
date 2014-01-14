@@ -1,10 +1,12 @@
 ﻿import basic;
 
-stdout := "Hallo World"; // おはよう。
 var binary ;= 0b01_10_1001_._00_1_10_010;
 var octal := 0o2337_41_706.63564;
 var decimal := 0d637482.389566374;
 var hex := 0x3f_83a_e8b_7c._283c_8D_DE;
+
+stdout := "Hallo World"; // おはよう。
+stdout := "num = {decimal + hex}";
 
 /*
  * 古典的プログラミング。 
