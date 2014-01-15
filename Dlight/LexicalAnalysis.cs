@@ -60,12 +60,15 @@ namespace Dlight
                 case LexerMode.Normal: 
                 case LexerMode.PostString:
                 case LexerMode.BuiltIn:
+                case LexerMode.PostBlockComment:
                     return Normal(it);
                 case LexerMode.PreBuiltIn: LexerM = LexerMode.BuiltIn; return Normal(it);
                 case LexerMode.String: return String(it);
                 case LexerMode.Integer: LexerM = LexerMode.RadixPoint; return Number(it);
                 case LexerMode.RadixPoint: LexerM = LexerMode.Fraction; return RadixPoint(it);
                 case LexerMode.Fraction: LexerM = LexerMode.Normal; return Number(it);
+                case LexerMode.BlockComment: LexerM = LexerMode.PostBlockComment; return BlockComment(it);
+                case LexerMode.LineComment: LexerM = LexerMode.Normal; return LineComment(it);
             }
             return null;
         }
@@ -191,7 +194,7 @@ namespace Dlight
             TokenT = TokenType.String;
             while (c != StrSep || p == '\\')
             {
-                if (c.Match("{"))
+                if (c == '{' && p != '\\')
                 {
                     LexerM = LexerMode.PreBuiltIn;
                     return it.Index;
@@ -199,6 +202,14 @@ namespace Dlight
                 if (c.Match("\x00\x1A"))
                 {
                     break;
+                }
+                if (c.Match("\x0A\x0D"))
+                {
+                    if (EndOfLine(it.Next, c).GetValueOrDefault() == 2)
+                    {
+                        it = it.Next;
+                        c = it.Current;
+                    }
                 }
                 p = c;
                 it = it.Next;
@@ -264,6 +275,7 @@ namespace Dlight
         private int? BlockComment(LexicalIterator it)
         {
             char c = it.Current, p = '\0';
+            TokenT = TokenType.Comment;
             while (c != '/' || p != '*')
             {
                 if (c.Match("\x00\x1A"))
@@ -282,12 +294,13 @@ namespace Dlight
                 it = it.Next;
                 c = it.Current;
             }
-            return it.Index + 1;
+            return it.Index - 1;
         }
 
         private int? LineComment(LexicalIterator it)
         {
             char c = it.Current;
+            TokenT = TokenType.Comment;
             while (!c.Match("\x00\x1A\x0A\x0D"))
             {
                 it = it.Next;
@@ -333,7 +346,7 @@ namespace Dlight
             char c = it.Current;
             switch (c)
             {
-                case '!': TokenT = TokenType.LineComment; return LineComment(it.Next);
+                case '!': TokenT = TokenType.PreLineComment; LexerM = LexerMode.LineComment; return 2;
             }
             return null;
         }
@@ -535,6 +548,7 @@ namespace Dlight
             {
                 case '=': TokenT = TokenType.MultiplyLeftAssign; return 2;
                 case '+': TokenT = TokenType.Power; return Power(it.Next) ?? 2;
+                case '/': TokenT = TokenType.EndBlockComment; LexerM = LexerMode.Normal; return 2;
             }
             return null;
         }
@@ -555,8 +569,8 @@ namespace Dlight
             switch (c)
             {
                 case '=': TokenT = TokenType.DivideLeftAssign; return 2;
-                case '*': TokenT = TokenType.BlockComment; return BlockComment(it.Next);
-                case '/': TokenT = TokenType.LineComment; return LineComment(it.Next);
+                case '*': TokenT = TokenType.StartBlockComment; LexerM = LexerMode.BlockComment; return 2;
+                case '/': TokenT = TokenType.PreLineComment; LexerM = LexerMode.LineComment; return 2;
             }
             return null;
         }
@@ -581,6 +595,9 @@ namespace Dlight
             PostString,
             PreBuiltIn,
             BuiltIn,
+            BlockComment,
+            PostBlockComment,
+            LineComment,
         }
 
         private struct LexicalIterator
