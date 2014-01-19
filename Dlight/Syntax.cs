@@ -6,95 +6,79 @@ using System.Threading.Tasks;
 
 namespace Dlight
 {
-    struct TextPosition
-    {
-        public string File;
-        public int Total;
-        public int Line;
-        public int Row;
-
-        public TextPosition(string file, int total, int line, int row)
-        {
-            File = file;
-            Total = total;
-            Line = line;
-            Row = row;
-        }
-    }
-
     abstract class Syntax
     {
         public SyntaxType Type { get; set; }
         public TextPosition Position { get; set; }
-
-        public Syntax() { }
-
-        public Syntax(SyntaxType type, string file, int line)
-        {
-            Type = type;
-            Position = new TextPosition(file, int.MinValue, line, int.MinValue);
-        }
+        public abstract string Text { get; set; }
+        public abstract List<Syntax> Child { get; set; }
 
         public override string ToString()
         {
-            return ToValueString();
+            return ToString(0);
         }
 
-        public abstract string ToValueString();
+        public virtual string ToString(int indent)
+        {
+            return base.ToString();
+        }
+
+        protected string Indent(int indent)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < indent; i++)
+            {
+                result.Append(" ");
+            }
+            return result.ToString();
+        }
     }
 
     class Token : Syntax
     {
-        public string Text;
-
-        public Token() { }
-
-        public Token(string value, SyntaxType type, string file, int line)
-            : base(type, file, line)
+        public override string Text { get; set; }
+        public override List<Syntax> Child 
         {
-            Text = value;
+            get
+            {
+                return null;
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
         }
 
-        public override string ToValueString()
+        public override string ToString(int indent)
         {
-            return Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20');
-        }
-
-        public override string ToString()
-        {
-            return Position.File + "(" + Position.Line + "): " + Enum.GetName(typeof(SyntaxType), Type) + " => " + ToValueString();
+            return Indent(indent) + Position + ": " + Enum.GetName(typeof(SyntaxType), Type) + " => " + Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20') + "\n";
         }
     }
 
-    class Expression : Syntax
+    class Element : Syntax
     {
-        public List<Syntax> Child;
-
-        public Expression() { }
-
-        public Expression(List<Syntax> child, SyntaxType type, string file, int line)
-            : base(type, file, line)
+        public override string Text
         {
-            Child = child;
+            get
+            {
+                return string.Empty;
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
         }
+        public override List<Syntax> Child { get; set; }
 
-        public override string ToValueString()
+        public override string ToString(int indent)
         {
             StringBuilder result = new StringBuilder();
+            result.AppendLine(Indent(indent) + Position + ": " + Enum.GetName(typeof(SyntaxType), Type));
             for (int i = 0; i < Child.Count; i++)
             {
-                if (i > 0)
-                {
-                    result.Append(" ");
-                }
-                result.Append(Child[i].ToValueString());
+                result.Append(Child[i].ToString(indent + 1));
             }
             return result.ToString();
-        }
-
-        public override string ToString()
-        {
-            return Position.File + "(" + Position.Line + "): " + Enum.GetName(typeof(SyntaxType), Type) + " => " + ToValueString();
         }
     }
 
@@ -102,9 +86,53 @@ namespace Dlight
     {
         Unknoun,
         Root,
+        Spacer,
+        Error,
+        BlockComment,
+        LineComment,
+        Import,
+        Using,
+        Alias,
+        WildAttribute,
+        Assign,
+        Tuple,
+        PeirLiteral,
+        RangeLiteral,
+        Logical,
+        Compare,
+        Bitwise,
+        Shift,
+        Addtive,
+        Multiplicative,
+        Powertive,
+        Unary,
+        GorupExpression,
+        Identifier,
+        PragmaLiteral,
+        MenberAccess,
+        ParentAccess,
+        IntegerLiteral,
+        RealLiteral,
+        StringLiteral,
+        BuiltIn,
+        Argument,
+        ArgumentList,
+        Parameter,
+        Attribute,
+        Annotation,
+        AttributeList,
+        Hamper,
+        Block,
+        EnumBlock,
+        EnumList,
+        EnumPair,
+        VariableLiteral,
+        RoutineLiteral,
+        LambdaLiteral,
+        ClassLiteral,
+        EnumLiteral,
 
-        EndOfFile,
-        EndOfLine,
+        EndLine,
         WhiteSpace,
         LetterStartString,
         DigitStartString,
@@ -114,21 +142,28 @@ namespace Dlight
         BackQuote,
         StartComment,
         EndComment,
-        LineComment,
-        EndOfExpression,
-        Pear,
+        StartLineComment,
+        EndDirective,
+        Peir,
         Separator,
         List,
         Access,
         Range,
         Wild,
-        Annotation,
+        At,
         Pragma,
         Lambda,
         Conditional,
         Coalesce,
         OrElse,
         AndElse,
+        Equal,
+        NotEqual,
+        LessThan,
+        LessThanOrEqual,
+        GreaterThan,
+        GreaterThanOrEqual,
+        Incompare,
         LeftAssign,
         RightAssign,
         Or,
@@ -141,13 +176,6 @@ namespace Dlight
         XorLeftAssign,
         XorRightAssign,
         Not,
-        Equal,
-        NotEqual,
-        LessThan,
-        LessThanOrEqual,
-        GreaterThan,
-        GreaterThanOrEqual,
-        Incompare,
         LeftShift,
         LeftShiftLeftAssign,
         LeftShiftRightAssign,
@@ -183,20 +211,5 @@ namespace Dlight
         RightBracket,
         LeftBrace,
         RightBrace,
-
-        Identifier,
-        BinaryPrefix,
-        OctalPrefix,
-        DecimalPrefix,
-        HexPrefix,
-        Number,
-        RadixPoint,
-        String,
-        StartString,
-        EndString,
-        BuiltIn,
-        StartBuiltIn,
-        EndBuiltIn,
-        Comment,
     }
 }

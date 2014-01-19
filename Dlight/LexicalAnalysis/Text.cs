@@ -8,50 +8,32 @@ namespace Dlight.LexicalAnalysis
 {
     partial class Lexer
     {
-        private Token EndOfFile(ref TextPosition p)
-        {
-            int i;
-            for (i = 0; IsEnd(p, i); i++)
-            {
-                char c = Peek(p, i);
-                if (c.Match("\x00\x1A"))
-                {
-                    continue;
-                }
-                break;
-            }
-            return TakeToken(ref p, i, SyntaxType.EndOfFile);
-        }
-
         private Token EndOfLine(ref TextPosition p)
         {
             int i = 0;
-            char c = Peek(p, i);
-            if (!IsEnd(p, i) && c.Match("\x0A"))
+            if (IsEnable(p, i) && Peek(p, i).Match("\x0A"))
             {
                 i++;
-                c = Peek(p, i);
-                if (!IsEnd(p, i) && c.Match("\x0D"))
+                if (IsEnable(p, i) && Peek(p, i).Match("\x0D"))
                 {
                     i++;
                 }
             }
-            else if (!IsEnd(p, i) && c.Match("\x0D"))
+            else if (IsEnable(p, i) && Peek(p, i).Match("\x0D"))
             {
                 i++;
-                c = Peek(p, i);
-                if (!IsEnd(p, i) && c.Match("\x0A"))
+                if (IsEnable(p, i) && Peek(p, i).Match("\x0A"))
                 {
                     i++;
                 }
             }
-            return TakeToken(ref p, i, SyntaxType.EndOfLine);
+            return TakeToken(ref p, i, SyntaxType.EndLine);
         }
 
         private Token WhiteSpace(ref TextPosition p)
         {
             int i;
-            for (i = 0; IsEnd(p, i); i++)
+            for (i = 0; IsEnable(p, i); i++)
             {
                 char c = Peek(p, i);
                 if (c.Match('\x00', '\x20') || c.Match("\x7F"))
@@ -67,7 +49,7 @@ namespace Dlight.LexicalAnalysis
         {
             int i;
             bool escape = false;
-            for (i = 0; IsEnd(p, i); i++)
+            for (i = 0; IsEnable(p, i); i++)
             {
                 char c = Peek(p, i);
                 if (escape && c.Match('!', '~'))
@@ -97,7 +79,7 @@ namespace Dlight.LexicalAnalysis
         {
             int i;
             bool escape = false;
-            for (i = 0; IsEnd(p, i); i++)
+            for (i = 0; IsEnable(p, i); i++)
             {
                 char c = Peek(p, i);
                 if (escape && c.Match('!', '~'))
@@ -126,7 +108,7 @@ namespace Dlight.LexicalAnalysis
         private Token OtherString(ref TextPosition p)
         {
             int i;
-            for (i = 0; IsEnd(p, i); i++)
+            for (i = 0; IsEnable(p, i); i++)
             {
                 char c = Peek(p, i);
                 if (!c.Match('\x00', '\x7F'))

@@ -17,12 +17,11 @@ namespace Dlight.LexicalAnalysis
             Text = text;
             TextPosition p = new TextPosition { File = file, Total = 0, Line = 1, Row = 0 };
             List<Token> result = new List<Token>();
-            while (IsEnd(p, 0))
+            while (IsEnable(p, 0))
             {
-                Token token = Coalesce
+                Token token = CoalesceLexer
                     (
                     ref p,
-                    EndOfFile,
                     EndOfLine,
                     WhiteSpace,
                     LetterStartString,
@@ -37,7 +36,7 @@ namespace Dlight.LexicalAnalysis
             return result;
         }
 
-        private bool IsEnd(TextPosition p, int i)
+        private bool IsEnable(TextPosition p, int i)
         {
             return p.Total + i < Text.Length;
         }
@@ -47,7 +46,7 @@ namespace Dlight.LexicalAnalysis
             return Text[p.Total + i];
         }
 
-        private Token Coalesce(ref TextPosition p, params LexerFunction[] func)
+        private Token CoalesceLexer(ref TextPosition p, params LexerFunction[] func)
         {
             Token result = null;
             foreach (LexerFunction f in func)
@@ -68,10 +67,12 @@ namespace Dlight.LexicalAnalysis
                 return null;
             }
             string text = TrySubString(p.Total, length);
-            Token result = new Token { Text = text, Type = type, Position = p };
+            TextPosition temp = p;
+            temp.Length = length;
+            Token result = new Token { Text = text, Type = type, Position = temp };
             p.Total += length;
             p.Row += length;
-            if (type == SyntaxType.EndOfLine)
+            if (type == SyntaxType.EndLine)
             {
                 p.Line++;
                 p.Row = 0;

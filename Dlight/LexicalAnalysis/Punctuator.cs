@@ -17,12 +17,12 @@ namespace Dlight.LexicalAnalysis
                 case "\'": type = SyntaxType.SingleQuote; break;
                 case "\"": type = SyntaxType.DoubleQuote; break;
                 case "`": type = SyntaxType.BackQuote; break;
-                case ";": type = SyntaxType.EndOfExpression; break;
-                case ":": type = SyntaxType.Pear; break;
+                case ";": type = SyntaxType.EndDirective; break;
+                case ":": type = SyntaxType.Peir; break;
                 case ",": type = SyntaxType.List; break;
                 case ".": type = SyntaxType.Access; break;
                 case "#": type = SyntaxType.Wild; break;
-                case "@": type = SyntaxType.Annotation; break;
+                case "@": type = SyntaxType.At; break;
                 case "$": type = SyntaxType.Lambda; break;
                 case "?": type = SyntaxType.Conditional; break;
                 case "|": type = SyntaxType.Or; break;
@@ -57,8 +57,8 @@ namespace Dlight.LexicalAnalysis
             {
                 case "/*": type = SyntaxType.StartComment; break;
                 case "*/": type = SyntaxType.EndComment; break;
-                case "//": type = SyntaxType.LineComment; break;
-                case "#!": type = SyntaxType.LineComment; break;
+                case "//": type = SyntaxType.StartLineComment; break;
+                case "#!": type = SyntaxType.StartLineComment; break;
                 case "::": type = SyntaxType.Separator; break;
                 case "..": type = SyntaxType.Range; break;
                 case "@@": type = SyntaxType.Pragma; break;
@@ -94,8 +94,8 @@ namespace Dlight.LexicalAnalysis
                 case "%=": type = SyntaxType.ModuloLeftAssign; break;
                 case "=%": type = SyntaxType.ModuloRightAssign; break;
                 case "**": type = SyntaxType.Power; break;
-                case "++": type = SyntaxType.Increment; break;
-                case "--": type = SyntaxType.Decrement; break;
+                //case "++": type = SyntaxType.Increment; break;
+                //case "--": type = SyntaxType.Decrement; break;
                 default: return null;
             }
             return TakeToken(ref p, 2, type);
@@ -119,6 +119,7 @@ namespace Dlight.LexicalAnalysis
                 case "=>>": type = SyntaxType.RightShiftRightAssign; break;
                 case "**=": type = SyntaxType.PowerLeftAssign; break;
                 case "=**": type = SyntaxType.PowerRightAssign; break;
+                case "**/": type = SyntaxType.EndComment; break;
                 default: return null;
             }
             return TakeToken(ref p, 3, type);

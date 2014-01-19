@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dlight
 {
-    class SyntacticAnalysis
+    class AbstractSyntax
     {
     }
 }
