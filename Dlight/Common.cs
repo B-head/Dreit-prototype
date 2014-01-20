@@ -13,6 +13,16 @@ namespace Dlight
             Console.WriteLine("Error " + file + "(" + line + "): " + message);
         }
 
+        public static string Indent(int indent)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < indent; i++)
+            {
+                result.Append(" ");
+            }
+            return result.ToString();
+        }
+
         public static bool Match<V, T>(this V value, IEnumerable<T> list) where V : IEquatable<T>
         {
             foreach (T v in list)
@@ -50,7 +60,7 @@ namespace Dlight
 
         public override string ToString()
         {
-            return File + "(" + Total + "," + Line + "," + Row + "," + Length + ")";
+            return File + "(" + Line + "," + Row + "," + Total + ")";
         }
     }
 }

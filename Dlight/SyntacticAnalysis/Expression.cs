@@ -8,107 +8,88 @@ namespace Dlight.SyntacticAnalysis
 {
     partial class Parser
     {
-        private Syntax Expression(ref int c)
+        private AbstractSyntax LeftJoinBinomial(ref int c, ParserFunction next, params SyntaxType[] type)
         {
-            return Assign(ref c);
+            AbstractSyntax left = next(ref c);
+            while(IsReadable(c))
+            {
+                SyntaxType match;
+                if(!CheckToken(c, out match, type))
+                {
+                    break;
+                }
+                SkipSpaser(++c);
+                AbstractSyntax right = next(ref c);
+                left = new Binomial { Left = left, Right = right, Operation = match, Position = left.Position };
+            }
+            return left;
         }
 
-        private Syntax Assign(ref int c)
+        private AbstractSyntax Expression(ref int c)
         {
-            return RepeatParser(SyntaxType.Assign, ref c, Tuple, SelectToken(SyntaxType.LeftAssign, SyntaxType.OrLeftAssign, SyntaxType.AndLeftAssign, SyntaxType.XorLeftAssign,
-                SyntaxType.LeftShiftLeftAssign, SyntaxType.RightShiftLeftAssign, SyntaxType.PlusLeftAssign, SyntaxType.MinusLeftAssign, SyntaxType.CombineLeftAssign,
-                SyntaxType.MultiplyLeftAssign, SyntaxType.DivideLeftAssign, SyntaxType.ModuloLeftAssign, SyntaxType.PowerLeftAssign,
-                SyntaxType.RightAssign, SyntaxType.OrRightAssign, SyntaxType.AndRightAssign, SyntaxType.XorRightAssign,
-                SyntaxType.LeftShiftRightAssign, SyntaxType.RightShiftRightAssign, SyntaxType.PlusRightAssign, SyntaxType.MinusRightAssign, SyntaxType.CombineRightAssign,
-                SyntaxType.MultiplyRightAssign, SyntaxType.DivideRightAssign, SyntaxType.ModuloRightAssign, SyntaxType.PowerRightAssign), Spacer, Tuple);
+            return Bitwise(ref c);
         }
 
-        private Syntax Tuple(ref int c)
+        private AbstractSyntax Bitwise(ref int c)
         {
-            return RepeatParser(SyntaxType.Tuple, ref c, PeirLiteral, SelectToken(SyntaxType.List), Spacer, PeirLiteral);
+            return LeftJoinBinomial(ref c, Shift, SyntaxType.Or, SyntaxType.And, SyntaxType.Xor);
         }
 
-        private Syntax PeirLiteral(ref int c)
+        private AbstractSyntax Shift(ref int c)
         {
-            return SequenceParser(SyntaxType.PeirLiteral, ref c, RangeLiteral, SelectToken(SyntaxType.Peir), Spacer, RangeLiteral);
+            return LeftJoinBinomial(ref c, Addtive, SyntaxType.LeftShift, SyntaxType.RightShift);
         }
 
-        private Syntax RangeLiteral(ref int c)
+        private AbstractSyntax Addtive(ref int c)
         {
-            return RepeatParser(SyntaxType.RangeLiteral, ref c, Logical, SelectToken(SyntaxType.Range), Spacer, Logical);
+            return LeftJoinBinomial(ref c, Multiplicative, SyntaxType.Plus, SyntaxType.Minus, SyntaxType.Combine);
         }
 
-        private Syntax Logical(ref int c)
+        private AbstractSyntax Multiplicative(ref int c)
         {
-            return RepeatParser(SyntaxType.Logical, ref c, Compare, SelectToken(SyntaxType.Coalesce, SyntaxType.OrElse, SyntaxType.AndElse), Spacer, Compare);
+            return LeftJoinBinomial(ref c, Powertive, SyntaxType.Multiply, SyntaxType.Divide, SyntaxType.Modulo);
         }
 
-        private Syntax Compare(ref int c)
+        private AbstractSyntax Powertive(ref int c)
         {
-            return RepeatParser(SyntaxType.Compare, ref c, Bitwise, SelectToken(SyntaxType.Equal, SyntaxType.NotEqual,
-                SyntaxType.LessThan, SyntaxType.LessThanOrEqual, SyntaxType.GreaterThan, SyntaxType.GreaterThanOrEqual, SyntaxType.Incompare), Spacer, Bitwise);
+            return LeftJoinBinomial(ref c, Primary, SyntaxType.Power);
         }
 
-        private Syntax Bitwise(ref int c)
+        private AbstractSyntax Primary(ref int c)
         {
-            return RepeatParser(SyntaxType.Bitwise, ref c, Shift, SelectToken(SyntaxType.Or, SyntaxType.And, SyntaxType.Xor), Spacer, Shift);
+            return Group(ref c) ?? Integer(ref c);
         }
 
-        private Syntax Shift(ref int c)
+        private AbstractSyntax Group(ref int c)
         {
-            return RepeatParser(SyntaxType.Shift, ref c, Addtive, SelectToken(SyntaxType.LeftShift, SyntaxType.RightShift), Spacer, Addtive);
+            int temp = c;
+            if (!CheckToken(temp, SyntaxType.LeftParenthesis))
+            {
+                return null;
+            }
+            SkipSpaser(++temp);
+            AbstractSyntax result = Expression(ref temp);
+            if (!CheckToken(temp, SyntaxType.RightParenthesis))
+            {
+                return null;
+            }
+            SkipSpaser(++temp);
+            c = temp;
+            return result;
         }
 
-        private Syntax Addtive(ref int c)
+        private AbstractSyntax Integer(ref int c)
         {
-            return RepeatParser(SyntaxType.Addtive, ref c, Multiplicative, SelectToken(SyntaxType.Plus, SyntaxType.Minus, SyntaxType.Combine), Spacer, Multiplicative);
-        }
-
-        private Syntax Multiplicative(ref int c)
-        {
-            return RepeatParser(SyntaxType.Multiplicative, ref c, Powertive, SelectToken(SyntaxType.Multiply, SyntaxType.Divide, SyntaxType.Modulo), Spacer, Powertive);
-        }
-
-        private Syntax Powertive(ref int c)
-        {
-            return RepeatParser(SyntaxType.Powertive, ref c, Unary, SelectToken(SyntaxType.Power), Spacer, Unary);
-        }
-
-        private Syntax Unary(ref int c)
-        {
-            return SequenceParser(SyntaxType.Unary, ref c, null, SelectToken(SyntaxType.Plus, SyntaxType.Minus, SyntaxType.Combine, SyntaxType.Not, SyntaxType.Xor), Spacer, Unary) ?? ParentAccess(ref c);
-        }
-
-        private Syntax ParentAccess(ref int c)
-        {
-            return SequenceParser(SyntaxType.ParentAccess, ref c, null, SelectToken(SyntaxType.Access), Spacer, MenberAccess) ?? MenberAccess(ref c);
-        }
-
-        private Syntax MenberAccess(ref int c)
-        {
-            return RepeatParser(SyntaxType.MenberAccess, ref c, Primary, SelectToken(SyntaxType.Access), Spacer, Identifier);
-        }
-
-        private Syntax Primary(ref int c)
-        {
-            return CoalesceParser
-                (ref c,
-                GorupExpression,
-                VariableLiteral,
-                RoutineLiteral,
-                LambdaLiteral,
-                ClassLiteral,
-                EnumLiteral,
-                PragmaLiteral,
-                Identifier,
-                RealLiteral,
-                StringLiteral
-                );
-        }
-
-        private Syntax GorupExpression(ref int c)
-        {
-            return SequenceParser(SyntaxType.GorupExpression, ref c, null, SelectToken(SyntaxType.LeftParenthesis), Spacer, Expression, SelectToken(SyntaxType.RightParenthesis), Spacer);
+            if(CheckToken(c, SyntaxType.DigitStartString))
+            {
+                Token t = Read(c);
+                SkipSpaser(++c);
+                return new NumberLiteral { Value = t.Text, Position = t.Position };
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

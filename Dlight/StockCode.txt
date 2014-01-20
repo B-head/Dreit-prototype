@@ -1,15 +1,11 @@
-﻿class FizzBuzz
+﻿import basic
+
+class A
 {
-	function output(num1:Integer32, num2:Integer32)
+	routine test (s, e)
 	{
-		for(0..100 :: i)
-		{ 
-			var c1 := i % num1 = 0;
-			var c2 := i % num2 = 0;
-			if(c1 && c2) stdout ;= "FizzBuzz";
-			else if(c1) stdout ;= "Fizz";
-			else if(c2) stdout ;= "Buzz";
-			else stdout := i;
-		}
+		/****古典的プログラミング。****/
+		var a:Integer32 := 10.000_000
+		"Hallo World { a + 10 ~ "-" }" =: stdout //こんにちは世界。
 	}
 }

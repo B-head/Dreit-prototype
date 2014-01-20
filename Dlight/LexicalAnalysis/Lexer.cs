@@ -8,9 +8,8 @@ namespace Dlight.LexicalAnalysis
 {
     partial class Lexer
     {
-        private string Text;
-
         private delegate Token LexerFunction(ref TextPosition p);
+        private string Text;
 
         public List<Token> Lex(string text, string file)
         {

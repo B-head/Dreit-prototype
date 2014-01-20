@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dlight.SyntacticAnalysis
+namespace Dlight.SyntacticAnalysisOld
 {
     partial class Parser
     {

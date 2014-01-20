@@ -8,169 +8,82 @@ namespace Dlight.SyntacticAnalysis
 {
     partial class Parser
     {
-        private List<Token> List;
+        private delegate AbstractSyntax ParserFunction(ref int c);
+        private List<Token> InputToken;
+        private List<Token> ErrorToken;
 
-        private delegate Syntax ParserFunction(ref int c);
-
-        public Syntax Parse(List<Token> list)
+        public Root Parse(IReadOnlyList<Token> input)
         {
-            List = list;
+            InputToken = input.ToList();
+            ErrorToken = new List<Token>();
             int c = 0;
-            List<Syntax> child = new List<Syntax>();
-            while(IsEnable(c))
+            SkipSpaser(c);
+            List<AbstractSyntax> child = new List<AbstractSyntax>();
+            while (IsReadable(c))
             {
-                Syntax s = Directive(ref c);
-                child.Add(s);
-            }
-            return CreateElement(child, SyntaxType.Root, c);
-        }
-
-        private bool IsEnable(int c)
-        {
-            return c < List.Count;
-        }
-
-        private Token Peek(int c)
-        {
-            return List[c];
-        }
-
-        private Syntax CreateElement(List<Syntax> child, SyntaxType type, int c)
-        {
-            TextPosition position = new TextPosition();
-            if(child.Count > 0)
-            {
-                position = child[0].Position;
-            }
-            else if(IsEnable(c))
-            {
-                position = Peek(c).Position;
-            }
-            return new Element { Child = child, Type = type, Position = position };
-        }
-
-        private Syntax CoalesceParser(ref int c, params ParserFunction[] func)
-        {
-            Syntax result = null;
-            foreach (ParserFunction f in func)
-            {
-                int temp = c;
-                result = f(ref temp);
-                if(result != null)
+                AbstractSyntax s = Expression(ref c);
+                if(s == null)
                 {
-                    c = temp;
-                    break;
-                }
-            }
-            return result;
-        }
-
-        private Syntax SequenceParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
-        {
-            int temp = c;
-            List<Syntax> child = new List<Syntax>();
-            Syntax first = null;
-            if (firstFunc != null)
-            {
-                first = firstFunc(ref temp);
-                if (first == null)
-                {
-                    return null;
-                }
-                c = temp;
-                child.Add(first);
-            }
-            foreach (ParserFunction f in func)
-            {
-                Syntax s = f(ref temp);
-                if (s == null)
-                {
-                    return first;
+                    SkipError(c);
+                    continue;
                 }
                 child.Add(s);
             }
-            c = temp;
-            return CreateElement(child, type, c);
+            return new Root { Child = child, ErrorToken = ErrorToken, Position = child[0].Position };
         }
 
-        private Syntax RepeatParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
+        public bool IsReadable(int c)
+        {
+            return c < InputToken.Count;
+        }
+
+        public Token Read(int c)
+        {
+            return IsReadable(c) ? InputToken[c] : null;
+        }
+
+        public void SkipSpaser(int c)
         {
             int temp = c;
-            Syntax first = firstFunc(ref temp);
-            if (first == null)
-            {
-                return null;
-            }
-            c = temp;
-            List<Syntax> child = new List<Syntax>();
-            List<Syntax> add = new List<Syntax>();
-            child.Add(first);
-            while (true)
-            {
-                add.Clear();
-                foreach (ParserFunction f in func)
-                {
-                    Syntax s = f(ref temp);
-                    if (s == null)
-                    {
-                        goto end;
-                    }
-                    child.Add(s);
-                }
-                c = temp;
-                child.AddRange(add);
-            }
-            end:
-            if (child.Count > 1)
-            {
-                return CreateElement(child, type, c);
-            }
-            else
-            {
-                return first;
-            }
+            Spacer(ref temp);
+            InputToken.RemoveRange(c, temp - c);
         }
 
-        private ParserFunction SelectToken(params SyntaxType[] type)
+        public void SkipError(int c)
         {
-            return (ref int c) =>
-            {
-                if(!IsEnable(c))
-                {
-                    return null;
-                }
-                Token t = Peek(c);
-                foreach (SyntaxType v in type)
-                {
-                    if(v == t.Type)
-                    {
-                        c++;
-                        return t;
-                    }
-                }
-                return null;
-            };
+            SkipSpaser(c);
+            AddError(c);
+            InputToken.RemoveAt(c);
         }
 
-        private ParserFunction CheckText(params string[] text)
+        public bool CheckToken(int c, params SyntaxType[] type)
         {
-            return (ref int c) =>
+            SyntaxType temp;
+            return CheckToken(c, out temp, type);
+        }
+
+        public bool CheckToken(int c, out SyntaxType match, params SyntaxType[] type)
+        {
+            match = SyntaxType.Unknoun;
+            Token t = Read(c);
+            if(t == null)
             {
-                if (!IsEnable(c))
+                return false;
+            }
+            foreach(SyntaxType v in type)
+            {
+                if(t.Type == v)
                 {
-                    return null;
+                    match = v;
+                    return true;
                 }
-                Token t = Peek(c);
-                foreach (string v in text)
-                {
-                    if (v == t.Text)
-                    {
-                        c++;
-                        return t;
-                    }
-                }
-                return null;
-            };
+            }
+            return false;
+        }
+
+        public void AddError(int c)
+        {
+            ErrorToken.Add(Read(c));
         }
     }
 }
