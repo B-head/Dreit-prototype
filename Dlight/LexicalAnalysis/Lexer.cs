@@ -11,10 +11,10 @@ namespace Dlight.LexicalAnalysis
         private delegate Token LexerFunction(ref TextPosition p);
         private string Text;
 
-        public List<Token> Lex(string text, string file)
+        public List<Token> Lex(string text, string fileName)
         {
             Text = text;
-            TextPosition p = new TextPosition { File = file, Total = 0, Line = 1, Row = 0 };
+            TextPosition p = new TextPosition { File = fileName, Total = 0, Line = 1, Row = 0 };
             List<Token> result = new List<Token>();
             while (IsEnable(p, 0))
             {
@@ -25,6 +25,7 @@ namespace Dlight.LexicalAnalysis
                     WhiteSpace,
                     LetterStartString,
                     DigitStartString,
+                    QuadruplePunctuator,
                     TriplePunctuator,
                     DoublePunctuator,
                     SinglePunctuator,

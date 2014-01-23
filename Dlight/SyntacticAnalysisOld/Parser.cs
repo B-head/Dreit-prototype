@@ -8,17 +8,17 @@ namespace Dlight.SyntacticAnalysisOld
 {
     partial class Parser
     {
-        private delegate Syntax ParserFunction(ref int c);
+        private delegate SyntaxOld ParserFunction(ref int c);
         private List<Token> List;
 
-        public Syntax Parse(List<Token> list)
+        public SyntaxOld Parse(List<Token> list)
         {
             List = list;
             int c = 0;
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             while(IsEnable(c))
             {
-                Syntax s = Directive(ref c);
+                SyntaxOld s = Directive(ref c);
                 child.Add(s);
             }
             return CreateElement(child, SyntaxType.Root, c);
@@ -34,7 +34,7 @@ namespace Dlight.SyntacticAnalysisOld
             return List[c];
         }
 
-        private Syntax CreateElement(List<Syntax> child, SyntaxType type, int c)
+        private SyntaxOld CreateElement(List<SyntaxOld> child, SyntaxType type, int c)
         {
             TextPosition position = new TextPosition();
             if(child.Count > 0)
@@ -45,12 +45,12 @@ namespace Dlight.SyntacticAnalysisOld
             {
                 position = Peek(c).Position;
             }
-            return new Element { Child = child, Type = type, Position = position };
+            return new DirectiveOld { Child = child, Type = type, Position = position };
         }
 
-        private Syntax CoalesceParser(ref int c, params ParserFunction[] func)
+        private SyntaxOld CoalesceParser(ref int c, params ParserFunction[] func)
         {
-            Syntax result = null;
+            SyntaxOld result = null;
             foreach (ParserFunction f in func)
             {
                 int temp = c;
@@ -64,11 +64,11 @@ namespace Dlight.SyntacticAnalysisOld
             return result;
         }
 
-        private Syntax SequenceParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
+        private SyntaxOld SequenceParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
         {
             int temp = c;
-            List<Syntax> child = new List<Syntax>();
-            Syntax first = null;
+            List<SyntaxOld> child = new List<SyntaxOld>();
+            SyntaxOld first = null;
             if (firstFunc != null)
             {
                 first = firstFunc(ref temp);
@@ -81,7 +81,7 @@ namespace Dlight.SyntacticAnalysisOld
             }
             foreach (ParserFunction f in func)
             {
-                Syntax s = f(ref temp);
+                SyntaxOld s = f(ref temp);
                 if (s == null)
                 {
                     return first;
@@ -92,24 +92,24 @@ namespace Dlight.SyntacticAnalysisOld
             return CreateElement(child, type, c);
         }
 
-        private Syntax RepeatParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
+        private SyntaxOld RepeatParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
         {
             int temp = c;
-            Syntax first = firstFunc(ref temp);
+            SyntaxOld first = firstFunc(ref temp);
             if (first == null)
             {
                 return null;
             }
             c = temp;
-            List<Syntax> child = new List<Syntax>();
-            List<Syntax> add = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
+            List<SyntaxOld> add = new List<SyntaxOld>();
             child.Add(first);
             while (true)
             {
                 add.Clear();
                 foreach (ParserFunction f in func)
                 {
-                    Syntax s = f(ref temp);
+                    SyntaxOld s = f(ref temp);
                     if (s == null)
                     {
                         goto end;

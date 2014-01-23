@@ -8,25 +8,25 @@ namespace Dlight.SyntacticAnalysisOld
 {
     partial class Parser
     {
-        private Syntax SkipError(ref int c)
+        private SyntaxOld SkipError(ref int c)
         {
             if(!IsEnable(c))
             {
                 return null;
             }
             Token error = Peek(c++);
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             child.Add(error);
             return CreateElement(child, SyntaxType.Error, c);
         }
 
-        private Syntax Spacer(ref int c)
+        private SyntaxOld Spacer(ref int c)
         {
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             bool error = false;
             while (IsEnable(c))
             {
-                Syntax s = CoalesceParser
+                SyntaxOld s = CoalesceParser
                     (
                     ref c,
                     BlockComment,
@@ -56,17 +56,17 @@ namespace Dlight.SyntacticAnalysisOld
             return CreateElement(child, error ? SyntaxType.Error : SyntaxType.Spacer, c);
         }
 
-        private Syntax BlockComment(ref int c)
+        private SyntaxOld BlockComment(ref int c)
         {
             if(!IsEnable(c) || Peek(c).Type != SyntaxType.StartComment)
             {
                 return null;
             }
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             child.Add(Peek(c++));
             while (IsEnable(c))
             {
-                Syntax s = BlockComment(ref c);
+                SyntaxOld s = BlockComment(ref c);
                 if(s != null)
                 {
                     child.Add(s);
@@ -83,13 +83,13 @@ namespace Dlight.SyntacticAnalysisOld
             return CreateElement(child, SyntaxType.BlockComment, c);
         }
 
-        private Syntax LineComment(ref int c)
+        private SyntaxOld LineComment(ref int c)
         {
             if (!IsEnable(c) || Peek(c).Type != SyntaxType.StartLineComment)
             {
                 return null;
             }
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             child.Add(Peek(c++));
             while (IsEnable(c))
             {

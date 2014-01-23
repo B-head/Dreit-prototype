@@ -8,9 +8,9 @@ namespace Dlight.SyntacticAnalysisOld
 {
     partial class Parser
     {
-        private Syntax Directive(ref int c)
+        private SyntaxOld Directive(ref int c)
         {
-            Syntax s = Spacer(ref c);
+            SyntaxOld s = Spacer(ref c);
             if(s.Child.Count > 0)
             {
                 return s;
@@ -18,7 +18,7 @@ namespace Dlight.SyntacticAnalysisOld
             return CoalesceParser
                 (
                 ref c,
-                SelectToken(SyntaxType.EndDirective),
+                SelectToken(SyntaxType.EndExpression),
                 Import,
                 Using,
                 Expression,
@@ -26,22 +26,22 @@ namespace Dlight.SyntacticAnalysisOld
                 );
         }
 
-        private Syntax Import(ref int c)
+        private SyntaxOld Import(ref int c)
         {
             return SequenceParser(SyntaxType.Import, ref c, null, CheckText("import", "include"), Spacer, ArgumentList);
         }
 
-        private Syntax Using(ref int c)
+        private SyntaxOld Using(ref int c)
         {
             return SequenceParser(SyntaxType.Using, ref c, null, CheckText("using"), Spacer, ArgumentList);
         }
 
-        private Syntax Alias(ref int c)
+        private SyntaxOld Alias(ref int c)
         {
             return SequenceParser(SyntaxType.Alias, ref c, null, CheckText("alias"), Spacer, ParentAccess, Spacer, ParentAccess);
         }
 
-        private Syntax WildAttribute(ref int c)
+        private SyntaxOld WildAttribute(ref int c)
         {
             return SequenceParser(SyntaxType.WildAttribute, ref c, null, SelectToken(SyntaxType.Wild), Spacer, ParentAccess);
         }

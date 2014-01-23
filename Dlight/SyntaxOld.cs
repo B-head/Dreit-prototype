@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Dlight
 {
-    abstract class Syntax
+    abstract class SyntaxOld
     {
         public SyntaxType Type { get; set; }
         public TextPosition Position { get; set; }
         public abstract string Text { get; set; }
-        public abstract List<Syntax> Child { get; set; }
+        public abstract List<SyntaxOld> Child { get; set; }
 
         public override string ToString()
         {
@@ -24,10 +24,10 @@ namespace Dlight
         }
     }
 
-    class Token : Syntax
+    class Token : SyntaxOld
     {
         public override string Text { get; set; }
-        public override List<Syntax> Child 
+        public override List<SyntaxOld> Child 
         {
             get
             {
@@ -45,7 +45,7 @@ namespace Dlight
         }
     }
 
-    class Element : Syntax
+    class DirectiveOld : SyntaxOld
     {
         public override string Text
         {
@@ -58,7 +58,7 @@ namespace Dlight
                 throw new NotSupportedException();
             }
         }
-        public override List<Syntax> Child { get; set; }
+        public override List<SyntaxOld> Child { get; set; }
 
         public override string ToString(int indent)
         {

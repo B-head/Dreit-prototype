@@ -7,8 +7,7 @@ using System.IO;
 using System.Reflection.Emit;
 using Dlight.LexicalAnalysis;
 using Dlight.SyntacticAnalysis;
-using Dlight.SemanticAnalysis;
-using Dlight.CodeTranslate;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
@@ -16,19 +15,24 @@ namespace Dlight
     {
         static void Main(string[] args)
         {
-            string file = args[0];
-            string save = file.Replace(".txt", ".exe");
-            string text = File.ReadAllText(file);
+            string fileName = args[0];
+            List<Module> module = new List<Module>();
+            module.Add(CompileFile(fileName));
+            Assembly assembly = new Assembly(fileName.Replace(".txt", ""), module);
+            Console.WriteLine(assembly);
+            assembly.CreateScope();
+            assembly.CheckSemantic(Console.Error);
+            AssemblyTranslator trans = new AssemblyTranslator(fileName.Replace(".txt", ""));
+            assembly.Translate(trans);
+        }
+
+        static Module CompileFile(string fileName)
+        {
+            string text = File.ReadAllText(fileName);
             Lexer lexer = new Lexer();
-            List<Token> token = lexer.Lex(text, file);
+            List<Token> token = lexer.Lex(text, fileName);
             Parser parser = new Parser();
-            Root root = parser.Parse(token);
-            string syntax = root.ToString();
-            Console.WriteLine(syntax);
-            Checker checker = new Checker();
-            checker.Check(root, Console.Error);
-            Translator translator = new Translator();
-            translator.Trans(root, save);
+            return parser.Parse(token, fileName.Replace(".txt", ""));
         }
     }
 }

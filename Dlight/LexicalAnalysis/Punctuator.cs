@@ -17,7 +17,7 @@ namespace Dlight.LexicalAnalysis
                 case "\'": type = SyntaxType.SingleQuote; break;
                 case "\"": type = SyntaxType.DoubleQuote; break;
                 case "`": type = SyntaxType.BackQuote; break;
-                case ";": type = SyntaxType.EndDirective; break;
+                case ";": type = SyntaxType.EndExpression; break;
                 case ":": type = SyntaxType.Peir; break;
                 case ",": type = SyntaxType.List; break;
                 case ".": type = SyntaxType.Access; break;
@@ -32,8 +32,8 @@ namespace Dlight.LexicalAnalysis
                 case "=": type = SyntaxType.Equal; break;
                 case "<": type = SyntaxType.LessThan; break;
                 case ">": type = SyntaxType.GreaterThan; break;
-                case "+": type = SyntaxType.Plus; break;
-                case "-": type = SyntaxType.Minus; break;
+                case "+": type = SyntaxType.Add; break;
+                case "-": type = SyntaxType.Subtract; break;
                 case "~": type = SyntaxType.Combine; break;
                 case "*": type = SyntaxType.Multiply; break;
                 case "/": type = SyntaxType.Divide; break;
@@ -73,6 +73,7 @@ namespace Dlight.LexicalAnalysis
                 case "=&": type = SyntaxType.AndRightAssign; break;
                 case "^=": type = SyntaxType.XorLeftAssign; break;
                 case "=^": type = SyntaxType.XorRightAssign; break;
+                case "==": type = SyntaxType.Equal; break;
                 case "<>": type = SyntaxType.NotEqual; break;
                 case "><": type = SyntaxType.NotEqual; break;
                 case "<=": type = SyntaxType.LessThanOrEqual; break;
@@ -93,7 +94,7 @@ namespace Dlight.LexicalAnalysis
                 case "=/": type = SyntaxType.DivideRightAssign; break;
                 case "%=": type = SyntaxType.ModuloLeftAssign; break;
                 case "=%": type = SyntaxType.ModuloRightAssign; break;
-                case "**": type = SyntaxType.Power; break;
+                case "**": type = SyntaxType.Exponent; break;
                 //case "++": type = SyntaxType.Increment; break;
                 //case "--": type = SyntaxType.Decrement; break;
                 default: return null;
@@ -117,9 +118,30 @@ namespace Dlight.LexicalAnalysis
                 case "=<<": type = SyntaxType.LeftShiftRightAssign; break;
                 case ">>=": type = SyntaxType.RightShiftLeftAssign; break;
                 case "=>>": type = SyntaxType.RightShiftRightAssign; break;
-                case "**=": type = SyntaxType.PowerLeftAssign; break;
-                case "=**": type = SyntaxType.PowerRightAssign; break;
+                //case ":>>": type = SyntaxType.ArithRightShift; break;
+                //case "<<<": type = SyntaxType.LeftRotate; break;
+                //case ">>>": type = SyntaxType.RightRotate; break;
+                case "**=": type = SyntaxType.ExponentLeftAssign; break;
+                case "=**": type = SyntaxType.ExponentRightAssign; break;
                 case "**/": type = SyntaxType.EndComment; break;
+                default: return null;
+            }
+            return TakeToken(ref p, 3, type);
+        }
+
+        private Token QuadruplePunctuator(ref TextPosition p)
+        {
+            SyntaxType type = SyntaxType.Unknoun;
+            string sub = TrySubString(p.Total, 3);
+            switch (sub)
+            {
+                //case ":>>=": type = SyntaxType.ArithRightShiftLeftAssign; break;
+                //case "=:>>": type = SyntaxType.ArithRightShiftRightAssign; break;
+                //case "<<<=": type = SyntaxType.LeftRotateLeftAssign; break;
+                //case "=<<<": type = SyntaxType.LeftRotateRightAssign; break;
+                //case ">>>=": type = SyntaxType.RightRotateLeftAssign; break;
+                //case "=>>>": type = SyntaxType.RightRotateRightAssign; break;
+                case "=**/": type = SyntaxType.EndComment; break;
                 default: return null;
             }
             return TakeToken(ref p, 3, type);

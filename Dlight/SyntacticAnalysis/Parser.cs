@@ -8,20 +8,20 @@ namespace Dlight.SyntacticAnalysis
 {
     partial class Parser
     {
-        private delegate AbstractSyntax ParserFunction(ref int c);
+        private delegate Syntax ParserFunction(ref int c);
         private List<Token> InputToken;
         private List<Token> ErrorToken;
 
-        public Root Parse(IReadOnlyList<Token> input)
+        public Module Parse(List<Token> input, string name)
         {
-            InputToken = input.ToList();
+            InputToken = input;
             ErrorToken = new List<Token>();
             int c = 0;
             SkipSpaser(c);
-            List<AbstractSyntax> child = new List<AbstractSyntax>();
+            List<Syntax> child = new List<Syntax>();
             while (IsReadable(c))
             {
-                AbstractSyntax s = Expression(ref c);
+                Syntax s = Expression(ref c);
                 if(s == null)
                 {
                     SkipError(c);
@@ -29,7 +29,7 @@ namespace Dlight.SyntacticAnalysis
                 }
                 child.Add(s);
             }
-            return new Root { Child = child, ErrorToken = ErrorToken, Position = child[0].Position };
+            return new Module(name, child, ErrorToken);
         }
 
         public bool IsReadable(int c)

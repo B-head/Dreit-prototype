@@ -8,27 +8,27 @@ namespace Dlight.SyntacticAnalysisOld
 {
     partial class Parser
     {
-        private Syntax Identifier(ref int c)
+        private SyntaxOld Identifier(ref int c)
         {
             return SequenceParser(SyntaxType.Identifier, ref c, SelectToken(SyntaxType.LetterStartString), Spacer);
         }
 
-        private Syntax PragmaLiteral(ref int c)
+        private SyntaxOld PragmaLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.PragmaLiteral, ref c, null, SelectToken(SyntaxType.Pragma), ParentAccess);
         }
 
-        private Syntax IntegerLiteral(ref int c)
+        private SyntaxOld IntegerLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.IntegerLiteral, ref c, null, SelectToken(SyntaxType.DigitStartString), Spacer);
         }
 
-        private Syntax RealLiteral(ref int c)
+        private SyntaxOld RealLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.RealLiteral, ref c, IntegerLiteral, SelectToken(SyntaxType.Access), Spacer, IntegerLiteral);
         }
 
-        private Syntax StringLiteral(ref int c)
+        private SyntaxOld StringLiteral(ref int c)
         {
             if(!IsEnable(c))
             {
@@ -41,11 +41,11 @@ namespace Dlight.SyntacticAnalysisOld
                 return null;
             }
             c++;
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             child.Add(temp);
             while (IsEnable(c))
             {
-                Syntax s = BuiltIn(ref c);
+                SyntaxOld s = BuiltIn(ref c);
                 if (s != null)
                 {
                     child.Add(s);
@@ -63,37 +63,37 @@ namespace Dlight.SyntacticAnalysisOld
             return CreateElement(child, SyntaxType.StringLiteral, c);
         }
 
-        private Syntax BuiltIn(ref int c)
+        private SyntaxOld BuiltIn(ref int c)
         {
             return SequenceParser(SyntaxType.BuiltIn, ref c, null, SelectToken(SyntaxType.LeftBrace), Spacer, Expression, SelectToken(SyntaxType.RightBrace));
         }
 
-        private Syntax Argument(ref int c)
+        private SyntaxOld Argument(ref int c)
         {
             return SequenceParser(SyntaxType.Argument, ref c, ParentAccess, SelectToken(SyntaxType.Peir), Spacer, ParentAccess);
         }
 
-        private Syntax ArgumentList(ref int c)
+        private SyntaxOld ArgumentList(ref int c)
         {
             return RepeatParser(SyntaxType.ArgumentList, ref c, Argument, SelectToken(SyntaxType.List), Spacer, Argument);
         }
 
-        private Syntax Attribute(ref int c)
+        private SyntaxOld Attribute(ref int c)
         {
             return SequenceParser(SyntaxType.Attribute, ref c, null, CheckText(), Spacer);
         }
 
-        private Syntax Annotation(ref int c)
+        private SyntaxOld Annotation(ref int c)
         {
             return SequenceParser(SyntaxType.Annotation, ref c, null, SelectToken(SyntaxType.At), Spacer, Identifier);
         }
 
-        private Syntax AttributeList(ref int c)
+        private SyntaxOld AttributeList(ref int c)
         {
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             while (IsEnable(c))
             {
-                Syntax s = CoalesceParser
+                SyntaxOld s = CoalesceParser
                     (
                     ref c,
                     Attribute,
@@ -108,12 +108,12 @@ namespace Dlight.SyntacticAnalysisOld
             return CreateElement(child, SyntaxType.AttributeList, c);
         }
 
-        private Syntax Parameter(ref int c)
+        private SyntaxOld Parameter(ref int c)
         {
             return SequenceParser(SyntaxType.Parameter, ref c, null, SelectToken(SyntaxType.LeftParenthesis), Spacer, ArgumentList, SelectToken(SyntaxType.RightParenthesis), Spacer);
         }
 
-        private Syntax CodeDefinition(ref int c)
+        private SyntaxOld CodeDefinition(ref int c)
         {
             return CoalesceParser
                 (
@@ -123,12 +123,12 @@ namespace Dlight.SyntacticAnalysisOld
                 );
         }
 
-        private Syntax Hamper(ref int c)
+        private SyntaxOld Hamper(ref int c)
         {
             return SequenceParser(SyntaxType.Hamper, ref c, null, SelectToken(SyntaxType.Separator), Spacer, Directive);
         }
 
-        private Syntax Block(ref int c)
+        private SyntaxOld Block(ref int c)
         {
             if (!IsEnable(c))
             {
@@ -140,7 +140,7 @@ namespace Dlight.SyntacticAnalysisOld
                 return null;
             }
             c++;
-            List<Syntax> child = new List<Syntax>();
+            List<SyntaxOld> child = new List<SyntaxOld>();
             child.Add(temp);
             while (IsEnable(c))
             {
@@ -151,7 +151,7 @@ namespace Dlight.SyntacticAnalysisOld
                     c++;
                     break;
                 }
-                Syntax s = Directive(ref c);
+                SyntaxOld s = Directive(ref c);
                 if (s != null)
                 {
                     child.Add(s);
@@ -162,42 +162,42 @@ namespace Dlight.SyntacticAnalysisOld
             return CreateElement(child, SyntaxType.Block, c);
         }
 
-        private Syntax EnumBlock(ref int c)
+        private SyntaxOld EnumBlock(ref int c)
         {
             return SequenceParser(SyntaxType.EnumBlock, ref c, null, SelectToken(SyntaxType.LeftBrace), Spacer, EnumList, SelectToken(SyntaxType.RightBrace), Spacer);
         }
 
-        private Syntax EnumList(ref int c)
+        private SyntaxOld EnumList(ref int c)
         {
             return RepeatParser(SyntaxType.EnumList, ref c, EnumPair, SelectToken(SyntaxType.List), Spacer, EnumPair);
         }
 
-        private Syntax EnumPair(ref int c)
+        private SyntaxOld EnumPair(ref int c)
         {
             return RepeatParser(SyntaxType.EnumPair, ref c, Identifier, SelectToken(SyntaxType.Peir), Spacer, Expression);
         }
 
-        private Syntax VariableLiteral(ref int c)
+        private SyntaxOld VariableLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.VariableLiteral, ref c, null, AttributeList, CheckText("var", "const"), Spacer, Argument);
         }
 
-        private Syntax RoutineLiteral(ref int c)
+        private SyntaxOld RoutineLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.RoutineLiteral, ref c, null, AttributeList, CheckText("routine", "function"), Spacer, ParentAccess, Parameter, CodeDefinition);
         }
 
-        private Syntax LambdaLiteral(ref int c)
+        private SyntaxOld LambdaLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.LambdaLiteral, ref c, null, SelectToken(SyntaxType.Lambda), Spacer, Parameter, CodeDefinition);
         }
 
-        private Syntax ClassLiteral(ref int c)
+        private SyntaxOld ClassLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.ClassLiteral, ref c, null, AttributeList, CheckText("class"), Spacer, ParentAccess, CodeDefinition);
         }
 
-        private Syntax EnumLiteral(ref int c)
+        private SyntaxOld EnumLiteral(ref int c)
         {
             return SequenceParser(SyntaxType.EnumLiteral, ref c, null, AttributeList, CheckText("enum"), Spacer, ParentAccess, EnumBlock);
         }

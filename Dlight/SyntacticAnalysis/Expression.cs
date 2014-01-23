@@ -8,9 +8,13 @@ namespace Dlight.SyntacticAnalysis
 {
     partial class Parser
     {
-        private AbstractSyntax LeftJoinBinomial(ref int c, ParserFunction next, params SyntaxType[] type)
+        private Syntax LeftJoinBinomial(ref int c, ParserFunction next, params SyntaxType[] type)
         {
-            AbstractSyntax left = next(ref c);
+            Syntax left = next(ref c);
+            if(left == null)
+            {
+                return null;
+            }
             while(IsReadable(c))
             {
                 SyntaxType match;
@@ -19,48 +23,53 @@ namespace Dlight.SyntacticAnalysis
                     break;
                 }
                 SkipSpaser(++c);
-                AbstractSyntax right = next(ref c);
+                Syntax right = next(ref c);
                 left = new Binomial { Left = left, Right = right, Operation = match, Position = left.Position };
             }
             return left;
         }
 
-        private AbstractSyntax Expression(ref int c)
+        private Syntax Expression(ref int c)
         {
-            return Bitwise(ref c);
+            Syntax result = Bitwise(ref c);
+            if (CheckToken(c, SyntaxType.EndExpression))
+            {
+                SkipSpaser(++c);
+            }
+            return result;
         }
 
-        private AbstractSyntax Bitwise(ref int c)
+        private Syntax Bitwise(ref int c)
         {
             return LeftJoinBinomial(ref c, Shift, SyntaxType.Or, SyntaxType.And, SyntaxType.Xor);
         }
 
-        private AbstractSyntax Shift(ref int c)
+        private Syntax Shift(ref int c)
         {
             return LeftJoinBinomial(ref c, Addtive, SyntaxType.LeftShift, SyntaxType.RightShift);
         }
 
-        private AbstractSyntax Addtive(ref int c)
+        private Syntax Addtive(ref int c)
         {
-            return LeftJoinBinomial(ref c, Multiplicative, SyntaxType.Plus, SyntaxType.Minus, SyntaxType.Combine);
+            return LeftJoinBinomial(ref c, Multiplicative, SyntaxType.Add, SyntaxType.Subtract, SyntaxType.Combine);
         }
 
-        private AbstractSyntax Multiplicative(ref int c)
+        private Syntax Multiplicative(ref int c)
         {
-            return LeftJoinBinomial(ref c, Powertive, SyntaxType.Multiply, SyntaxType.Divide, SyntaxType.Modulo);
+            return LeftJoinBinomial(ref c, Exponentive, SyntaxType.Multiply, SyntaxType.Divide, SyntaxType.Modulo);
         }
 
-        private AbstractSyntax Powertive(ref int c)
+        private Syntax Exponentive(ref int c)
         {
-            return LeftJoinBinomial(ref c, Primary, SyntaxType.Power);
+            return LeftJoinBinomial(ref c, Primary, SyntaxType.Exponent);
         }
 
-        private AbstractSyntax Primary(ref int c)
+        private Syntax Primary(ref int c)
         {
             return Group(ref c) ?? Integer(ref c);
         }
 
-        private AbstractSyntax Group(ref int c)
+        private Syntax Group(ref int c)
         {
             int temp = c;
             if (!CheckToken(temp, SyntaxType.LeftParenthesis))
@@ -68,7 +77,7 @@ namespace Dlight.SyntacticAnalysis
                 return null;
             }
             SkipSpaser(++temp);
-            AbstractSyntax result = Expression(ref temp);
+            Syntax result = Expression(ref temp);
             if (!CheckToken(temp, SyntaxType.RightParenthesis))
             {
                 return null;
@@ -78,7 +87,7 @@ namespace Dlight.SyntacticAnalysis
             return result;
         }
 
-        private AbstractSyntax Integer(ref int c)
+        private Syntax Integer(ref int c)
         {
             if(CheckToken(c, SyntaxType.DigitStartString))
             {
