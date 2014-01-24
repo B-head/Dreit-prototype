@@ -25,14 +25,10 @@ namespace Dlight.CilTranslate
             return Name + ".exe";
         }
 
-        public override MethodInfo GetContext()
+        public void RegisterEmbedType(string name, Type type)
         {
-            throw new NotSupportedException();
-        }
-
-        public override Type GetDataType()
-        {
-            throw new NotSupportedException();
+            EmbedTypeTranslator temp = new EmbedTypeTranslator(name, type);
+            RegisterTranslator(name, temp);
         }
 
         public override CilTranslator FindTranslator(string fullName)
@@ -58,16 +54,6 @@ namespace Dlight.CilTranslate
             ModuleTranslator result = new ModuleTranslator(scope, this, builder);
             Child.Add(result);
             return result;
-        }
-
-        public override void GenelateNumber(int value)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override void GenelateBinomial(Type dataType, SyntaxType operation)
-        {
-            throw new NotSupportedException();
         }
     }
 }

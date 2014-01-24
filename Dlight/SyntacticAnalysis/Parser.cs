@@ -12,7 +12,7 @@ namespace Dlight.SyntacticAnalysis
         private List<Token> InputToken;
         private List<Token> ErrorToken;
 
-        public Module Parse(List<Token> input, string name)
+        public ModuleElement Parse(List<Token> input, string name)
         {
             InputToken = input;
             ErrorToken = new List<Token>();
@@ -29,7 +29,7 @@ namespace Dlight.SyntacticAnalysis
                 }
                 child.Add(s);
             }
-            return new Module(name, child, ErrorToken);
+            return new ModuleElement(name, child, ErrorToken);
         }
 
         public bool IsReadable(int c)

@@ -7,13 +7,13 @@ using System.IO;
 
 namespace Dlight
 {
-    class Assembly : Element
+    class AssemblyElement : Element
     {
         public string Name { get; set; }
-        public List<Module> Child { get; set; }
+        public List<ModuleElement> Child { get; set; }
         public Scope<Element> Scope { get; set; }
 
-        public Assembly(string name, List<Module> child)
+        public AssemblyElement(string name, List<ModuleElement> child)
         {
             Name = name;
             Child = child;
@@ -52,14 +52,14 @@ namespace Dlight
         }
     }
 
-    class Module : Element
+    class ModuleElement : Element
     {
         public string Name { get; set; }
         public List<Syntax> Child { get; set; }
         public List<Token> ErrorToken { get; set; }
         public Scope<Element> Scope { get; set; }
 
-        public Module(string name, List<Syntax> child, List<Token> error)
+        public ModuleElement(string name, List<Syntax> child, List<Token> error)
         {
             Name = name;
             Child = child.ToList();

@@ -49,9 +49,9 @@ namespace Dlight.CilTranslate
             GlobalContext.GenelateNumber(value);
         }
 
-        public override void GenelateBinomial(Type dataType, SyntaxType operation)
+        public override void GenelateBinomial(string fullName, SyntaxType operation)
         {
-            GlobalContext.GenelateBinomial(dataType, operation);
+            GlobalContext.GenelateBinomial(fullName, operation);
         }
     }
 }

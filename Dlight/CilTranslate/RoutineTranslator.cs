@@ -50,8 +50,9 @@ namespace Dlight.CilTranslate
             Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Integer32).GetConstructor(new Type[] { typeof(int) }));
         }
 
-        public override void GenelateBinomial(Type dataType, SyntaxType operation)
+        public override void GenelateBinomial(string fullName, SyntaxType operation)
         {
+            Type dataType = FindTranslator(fullName).GetDataType();
             switch (operation)
             {
                 case SyntaxType.Add: Generator.Emit(OpCodes.Call, dataType.GetMethod("opAdd")); break;

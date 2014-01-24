@@ -41,7 +41,7 @@ namespace Dlight
         void Save();
         Translator CreateModule(Scope<Element> scope);
         void GenelateNumber(int value);
-        void GenelateBinomial(Type dataType, SyntaxType operation);
+        void GenelateBinomial(string fullName, SyntaxType operation);
     }
 
     struct TextPosition

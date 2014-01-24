@@ -29,10 +29,15 @@ namespace Dlight.CilTranslate
             RegisterTranslator(scope.GetFullName(), this);
         }
 
-        public abstract MethodInfo GetContext();
-        public abstract Type GetDataType();
-        public abstract void GenelateNumber(int value);
-        public abstract void GenelateBinomial(Type dataType, SyntaxType operation);
+        public virtual MethodInfo GetContext()
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual Type GetDataType()
+        {
+            throw new NotSupportedException();
+        }
 
         public virtual CilTranslator FindTranslator(string fullName)
         {
@@ -56,8 +61,15 @@ namespace Dlight.CilTranslate
         {
             return Parent.CreateModule(scope);
         }
+
+        public virtual void GenelateNumber(int value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void GenelateBinomial(string fullName, SyntaxType operation)
+        {
+            throw new NotSupportedException();
+        }
     }
-
-
-
 }

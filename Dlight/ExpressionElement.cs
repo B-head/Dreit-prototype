@@ -51,7 +51,7 @@ namespace Dlight
         public override void Translate(Translator trans)
         {
             base.Translate(trans);
-            trans.GenelateBinomial(typeof(DlightObject.Integer32), Operation);
+            trans.GenelateBinomial("Integer32", Operation);
         }
     }
 

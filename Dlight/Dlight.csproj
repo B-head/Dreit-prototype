@@ -44,6 +44,7 @@
     <Compile Include="AssemblyElement.cs" />
     <Compile Include="CilTranslate\AssemblyTranslator.cs" />
     <Compile Include="CilTranslate\CilTranslator.cs" />
+    <Compile Include="CilTranslate\EmbedTypeTranslator.cs" />
     <Compile Include="CilTranslate\ModuleTranslator.cs" />
     <Compile Include="CilTranslate\RoutineTranslator.cs" />
     <Compile Include="Element.cs" />
@@ -70,7 +71,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Stock.txt" />
     <Content Include="Main.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
