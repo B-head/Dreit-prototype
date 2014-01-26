@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binary64.cs" />
     <Compile Include="Integer32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

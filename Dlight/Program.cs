@@ -19,12 +19,18 @@ namespace Dlight
             List<ModuleElement> module = new List<ModuleElement>();
             module.Add(CompileFile(fileName));
             AssemblyElement assembly = new AssemblyElement(fileName.Replace(".txt", ""), module);
-            Console.WriteLine(assembly);
             assembly.CreateScope();
-            assembly.CheckSemantic(Console.Error);
-            AssemblyTranslator trans = new AssemblyTranslator(fileName.Replace(".txt", ""));
-            RegisterEmbedType(trans);
-            assembly.Translate(trans);
+            ErrorManager manager = new ErrorManager();
+            assembly.CheckSemantic(manager);
+            Console.WriteLine(manager);
+            Console.WriteLine(assembly);
+            if (manager.ErrorCount == 0)
+            {
+                AssemblyTranslator trans = new AssemblyTranslator(fileName.Replace(".txt", ""));
+                RegisterEmbedType(trans);
+                assembly.Translate(trans);
+                trans.Save();
+            }
         }
 
         static ModuleElement CompileFile(string fileName)
@@ -39,6 +45,7 @@ namespace Dlight
         static void RegisterEmbedType(AssemblyTranslator trans)
         {
             trans.RegisterEmbedType("Integer32", typeof(DlightObject.Integer32));
+            trans.RegisterEmbedType("Binary64", typeof(DlightObject.Binary64));
         }
     }
 }

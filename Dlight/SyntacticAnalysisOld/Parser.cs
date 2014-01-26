@@ -21,7 +21,7 @@ namespace Dlight.SyntacticAnalysisOld
                 SyntaxOld s = Directive(ref c);
                 child.Add(s);
             }
-            return CreateElement(child, SyntaxType.Root, c);
+            return CreateElement(child, TokenType.Root, c);
         }
 
         private bool IsEnable(int c)
@@ -34,7 +34,7 @@ namespace Dlight.SyntacticAnalysisOld
             return List[c];
         }
 
-        private SyntaxOld CreateElement(List<SyntaxOld> child, SyntaxType type, int c)
+        private SyntaxOld CreateElement(List<SyntaxOld> child, TokenType type, int c)
         {
             TextPosition position = new TextPosition();
             if(child.Count > 0)
@@ -64,7 +64,7 @@ namespace Dlight.SyntacticAnalysisOld
             return result;
         }
 
-        private SyntaxOld SequenceParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
+        private SyntaxOld SequenceParser(TokenType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
         {
             int temp = c;
             List<SyntaxOld> child = new List<SyntaxOld>();
@@ -92,7 +92,7 @@ namespace Dlight.SyntacticAnalysisOld
             return CreateElement(child, type, c);
         }
 
-        private SyntaxOld RepeatParser(SyntaxType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
+        private SyntaxOld RepeatParser(TokenType type, ref int c, ParserFunction firstFunc, params ParserFunction[] func)
         {
             int temp = c;
             SyntaxOld first = firstFunc(ref temp);
@@ -130,7 +130,7 @@ namespace Dlight.SyntacticAnalysisOld
             }
         }
 
-        private ParserFunction SelectToken(params SyntaxType[] type)
+        private ParserFunction SelectToken(params TokenType[] type)
         {
             return (ref int c) =>
             {
@@ -139,7 +139,7 @@ namespace Dlight.SyntacticAnalysisOld
                     return null;
                 }
                 Token t = Peek(c);
-                foreach (SyntaxType v in type)
+                foreach (TokenType v in type)
                 {
                     if(v == t.Type)
                     {

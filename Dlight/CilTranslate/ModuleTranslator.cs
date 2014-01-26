@@ -13,7 +13,7 @@ namespace Dlight.CilTranslate
         private ModuleBuilder Builder { get; set; }
         private RoutineTranslator GlobalContext { get; set; }
 
-        public ModuleTranslator(Scope<Element> scope, AssemblyTranslator parent, ModuleBuilder builder)
+        public ModuleTranslator(Scope<Element> scope, CilTranslator parent, ModuleBuilder builder)
             : base(scope, parent)
         {
             Builder = builder;
@@ -32,11 +32,6 @@ namespace Dlight.CilTranslate
             return GlobalContext.GetContext();
         }
 
-        public override Type GetDataType()
-        {
-            throw new NotSupportedException(); //どうするか考えよう。
-        }
-
         public override void Save()
         {
             base.Save();
@@ -44,12 +39,27 @@ namespace Dlight.CilTranslate
             Builder.CreateGlobalFunctions();
         }
 
+        public override Translator CreateVariable(Scope<Element> scope, string fullName)
+        {
+            return GlobalContext.CreateVariable(scope, fullName);
+        }
+
+        public override void GenelateLoad(string fullName)
+        {
+            GlobalContext.GenelateLoad(fullName);
+        }
+
+        public override void GenelateStore(string fullName)
+        {
+            GlobalContext.GenelateStore(fullName);
+        }
+
         public override void GenelateNumber(int value)
         {
             GlobalContext.GenelateNumber(value);
         }
 
-        public override void GenelateBinomial(string fullName, SyntaxType operation)
+        public override void GenelateBinomial(string fullName, TokenType operation)
         {
             GlobalContext.GenelateBinomial(fullName, operation);
         }

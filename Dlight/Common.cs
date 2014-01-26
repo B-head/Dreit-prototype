@@ -6,6 +6,16 @@ using System.Threading.Tasks;
 
 namespace Dlight
 {
+    interface Translator
+    {
+        Translator CreateModule(Scope<Element> scope);
+        Translator CreateVariable(Scope<Element> scope, string fullName);
+        void GenelateLoad(string fullName);
+        void GenelateStore(string fullName);
+        void GenelateNumber(int value);
+        void GenelateBinomial(string fullName, TokenType operation);
+    }
+
     static class Common
     {
         public static string Indent(int indent)
@@ -36,174 +46,87 @@ namespace Dlight
         }
     }
 
-    interface Translator
+    class ErrorManager
     {
-        void Save();
-        Translator CreateModule(Scope<Element> scope);
-        void GenelateNumber(int value);
-        void GenelateBinomial(string fullName, SyntaxType operation);
-    }
+        public int ErrorCount { get; private set; }
+        public int WarningCount { get; private set; }
 
-    struct TextPosition
-    {
-        public string File;
-        public int Total;
-        public int Line;
-        public int Row;
-        public int Length;
-
-        public TextPosition(string file, int total, int line, int row)
+        public void Error(string format, params object[] args)
         {
-            File = file;
-            Total = total;
-            Line = line;
-            Row = row;
-            Length = 0;
+            Console.WriteLine("Error: " + format, args);
+            ErrorCount++;
+        }
+
+        public void Warning(string format, params object[] args)
+        {
+            Console.WriteLine("Warning: " + format, args);
+            WarningCount++;
         }
 
         public override string ToString()
         {
-            return File + "(" + Line + ")";
+            return "Error = " + ErrorCount + ", Warning = " + WarningCount; 
         }
     }
 
-    enum SyntaxType
+    class Scope<V>
     {
-        Unknoun,
-        Root,
-        Spacer,
-        Error,
-        BlockComment,
-        LineComment,
-        Import,
-        Using,
-        Alias,
-        WildAttribute,
-        Assign,
-        Tuple,
-        PeirLiteral,
-        RangeLiteral,
-        Logical,
-        Compare,
-        Bitwise,
-        Shift,
-        Addtive,
-        Multiplicative,
-        Powertive,
-        Unary,
-        GorupExpression,
-        Identifier,
-        PragmaLiteral,
-        MenberAccess,
-        ParentAccess,
-        IntegerLiteral,
-        RealLiteral,
-        StringLiteral,
-        BuiltIn,
-        Argument,
-        ArgumentList,
-        Parameter,
-        Attribute,
-        Annotation,
-        AttributeList,
-        Hamper,
-        Block,
-        EnumBlock,
-        EnumList,
-        EnumPair,
-        VariableLiteral,
-        RoutineLiteral,
-        LambdaLiteral,
-        ClassLiteral,
-        EnumLiteral,
+        public V Value { get; private set; }
+        public string Name { get; private set; }
+        public Scope<V> Parent { get; private set; }
+        private Dictionary<string, Scope<V>> Child;
 
-        EndLine,
-        WhiteSpace,
-        LetterStartString,
-        DigitStartString,
-        OtherString,
-        SingleQuote,
-        DoubleQuote,
-        BackQuote,
-        StartComment,
-        EndComment,
-        StartLineComment,
-        EndExpression,
-        Peir,
-        Separator,
-        List,
-        Access,
-        Range,
-        Wild,
-        At,
-        Pragma,
-        Lambda,
-        Conditional,
-        Coalesce,
-        OrElse,
-        AndElse,
-        Equal,
-        NotEqual,
-        LessThan,
-        LessThanOrEqual,
-        GreaterThan,
-        GreaterThanOrEqual,
-        Incompare,
-        LeftAssign,
-        RightAssign,
-        Or,
-        OrLeftAssign,
-        OrRightAssign,
-        And,
-        AndLeftAssign,
-        AndRightAssign,
-        Xor,
-        XorLeftAssign,
-        XorRightAssign,
-        Not,
-        LeftShift,
-        LeftShiftLeftAssign,
-        LeftShiftRightAssign,
-        RightShift,
-        RightShiftLeftAssign,
-        RightShiftRightAssign,
-        ArithRightShift,
-        ArithRightShiftLeftAssign,
-        ArithRightShiftRightAssign,
-        LeftRotate,
-        LeftRotateLeftAssign,
-        LeftRotateRightAssign,
-        RightRotate,
-        RightRotateLeftAssign,
-        RightRotateRightAssign,
-        Add,
-        PlusLeftAssign,
-        PlusRightAssign,
-        Subtract,
-        MinusLeftAssign,
-        MinusRightAssign,
-        Combine,
-        CombineLeftAssign,
-        CombineRightAssign,
-        Multiply,
-        MultiplyLeftAssign,
-        MultiplyRightAssign,
-        Divide,
-        DivideLeftAssign,
-        DivideRightAssign,
-        Modulo,
-        ModuloLeftAssign,
-        ModuloRightAssign,
-        Exponent,
-        ExponentLeftAssign,
-        ExponentRightAssign,
-        Increment,
-        Decrement,
-        LeftParenthesis,
-        RightParenthesis,
-        LeftBracket,
-        RightBracket,
-        LeftBrace,
-        RightBrace,
+        public Scope(V value, string name = null, Scope<V> parent = null)
+        {
+            Value = value;
+            Name = name;
+            Parent = parent;
+            Child = new Dictionary<string, Scope<V>>();
+        }
+
+        public Scope<V> CreateChild(V value, string name)
+        {
+            Scope<V> result = new Scope<V>(value, name, this);
+            Child.Add(name, result);
+            return result;
+        }
+
+        public Scope<V> GetRoot()
+        {
+            return Parent ?? this;
+        }
+
+        public IReadOnlyDictionary<string, Scope<V>> GetChild()
+        {
+            return Child;
+        }
+
+        public string GetFullName()
+        {
+            if (Parent == null)
+            {
+                return Name;
+            }
+            string p = Parent.GetFullName();
+            return p == null ? Name : p + "." + Name;
+        }
+
+        public Scope<V> NameResolution(string name)
+        {
+            if (name == Name)
+            {
+                return this;
+            }
+            Scope<V> temp;
+            if (Child.TryGetValue(name, out temp))
+            {
+                return temp;
+            }
+            if (Parent == null)
+            {
+                return null;
+            }
+            return Parent.NameResolution(name);
+        }
     }
 }

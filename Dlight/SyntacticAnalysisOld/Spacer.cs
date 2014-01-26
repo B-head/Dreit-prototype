@@ -17,7 +17,7 @@ namespace Dlight.SyntacticAnalysisOld
             Token error = Peek(c++);
             List<SyntaxOld> child = new List<SyntaxOld>();
             child.Add(error);
-            return CreateElement(child, SyntaxType.Error, c);
+            return CreateElement(child, TokenType.Error, c);
         }
 
         private SyntaxOld Spacer(ref int c)
@@ -38,13 +38,13 @@ namespace Dlight.SyntacticAnalysisOld
                     continue;
                 }
                 Token t = Peek(c);
-                if(t.Type == SyntaxType.EndLine || t.Type == SyntaxType.WhiteSpace)
+                if(t.Type == TokenType.EndLine || t.Type == TokenType.WhiteSpace)
                 {
                     child.Add(t);
                     c++;
                     continue;
                 }
-                if (t.Type == SyntaxType.OtherString)
+                if (t.Type == TokenType.OtherString)
                 {
                     child.Add(t);
                     c++;
@@ -53,12 +53,12 @@ namespace Dlight.SyntacticAnalysisOld
                 }
                 break;
             }
-            return CreateElement(child, error ? SyntaxType.Error : SyntaxType.Spacer, c);
+            return CreateElement(child, error ? TokenType.Error : TokenType.Spacer, c);
         }
 
         private SyntaxOld BlockComment(ref int c)
         {
-            if(!IsEnable(c) || Peek(c).Type != SyntaxType.StartComment)
+            if(!IsEnable(c) || Peek(c).Type != TokenType.StartComment)
             {
                 return null;
             }
@@ -75,17 +75,17 @@ namespace Dlight.SyntacticAnalysisOld
                 Token t = Peek(c);
                 child.Add(t);
                 c++;
-                if (t.Type == SyntaxType.EndComment)
+                if (t.Type == TokenType.EndComment)
                 {
                     break;
                 }
             }
-            return CreateElement(child, SyntaxType.BlockComment, c);
+            return CreateElement(child, TokenType.BlockComment, c);
         }
 
         private SyntaxOld LineComment(ref int c)
         {
-            if (!IsEnable(c) || Peek(c).Type != SyntaxType.StartLineComment)
+            if (!IsEnable(c) || Peek(c).Type != TokenType.StartLineComment)
             {
                 return null;
             }
@@ -96,12 +96,12 @@ namespace Dlight.SyntacticAnalysisOld
                 Token t = Peek(c);
                 child.Add(t);
                 c++;
-                if (t.Type == SyntaxType.EndLine)
+                if (t.Type == TokenType.EndLine)
                 {
                     break;
                 }
             }
-            return CreateElement(child, SyntaxType.LineComment, c);
+            return CreateElement(child, TokenType.LineComment, c);
         }
     }
 }

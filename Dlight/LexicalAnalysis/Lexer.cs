@@ -60,7 +60,7 @@ namespace Dlight.LexicalAnalysis
             return result;
         }
 
-        private Token TakeToken(ref TextPosition p, int length, SyntaxType type)
+        private Token TakeToken(ref TextPosition p, int length, TokenType type)
         {
             if (length == 0)
             {
@@ -72,7 +72,7 @@ namespace Dlight.LexicalAnalysis
             Token result = new Token { Text = text, Type = type, Position = temp };
             p.Total += length;
             p.Row += length;
-            if (type == SyntaxType.EndLine)
+            if (type == TokenType.EndLine)
             {
                 p.Line++;
                 p.Row = 0;

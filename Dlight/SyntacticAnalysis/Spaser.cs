@@ -14,12 +14,12 @@ namespace Dlight.SyntacticAnalysis
             {
                 BlockComment(ref c);
                 LineComment(ref c);
-                if (CheckToken(c, SyntaxType.WhiteSpace, SyntaxType.EndLine))
+                if (CheckToken(c, TokenType.WhiteSpace, TokenType.EndLine))
                 {
                     c++;
                     continue;
                 }
-                if (CheckToken(c, SyntaxType.OtherString))
+                if (CheckToken(c, TokenType.OtherString))
                 {
                     c++;
                     AddError(c);
@@ -32,7 +32,7 @@ namespace Dlight.SyntacticAnalysis
         private void BlockComment(ref int c)
         {
             Token t = Read(c);
-            if (!CheckToken(c, SyntaxType.StartComment))
+            if (!CheckToken(c, TokenType.StartComment))
             {
                 return;
             }
@@ -40,7 +40,7 @@ namespace Dlight.SyntacticAnalysis
             while (IsReadable(c))
             {
                 BlockComment(ref c);
-                if (CheckToken(c++, SyntaxType.EndComment))
+                if (CheckToken(c++, TokenType.EndComment))
                 {
                     break;
                 }
@@ -50,14 +50,14 @@ namespace Dlight.SyntacticAnalysis
         private void LineComment(ref int c)
         {
             Token t = Read(c);
-            if (!CheckToken(c, SyntaxType.StartLineComment))
+            if (!CheckToken(c, TokenType.StartLineComment))
             {
                 return;
             }
             c++;
             while (IsReadable(c))
             {
-                if (CheckToken(c++, SyntaxType.EndLine))
+                if (CheckToken(c++, TokenType.EndLine))
                 {
                     break;
                 }

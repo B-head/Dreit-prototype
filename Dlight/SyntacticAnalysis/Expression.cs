@@ -8,77 +8,61 @@ namespace Dlight.SyntacticAnalysis
 {
     partial class Parser
     {
-        private Syntax LeftJoinBinomial(ref int c, ParserFunction next, params SyntaxType[] type)
-        {
-            Syntax left = next(ref c);
-            if(left == null)
-            {
-                return null;
-            }
-            while(IsReadable(c))
-            {
-                SyntaxType match;
-                if(!CheckToken(c, out match, type))
-                {
-                    break;
-                }
-                SkipSpaser(++c);
-                Syntax right = next(ref c);
-                left = new Binomial { Left = left, Right = right, Operation = match, Position = left.Position };
-            }
-            return left;
-        }
-
         private Syntax Expression(ref int c)
         {
-            Syntax result = Bitwise(ref c);
-            if (CheckToken(c, SyntaxType.EndExpression))
+            Syntax result = Assign(ref c);
+            if (CheckToken(c, TokenType.EndExpression))
             {
                 SkipSpaser(++c);
             }
             return result;
         }
 
+        private Syntax Assign(ref int c)
+        {
+            return RepeatSet<Assign>(ref c, Bitwise, TokenType.LeftAssign, TokenType.RightAssign);
+        }
+
         private Syntax Bitwise(ref int c)
         {
-            return LeftJoinBinomial(ref c, Shift, SyntaxType.Or, SyntaxType.And, SyntaxType.Xor);
+            return LeftJoinBinomial(ref c, Shift, TokenType.Or, TokenType.And, TokenType.Xor);
         }
 
         private Syntax Shift(ref int c)
         {
-            return LeftJoinBinomial(ref c, Addtive, SyntaxType.LeftShift, SyntaxType.RightShift);
+            return LeftJoinBinomial(ref c, Addtive, TokenType.LeftShift, TokenType.RightShift);
         }
 
         private Syntax Addtive(ref int c)
         {
-            return LeftJoinBinomial(ref c, Multiplicative, SyntaxType.Add, SyntaxType.Subtract, SyntaxType.Combine);
+            return LeftJoinBinomial(ref c, Multiplicative, TokenType.Add, TokenType.Subtract, TokenType.Combine);
         }
 
         private Syntax Multiplicative(ref int c)
         {
-            return LeftJoinBinomial(ref c, Exponentive, SyntaxType.Multiply, SyntaxType.Divide, SyntaxType.Modulo);
+            return LeftJoinBinomial(ref c, Exponentive, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
         }
 
         private Syntax Exponentive(ref int c)
         {
-            return LeftJoinBinomial(ref c, Primary, SyntaxType.Exponent);
+            return LeftJoinBinomial(ref c, Primary, TokenType.Exponent);
         }
 
         private Syntax Primary(ref int c)
         {
-            return Group(ref c) ?? Integer(ref c);
+            return Group(ref c) ?? Number(ref c) ?? DeclareVariable(ref c) ?? Identifier(ref c);
         }
 
         private Syntax Group(ref int c)
         {
             int temp = c;
-            if (!CheckToken(temp, SyntaxType.LeftParenthesis))
+            if (!CheckToken(temp, TokenType.LeftParenthesis))
             {
                 return null;
             }
             SkipSpaser(++temp);
             Syntax result = Expression(ref temp);
-            if (!CheckToken(temp, SyntaxType.RightParenthesis))
+            if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
             }
@@ -87,18 +71,57 @@ namespace Dlight.SyntacticAnalysis
             return result;
         }
 
-        private Syntax Integer(ref int c)
+        private Syntax Number(ref int c)
         {
-            if(CheckToken(c, SyntaxType.DigitStartString))
-            {
-                Token t = Read(c);
-                SkipSpaser(++c);
-                return new NumberLiteral { Value = t.Text, Position = t.Position };
-            }
-            else
+            int temp = c;
+            string value = string.Empty;
+            if (!CheckToken(temp, TokenType.DigitStartString))
             {
                 return null;
             }
+            Token i = Read(temp);
+            SkipSpaser(++temp);
+            c = temp;
+            if (CheckToken(temp, TokenType.Access))
+            {
+                SkipSpaser(++temp);
+                if (CheckToken(temp, TokenType.DigitStartString))
+                {
+                    Token f = Read(temp);
+                    SkipSpaser(++temp);
+                    c = temp;
+                    return new NumberLiteral { Integral = i.Text, Fraction = f.Text, Position = i.Position };
+                }
+            }
+            return new NumberLiteral { Integral = i.Text, Position = i.Position };
+        }
+
+        private Syntax Identifier(ref int c)
+        {
+            if (!CheckToken(c, TokenType.LetterStartString))
+            {
+                return null;
+            }
+            Token t = Read(c);
+            SkipSpaser(++c);
+            return new Identifier { Value = t.Text, Position = t.Position };
+        }
+
+        private Syntax DeclareVariable(ref int c)
+        {
+            if (!CheckText(c, "var"))
+            {
+                return null;
+            }
+            SkipSpaser(++c);
+            Identifier name = (Identifier)Identifier(ref c);
+            if (!CheckToken(c, TokenType.Peir))
+            {
+                return new DeclareVariable { Name = name, Position = name.Position };
+            }
+            SkipSpaser(++c);
+            Identifier dataType = (Identifier)Identifier(ref c);
+            return new DeclareVariable { Name = name, DataType = dataType, Position = name.Position };
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Dlight.SyntacticAnalysisOld
             return CoalesceParser
                 (
                 ref c,
-                SelectToken(SyntaxType.EndExpression),
+                SelectToken(TokenType.EndExpression),
                 Import,
                 Using,
                 Expression,
@@ -28,22 +28,22 @@ namespace Dlight.SyntacticAnalysisOld
 
         private SyntaxOld Import(ref int c)
         {
-            return SequenceParser(SyntaxType.Import, ref c, null, CheckText("import", "include"), Spacer, ArgumentList);
+            return SequenceParser(TokenType.Import, ref c, null, CheckText("import", "include"), Spacer, ArgumentList);
         }
 
         private SyntaxOld Using(ref int c)
         {
-            return SequenceParser(SyntaxType.Using, ref c, null, CheckText("using"), Spacer, ArgumentList);
+            return SequenceParser(TokenType.Using, ref c, null, CheckText("using"), Spacer, ArgumentList);
         }
 
         private SyntaxOld Alias(ref int c)
         {
-            return SequenceParser(SyntaxType.Alias, ref c, null, CheckText("alias"), Spacer, ParentAccess, Spacer, ParentAccess);
+            return SequenceParser(TokenType.Alias, ref c, null, CheckText("alias"), Spacer, ParentAccess, Spacer, ParentAccess);
         }
 
         private SyntaxOld WildAttribute(ref int c)
         {
-            return SequenceParser(SyntaxType.WildAttribute, ref c, null, SelectToken(SyntaxType.Wild), Spacer, ParentAccess);
+            return SequenceParser(TokenType.WildAttribute, ref c, null, SelectToken(TokenType.Wild), Spacer, ParentAccess);
         }
     }
 }

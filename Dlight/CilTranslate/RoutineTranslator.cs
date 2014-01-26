@@ -44,32 +44,43 @@ namespace Dlight.CilTranslate
             Generator.Emit(OpCodes.Ret);
         }
 
+        public override Translator CreateVariable(Scope<Element> scope, string fullName)
+        {
+            Type dataType = FindTranslator(fullName).GetDataType();
+            LocalBuilder builder = Generator.DeclareLocal(dataType);
+            LocalTranslator result = new LocalTranslator(scope, this, builder);
+            Child.Add(result);
+            return result;
+        }
+
+        public override void GenelateLoad(string fullName)
+        {
+            LocalBuilder local = FindTranslator(fullName).GetLocal();
+            Generator.Emit(OpCodes.Ldloc, local);
+        }
+
+        public override void GenelateStore(string fullName)
+        {
+            LocalBuilder local = FindTranslator(fullName).GetLocal();
+            Generator.Emit(OpCodes.Stloc, local);
+        }
+
         public override void GenelateNumber(int value)
         {
             Generator.Emit(OpCodes.Ldc_I4, (int)value);
             Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Integer32).GetConstructor(new Type[] { typeof(int) }));
         }
 
-        public override void GenelateBinomial(string fullName, SyntaxType operation)
+        public override void GenelateBinomial(string fullName, TokenType operation)
         {
             Type dataType = FindTranslator(fullName).GetDataType();
             switch (operation)
             {
-                case SyntaxType.Add: Generator.Emit(OpCodes.Call, dataType.GetMethod("opAdd")); break;
-                case SyntaxType.Subtract: Generator.Emit(OpCodes.Call, dataType.GetMethod("opSubtract")); break;
-                case SyntaxType.Combine: Generator.Emit(OpCodes.Call, dataType.GetMethod("opCombine")); break;
-                case SyntaxType.Multiply: Generator.Emit(OpCodes.Call, dataType.GetMethod("opMultiply")); break;
-                case SyntaxType.Divide: Generator.Emit(OpCodes.Call, dataType.GetMethod("opDivide")); break;
-                case SyntaxType.Modulo: Generator.Emit(OpCodes.Call, dataType.GetMethod("opModulo")); break;
-                case SyntaxType.Exponent: Generator.Emit(OpCodes.Call, dataType.GetMethod("opExponent")); break;
-                case SyntaxType.Or: Generator.Emit(OpCodes.Call, dataType.GetMethod("opOr")); break;
-                case SyntaxType.And: Generator.Emit(OpCodes.Call, dataType.GetMethod("opAnd")); break;
-                case SyntaxType.Xor: Generator.Emit(OpCodes.Call, dataType.GetMethod("opXor")); break;
-                case SyntaxType.LeftShift: Generator.Emit(OpCodes.Call, dataType.GetMethod("opLeftShift")); break;
-                case SyntaxType.RightShift: Generator.Emit(OpCodes.Call, dataType.GetMethod("opRightShift")); break;
-                //case SyntaxType.ArithRightShift: Generator.Emit(OpCodes.Call, dataType.GetMethod("opArithRightShift")); break;
-                //case SyntaxType.LeftRotate: Generator.Emit(OpCodes.Call, dataType.GetMethod("opLeftRotate")); break;
-                //case SyntaxType.RightRotate: Generator.Emit(OpCodes.Call, dataType.GetMethod("opRightRotate")); break;
+                case TokenType.Add: Generator.Emit(OpCodes.Call, dataType.GetMethod("opAdd")); break;
+                case TokenType.Subtract: Generator.Emit(OpCodes.Call, dataType.GetMethod("opSubtract")); break;
+                case TokenType.Multiply: Generator.Emit(OpCodes.Call, dataType.GetMethod("opMultiply")); break;
+                case TokenType.Divide: Generator.Emit(OpCodes.Call, dataType.GetMethod("opDivide")); break;
+                case TokenType.Modulo: Generator.Emit(OpCodes.Call, dataType.GetMethod("opModulo")); break;
                 default: throw new ArgumentException();
             }
         }

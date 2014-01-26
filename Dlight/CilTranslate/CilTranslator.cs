@@ -34,6 +34,11 @@ namespace Dlight.CilTranslate
             throw new NotSupportedException();
         }
 
+        public virtual LocalBuilder GetLocal()
+        {
+            throw new NotSupportedException();
+        }
+
         public virtual Type GetDataType()
         {
             throw new NotSupportedException();
@@ -62,12 +67,27 @@ namespace Dlight.CilTranslate
             return Parent.CreateModule(scope);
         }
 
+        public virtual Translator CreateVariable(Scope<Element> scope, string fullName)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void GenelateLoad(string fullName)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void GenelateStore(string fullName)
+        {
+            throw new NotSupportedException();
+        }
+
         public virtual void GenelateNumber(int value)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateBinomial(string fullName, SyntaxType operation)
+        public virtual void GenelateBinomial(string fullName, TokenType operation)
         {
             throw new NotSupportedException();
         }

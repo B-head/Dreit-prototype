@@ -32,45 +32,50 @@ namespace Dlight.SyntacticAnalysis
             return new ModuleElement(name, child, ErrorToken);
         }
 
-        public bool IsReadable(int c)
+        private bool IsReadable(int c)
         {
             return c < InputToken.Count;
         }
 
-        public Token Read(int c)
+        private Token Read(int c)
         {
             return IsReadable(c) ? InputToken[c] : null;
         }
 
-        public void SkipSpaser(int c)
+        private void SkipSpaser(int c)
         {
             int temp = c;
             Spacer(ref temp);
             InputToken.RemoveRange(c, temp - c);
         }
 
-        public void SkipError(int c)
+        private void SkipError(int c)
         {
             SkipSpaser(c);
             AddError(c);
             InputToken.RemoveAt(c);
         }
 
-        public bool CheckToken(int c, params SyntaxType[] type)
+        private void AddError(int c)
         {
-            SyntaxType temp;
+            ErrorToken.Add(Read(c));
+        }
+
+        private bool CheckToken(int c, params TokenType[] type)
+        {
+            TokenType temp;
             return CheckToken(c, out temp, type);
         }
 
-        public bool CheckToken(int c, out SyntaxType match, params SyntaxType[] type)
+        private bool CheckToken(int c, out TokenType match, params TokenType[] type)
         {
-            match = SyntaxType.Unknoun;
+            match = TokenType.Unknoun;
             Token t = Read(c);
             if(t == null)
             {
                 return false;
             }
-            foreach(SyntaxType v in type)
+            foreach(TokenType v in type)
             {
                 if(t.Type == v)
                 {
@@ -81,9 +86,70 @@ namespace Dlight.SyntacticAnalysis
             return false;
         }
 
-        public void AddError(int c)
+        private bool CheckText(int c, params string[] text)
         {
-            ErrorToken.Add(Read(c));
+            if (!IsReadable(c))
+            {
+                return false;
+            }
+            Token t = Read(c);
+            foreach (string v in text)
+            {
+                if (v == t.Text)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private Syntax LeftJoinBinomial(ref int c, ParserFunction next, params TokenType[] type)
+        {
+            Syntax left = next(ref c);
+            if (left == null)
+            {
+                return null;
+            }
+            while (IsReadable(c))
+            {
+                TokenType match;
+                if (!CheckToken(c, out match, type))
+                {
+                    break;
+                }
+                SkipSpaser(++c);
+                Syntax right = next(ref c);
+                left = new Binomial { Left = left, Right = right, Operation = match, Position = left.Position };
+            }
+            return left;
+        }
+
+        private Syntax RepeatSet<SET>(ref int c, ParserFunction next, params TokenType[] type) where SET : ExpressionSet, new()
+        {
+            List<Syntax> child = new List<Syntax>();
+            List<TokenType> expType = new List<TokenType>();
+            Syntax first = next(ref c);
+            if (first == null)
+            {
+                return null;
+            }
+            child.Add(first);
+            while (IsReadable(c))
+            {
+                TokenType match;
+                if (!CheckToken(c, out match, type))
+                {
+                    break;
+                }
+                expType.Add(match);
+                SkipSpaser(++c);
+                child.Add(next(ref c));
+            }
+            if(child.Count <= 1)
+            {
+                return first;
+            }
+            return new SET { Child = child, ExpType = expType, Position = first.Position };
         }
     }
 }

@@ -41,19 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyElement.cs" />
     <Compile Include="CilTranslate\AssemblyTranslator.cs" />
     <Compile Include="CilTranslate\CilTranslator.cs" />
     <Compile Include="CilTranslate\EmbedTypeTranslator.cs" />
+    <Compile Include="CilTranslate\LocalTranslator.cs" />
     <Compile Include="CilTranslate\ModuleTranslator.cs" />
     <Compile Include="CilTranslate\RoutineTranslator.cs" />
+    <Compile Include="DeclareElement.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ExpressionElement.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="LexicalAnalysis\Lexer.cs" />
     <Compile Include="LexicalAnalysis\Punctuator.cs" />
     <Compile Include="LexicalAnalysis\Text.cs" />
-    <Compile Include="Scope.cs" />
+    <Compile Include="LiteralElement.cs" />
     <Compile Include="SyntacticAnalysis\Expression.cs" />
     <Compile Include="SyntacticAnalysis\Parser.cs" />
     <Compile Include="SyntacticAnalysis\Spaser.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="SyntacticAnalysisOld\Spacer.cs" />
     <Compile Include="SyntacticAnalysisOld\Parser.cs" />
     <Compile Include="SyntaxOld.cs" />
+    <Compile Include="Token.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -38,6 +38,10 @@ namespace Dlight.CilTranslate
 
         public override void RegisterTranslator(string fullName, CilTranslator trans)
         {
+            if(TransDictionary.ContainsKey(fullName))
+            {
+                return;
+            }
             TransDictionary.Add(fullName, trans);
         }
 
@@ -50,7 +54,7 @@ namespace Dlight.CilTranslate
 
         public override Translator CreateModule(Scope<Element> scope)
         {
-            ModuleBuilder builder = Builder.DefineDynamicModule(scope.Name, GetSaveName());
+            ModuleBuilder builder = Builder.DefineDynamicModule(scope.Name, GetSaveName(), true);
             ModuleTranslator result = new ModuleTranslator(scope, this, builder);
             Child.Add(result);
             return result;

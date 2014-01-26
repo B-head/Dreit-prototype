@@ -10,40 +10,40 @@ namespace Dlight.LexicalAnalysis
     {
         private Token SinglePunctuator(ref TextPosition p)
         {
-            SyntaxType type = SyntaxType.Unknoun;
+            TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 1);
             switch(sub)
             {
-                case "\'": type = SyntaxType.SingleQuote; break;
-                case "\"": type = SyntaxType.DoubleQuote; break;
-                case "`": type = SyntaxType.BackQuote; break;
-                case ";": type = SyntaxType.EndExpression; break;
-                case ":": type = SyntaxType.Peir; break;
-                case ",": type = SyntaxType.List; break;
-                case ".": type = SyntaxType.Access; break;
-                case "#": type = SyntaxType.Wild; break;
-                case "@": type = SyntaxType.At; break;
-                case "$": type = SyntaxType.Lambda; break;
-                case "?": type = SyntaxType.Conditional; break;
-                case "|": type = SyntaxType.Or; break;
-                case "&": type = SyntaxType.And; break;
-                case "^": type = SyntaxType.Xor; break;
-                case "!": type = SyntaxType.Not; break;
-                case "=": type = SyntaxType.Equal; break;
-                case "<": type = SyntaxType.LessThan; break;
-                case ">": type = SyntaxType.GreaterThan; break;
-                case "+": type = SyntaxType.Add; break;
-                case "-": type = SyntaxType.Subtract; break;
-                case "~": type = SyntaxType.Combine; break;
-                case "*": type = SyntaxType.Multiply; break;
-                case "/": type = SyntaxType.Divide; break;
-                case "%": type = SyntaxType.Modulo; break;
-                case "(": type = SyntaxType.LeftParenthesis; break;
-                case ")": type = SyntaxType.RightParenthesis; break;
-                case "[": type = SyntaxType.LeftBracket; break;
-                case "]": type = SyntaxType.RightBracket; break;
-                case "{": type = SyntaxType.LeftBrace; break;
-                case "}": type = SyntaxType.RightBrace; break;
+                case "\'": type = TokenType.SingleQuote; break;
+                case "\"": type = TokenType.DoubleQuote; break;
+                case "`": type = TokenType.BackQuote; break;
+                case ";": type = TokenType.EndExpression; break;
+                case ":": type = TokenType.Peir; break;
+                case ",": type = TokenType.List; break;
+                case ".": type = TokenType.Access; break;
+                case "#": type = TokenType.Wild; break;
+                case "@": type = TokenType.At; break;
+                case "$": type = TokenType.Lambda; break;
+                case "?": type = TokenType.Conditional; break;
+                case "|": type = TokenType.Or; break;
+                case "&": type = TokenType.And; break;
+                case "^": type = TokenType.Xor; break;
+                case "!": type = TokenType.Not; break;
+                case "=": type = TokenType.Equal; break;
+                case "<": type = TokenType.LessThan; break;
+                case ">": type = TokenType.GreaterThan; break;
+                case "+": type = TokenType.Add; break;
+                case "-": type = TokenType.Subtract; break;
+                case "~": type = TokenType.Combine; break;
+                case "*": type = TokenType.Multiply; break;
+                case "/": type = TokenType.Divide; break;
+                case "%": type = TokenType.Modulo; break;
+                case "(": type = TokenType.LeftParenthesis; break;
+                case ")": type = TokenType.RightParenthesis; break;
+                case "[": type = TokenType.LeftBracket; break;
+                case "]": type = TokenType.RightBracket; break;
+                case "{": type = TokenType.LeftBrace; break;
+                case "}": type = TokenType.RightBrace; break;
                 default: return null;
             }
             return TakeToken(ref p, 1, type);
@@ -51,50 +51,50 @@ namespace Dlight.LexicalAnalysis
 
         private Token DoublePunctuator(ref TextPosition p)
         {
-            SyntaxType type = SyntaxType.Unknoun;
+            TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 2);
             switch (sub)
             {
-                case "/*": type = SyntaxType.StartComment; break;
-                case "*/": type = SyntaxType.EndComment; break;
-                case "//": type = SyntaxType.StartLineComment; break;
-                case "#!": type = SyntaxType.StartLineComment; break;
-                case "::": type = SyntaxType.Separator; break;
-                case "..": type = SyntaxType.Range; break;
-                case "@@": type = SyntaxType.Pragma; break;
-                case "??": type = SyntaxType.Coalesce; break;
-                case "||": type = SyntaxType.OrElse; break;
-                case "&&": type = SyntaxType.AndElse; break;
-                case ":=": type = SyntaxType.LeftAssign; break;
-                case "=:": type = SyntaxType.RightAssign; break;
-                case "|=": type = SyntaxType.OrLeftAssign; break;
-                case "=|": type = SyntaxType.OrRightAssign; break;
-                case "&=": type = SyntaxType.AndLeftAssign; break;
-                case "=&": type = SyntaxType.AndRightAssign; break;
-                case "^=": type = SyntaxType.XorLeftAssign; break;
-                case "=^": type = SyntaxType.XorRightAssign; break;
-                case "==": type = SyntaxType.Equal; break;
-                case "<>": type = SyntaxType.NotEqual; break;
-                case "><": type = SyntaxType.NotEqual; break;
-                case "<=": type = SyntaxType.LessThanOrEqual; break;
-                case "=<": type = SyntaxType.LessThanOrEqual; break;
-                case ">=": type = SyntaxType.GreaterThanOrEqual; break;
-                case "=>": type = SyntaxType.GreaterThanOrEqual; break;
-                case "<<": type = SyntaxType.LeftShift; break;
-                case ">>": type = SyntaxType.RightShift; break;
-                case "+=": type = SyntaxType.PlusLeftAssign; break;
-                case "=+": type = SyntaxType.PlusRightAssign; break;
-                case "-=": type = SyntaxType.MinusLeftAssign; break;
-                case "=-": type = SyntaxType.MinusRightAssign; break;
-                case "~=": type = SyntaxType.CombineLeftAssign; break;
-                case "=~": type = SyntaxType.CombineRightAssign; break;
-                case "*=": type = SyntaxType.MultiplyLeftAssign; break;
-                case "=*": type = SyntaxType.MultiplyRightAssign; break;
-                case "/=": type = SyntaxType.DivideLeftAssign; break;
-                case "=/": type = SyntaxType.DivideRightAssign; break;
-                case "%=": type = SyntaxType.ModuloLeftAssign; break;
-                case "=%": type = SyntaxType.ModuloRightAssign; break;
-                case "**": type = SyntaxType.Exponent; break;
+                case "/*": type = TokenType.StartComment; break;
+                case "*/": type = TokenType.EndComment; break;
+                case "//": type = TokenType.StartLineComment; break;
+                case "#!": type = TokenType.StartLineComment; break;
+                case "::": type = TokenType.Separator; break;
+                case "..": type = TokenType.Range; break;
+                case "@@": type = TokenType.Pragma; break;
+                case "??": type = TokenType.Coalesce; break;
+                case "||": type = TokenType.OrElse; break;
+                case "&&": type = TokenType.AndElse; break;
+                case ":=": type = TokenType.LeftAssign; break;
+                case "=:": type = TokenType.RightAssign; break;
+                case "|=": type = TokenType.OrLeftAssign; break;
+                case "=|": type = TokenType.OrRightAssign; break;
+                case "&=": type = TokenType.AndLeftAssign; break;
+                case "=&": type = TokenType.AndRightAssign; break;
+                case "^=": type = TokenType.XorLeftAssign; break;
+                case "=^": type = TokenType.XorRightAssign; break;
+                case "==": type = TokenType.Equal; break;
+                case "<>": type = TokenType.NotEqual; break;
+                case "><": type = TokenType.NotEqual; break;
+                case "<=": type = TokenType.LessThanOrEqual; break;
+                case "=<": type = TokenType.LessThanOrEqual; break;
+                case ">=": type = TokenType.GreaterThanOrEqual; break;
+                case "=>": type = TokenType.GreaterThanOrEqual; break;
+                case "<<": type = TokenType.LeftShift; break;
+                case ">>": type = TokenType.RightShift; break;
+                case "+=": type = TokenType.PlusLeftAssign; break;
+                case "=+": type = TokenType.PlusRightAssign; break;
+                case "-=": type = TokenType.MinusLeftAssign; break;
+                case "=-": type = TokenType.MinusRightAssign; break;
+                case "~=": type = TokenType.CombineLeftAssign; break;
+                case "=~": type = TokenType.CombineRightAssign; break;
+                case "*=": type = TokenType.MultiplyLeftAssign; break;
+                case "=*": type = TokenType.MultiplyRightAssign; break;
+                case "/=": type = TokenType.DivideLeftAssign; break;
+                case "=/": type = TokenType.DivideRightAssign; break;
+                case "%=": type = TokenType.ModuloLeftAssign; break;
+                case "=%": type = TokenType.ModuloRightAssign; break;
+                case "**": type = TokenType.Exponent; break;
                 //case "++": type = SyntaxType.Increment; break;
                 //case "--": type = SyntaxType.Decrement; break;
                 default: return null;
@@ -104,26 +104,26 @@ namespace Dlight.LexicalAnalysis
 
         private Token TriplePunctuator(ref TextPosition p)
         {
-            SyntaxType type = SyntaxType.Unknoun;
+            TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 3);
             switch (sub)
             {
-                case "=<>": type = SyntaxType.Incompare; break;
-                case "=><": type = SyntaxType.Incompare; break;
-                case "<=>": type = SyntaxType.Incompare; break;
-                case ">=<": type = SyntaxType.Incompare; break;
-                case "<>=": type = SyntaxType.Incompare; break;
-                case "><=": type = SyntaxType.Incompare; break;
-                case "<<=": type = SyntaxType.LeftShiftLeftAssign; break;
-                case "=<<": type = SyntaxType.LeftShiftRightAssign; break;
-                case ">>=": type = SyntaxType.RightShiftLeftAssign; break;
-                case "=>>": type = SyntaxType.RightShiftRightAssign; break;
+                case "=<>": type = TokenType.Incompare; break;
+                case "=><": type = TokenType.Incompare; break;
+                case "<=>": type = TokenType.Incompare; break;
+                case ">=<": type = TokenType.Incompare; break;
+                case "<>=": type = TokenType.Incompare; break;
+                case "><=": type = TokenType.Incompare; break;
+                case "<<=": type = TokenType.LeftShiftLeftAssign; break;
+                case "=<<": type = TokenType.LeftShiftRightAssign; break;
+                case ">>=": type = TokenType.RightShiftLeftAssign; break;
+                case "=>>": type = TokenType.RightShiftRightAssign; break;
                 //case ":>>": type = SyntaxType.ArithRightShift; break;
                 //case "<<<": type = SyntaxType.LeftRotate; break;
                 //case ">>>": type = SyntaxType.RightRotate; break;
-                case "**=": type = SyntaxType.ExponentLeftAssign; break;
-                case "=**": type = SyntaxType.ExponentRightAssign; break;
-                case "**/": type = SyntaxType.EndComment; break;
+                case "**=": type = TokenType.ExponentLeftAssign; break;
+                case "=**": type = TokenType.ExponentRightAssign; break;
+                case "**/": type = TokenType.EndComment; break;
                 default: return null;
             }
             return TakeToken(ref p, 3, type);
@@ -131,7 +131,7 @@ namespace Dlight.LexicalAnalysis
 
         private Token QuadruplePunctuator(ref TextPosition p)
         {
-            SyntaxType type = SyntaxType.Unknoun;
+            TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 3);
             switch (sub)
             {
@@ -141,7 +141,7 @@ namespace Dlight.LexicalAnalysis
                 //case "=<<<": type = SyntaxType.LeftRotateRightAssign; break;
                 //case ">>>=": type = SyntaxType.RightRotateLeftAssign; break;
                 //case "=>>>": type = SyntaxType.RightRotateRightAssign; break;
-                case "=**/": type = SyntaxType.EndComment; break;
+                case "=**/": type = TokenType.EndComment; break;
                 default: return null;
             }
             return TakeToken(ref p, 3, type);

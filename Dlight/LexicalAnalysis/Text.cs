@@ -27,7 +27,7 @@ namespace Dlight.LexicalAnalysis
                     i++;
                 }
             }
-            return TakeToken(ref p, i, SyntaxType.EndLine);
+            return TakeToken(ref p, i, TokenType.EndLine);
         }
 
         private Token WhiteSpace(ref TextPosition p)
@@ -42,7 +42,7 @@ namespace Dlight.LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, SyntaxType.WhiteSpace);
+            return TakeToken(ref p, i, TokenType.WhiteSpace);
         }
 
         private Token LetterStartString(ref TextPosition p)
@@ -72,7 +72,7 @@ namespace Dlight.LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, SyntaxType.LetterStartString);
+            return TakeToken(ref p, i, TokenType.LetterStartString);
         }
 
         private Token DigitStartString(ref TextPosition p)
@@ -102,7 +102,7 @@ namespace Dlight.LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, SyntaxType.DigitStartString);
+            return TakeToken(ref p, i, TokenType.DigitStartString);
         }
 
         private Token OtherString(ref TextPosition p)
@@ -117,7 +117,7 @@ namespace Dlight.LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, SyntaxType.OtherString);
+            return TakeToken(ref p, i, TokenType.OtherString);
         }
     }
 }
