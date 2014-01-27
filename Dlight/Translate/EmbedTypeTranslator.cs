@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Dlight.CilTranslate
+namespace Dlight.Translate
 {
-    class EmbedTypeTranslator : CilTranslator
+    class EmbedTypeTranslator : Translator
     {
         private Type EmbedType { get; set; }
 

@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection.Emit;
 using Dlight.LexicalAnalysis;
 using Dlight.SyntacticAnalysis;
-using Dlight.CilTranslate;
+using Dlight.Translate;
 
 namespace Dlight
 {
@@ -16,24 +16,24 @@ namespace Dlight
         static void Main(string[] args)
         {
             string fileName = args[0];
-            List<ModuleElement> module = new List<ModuleElement>();
+            List<Element> module = new List<Element>();
             module.Add(CompileFile(fileName));
-            AssemblyElement assembly = new AssemblyElement(fileName.Replace(".txt", ""), module);
-            assembly.CreateScope();
-            ErrorManager manager = new ErrorManager();
-            assembly.CheckSemantic(manager);
-            Console.WriteLine(manager);
-            Console.WriteLine(assembly);
-            if (manager.ErrorCount == 0)
+            Root root = new Root { Name = fileName.Replace(".txt", ""), Child = module };
+            root.SpreadScope();
+            root.CheckSemantic();
+            root.CheckType();
+            Console.WriteLine(root);
+            if (root.ErrorCount == 0)
             {
                 AssemblyTranslator trans = new AssemblyTranslator(fileName.Replace(".txt", ""));
                 RegisterEmbedType(trans);
-                assembly.Translate(trans);
+                root.SpreadTranslate(trans);
+                root.Translate();
                 trans.Save();
             }
         }
 
-        static ModuleElement CompileFile(string fileName)
+        static Element CompileFile(string fileName)
         {
             string text = File.ReadAllText(fileName);
             Lexer lexer = new Lexer();

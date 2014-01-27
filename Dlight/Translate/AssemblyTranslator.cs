@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Dlight.CilTranslate
+namespace Dlight.Translate
 {
-    class AssemblyTranslator : CilTranslator
+    class AssemblyTranslator : Translator
     {
         private AssemblyBuilder Builder { get; set; }
-        private Dictionary<string, CilTranslator> TransDictionary { get; set; }
+        private Dictionary<string, Translator> TransDictionary { get; set; }
 
         public AssemblyTranslator(string name)
             : base(name)
         {
             Builder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(name), AssemblyBuilderAccess.RunAndSave);
-            TransDictionary = new Dictionary<string, CilTranslator>();
+            TransDictionary = new Dictionary<string, Translator>();
         }
 
         private string GetSaveName()
@@ -31,12 +31,12 @@ namespace Dlight.CilTranslate
             RegisterTranslator(name, temp);
         }
 
-        public override CilTranslator FindTranslator(string fullName)
+        public override Translator FindTranslator(string fullName)
         {
             return TransDictionary[fullName];
         }
 
-        public override void RegisterTranslator(string fullName, CilTranslator trans)
+        public override void RegisterTranslator(string fullName, Translator trans)
         {
             if(TransDictionary.ContainsKey(fullName))
             {
@@ -52,7 +52,7 @@ namespace Dlight.CilTranslate
             Builder.Save(GetSaveName());
         }
 
-        public override Translator CreateModule(Scope<Element> scope)
+        public override Translator GenelateModule(Scope scope)
         {
             ModuleBuilder builder = Builder.DefineDynamicModule(scope.Name, GetSaveName(), true);
             ModuleTranslator result = new ModuleTranslator(scope, this, builder);

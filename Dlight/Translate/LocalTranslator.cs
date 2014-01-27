@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Dlight.CilTranslate
+namespace Dlight.Translate
 {
-    class LocalTranslator : CilTranslator
+    class LocalTranslator : Translator
     {
         private LocalBuilder Builder { get; set; }
 
-        public LocalTranslator(Scope<Element> scope, CilTranslator parent, LocalBuilder builder)
+        public LocalTranslator(Scope scope, Translator parent, LocalBuilder builder)
             : base(scope, parent)
         {
             Builder = builder;
@@ -29,9 +29,9 @@ namespace Dlight.CilTranslate
             return Builder.LocalType;
         }
 
-        public override Translator CreateVariable(Scope<Element> scope, string fullName)
+        public override Translator GenelateVariant(Scope scope, string fullName)
         {
-            return Parent.CreateVariable(scope, fullName);
+            return Parent.GenelateVariant(scope, fullName);
         }
 
         public override void GenelateLoad(string fullName)
@@ -44,14 +44,14 @@ namespace Dlight.CilTranslate
             Parent.GenelateStore(fullName);
         }
 
-        public override void GenelateNumber(int value)
+        public override void GenelateConstant(int value)
         {
-            Parent.GenelateNumber(value);
+            Parent.GenelateConstant(value);
         }
 
-        public override void GenelateBinomial(string fullName, TokenType operation)
+        public override void GenelateOperate(string fullName, TokenType operation)
         {
-            Parent.GenelateBinomial(fullName, operation);
+            Parent.GenelateOperate(fullName, operation);
         }
     }
 }

@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Dlight.CilTranslate
+namespace Dlight.Translate
 {
-    class RoutineTranslator : CilTranslator
+    class RoutineTranslator : Translator
     {
         private MethodBuilder Builder { get; set; }
         private ILGenerator Generator { get; set; }
 
-        public RoutineTranslator(string name, CilTranslator parent, MethodBuilder builder)
+        public RoutineTranslator(string name, Translator parent, MethodBuilder builder)
             : base(name, parent)
         {
             Builder = builder;
             Generator = Builder.GetILGenerator();
         }
 
-        public RoutineTranslator(Scope<Element> scope, CilTranslator parent, MethodBuilder builder)
+        public RoutineTranslator(Scope scope, Translator parent, MethodBuilder builder)
             : base(scope, parent)
         {
             Builder = builder;
@@ -44,7 +44,7 @@ namespace Dlight.CilTranslate
             Generator.Emit(OpCodes.Ret);
         }
 
-        public override Translator CreateVariable(Scope<Element> scope, string fullName)
+        public override Translator GenelateVariant(Scope scope, string fullName)
         {
             Type dataType = FindTranslator(fullName).GetDataType();
             LocalBuilder builder = Generator.DeclareLocal(dataType);
@@ -65,13 +65,13 @@ namespace Dlight.CilTranslate
             Generator.Emit(OpCodes.Stloc, local);
         }
 
-        public override void GenelateNumber(int value)
+        public override void GenelateConstant(int value)
         {
             Generator.Emit(OpCodes.Ldc_I4, (int)value);
             Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Integer32).GetConstructor(new Type[] { typeof(int) }));
         }
 
-        public override void GenelateBinomial(string fullName, TokenType operation)
+        public override void GenelateOperate(string fullName, TokenType operation)
         {
             Type dataType = FindTranslator(fullName).GetDataType();
             switch (operation)

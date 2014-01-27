@@ -8,9 +8,58 @@ namespace Dlight.SyntacticAnalysis
 {
     partial class Parser
     {
-        private Syntax Expression(ref int c)
+        private Element LeftJoinBinomial(ref int c, ParserFunction next, params TokenType[] type)
         {
-            Syntax result = Assign(ref c);
+            Element left = next(ref c);
+            if (left == null)
+            {
+                return null;
+            }
+            while (IsReadable(c))
+            {
+                TokenType match;
+                if (!CheckToken(c, out match, type))
+                {
+                    break;
+                }
+                SkipSpaser(++c);
+                Element right = next(ref c);
+                left = new Binomial { Left = left, Right = right, Operation = match, Position = left.Position };
+            }
+            return left;
+        }
+
+        private Element RepeatSet<SET>(ref int c, ParserFunction next, params TokenType[] type) where SET : ExpressionSet, new()
+        {
+            List<Element> child = new List<Element>();
+            List<TokenType> expType = new List<TokenType>();
+            Element first = next(ref c);
+            if (first == null)
+            {
+                return null;
+            }
+            child.Add(first);
+            while (IsReadable(c))
+            {
+                TokenType match;
+                if (!CheckToken(c, out match, type))
+                {
+                    break;
+                }
+                expType.Add(match);
+                SkipSpaser(++c);
+                child.Add(next(ref c));
+            }
+            if (child.Count <= 1)
+            {
+                return first;
+            }
+            return new SET { Child = child, ExpType = expType, Position = first.Position };
+        }
+
+        private Element Expression(ref int c)
+        {
+            Element result = Assign(ref c);
             if (CheckToken(c, TokenType.EndExpression))
             {
                 SkipSpaser(++c);
@@ -18,42 +67,42 @@ namespace Dlight.SyntacticAnalysis
             return result;
         }
 
-        private Syntax Assign(ref int c)
+        private Element Assign(ref int c)
         {
             return RepeatSet<Assign>(ref c, Bitwise, TokenType.LeftAssign, TokenType.RightAssign);
         }
 
-        private Syntax Bitwise(ref int c)
+        private Element Bitwise(ref int c)
         {
             return LeftJoinBinomial(ref c, Shift, TokenType.Or, TokenType.And, TokenType.Xor);
         }
 
-        private Syntax Shift(ref int c)
+        private Element Shift(ref int c)
         {
             return LeftJoinBinomial(ref c, Addtive, TokenType.LeftShift, TokenType.RightShift);
         }
 
-        private Syntax Addtive(ref int c)
+        private Element Addtive(ref int c)
         {
             return LeftJoinBinomial(ref c, Multiplicative, TokenType.Add, TokenType.Subtract, TokenType.Combine);
         }
 
-        private Syntax Multiplicative(ref int c)
+        private Element Multiplicative(ref int c)
         {
             return LeftJoinBinomial(ref c, Exponentive, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
         }
 
-        private Syntax Exponentive(ref int c)
+        private Element Exponentive(ref int c)
         {
             return LeftJoinBinomial(ref c, Primary, TokenType.Exponent);
         }
 
-        private Syntax Primary(ref int c)
+        private Element Primary(ref int c)
         {
             return Group(ref c) ?? Number(ref c) ?? DeclareVariable(ref c) ?? Identifier(ref c);
         }
 
-        private Syntax Group(ref int c)
+        private Element Group(ref int c)
         {
             int temp = c;
             if (!CheckToken(temp, TokenType.LeftParenthesis))
@@ -61,7 +110,7 @@ namespace Dlight.SyntacticAnalysis
                 return null;
             }
             SkipSpaser(++temp);
-            Syntax result = Expression(ref temp);
+            Element result = Expression(ref temp);
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
@@ -71,7 +120,7 @@ namespace Dlight.SyntacticAnalysis
             return result;
         }
 
-        private Syntax Number(ref int c)
+        private Element Number(ref int c)
         {
             int temp = c;
             string value = string.Empty;
@@ -96,7 +145,7 @@ namespace Dlight.SyntacticAnalysis
             return new NumberLiteral { Integral = i.Text, Position = i.Position };
         }
 
-        private Syntax Identifier(ref int c)
+        private Element Identifier(ref int c)
         {
             if (!CheckToken(c, TokenType.LetterStartString))
             {
@@ -107,7 +156,7 @@ namespace Dlight.SyntacticAnalysis
             return new Identifier { Value = t.Text, Position = t.Position };
         }
 
-        private Syntax DeclareVariable(ref int c)
+        private Element DeclareVariable(ref int c)
         {
             if (!CheckText(c, "var"))
             {
@@ -117,11 +166,11 @@ namespace Dlight.SyntacticAnalysis
             Identifier name = (Identifier)Identifier(ref c);
             if (!CheckToken(c, TokenType.Peir))
             {
-                return new DeclareVariable { Name = name, Position = name.Position };
+                return new DeclareVariant { Ident = name, Position = name.Position };
             }
             SkipSpaser(++c);
             Identifier dataType = (Identifier)Identifier(ref c);
-            return new DeclareVariable { Name = name, DataType = dataType, Position = name.Position };
+            return new DeclareVariant { Ident = name, DataType = dataType, Position = name.Position };
         }
     }
 }
