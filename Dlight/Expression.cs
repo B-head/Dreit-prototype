@@ -78,10 +78,28 @@ namespace Dlight
             return base.ElementInfo() + Enum.GetName(typeof(TokenType), Operation);
         }
 
+        public override void CheckDataType()
+        {
+            string l = Left.GetDataType();
+            string r = Right.GetDataType();
+            if(l != r)
+            {
+                CompileError(l + " 型と " + r + " 型を演算することは出来ません。");
+            }
+            base.CheckDataType();
+        }
+
+        public override string GetDataType()
+        {
+            // 式の結果の型を渡すようにしないと・・・
+            return Left.GetDataType();
+        }
+
         public override void Translate()
         {
             base.Translate();
-            Trans.GenelateOperate("Integer32", Operation);
+            string type = Left.GetDataType();
+            Trans.GenelateOperate(type, Operation);
         }
     }
 }

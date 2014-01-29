@@ -42,7 +42,7 @@ namespace Dlight
         public override string ToString(int indent)
         {
             StringBuilder result = new StringBuilder();
-            result.AppendLine(Common.Indent(indent) + Position + ": " + Enum.GetName(typeof(TokenType), Type));
+            result.AppendLine(Position + ": " + Enum.GetName(typeof(TokenType), Type));
             for (int i = 0; i < Child.Count; i++)
             {
                 result.Append(Child[i].ToString(indent + 1));

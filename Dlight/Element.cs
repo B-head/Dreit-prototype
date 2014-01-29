@@ -86,15 +86,35 @@ namespace Dlight
             }
         }
 
-        public virtual void CheckType()
+        public virtual void CheckDataType()
         {
             foreach (Element v in EnumChild())
             {
                 if (v != null)
                 {
-                    v.CheckType();
+                    v.CheckDataType();
                 }
             }
+        }
+
+        public virtual void CheckDataTypeAssign(string type)
+        {
+            foreach (Element v in EnumChild())
+            {
+                if (v == null)
+                {
+                    continue;
+                }
+                if (v.IsReference)
+                {
+                    v.CheckDataTypeAssign(type);
+                }
+            }
+        }
+
+        public virtual string GetDataType()
+        {
+            throw new NotSupportedException();
         }
 
         public virtual void SpreadTranslate(Translator trans)
@@ -132,11 +152,17 @@ namespace Dlight
                 {
                     v.TranslateAssign();
                 }
-                else
-                {
-                    v.Translate();
-                }
             }
+        }
+
+        public string Indent(int indent)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < indent; i++)
+            {
+                result.Append(" ");
+            }
+            return result.ToString();
         }
 
         public override string ToString()
@@ -147,12 +173,12 @@ namespace Dlight
         public virtual string ToString(int indent)
         {
             StringBuilder result = new StringBuilder();
-            result.AppendLine(Common.Indent(indent) + ElementInfo());
+            result.AppendLine(Indent(indent) + ElementInfo());
             foreach (Element v in EnumChild())
             {
                 if (v == null)
                 {
-                    result.AppendLine("<null>");
+                    result.AppendLine(Indent(indent + 1) + "<null>");
                     continue;
                 }
                 result.Append(v.ToString(indent + 1));

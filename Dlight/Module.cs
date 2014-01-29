@@ -22,6 +22,11 @@ namespace Dlight
             return Child[index];
         }
 
+        public override string ElementInfo()
+        {
+            return base.ElementInfo() + "ErrorToken = " + ErrorToken.Count;
+        }
+
         public override void CheckSemantic()
         {
             foreach (Token v in ErrorToken)

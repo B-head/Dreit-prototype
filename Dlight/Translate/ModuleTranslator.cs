@@ -44,6 +44,16 @@ namespace Dlight.Translate
             return GlobalContext.GenelateVariant(scope, fullName);
         }
 
+        public override void GenelateConstant(int value)
+        {
+            GlobalContext.GenelateConstant(value);
+        }
+
+        public override void GenelateConstant(double value)
+        {
+            GlobalContext.GenelateConstant(value);
+        }
+
         public override void GenelateLoad(string fullName)
         {
             GlobalContext.GenelateLoad(fullName);
@@ -52,11 +62,6 @@ namespace Dlight.Translate
         public override void GenelateStore(string fullName)
         {
             GlobalContext.GenelateStore(fullName);
-        }
-
-        public override void GenelateConstant(int value)
-        {
-            GlobalContext.GenelateConstant(value);
         }
 
         public override void GenelateOperate(string fullName, TokenType operation)

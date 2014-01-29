@@ -32,20 +32,10 @@ namespace Dlight
             base.SpreadScope(scope, parent);
         }
 
-        public override string ToString(int indent)
+        public void RegisterEmbed(Scope scope)
         {
-            StringBuilder result = new StringBuilder();
-            result.AppendLine(CompileResult());
-            foreach (Element v in EnumChild())
-            {
-                if (v == null)
-                {
-                    result.AppendLine("<null>");
-                    continue;
-                }
-                result.Append(v.ToString(indent));
-            }
-            return result.ToString();
+            AddChild(scope);
+            Child.Add(scope);
         }
 
         public void OutputError(string message)
@@ -63,6 +53,22 @@ namespace Dlight
         public string CompileResult()
         {
             return "Error = " + ErrorCount + ", Warning = " + WarningCount;
+        }
+
+        public override string ToString(int indent)
+        {
+            StringBuilder result = new StringBuilder();
+            result.AppendLine(CompileResult());
+            foreach (Element v in EnumChild())
+            {
+                if (v == null)
+                {
+                    result.AppendLine("<null>");
+                    continue;
+                }
+                result.Append(v.ToString(indent));
+            }
+            return result.ToString();
         }
     }
 }

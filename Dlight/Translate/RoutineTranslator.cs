@@ -53,6 +53,18 @@ namespace Dlight.Translate
             return result;
         }
 
+        public override void GenelateConstant(int value)
+        {
+            Generator.Emit(OpCodes.Ldc_I4, (int)value);
+            Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Integer32).GetConstructor(new Type[] { typeof(int) }));
+        }
+
+        public override void GenelateConstant(double value)
+        {
+            Generator.Emit(OpCodes.Ldc_R8, (double)value);
+            Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Binary64).GetConstructor(new Type[] { typeof(double) }));
+        }
+
         public override void GenelateLoad(string fullName)
         {
             LocalBuilder local = FindTranslator(fullName).GetLocal();
@@ -63,12 +75,6 @@ namespace Dlight.Translate
         {
             LocalBuilder local = FindTranslator(fullName).GetLocal();
             Generator.Emit(OpCodes.Stloc, local);
-        }
-
-        public override void GenelateConstant(int value)
-        {
-            Generator.Emit(OpCodes.Ldc_I4, (int)value);
-            Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Integer32).GetConstructor(new Type[] { typeof(int) }));
         }
 
         public override void GenelateOperate(string fullName, TokenType operation)

@@ -85,4 +85,24 @@ namespace Dlight.LexicalAnalysis
             return startIndex + length <= Text.Length ? Text.Substring(startIndex, length) : string.Empty;
         }
     }
+
+    static class LexerExtension
+    {
+        public static bool Match<V, T>(this V value, IEnumerable<T> list) where V : IEquatable<T>
+        {
+            foreach (T v in list)
+            {
+                if (value.Equals(v))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool Match<V>(this V value, V stert, V end) where V : IComparable<V>
+        {
+            return value.CompareTo(stert) >= 0 && value.CompareTo(end) <= 0;
+        }
+    }
 }

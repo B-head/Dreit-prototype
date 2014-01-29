@@ -34,6 +34,16 @@ namespace Dlight.Translate
             return Parent.GenelateVariant(scope, fullName);
         }
 
+        public override void GenelateConstant(int value)
+        {
+            Parent.GenelateConstant(value);
+        }
+
+        public override void GenelateConstant(double value)
+        {
+            Parent.GenelateConstant(value);
+        }
+
         public override void GenelateLoad(string fullName)
         {
             Parent.GenelateLoad(fullName);
@@ -42,11 +52,6 @@ namespace Dlight.Translate
         public override void GenelateStore(string fullName)
         {
             Parent.GenelateStore(fullName);
-        }
-
-        public override void GenelateConstant(int value)
-        {
-            Parent.GenelateConstant(value);
         }
 
         public override void GenelateOperate(string fullName, TokenType operation)

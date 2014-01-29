@@ -25,7 +25,7 @@ namespace Dlight.Translate
             return Name + ".exe";
         }
 
-        public void RegisterEmbedType(string name, Type type)
+        public void RegisterEmbed(string name, Type type)
         {
             EmbedTypeTranslator temp = new EmbedTypeTranslator(name, type);
             RegisterTranslator(name, temp);

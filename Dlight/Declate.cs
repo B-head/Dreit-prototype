@@ -32,6 +32,11 @@ namespace Dlight
             base.CheckSemantic();
         }
 
+        public override string GetDataType()
+        {
+            return Scope.NameResolution(Value).GetDataType();
+        }
+
         public override void Translate()
         {
             Scope temp = Scope.NameResolution(Value);
@@ -51,6 +56,7 @@ namespace Dlight
     {
         public Identifier Ident { get; set; }
         public Identifier DataType { get; set; }
+        public string TypeFullName { get; set; }
 
         public override bool IsReference
         {
@@ -74,13 +80,14 @@ namespace Dlight
 
         public override string ElementInfo()
         {
+            string temp = " (" + TypeFullName + ")";
             if (DataType == null)
             {
-                return base.ElementInfo() + Ident.Value;
+                return base.ElementInfo() + Ident.Value + temp;
             }
             else
             {
-                return base.ElementInfo() + Ident.Value + ":" + DataType.Value;
+                return base.ElementInfo() + Ident.Value + ":" + DataType.Value + temp;
             }
         }
 
@@ -90,9 +97,43 @@ namespace Dlight
             base.SpreadScope(scope, parent);
         }
 
+        public override void CheckDataType()
+        {
+            if (DataType != null)
+            {
+                TypeFullName = NameResolution(DataType.Value).GetFullName();
+            }
+            base.CheckDataType();
+        }
+
+        public override void CheckDataTypeAssign(string type)
+        {
+            if(TypeFullName == null)
+            {
+                TypeFullName = type;
+            }
+            base.CheckDataTypeAssign(type);
+        }
+
+        public override string GetDataType()
+        {
+            return TypeFullName;
+        }
+
+        public override void Translate()
+        {
+            Ident.Translate();
+        }
+
+        public override void TranslateAssign()
+        {
+            Ident.TranslateAssign();
+        }
+
         public override void SpreadTranslate(Translator trans)
         {
-            Translator temp = trans.GenelateVariant(Scope, "Integer32");
+            string type = GetDataType();
+            Translator temp = trans.GenelateVariant(Scope, type);
             base.SpreadTranslate(temp);
         }
     }

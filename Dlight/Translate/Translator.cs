@@ -87,6 +87,11 @@ namespace Dlight.Translate
             throw new NotSupportedException();
         }
 
+        public virtual void GenelateConstant(double value)
+        {
+            throw new NotSupportedException();
+        }
+
         public virtual void GenelateCalculate()
         {
             throw new NotSupportedException();

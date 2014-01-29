@@ -18,15 +18,16 @@ namespace Dlight
             string fileName = args[0];
             List<Element> module = new List<Element>();
             module.Add(CompileFile(fileName));
-            Root root = new Root { Name = fileName.Replace(".txt", ""), Child = module };
+            Root root = new Root { Child = module };
+            RegisterEmbed(root);
             root.SpreadScope();
             root.CheckSemantic();
-            root.CheckType();
+            root.CheckDataType();
             Console.WriteLine(root);
             if (root.ErrorCount == 0)
             {
                 AssemblyTranslator trans = new AssemblyTranslator(fileName.Replace(".txt", ""));
-                RegisterEmbedType(trans);
+                RegisterEmbed(trans);
                 root.SpreadTranslate(trans);
                 root.Translate();
                 trans.Save();
@@ -42,10 +43,17 @@ namespace Dlight
             return parser.Parse(token, fileName.Replace(".txt", ""));
         }
 
-        static void RegisterEmbedType(AssemblyTranslator trans)
+        static void RegisterEmbed(Root root)
         {
-            trans.RegisterEmbedType("Integer32", typeof(DlightObject.Integer32));
-            trans.RegisterEmbedType("Binary64", typeof(DlightObject.Binary64));
+            TextPosition p = new TextPosition { File = "@@Embed" };
+            root.RegisterEmbed(new Scope { Name = "Integer32", Position = p });
+            root.RegisterEmbed(new Scope { Name = "Binary64", Position = p });
+        }
+
+        static void RegisterEmbed(AssemblyTranslator trans)
+        {
+            trans.RegisterEmbed("Integer32", typeof(DlightObject.Integer32));
+            trans.RegisterEmbed("Binary64", typeof(DlightObject.Binary64));
         }
     }
 }

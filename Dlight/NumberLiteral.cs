@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 using Dlight.Translate;
 
 namespace Dlight
@@ -26,51 +27,103 @@ namespace Dlight
 
         public override void CheckSemantic()
         {
-            bool unchar, overflow;
-            Parse(out unchar, out overflow);
-            if (unchar)
+            Parse(Integral);
+            if(Fraction != null)
             {
-                CompileError("数値リテラルに使用できない文字が含まれています。");
+                Parse(Fraction);
             }
             base.CheckSemantic();
         }
 
+        public override string GetDataType()
+        {
+            if(Fraction == null)
+            {
+                return "Integer32";
+            }
+            else
+            {
+                return "Binary64";
+            }
+        }
+
         public override void Translate()
         {
-            int number = (int)Parse();
-            Trans.GenelateConstant(number);
+            if (Fraction == null)
+            {
+                int number = (int)Parse(Integral);
+                Trans.GenelateConstant(number);
+            }
+            else
+            {
+                double number = (double)Parse(Integral);
+                int count, b;
+                number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
+                Trans.GenelateConstant(number);
+            }
             base.Translate();
         }
 
-        private ulong Parse(uint b = 10)
+        private BigInteger Parse(string text)
         {
-            bool unchar, overflow;
-            return Parse(out unchar, out overflow, b);
+            int count, b;
+            return Parse(text, out count, out b);
         }
 
-        private ulong Parse(out bool unchar, out bool overflow, uint b = 10)
+        private BigInteger Parse(string text, out int count, out int b)
         {
-            unchar = false; overflow = false;
-            ulong number = 0;
-            foreach (char v in Integral)
+            b = CheckPrefix(ref text);
+            count = 0;
+            BigInteger number = 0;
+            foreach (char v in text)
             {
-                if(v == '_')
+                if (v == '_')
                 {
                     continue;
                 }
-                number *= b;
-                uint temp = ToNum(v);
-                if(temp >= b)
+                checked
                 {
-                    unchar = true;
-                    return 0;
+                    number *= b;
+                    int temp = ToNum(v);
+                    if (temp >= b)
+                    {
+                        CompileError("数値リテラルに使用できない文字が含まれています。");
+                        return 0;
+                    }
+                    number += temp;
+                    count++;
                 }
-                number += temp;
             }
             return number;
         }
+
+        private int CheckPrefix(ref string text)
+        {
+            if(text.Length < 2)
+            {
+                return 10;
+            }
+            int result = 0;
+            string temp = text.Substring(0, 2);
+            switch(temp)
+            {
+                case "0b": result = 2; break;
+                case "0B": result = 2; break;
+                case "0o": result = 8; break;
+                case "0O": result = 8; break;
+                case "0d": result = 10; break;
+                case "0D": result = 10; break;
+                case "0h": result = 16; break;
+                case "0H": result = 16; break;
+                case "0x": result = 16; break;
+                case "0X": result = 16; break;
+                default: return 10;
+            }
+            text = text.Substring(2);
+            return result;
+        }
         
-        private uint ToNum(char c)
+        private int ToNum(char c)
         {
             switch (c)
             {
@@ -96,7 +149,7 @@ namespace Dlight
                 case 'E': return 14;
                 case 'f': return 15;
                 case 'F': return 15;
-                default: return uint.MaxValue;
+                default: return int.MaxValue;
             }
         }
     }

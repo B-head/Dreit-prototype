@@ -29,7 +29,7 @@ namespace Dlight.SyntacticAnalysis
                 }
                 child.Add(s);
             }
-            return new Module { Name = name, Child = child, ErrorToken = ErrorToken };
+            return new Module { Name = name, Child = child, ErrorToken = ErrorToken, Position = child[0].Position };
         }
 
         private bool IsReadable(int c)

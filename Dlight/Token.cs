@@ -23,7 +23,7 @@ namespace Dlight
 
         public override string ToString(int indent)
         {
-            return Common.Indent(indent) + Position + ": " + Enum.GetName(typeof(TokenType), Type) + " => " + Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20') + "\n";
+            return Position + ": " + Enum.GetName(typeof(TokenType), Type) + " => " + Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20') + "\n";
         }
     }
 

@@ -41,6 +41,28 @@ namespace Dlight
             base.CheckSemantic();
         }
 
+        public override void CheckDataType()
+        {
+            if (Direction)
+            {
+                for (int i = 0; i < Child.Count - 1; i++)
+                {
+                    Child[i].CheckDataType();
+                    string temp = Child[i].GetDataType();
+                    Child[i + 1].CheckDataTypeAssign(temp);
+                }
+            }
+            else
+            {
+                for (int i = Child.Count - 1; i >= 1; i--)
+                {
+                    Child[i].CheckDataType();
+                    string temp = Child[i].GetDataType();
+                    Child[i - 1].CheckDataTypeAssign(temp);
+                }
+            }
+        }
+
         public override void Translate()
         {
             if (Direction)
