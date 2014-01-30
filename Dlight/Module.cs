@@ -45,7 +45,7 @@ namespace Dlight
 
         public override void SpreadTranslate(Translator trans)
         {
-            Translator temp = trans.GenelateModule(Scope);
+            Translator temp = trans.GenelateModule(Scope.FullName);
             base.SpreadTranslate(temp);
         }
     }

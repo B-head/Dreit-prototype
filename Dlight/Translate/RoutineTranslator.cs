@@ -20,8 +20,8 @@ namespace Dlight.Translate
             Generator = Builder.GetILGenerator();
         }
 
-        public RoutineTranslator(Scope scope, Translator parent, MethodBuilder builder)
-            : base(scope, parent)
+        public RoutineTranslator(FullName fullname, Translator parent, MethodBuilder builder)
+            : base(fullname, parent)
         {
             Builder = builder;
             Generator = Builder.GetILGenerator();
@@ -44,11 +44,11 @@ namespace Dlight.Translate
             Generator.Emit(OpCodes.Ret);
         }
 
-        public override Translator GenelateVariant(Scope scope, string fullName)
+        public override Translator GenelateVariant(FullName gen, FullName type)
         {
-            Type dataType = FindTranslator(fullName).GetDataType();
+            Type dataType = FindTranslator(type).GetDataType();
             LocalBuilder builder = Generator.DeclareLocal(dataType);
-            LocalTranslator result = new LocalTranslator(scope, this, builder);
+            LocalTranslator result = new LocalTranslator(gen, this, builder);
             Child.Add(result);
             return result;
         }
@@ -65,21 +65,21 @@ namespace Dlight.Translate
             Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Binary64).GetConstructor(new Type[] { typeof(double) }));
         }
 
-        public override void GenelateLoad(string fullName)
+        public override void GenelateLoad(FullName type)
         {
-            LocalBuilder local = FindTranslator(fullName).GetLocal();
+            LocalBuilder local = FindTranslator(type).GetLocal();
             Generator.Emit(OpCodes.Ldloc, local);
         }
 
-        public override void GenelateStore(string fullName)
+        public override void GenelateStore(FullName type)
         {
-            LocalBuilder local = FindTranslator(fullName).GetLocal();
+            LocalBuilder local = FindTranslator(type).GetLocal();
             Generator.Emit(OpCodes.Stloc, local);
         }
 
-        public override void GenelateOperate(string fullName, TokenType operation)
+        public override void GenelateOperate(FullName type, TokenType operation)
         {
-            Type dataType = FindTranslator(fullName).GetDataType();
+            Type dataType = FindTranslator(type).GetDataType();
             switch (operation)
             {
                 case TokenType.Add: Generator.Emit(OpCodes.Call, dataType.GetMethod("opAdd")); break;

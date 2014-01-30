@@ -12,11 +12,11 @@ namespace Dlight.Translate
     {
         private LocalBuilder Builder { get; set; }
 
-        public LocalTranslator(Scope scope, Translator parent, LocalBuilder builder)
-            : base(scope, parent)
+        public LocalTranslator(FullName fullname, Translator parent, LocalBuilder builder)
+            : base(fullname, parent)
         {
             Builder = builder;
-            Builder.SetLocalSymInfo(scope.Name);
+            Builder.SetLocalSymInfo(fullname.Name);
         }
 
         public override LocalBuilder GetLocal()
@@ -29,9 +29,9 @@ namespace Dlight.Translate
             return Builder.LocalType;
         }
 
-        public override Translator GenelateVariant(Scope scope, string fullName)
+        public override Translator GenelateVariant(FullName gen, FullName type)
         {
-            return Parent.GenelateVariant(scope, fullName);
+            return Parent.GenelateVariant(gen, type);
         }
 
         public override void GenelateConstant(int value)
@@ -44,19 +44,19 @@ namespace Dlight.Translate
             Parent.GenelateConstant(value);
         }
 
-        public override void GenelateLoad(string fullName)
+        public override void GenelateLoad(FullName type)
         {
-            Parent.GenelateLoad(fullName);
+            Parent.GenelateLoad(type);
         }
 
-        public override void GenelateStore(string fullName)
+        public override void GenelateStore(FullName type)
         {
-            Parent.GenelateStore(fullName);
+            Parent.GenelateStore(type);
         }
 
-        public override void GenelateOperate(string fullName, TokenType operation)
+        public override void GenelateOperate(FullName type, TokenType operation)
         {
-            Parent.GenelateOperate(fullName, operation);
+            Parent.GenelateOperate(type, operation);
         }
     }
 }

@@ -13,8 +13,8 @@ namespace Dlight.Translate
         private ModuleBuilder Builder { get; set; }
         private RoutineTranslator GlobalContext { get; set; }
 
-        public ModuleTranslator(Scope scope, Translator parent, ModuleBuilder builder)
-            : base(scope, parent)
+        public ModuleTranslator(FullName fullname, Translator parent, ModuleBuilder builder)
+            : base(fullname, parent)
         {
             Builder = builder;
             GlobalContext = CreateGlobalContext("@@globalcontext");
@@ -39,9 +39,9 @@ namespace Dlight.Translate
             Builder.CreateGlobalFunctions();
         }
 
-        public override Translator GenelateVariant(Scope scope, string fullName)
+        public override Translator GenelateVariant(FullName gen, FullName type)
         {
-            return GlobalContext.GenelateVariant(scope, fullName);
+            return GlobalContext.GenelateVariant(gen, type);
         }
 
         public override void GenelateConstant(int value)
@@ -54,17 +54,17 @@ namespace Dlight.Translate
             GlobalContext.GenelateConstant(value);
         }
 
-        public override void GenelateLoad(string fullName)
+        public override void GenelateLoad(FullName fullName)
         {
             GlobalContext.GenelateLoad(fullName);
         }
 
-        public override void GenelateStore(string fullName)
+        public override void GenelateStore(FullName fullName)
         {
             GlobalContext.GenelateStore(fullName);
         }
 
-        public override void GenelateOperate(string fullName, TokenType operation)
+        public override void GenelateOperate(FullName fullName, TokenType operation)
         {
             GlobalContext.GenelateOperate(fullName, operation);
         }

@@ -48,7 +48,7 @@ namespace Dlight
                 for (int i = 0; i < Child.Count - 1; i++)
                 {
                     Child[i].CheckDataType();
-                    string temp = Child[i].GetDataType();
+                    FullName temp = Child[i].GetDataType();
                     Child[i + 1].CheckDataTypeAssign(temp);
                 }
             }
@@ -57,7 +57,7 @@ namespace Dlight
                 for (int i = Child.Count - 1; i >= 1; i--)
                 {
                     Child[i].CheckDataType();
-                    string temp = Child[i].GetDataType();
+                    FullName temp = Child[i].GetDataType();
                     Child[i - 1].CheckDataTypeAssign(temp);
                 }
             }

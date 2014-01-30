@@ -21,12 +21,12 @@ namespace Dlight.Translate
             Child = new List<Translator>();
         }
 
-        public Translator(Scope scope, Translator parent)
+        public Translator(FullName fullname, Translator parent)
         {
-            Name = scope.Name;
+            Name = fullname.Name;
             Parent = parent;
             Child = new List<Translator>();
-            RegisterTranslator(scope.GetFullName(), this);
+            RegisterTranslator(fullname, this);
         }
 
         public virtual MethodInfo GetContext()
@@ -44,12 +44,12 @@ namespace Dlight.Translate
             throw new NotSupportedException();
         }
 
-        public virtual Translator FindTranslator(string fullName)
+        public virtual Translator FindTranslator(FullName fullName)
         {
             return Parent.FindTranslator(fullName);
         }
 
-        public virtual void RegisterTranslator(string fullName, Translator trans)
+        public virtual void RegisterTranslator(FullName fullName, Translator trans)
         {
             Parent.RegisterTranslator(fullName, trans);
         }
@@ -62,22 +62,22 @@ namespace Dlight.Translate
             }
         }
 
-        public virtual Translator GenelateModule(Scope scope)
+        public virtual Translator GenelateModule(FullName gen)
         {
-            return Parent.GenelateModule(scope);
+            return Parent.GenelateModule(gen);
         }
 
-        public virtual Translator GenelateType(Scope scope)
-        {
-            throw new NotSupportedException();
-        }
-
-        public virtual Translator GenelateRoutine(Scope scope)
+        public virtual Translator GenelateType(FullName gen)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator GenelateVariant(Scope scope, string fullName)
+        public virtual Translator GenelateRoutine(FullName gen)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual Translator GenelateVariant(FullName gen, FullName type)
         {
             throw new NotSupportedException();
         }
@@ -97,17 +97,17 @@ namespace Dlight.Translate
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateOperate(string fullName, TokenType operation)
+        public virtual void GenelateOperate(FullName type, TokenType operation)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateLoad(string fullName)
+        public virtual void GenelateLoad(FullName type)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateStore(string fullName)
+        public virtual void GenelateStore(FullName type)
         {
             throw new NotSupportedException();
         }

@@ -43,10 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assign.cs" />
+    <Compile Include="DeclateVariant.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="Expression.cs" />
+    <Compile Include="FullName.cs" />
     <Compile Include="Module.cs" />
-    <Compile Include="Declate.cs" />
+    <Compile Include="Identifier.cs" />
     <Compile Include="NumberLiteral.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />

@@ -80,8 +80,8 @@ namespace Dlight
 
         public override void CheckDataType()
         {
-            string l = Left.GetDataType();
-            string r = Right.GetDataType();
+            FullName l = Left.GetDataType();
+            FullName r = Right.GetDataType();
             if(l != r)
             {
                 CompileError(l + " 型と " + r + " 型を演算することは出来ません。");
@@ -89,7 +89,7 @@ namespace Dlight
             base.CheckDataType();
         }
 
-        public override string GetDataType()
+        public override FullName GetDataType()
         {
             // 式の結果の型を渡すようにしないと・・・
             return Left.GetDataType();
@@ -98,7 +98,7 @@ namespace Dlight
         public override void Translate()
         {
             base.Translate();
-            string type = Left.GetDataType();
+            FullName type = Left.GetDataType();
             Trans.GenelateOperate(type, Operation);
         }
     }

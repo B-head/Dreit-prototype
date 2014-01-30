@@ -27,7 +27,7 @@ namespace Dlight
             if (root.ErrorCount == 0)
             {
                 AssemblyTranslator trans = new AssemblyTranslator(fileName.Replace(".txt", ""));
-                RegisterEmbed(trans);
+                RegisterEmbed(trans, root);
                 root.SpreadTranslate(trans);
                 root.Translate();
                 trans.Save();
@@ -50,10 +50,10 @@ namespace Dlight
             root.RegisterEmbed(new Scope { Name = "Binary64", Position = p });
         }
 
-        static void RegisterEmbed(AssemblyTranslator trans)
+        static void RegisterEmbed(AssemblyTranslator trans, Root root)
         {
-            trans.RegisterEmbed("Integer32", typeof(DlightObject.Integer32));
-            trans.RegisterEmbed("Binary64", typeof(DlightObject.Binary64));
+            trans.RegisterEmbed(root.NameResolution("Integer32").FullName, typeof(DlightObject.Integer32));
+            trans.RegisterEmbed(root.NameResolution("Binary64").FullName, typeof(DlightObject.Binary64));
         }
     }
 }

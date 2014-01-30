@@ -170,7 +170,7 @@ namespace Dlight.SyntacticAnalysis
             }
             SkipSpaser(++c);
             Identifier dataType = (Identifier)Identifier(ref c);
-            return new DeclareVariant { Ident = name, DataType = dataType, Position = name.Position };
+            return new DeclareVariant { Ident = name, ExplicitType = dataType, Position = name.Position };
         }
     }
 }

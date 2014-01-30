@@ -12,8 +12,8 @@ namespace Dlight.Translate
     {
         private Type EmbedType { get; set; }
 
-        public EmbedTypeTranslator(string name, Type type)
-            :base(name)
+        public EmbedTypeTranslator(FullName fullname, Translator parent, Type type)
+            : base(fullname, parent)
         {
             EmbedType = type;
         }

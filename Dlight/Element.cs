@@ -97,7 +97,7 @@ namespace Dlight
             }
         }
 
-        public virtual void CheckDataTypeAssign(string type)
+        public virtual void CheckDataTypeAssign(FullName type)
         {
             foreach (Element v in EnumChild())
             {
@@ -112,7 +112,7 @@ namespace Dlight
             }
         }
 
-        public virtual string GetDataType()
+        public virtual FullName GetDataType()
         {
             throw new NotSupportedException();
         }

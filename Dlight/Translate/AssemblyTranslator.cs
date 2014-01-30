@@ -11,13 +11,13 @@ namespace Dlight.Translate
     class AssemblyTranslator : Translator
     {
         private AssemblyBuilder Builder { get; set; }
-        private Dictionary<string, Translator> TransDictionary { get; set; }
+        private Dictionary<FullName, Translator> TransDictionary { get; set; }
 
         public AssemblyTranslator(string name)
             : base(name)
         {
             Builder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(name), AssemblyBuilderAccess.RunAndSave);
-            TransDictionary = new Dictionary<string, Translator>();
+            TransDictionary = new Dictionary<FullName, Translator>();
         }
 
         private string GetSaveName()
@@ -25,18 +25,18 @@ namespace Dlight.Translate
             return Name + ".exe";
         }
 
-        public void RegisterEmbed(string name, Type type)
+        public void RegisterEmbed(FullName fullname, Type type)
         {
-            EmbedTypeTranslator temp = new EmbedTypeTranslator(name, type);
-            RegisterTranslator(name, temp);
+            EmbedTypeTranslator temp = new EmbedTypeTranslator(fullname, this, type);
+            RegisterTranslator(fullname, temp);
         }
 
-        public override Translator FindTranslator(string fullName)
+        public override Translator FindTranslator(FullName fullName)
         {
             return TransDictionary[fullName];
         }
 
-        public override void RegisterTranslator(string fullName, Translator trans)
+        public override void RegisterTranslator(FullName fullName, Translator trans)
         {
             if(TransDictionary.ContainsKey(fullName))
             {
@@ -52,7 +52,7 @@ namespace Dlight.Translate
             Builder.Save(GetSaveName());
         }
 
-        public override Translator GenelateModule(Scope scope)
+        public override Translator GenelateModule(FullName scope)
         {
             ModuleBuilder builder = Builder.DefineDynamicModule(scope.Name, GetSaveName(), true);
             ModuleTranslator result = new ModuleTranslator(scope, this, builder);

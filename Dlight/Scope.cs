@@ -9,23 +9,43 @@ namespace Dlight
 
     class Scope : Element
     {
+        public static int NextId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
+        public FullName FullName { get; set; }
         public Scope ScopeParent { get; set; }
         public Dictionary<string, Scope> ScopeChild { get; set; }
 
         public Scope()
         {
+            Id = NextId++;
             ScopeChild = new Dictionary<string, Scope>();
         }
 
-        public string GetFullName()
+        private FullName GetFullName()
         {
             if (ScopeParent == null)
             {
-                return Name;
+                return CreateFullName();
             }
-            string p = ScopeParent.GetFullName();
-            return p == null ? Name : p + "." + Name;
+            FullName temp = ScopeParent.GetFullName();
+            if(temp == null)
+            {
+                return CreateFullName();
+            }
+            temp.Append(Name, Id);
+            return temp;
+        }
+
+        private FullName CreateFullName()
+        {
+            if(Name == null)
+            {
+                return null;
+            }
+            FullName result = new FullName();
+            result.Append(Name, Id);
+            return result;
         }
 
         public Scope NameResolution(string name)
@@ -61,6 +81,7 @@ namespace Dlight
             if (scope != null)
             {
                 scope.AddChild(this);
+                FullName = GetFullName();
             }
             base.SpreadScope(this, parent);
         }

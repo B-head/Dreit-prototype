@@ -35,15 +35,17 @@ namespace Dlight
             base.CheckSemantic();
         }
 
-        public override string GetDataType()
+        public override FullName GetDataType()
         {
             if(Fraction == null)
             {
-                return "Integer32";
+                FullName type = Scope.NameResolution("Integer32").FullName;
+                return type;
             }
             else
             {
-                return "Binary64";
+                FullName type = Scope.NameResolution("Binary64").FullName;
+                return type;
             }
         }
 
