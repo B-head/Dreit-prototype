@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Dlight
 {
-
     class Scope : Element
     {
         public static int NextId { get; set; }

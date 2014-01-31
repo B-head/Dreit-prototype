@@ -9,17 +9,21 @@ namespace Dlight
 {
     class Module : Scope
     {
-        public List<Element> Child { get; set; }
+        public ExpressionList ExpList { get; set; }
         public List<Token> ErrorToken { get; set; }
 
         public override int ChildCount
         {
-            get { return Child.Count; }
+            get { return 1; }
         }
 
         public override Element GetChild(int index)
         {
-            return Child[index];
+            switch (index)
+            {
+                case 0: return ExpList;
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
 
         public override string ElementInfo()
@@ -47,6 +51,13 @@ namespace Dlight
         {
             Translator temp = trans.GenelateModule(Scope.FullName);
             base.SpreadTranslate(temp);
+        }
+
+        public override void Translate()
+        {
+            base.Translate();
+            FullName stdout = NameResolution("stdout").FullName;
+            Trans.GenelateOperate(stdout, TokenType.Special);
         }
     }
 }

@@ -54,19 +54,19 @@ namespace Dlight.Translate
             GlobalContext.GenelateConstant(value);
         }
 
+        public override void GenelateOperate(FullName type, TokenType operation)
+        {
+            GlobalContext.GenelateOperate(type, operation);
+        }
+
         public override void GenelateLoad(FullName fullName)
         {
             GlobalContext.GenelateLoad(fullName);
         }
 
-        public override void GenelateStore(FullName fullName)
+        public override void GenelateStore(FullName fullName = null)
         {
             GlobalContext.GenelateStore(fullName);
-        }
-
-        public override void GenelateOperate(FullName fullName, TokenType operation)
-        {
-            GlobalContext.GenelateOperate(fullName, operation);
         }
     }
 }

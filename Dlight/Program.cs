@@ -16,9 +16,8 @@ namespace Dlight
         static void Main(string[] args)
         {
             string fileName = args[0];
-            List<Element> module = new List<Element>();
-            module.Add(CompileFile(fileName));
-            Root root = new Root { Child = module };
+            Root root = new Root();
+            root.Append(CompileFile(fileName));
             RegisterEmbed(root);
             root.SpreadScope();
             root.CheckSemantic();

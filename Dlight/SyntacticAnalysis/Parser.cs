@@ -18,18 +18,8 @@ namespace Dlight.SyntacticAnalysis
             ErrorToken = new List<Token>();
             int c = 0;
             SkipSpaser(c);
-            List<Element> child = new List<Element>();
-            while (IsReadable(c))
-            {
-                Element s = Expression(ref c);
-                if(s == null)
-                {
-                    SkipError(c);
-                    continue;
-                }
-                child.Add(s);
-            }
-            return new Module { Name = name, Child = child, ErrorToken = ErrorToken, Position = child[0].Position };
+            ExpressionList exp = Expression(ref c, true);
+            return new Module { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
         }
 
         private bool IsReadable(int c)

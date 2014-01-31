@@ -42,16 +42,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assign.cs" />
     <Compile Include="DeclateVariant.cs" />
+    <Compile Include="DyadicCalculate.cs" />
+    <Compile Include="DyadicExpression.cs" />
     <Compile Include="Element.cs" />
-    <Compile Include="Expression.cs" />
+    <Compile Include="ExpressionGrouping.cs" />
+    <Compile Include="ExpressionList.cs" />
     <Compile Include="FullName.cs" />
+    <Compile Include="LeftAssign.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Identifier.cs" />
+    <Compile Include="MonadicExpression.cs" />
     <Compile Include="NumberLiteral.cs" />
+    <Compile Include="RightAssign.cs" />
     <Compile Include="Root.cs" />
+    <Compile Include="DeclateRoutine.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="SpecialIdentifier.cs" />
+    <Compile Include="SyntacticAnalysis\PrimaryParser.cs" />
     <Compile Include="Translate\AssemblyTranslator.cs" />
     <Compile Include="Translate\Translator.cs" />
     <Compile Include="Translate\EmbedTypeTranslator.cs" />

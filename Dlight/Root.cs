@@ -14,7 +14,13 @@ namespace Dlight
 
         public Root()
         {
+            Child = new List<Element>();
             Root = this;
+        }
+
+        public void Append(Element append)
+        {
+            Child.Add(append);
         }
 
         public override int ChildCount

@@ -44,19 +44,19 @@ namespace Dlight.Translate
             Parent.GenelateConstant(value);
         }
 
-        public override void GenelateLoad(FullName type)
-        {
-            Parent.GenelateLoad(type);
-        }
-
-        public override void GenelateStore(FullName type)
-        {
-            Parent.GenelateStore(type);
-        }
-
         public override void GenelateOperate(FullName type, TokenType operation)
         {
             Parent.GenelateOperate(type, operation);
+        }
+
+        public override void GenelateLoad(FullName fullName)
+        {
+            Parent.GenelateLoad(fullName);
+        }
+
+        public override void GenelateStore(FullName fullName = null)
+        {
+            Parent.GenelateStore(fullName);
         }
     }
 }

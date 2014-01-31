@@ -40,7 +40,6 @@ namespace Dlight.Translate
         public override void Save()
         {
             base.Save();
-            Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(object) }));
             Generator.Emit(OpCodes.Ret);
         }
 
@@ -65,18 +64,6 @@ namespace Dlight.Translate
             Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Binary64).GetConstructor(new Type[] { typeof(double) }));
         }
 
-        public override void GenelateLoad(FullName type)
-        {
-            LocalBuilder local = FindTranslator(type).GetLocal();
-            Generator.Emit(OpCodes.Ldloc, local);
-        }
-
-        public override void GenelateStore(FullName type)
-        {
-            LocalBuilder local = FindTranslator(type).GetLocal();
-            Generator.Emit(OpCodes.Stloc, local);
-        }
-
         public override void GenelateOperate(FullName type, TokenType operation)
         {
             Type dataType = FindTranslator(type).GetDataType();
@@ -87,8 +74,26 @@ namespace Dlight.Translate
                 case TokenType.Multiply: Generator.Emit(OpCodes.Call, dataType.GetMethod("opMultiply")); break;
                 case TokenType.Divide: Generator.Emit(OpCodes.Call, dataType.GetMethod("opDivide")); break;
                 case TokenType.Modulo: Generator.Emit(OpCodes.Call, dataType.GetMethod("opModulo")); break;
+                case TokenType.Special: Generator.EmitWriteLine(FindTranslator(type).GetLocal()); break;
                 default: throw new ArgumentException();
             }
+        }
+
+        public override void GenelateLoad(FullName fullname)
+        {
+            LocalBuilder local = FindTranslator(fullname).GetLocal();
+            Generator.Emit(OpCodes.Ldloc, local);
+        }
+
+        public override void GenelateStore(FullName fullname = null)
+        {
+            if(fullname == null)
+            {
+                Generator.Emit(OpCodes.Pop);
+                return;
+            }
+            LocalBuilder local = FindTranslator(fullname).GetLocal();
+            Generator.Emit(OpCodes.Stloc, local);
         }
     }
 }

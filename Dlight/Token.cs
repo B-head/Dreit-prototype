@@ -53,6 +53,8 @@ namespace Dlight
     enum TokenType
     {
         Unknoun,
+        Special,
+
         Root,
         Spacer,
         Error,

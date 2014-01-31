@@ -102,12 +102,12 @@ namespace Dlight.Translate
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateLoad(FullName type)
+        public virtual void GenelateLoad(FullName fullName)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateStore(FullName type)
+        public virtual void GenelateStore(FullName fullName = null)
         {
             throw new NotSupportedException();
         }
