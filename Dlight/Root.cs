@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
-    class Root : Scope
+    class Root : Element
     {
         public List<Element> Child { get; set; }
         public int ErrorCount { get; set; }
@@ -15,7 +16,6 @@ namespace Dlight
         public Root()
         {
             Child = new List<Element>();
-            Root = this;
         }
 
         public void Append(Element append)
@@ -33,15 +33,9 @@ namespace Dlight
             return Child[index];
         }
 
-        public override void SpreadScope(Scope scope = null, Element parent = null)
+        public void PreProcess(RootTranslator trans)
         {
-            base.SpreadScope(scope, parent);
-        }
-
-        public void RegisterEmbed(Scope scope)
-        {
-            AddChild(scope);
-            Child.Add(scope);
+            SpreadScope(trans, null);
         }
 
         public void OutputError(string message)

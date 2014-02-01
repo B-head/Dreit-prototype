@@ -27,7 +27,7 @@ namespace Dlight
             }
         }
 
-        public override string ElementInfo()
+        protected override string ElementInfo()
         {
             return base.ElementInfo() + (Operation == TokenType.Special ? string.Empty : Enum.GetName(typeof(TokenType), Operation));
         }

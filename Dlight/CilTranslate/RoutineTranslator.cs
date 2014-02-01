@@ -6,59 +6,39 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Dlight.Translate
+namespace Dlight.CilTranslate
 {
-    class RoutineTranslator : Translator
+    class RoutineTranslator : ContextTranslator
     {
-        private MethodBuilder Builder { get; set; }
-        private ILGenerator Generator { get; set; }
-
-        public RoutineTranslator(string name, Translator parent, MethodBuilder builder)
+        public RoutineTranslator(string name, Translator parent)
             : base(name, parent)
         {
-            Builder = builder;
+
+        }
+
+        /*public override void BuildCode()
+        {
+            base.BuildCode();
             Generator = Builder.GetILGenerator();
-        }
-
-        public RoutineTranslator(FullName fullname, Translator parent, MethodBuilder builder)
-            : base(fullname, parent)
-        {
-            Builder = builder;
-            Generator = Builder.GetILGenerator();
-        }
-
-        public override MethodInfo GetContext()
-        {
-            return Builder;
-        }
-
-        public override Type GetDataType()
-        {
-            return Builder.DeclaringType;
-        }
-
-        public override void Save()
-        {
-            base.Save();
             Generator.Emit(OpCodes.Ret);
         }
 
-        public override Translator GenelateVariant(FullName gen, FullName type)
+        public override Translator CreateAttribute(FullName gen, FullName type)
         {
             Type dataType = FindTranslator(type).GetDataType();
             LocalBuilder builder = Generator.DeclareLocal(dataType);
             LocalTranslator result = new LocalTranslator(gen, this, builder);
-            Child.Add(result);
+            _Child.Add(result);
             return result;
         }
 
-        public override void GenelateConstant(int value)
+        public override void GenelatePrimitive(int value)
         {
             Generator.Emit(OpCodes.Ldc_I4, (int)value);
             Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Integer32).GetConstructor(new Type[] { typeof(int) }));
         }
 
-        public override void GenelateConstant(double value)
+        public override void GenelatePrimitive(double value)
         {
             Generator.Emit(OpCodes.Ldc_R8, (double)value);
             Generator.Emit(OpCodes.Newobj, typeof(DlightObject.Binary64).GetConstructor(new Type[] { typeof(double) }));
@@ -94,6 +74,6 @@ namespace Dlight.Translate
             }
             LocalBuilder local = FindTranslator(fullname).GetLocal();
             Generator.Emit(OpCodes.Stloc, local);
-        }
+        }*/
     }
 }

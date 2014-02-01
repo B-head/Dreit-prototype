@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dlight.Translate;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
-    class DeclateRoutine : Scope
+    class DeclateRoutine : Element
     {
         public Identifier Ident { get; set; }
         public Element AttribuleList { get; set; }
         public Identifier ResultExplicitType { get; set; }
         public Element Block { get; set; }
-        public FullName ResultType { get; set; }
+        public Translator ResultType { get; set; }
 
         public override int ChildCount
         {
@@ -32,7 +32,7 @@ namespace Dlight
             }
         }
 
-        public override string ElementInfo()
+        protected override string ElementInfo()
         {
             string temp = " (" + ResultType + ")";
             if (ResultExplicitType == null)
@@ -45,16 +45,9 @@ namespace Dlight
             }
         }
 
-        public override void SpreadScope(Scope scope, Element parent)
+        protected override Translator CreateTranslator(Translator trans)
         {
-            Name = Ident.Value;
-            base.SpreadScope(scope, parent);
-        }
-
-        public override void SpreadTranslate(Translator trans)
-        {
-            Translator temp = trans.GenelateRoutine(Scope.FullName);
-            base.SpreadTranslate(temp);
+            return trans.CreateRoutine(Ident.Value);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
-using Dlight.Translate;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
@@ -13,7 +13,7 @@ namespace Dlight
         public string Integral { get; set; }
         public string Fraction { get; set; }
 
-        public override string ElementInfo()
+        protected override string ElementInfo()
         {
             if (Fraction == null)
             {
@@ -35,16 +35,16 @@ namespace Dlight
             base.CheckSemantic();
         }
 
-        public override FullName GetDataType()
+        public override Translator GetDataType()
         {
             if(Fraction == null)
             {
-                FullName type = Scope.NameResolution("Integer32").FullName;
+                Translator type = Trans.NameResolution("Integer32");
                 return type;
             }
             else
             {
-                FullName type = Scope.NameResolution("Binary64").FullName;
+                Translator type = Trans.NameResolution("Binary64");
                 return type;
             }
         }
@@ -54,14 +54,14 @@ namespace Dlight
             if (Fraction == null)
             {
                 int number = (int)Parse(Integral);
-                Trans.GenelateConstant(number);
+                Trans.GenelatePrimitive(number);
             }
             else
             {
                 double number = (double)Parse(Integral);
                 int count, b;
                 number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
-                Trans.GenelateConstant(number);
+                Trans.GenelatePrimitive(number);
             }
             base.Translate();
         }

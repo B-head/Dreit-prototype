@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection.Emit;
 using Dlight.LexicalAnalysis;
 using Dlight.SyntacticAnalysis;
-using Dlight.Translate;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
@@ -19,18 +19,16 @@ namespace Dlight
             Func<string, string> lambda = x => x + fileName;
             Root root = new Root();
             root.Append(CompileFile(fileName));
-            RegisterEmbed(root);
-            root.SpreadScope();
+            RootTranslator trans = new RootTranslator();
+            RegisterEmbed(trans);
+            root.PreProcess(trans);
             root.CheckSemantic();
             root.CheckDataType();
             Console.WriteLine(root);
             if (root.ErrorCount == 0)
             {
-                AssemblyTranslator trans = new AssemblyTranslator(fileName.Replace(".txt", ""));
-                RegisterEmbed(trans, root);
-                root.SpreadTranslate(trans);
                 root.Translate();
-                trans.Save();
+                trans.Save(fileName.Replace(".txt", ""));
             }
         }
 
@@ -43,17 +41,10 @@ namespace Dlight
             return parser.Parse(token, fileName.Replace(".txt", ""));
         }
 
-        static void RegisterEmbed(Root root)
+        static void RegisterEmbed(RootTranslator trans)
         {
-            TextPosition p = new TextPosition { File = "@@Embed" };
-            root.RegisterEmbed(new Scope { Name = "Integer32", Position = p });
-            root.RegisterEmbed(new Scope { Name = "Binary64", Position = p });
-        }
-
-        static void RegisterEmbed(AssemblyTranslator trans, Root root)
-        {
-            trans.RegisterEmbed(root.NameResolution("Integer32").FullName, typeof(DlightObject.Integer32));
-            trans.RegisterEmbed(root.NameResolution("Binary64").FullName, typeof(DlightObject.Binary64));
+            trans.CreateExturn(typeof(DlightObject.Integer32));
+            trans.CreateExturn(typeof(DlightObject.Binary64));
         }
     }
 }

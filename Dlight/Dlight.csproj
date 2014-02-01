@@ -42,13 +42,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CilTranslate\AttributeTranslator.cs" />
+    <Compile Include="CilTranslate\ClassTranslator.cs" />
+    <Compile Include="CilTranslate\ContextTranslator.cs" />
+    <Compile Include="CilTranslate\EnumTranslator.cs" />
+    <Compile Include="CilTranslate\GenericTranslator.cs" />
+    <Compile Include="CilTranslate\LabelTranslator.cs" />
+    <Compile Include="CilTranslate\OperationTranslator.cs" />
+    <Compile Include="CilTranslate\PolyTranslator.cs" />
+    <Compile Include="CilTranslate\VirtualCode.cs" />
     <Compile Include="DeclateVariant.cs" />
     <Compile Include="DyadicCalculate.cs" />
     <Compile Include="DyadicExpression.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ExpressionGrouping.cs" />
     <Compile Include="ExpressionList.cs" />
-    <Compile Include="FullName.cs" />
     <Compile Include="LeftAssign.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Identifier.cs" />
@@ -57,14 +65,14 @@
     <Compile Include="RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="DeclateRoutine.cs" />
-    <Compile Include="Scope.cs" />
     <Compile Include="SyntacticAnalysis\PrimaryParser.cs" />
-    <Compile Include="Translate\AssemblyTranslator.cs" />
-    <Compile Include="Translate\Translator.cs" />
-    <Compile Include="Translate\EmbedTypeTranslator.cs" />
-    <Compile Include="Translate\LocalTranslator.cs" />
-    <Compile Include="Translate\ModuleTranslator.cs" />
-    <Compile Include="Translate\RoutineTranslator.cs" />
+    <Compile Include="CilTranslate\PackageTranslator.cs" />
+    <Compile Include="CilTranslate\RootTranslator.cs" />
+    <Compile Include="CilTranslate\Translator.cs" />
+    <Compile Include="CilTranslate\ExturnTranslator.cs" />
+    <Compile Include="CilTranslate\VariantTranslator.cs" />
+    <Compile Include="CilTranslate\ModuleTranslator.cs" />
+    <Compile Include="CilTranslate\RoutineTranslator.cs" />
     <Compile Include="LexicalAnalysis\Lexer.cs" />
     <Compile Include="LexicalAnalysis\PunctuatorLexer.cs" />
     <Compile Include="LexicalAnalysis\TextLexer.cs" />

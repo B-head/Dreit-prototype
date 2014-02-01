@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dlight.Translate;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
-    class DeclareVariant : Scope
+    class DeclareVariant : Element
     {
         public Identifier Ident { get; set; }
         public Identifier ExplicitType { get; set; }
-        public FullName IdentType { get; set; }
+        public Translator IdentType { get; set; }
 
         public override bool IsReference
         {
@@ -33,7 +33,7 @@ namespace Dlight
             }
         }
 
-        public override string ElementInfo()
+        protected override string ElementInfo()
         {
             string temp = " (" + IdentType + ")";
             if (ExplicitType == null)
@@ -46,22 +46,21 @@ namespace Dlight
             }
         }
 
-        public override void SpreadScope(Scope scope, Element parent)
+        protected override Translator CreateTranslator(Translator trans)
         {
-            Name = Ident.Value;
-            base.SpreadScope(scope, parent);
+            return trans.CreateVariant(Ident.Value);
         }
 
         public override void CheckDataType()
         {
             if (ExplicitType != null)
             {
-                IdentType = NameResolution(ExplicitType.Value).FullName;
+                IdentType = Trans.NameResolution(ExplicitType.Value);
             }
             base.CheckDataType();
         }
 
-        public override void CheckDataTypeAssign(FullName type)
+        public override void CheckDataTypeAssign(Translator type)
         {
             if (IdentType == null)
             {
@@ -70,26 +69,19 @@ namespace Dlight
             base.CheckDataTypeAssign(type);
         }
 
-        public override FullName GetDataType()
+        public override Translator GetDataType()
         {
             return IdentType;
         }
 
         public override void Translate()
         {
-            Ident.Translate();
+            Parent.Trans.GenelateLoad(Ident.Refer);
         }
 
         public override void TranslateAssign()
         {
-            Ident.TranslateAssign();
-        }
-
-        public override void SpreadTranslate(Translator trans)
-        {
-            FullName type = GetDataType();
-            Translator temp = trans.GenelateVariant(Scope.FullName, type);
-            base.SpreadTranslate(temp);
+            Parent.Trans.GenelateStore(Ident.Refer);
         }
     }
 }

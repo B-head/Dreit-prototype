@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dlight.Translate;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
-    class Module : Scope
+    class Module : Element
     {
+        public string Name { get; set; }
         public ExpressionList ExpList { get; set; }
         public List<Token> ErrorToken { get; set; }
 
@@ -26,7 +27,7 @@ namespace Dlight
             }
         }
 
-        public override string ElementInfo()
+        protected override string ElementInfo()
         {
             return base.ElementInfo() + "ErrorToken = " + ErrorToken.Count;
         }
@@ -47,20 +48,9 @@ namespace Dlight
             base.CheckSemantic();
         }
 
-        public override void SpreadTranslate(Translator trans)
+        protected override Translator CreateTranslator(Translator trans)
         {
-            Translator temp = trans.GenelateModule(Scope.FullName);
-            base.SpreadTranslate(temp);
-        }
-
-        public override void Translate()
-        {
-            base.Translate();
-            Scope scope = NameResolution("stdout");
-            if(scope != null)
-            {
-                Trans.GenelateOperate(scope.FullName, TokenType.Special);
-            }
+            return trans.CreateModule(Name);
         }
     }
 }

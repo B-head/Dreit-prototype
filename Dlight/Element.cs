@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dlight.Translate;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
     abstract class Element
     {
         public TextPosition Position { get; set; }
-        public Element Parent { get; set; }
-        public Root Root { get; set; }
-        public Scope Scope { get; set; }
-        public Translator Trans { get; set; }
+        public Element Parent { get; private set; }
+        public Root Root { get; private set; }
+        public Translator Trans { get; private set; }
 
         public virtual bool IsReference
         {
@@ -38,31 +37,35 @@ namespace Dlight
             }
         }
 
-        public virtual string ElementInfo()
+        protected virtual string ElementInfo()
         {
             return Position + " " + this.GetType().Name + ": ";
         }
 
-        public virtual string ErrorInfo()
+        protected virtual string ErrorInfo()
         {
             return Position + ": ";
         }
 
-        public void CompileError(string message)
+        protected void CompileError(string message)
         {
             Root.OutputError("Error: " + ErrorInfo() + message);
         }
 
-        public void CompileWarning(string message)
+        protected void CompileWarning(string message)
         {
             Root.OutputWarning("Warning: " + ErrorInfo() + message);
         }
 
-        public virtual void SpreadScope(Scope scope, Element parent)
+        protected void SpreadScope(Translator trans, Element parent)
         {
-            Scope = scope;
             Parent = parent;
-            if (parent != null)
+            Trans = CreateTranslator(trans);
+            if (parent == null)
+            {
+                Root = (Root)this;
+            }
+            else
             {
                 Root = parent.Root;
             }
@@ -70,13 +73,22 @@ namespace Dlight
             {
                 if (v != null)
                 {
-                    v.SpreadScope(scope, this);
+                    v.SpreadScope(Trans, this);
                 }
             }
         }
 
+        protected virtual Translator CreateTranslator(Translator trans)
+        {
+            return trans;
+        }
+
         public virtual void CheckSemantic()
         {
+            if (Trans.Parent == null && !(Trans is RootTranslator))
+            {
+                CompileError("このスコープには識別子 " + Trans.Name + " が既に宣言されています。");
+            }
             foreach (Element v in EnumChild())
             {
                 if (v != null)
@@ -97,7 +109,7 @@ namespace Dlight
             }
         }
 
-        public virtual void CheckDataTypeAssign(FullName type)
+        public virtual void CheckDataTypeAssign(Translator type)
         {
             foreach (Element v in EnumChild())
             {
@@ -112,21 +124,9 @@ namespace Dlight
             }
         }
 
-        public virtual FullName GetDataType()
+        public virtual Translator GetDataType()
         {
             throw new NotSupportedException();
-        }
-
-        public virtual void SpreadTranslate(Translator trans)
-        {
-            Trans = trans;
-            foreach (Element v in EnumChild())
-            {
-                if (v != null)
-                {
-                    v.SpreadTranslate(trans);
-                }
-            }
         }
 
         public virtual void Translate()

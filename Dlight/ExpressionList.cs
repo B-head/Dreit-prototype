@@ -34,17 +34,12 @@ namespace Dlight
             return Child[index];
         }
 
-        public override string ElementInfo()
-        {
-            return base.ElementInfo() + "Scope = " + Scope.FullName;
-        }
-
         public override void Translate()
         {
             foreach(Element v in EnumChild())
             {
                 v.Translate();
-                Trans.GenelateStore();
+                Trans.GenelateStore(null);
             }
         }
     }

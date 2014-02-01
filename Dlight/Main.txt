@@ -1,4 +1,2 @@
-﻿rout test(a:Integer32, b:Integer32):Integer32
-{
-	a + b =: var stdout:Integer32
-}
+﻿1 + 2 * 3 =: var a =: var b
+var stdout := a * b

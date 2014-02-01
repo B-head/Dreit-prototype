@@ -6,21 +6,16 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Dlight.Translate
+namespace Dlight.CilTranslate
 {
-    class EmbedTypeTranslator : Translator
+    class ExturnTranslator : Translator
     {
         private Type EmbedType { get; set; }
 
-        public EmbedTypeTranslator(FullName fullname, Translator parent, Type type)
-            : base(fullname, parent)
+        public ExturnTranslator(Type type, Translator parent)
+            : base(type.Name, parent)
         {
             EmbedType = type;
-        }
-
-        public override Type GetDataType()
-        {
-            return EmbedType;
         }
     }
 }

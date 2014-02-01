@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
@@ -25,13 +26,13 @@ namespace Dlight
         {
             if (Right != null && Left != null)
             {
-                FullName temp = Right.GetDataType();
+                Translator temp = Right.GetDataType();
                 Left.CheckDataTypeAssign(temp);
             }
             base.CheckDataType();
         }
 
-        public override FullName GetDataType()
+        public override Translator GetDataType()
         {
             return Right.GetDataType();
         }
