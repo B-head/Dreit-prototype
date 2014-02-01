@@ -56,8 +56,11 @@ namespace Dlight
         public override void Translate()
         {
             base.Translate();
-            FullName stdout = NameResolution("stdout").FullName;
-            Trans.GenelateOperate(stdout, TokenType.Special);
+            Scope scope = NameResolution("stdout");
+            if(scope != null)
+            {
+                Trans.GenelateOperate(scope.FullName, TokenType.Special);
+            }
         }
     }
 }

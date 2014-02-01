@@ -14,7 +14,7 @@ namespace Dlight.SyntacticAnalysis
             {
                 BlockComment(ref c);
                 LineComment(ref c);
-                if (CheckToken(c, TokenType.WhiteSpace, TokenType.EndLine))
+                if (CheckToken(c, TokenType.WhiteSpace, TokenType.LineTerminator))
                 {
                     c++;
                     continue;
@@ -57,7 +57,7 @@ namespace Dlight.SyntacticAnalysis
             c++;
             while (IsReadable(c))
             {
-                if (CheckToken(c++, TokenType.EndLine))
+                if (CheckToken(c++, TokenType.LineTerminator))
                 {
                     break;
                 }

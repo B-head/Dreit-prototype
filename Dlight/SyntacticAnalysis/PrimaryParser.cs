@@ -10,10 +10,10 @@ namespace Dlight.SyntacticAnalysis
     {
         private Element Primary(ref int c)
         {
-            return Group(ref c) ?? Number(ref c) ?? DeclareVariable(ref c) ?? Identifier(ref c);
+            return CoalesceParser(ref c, Group, Number, DeclateRoutine, DeclareVariant, Identifier);
         }
 
-        private Element Group(ref int c)
+        private ExpressionGrouping Group(ref int c)
         {
             int temp = c;
             if (!CheckToken(temp, TokenType.LeftParenthesis))
@@ -22,7 +22,7 @@ namespace Dlight.SyntacticAnalysis
             }
             TextPosition position = Read(temp).Position;
             SkipSpaser(++temp);
-            Element exp = Expression(ref temp);
+            Element exp = ExpressionList(ref temp);
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
@@ -32,7 +32,7 @@ namespace Dlight.SyntacticAnalysis
             return new ExpressionGrouping { Child = exp, Operation = TokenType.Special, Position = position };
         }
 
-        private Element Number(ref int c)
+        private NumberLiteral Number(ref int c)
         {
             int temp = c;
             string value = string.Empty;
@@ -57,7 +57,7 @@ namespace Dlight.SyntacticAnalysis
             return new NumberLiteral { Integral = i.Text, Position = i.Position };
         }
 
-        private Element Identifier(ref int c)
+        private Identifier Identifier(ref int c)
         {
             if (!CheckToken(c, TokenType.LetterStartString))
             {
@@ -68,32 +68,75 @@ namespace Dlight.SyntacticAnalysis
             return new Identifier { Value = t.Text, Position = t.Position };
         }
 
-        private Element SpecialIdentifier(ref int c)
+        private DeclareVariant DeclareVariant(ref int c)
         {
-            if (!CheckText(c, "this"))
+            if (!CheckText(c, "var", "variant"))
             {
                 return null;
             }
-            Token t = Read(c);
             SkipSpaser(++c);
-            return new Identifier { Value = t.Text, Position = t.Position };
+            return VariantSetting(ref c);
         }
 
-        private Element DeclareVariable(ref int c)
+        private DeclateRoutine DeclateRoutine(ref int c)
         {
-            if (!CheckText(c, "var"))
+            if (!CheckText(c, "rout", "routine"))
             {
                 return null;
             }
             SkipSpaser(++c);
-            Identifier name = (Identifier)Identifier(ref c);
-            if (!CheckToken(c, TokenType.Peir))
+            Identifier ident = Identifier(ref c);
+            Element attr = null;
+            Identifier retType = null;
+            Element block = null;
+            if (CheckToken(c, TokenType.LeftParenthesis))
             {
-                return new DeclareVariant { Ident = name, Position = name.Position };
+                SkipSpaser(++c);
+                attr = RightAssociative<Tuple>(ref c, VariantSetting, TokenType.List);
+                if (CheckToken(c, TokenType.RightParenthesis))
+                {
+                    SkipSpaser(++c);
+                }
             }
-            SkipSpaser(++c);
-            Identifier dataType = (Identifier)Identifier(ref c);
-            return new DeclareVariant { Ident = name, ExplicitType = dataType, Position = name.Position };
+            if (CheckToken(c, TokenType.Peir))
+            {
+                SkipSpaser(++c);
+                retType = Identifier(ref c);
+            }
+            block = Block(ref c);
+            return new DeclateRoutine { Ident = ident, AttribuleList = attr, ResultExplicitType = retType, Block = block, Position = ident.Position };
+        }
+
+        private DeclareVariant VariantSetting(ref int c)
+        {
+            Identifier ident = Identifier(ref c);
+            Identifier explType = null;
+            if (CheckToken(c, TokenType.Peir))
+            {
+                SkipSpaser(++c);
+                explType = Identifier(ref c);
+            }
+            return new DeclareVariant { Ident = ident, ExplicitType = explType, Position = ident.Position };
+        }
+
+        private Element Block(ref int c)
+        {
+            Element result = null;
+            if (CheckToken(c, TokenType.Separator))
+            {
+                SkipSpaser(++c);
+                result = Expression(ref c);
+            }
+            else if (CheckToken(c, TokenType.LeftBrace))
+            {
+                SkipSpaser(++c);
+                result = ExpressionList(ref c);
+                if (CheckToken(c, TokenType.RightBrace))
+                {
+                    SkipSpaser(++c);
+                }
+            }
+            return result;
         }
     }
 }

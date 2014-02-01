@@ -27,7 +27,7 @@ namespace Dlight.LexicalAnalysis
                     i++;
                 }
             }
-            return TakeToken(ref p, i, TokenType.EndLine);
+            return TakeToken(ref p, i, TokenType.LineTerminator);
         }
 
         private Token WhiteSpace(ref TextPosition p)

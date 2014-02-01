@@ -8,42 +8,17 @@ namespace Dlight.SyntacticAnalysis
 {
     partial class Parser
     {
-        private Element LeftAssociative<R>(ref int c, ParserFunction next, params TokenType[] type) where R : DyadicExpression, new()
-        {
-            Element left = next(ref c);
-            TokenType match;
-            while (CheckToken(c, out match, type))
-            {
-                SkipSpaser(++c);
-                Element right = next(ref c);
-                left = new R { Left = left, Right = right, Operation = match, Position = left.Position };
-            }
-            return left;
-        }
-
-        private Element RightAssociative<R>(ref int c, ParserFunction next, params TokenType[] type) where R : DyadicExpression, new()
-        {
-            Element left = next(ref c);
-            TokenType match;
-            if (!CheckToken(c, out match, type))
-            {
-                return left;
-            }
-            SkipSpaser(++c);
-            Element right = RightAssociative<R>(ref c, next, type);
-            return new R { Left = left, Right = right, Operation = match, Position = left.Position };
-        }
-
-        private ExpressionList Expression(ref int c, bool root = false)
+        private ExpressionList ExpressionList(ref int c, bool root = false)
         {
             ExpressionList result = new ExpressionList();
             while (IsReadable(c))
             {
-                Element temp = LeftAssign(ref c);
                 if (CheckToken(c, TokenType.EndExpression))
                 {
                     SkipSpaser(++c);
+                    continue;
                 }
+                Element temp = Expression(ref c);
                 if (temp == null)
                 {
                     if(!root && CheckToken(c, TokenType.RightBrace))
@@ -56,6 +31,16 @@ namespace Dlight.SyntacticAnalysis
                 result.Append(temp);
             }
             return result;
+        }
+
+        private Element Expression(ref int c)
+        {
+            Element temp = LeftAssign(ref c);
+            if (CheckToken(c, TokenType.EndExpression))
+            {
+                SkipSpaser(++c);
+            }
+            return temp;
         }
 
         private Element LeftAssign(ref int c)

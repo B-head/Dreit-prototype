@@ -72,7 +72,7 @@ namespace Dlight.LexicalAnalysis
             Token result = new Token { Text = text, Type = type, Position = temp };
             p.Total += length;
             p.Row += length;
-            if (type == TokenType.EndLine)
+            if (type == TokenType.LineTerminator)
             {
                 p.Line++;
                 p.Row = 0;

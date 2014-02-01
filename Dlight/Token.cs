@@ -46,7 +46,7 @@ namespace Dlight
 
         public override string ToString()
         {
-            return File + "(" + Line + ")";
+            return File + "(" + Line + "," + Row + ")";
         }
     }
 
@@ -102,7 +102,7 @@ namespace Dlight
         ClassLiteral,
         EnumLiteral,
 
-        EndLine,
+        LineTerminator,
         WhiteSpace,
         LetterStartString,
         DigitStartString,

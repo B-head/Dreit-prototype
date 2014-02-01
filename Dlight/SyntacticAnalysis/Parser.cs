@@ -18,7 +18,7 @@ namespace Dlight.SyntacticAnalysis
             ErrorToken = new List<Token>();
             int c = 0;
             SkipSpaser(c);
-            ExpressionList exp = Expression(ref c, true);
+            ExpressionList exp = ExpressionList(ref c, true);
             return new Module { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
         }
 
@@ -91,6 +91,48 @@ namespace Dlight.SyntacticAnalysis
                 }
             }
             return false;
+        }
+
+        private Element CoalesceParser(ref int c, params ParserFunction[] func)
+        {
+            Element result = null;
+            foreach (ParserFunction f in func)
+            {
+                int temp = c;
+                result = f(ref temp);
+                if (result != null)
+                {
+                    c = temp;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        private Element LeftAssociative<R>(ref int c, ParserFunction next, params TokenType[] type) where R : DyadicExpression, new()
+        {
+            Element left = next(ref c);
+            TokenType match;
+            while (CheckToken(c, out match, type))
+            {
+                SkipSpaser(++c);
+                Element right = next(ref c);
+                left = new R { Left = left, Right = right, Operation = match, Position = left.Position };
+            }
+            return left;
+        }
+
+        private Element RightAssociative<R>(ref int c, ParserFunction next, params TokenType[] type) where R : DyadicExpression, new()
+        {
+            Element left = next(ref c);
+            TokenType match;
+            if (!CheckToken(c, out match, type))
+            {
+                return left;
+            }
+            SkipSpaser(++c);
+            Element right = RightAssociative<R>(ref c, next, type);
+            return new R { Left = left, Right = right, Operation = match, Position = left.Position };
         }
     }
 }

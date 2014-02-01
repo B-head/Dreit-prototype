@@ -23,7 +23,7 @@ namespace Dlight.Translate
         private RoutineTranslator CreateGlobalContext(string name)
         {
             MethodAttributes attr = MethodAttributes.Static | MethodAttributes.SpecialName;
-            MethodBuilder builder = Builder.DefineGlobalMethod(name, attr, typeof(void), Type.EmptyTypes);
+            MethodBuilder builder = Builder.DefineGlobalMethod(name, attr, null, null);
             return new RoutineTranslator(name, this, builder);
         }
 
@@ -42,6 +42,15 @@ namespace Dlight.Translate
         public override Translator GenelateVariant(FullName gen, FullName type)
         {
             return GlobalContext.GenelateVariant(gen, type);
+        }
+
+        public override Translator GenelateRoutine(FullName gen)
+        {
+            MethodAttributes attr = MethodAttributes.Static;
+            MethodBuilder builder = Builder.DefineGlobalMethod(gen.Name, attr, null, null);
+            RoutineTranslator result = new RoutineTranslator(gen, this, builder);
+            Child.Add(result);
+            return result;
         }
 
         public override void GenelateConstant(int value)

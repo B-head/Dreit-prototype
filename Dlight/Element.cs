@@ -48,14 +48,14 @@ namespace Dlight
             return Position + ": ";
         }
 
-        public void CompileError(string format, params object[] args)
+        public void CompileError(string message)
         {
-            Root.OutputError("Error: " + ErrorInfo() + string.Format(format, args));
+            Root.OutputError("Error: " + ErrorInfo() + message);
         }
 
-        public void CompileWarning(string format, params object[] args)
+        public void CompileWarning(string message)
         {
-            Root.OutputWarning("Warning: " + ErrorInfo() + string.Format(format, args));
+            Root.OutputWarning("Warning: " + ErrorInfo() + message);
         }
 
         public virtual void SpreadScope(Scope scope, Element parent)

@@ -40,7 +40,10 @@ namespace Dlight
         public override void Translate()
         {
             Scope temp = Scope.NameResolution(Value);
-            Trans.GenelateLoad(temp.FullName);
+            if (temp is DeclareVariant)
+            {
+                Trans.GenelateLoad(temp.FullName);
+            }
             base.Translate();
         }
 

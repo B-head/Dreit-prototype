@@ -6,5 +6,11 @@ using System.Threading.Tasks;
 
 namespace Dlight
 {
-
+    class Tuple : DyadicExpression
+    {
+        public Tuple()
+        {
+            Operation = TokenType.List;
+        }
+    }
 }

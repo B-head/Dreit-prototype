@@ -58,7 +58,6 @@
     <Compile Include="Root.cs" />
     <Compile Include="DeclateRoutine.cs" />
     <Compile Include="Scope.cs" />
-    <Compile Include="SpecialIdentifier.cs" />
     <Compile Include="SyntacticAnalysis\PrimaryParser.cs" />
     <Compile Include="Translate\AssemblyTranslator.cs" />
     <Compile Include="Translate\Translator.cs" />
@@ -66,7 +65,6 @@
     <Compile Include="Translate\LocalTranslator.cs" />
     <Compile Include="Translate\ModuleTranslator.cs" />
     <Compile Include="Translate\RoutineTranslator.cs" />
-    <Compile Include="Common.cs" />
     <Compile Include="LexicalAnalysis\Lexer.cs" />
     <Compile Include="LexicalAnalysis\PunctuatorLexer.cs" />
     <Compile Include="LexicalAnalysis\TextLexer.cs" />
@@ -83,6 +81,7 @@
     <Compile Include="SyntacticAnalysisOld\Parser.cs" />
     <Compile Include="SyntaxOld.cs" />
     <Compile Include="Token.cs" />
+    <Compile Include="Tuple.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

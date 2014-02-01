@@ -38,7 +38,7 @@ namespace Dlight.SyntacticAnalysisOld
                     continue;
                 }
                 Token t = Peek(c);
-                if(t.Type == TokenType.EndLine || t.Type == TokenType.WhiteSpace)
+                if(t.Type == TokenType.LineTerminator || t.Type == TokenType.WhiteSpace)
                 {
                     child.Add(t);
                     c++;
@@ -96,7 +96,7 @@ namespace Dlight.SyntacticAnalysisOld
                 Token t = Peek(c);
                 child.Add(t);
                 c++;
-                if (t.Type == TokenType.EndLine)
+                if (t.Type == TokenType.LineTerminator)
                 {
                     break;
                 }

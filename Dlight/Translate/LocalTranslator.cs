@@ -29,26 +29,6 @@ namespace Dlight.Translate
             return Builder.LocalType;
         }
 
-        public override Translator GenelateVariant(FullName gen, FullName type)
-        {
-            return Parent.GenelateVariant(gen, type);
-        }
-
-        public override void GenelateConstant(int value)
-        {
-            Parent.GenelateConstant(value);
-        }
-
-        public override void GenelateConstant(double value)
-        {
-            Parent.GenelateConstant(value);
-        }
-
-        public override void GenelateOperate(FullName type, TokenType operation)
-        {
-            Parent.GenelateOperate(type, operation);
-        }
-
         public override void GenelateLoad(FullName fullName)
         {
             Parent.GenelateLoad(fullName);

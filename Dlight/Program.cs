@@ -16,6 +16,7 @@ namespace Dlight
         static void Main(string[] args)
         {
             string fileName = args[0];
+            Func<string, string> lambda = x => x + fileName;
             Root root = new Root();
             root.Append(CompileFile(fileName));
             RegisterEmbed(root);
