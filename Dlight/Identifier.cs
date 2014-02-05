@@ -10,7 +10,7 @@ namespace Dlight
     class Identifier : Element
     {
         public string Value { get; set; }
-        public Translator Refer { get; set; }
+        public Element Refer { get; set; }
 
         public override bool IsReference
         {
@@ -24,7 +24,7 @@ namespace Dlight
 
         public override void CheckSemantic()
         {
-            Refer = Trans.NameResolution(Value);
+            Refer = NameResolution(Value);
             if (Refer == null)
             {
                 CompileError("このスコープで識別子 " + Value + " が宣言されていません。");
@@ -35,18 +35,18 @@ namespace Dlight
 
         public override Translator GetDataType()
         {
-            return null; //Refer.GetDataType();
+            return Refer.GetDataType();
         }
 
         public override void Translate()
         {
-            Trans.GenelateLoad(Refer);
+            Trans.GenelateLoad(Refer.Trans);
             base.Translate();
         }
 
         public override void TranslateAssign()
         {
-            Trans.GenelateStore(Refer);
+            Trans.GenelateStore(Refer.Trans);
             base.TranslateAssign();
         }
     }

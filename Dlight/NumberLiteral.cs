@@ -39,13 +39,11 @@ namespace Dlight
         {
             if(Fraction == null)
             {
-                Translator type = Trans.NameResolution("Integer32");
-                return type;
+                return Trans.NameResolution("DlightObject").NameResolution("Integer32");
             }
             else
             {
-                Translator type = Trans.NameResolution("Binary64");
-                return type;
+                return Trans.NameResolution("DlightObject").NameResolution("Binary64");
             }
         }
 
@@ -55,6 +53,7 @@ namespace Dlight
             {
                 int number = (int)Parse(Integral);
                 Trans.GenelatePrimitive(number);
+                Trans.GenelateCall(GetDataType());
             }
             else
             {
@@ -62,6 +61,7 @@ namespace Dlight
                 int count, b;
                 number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
                 Trans.GenelatePrimitive(number);
+                Trans.GenelateCall(GetDataType());
             }
             base.Translate();
         }

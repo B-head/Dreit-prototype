@@ -20,16 +20,6 @@ namespace DlightObject
             return Value.ToString();
         }
 
-        public Integer32 opCall()
-        {
-            return this;
-        }
-
-        public Integer32 opCall(Integer32 arg)
-        {
-            return new Integer32(Value = arg.Value);
-        }
-
         public Integer32 opAdd(Integer32 arg)
         {
             return new Integer32(Value + arg.Value);

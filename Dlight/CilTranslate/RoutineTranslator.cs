@@ -10,10 +10,22 @@ namespace Dlight.CilTranslate
 {
     class RoutineTranslator : ContextTranslator
     {
-        public RoutineTranslator(string name, Translator parent)
+        public MethodInfo Method { get; private set; }
+
+        public RoutineTranslator(string name, Translator parent, MethodInfo method = null)
             : base(name, parent)
         {
+            Method = method;
+        }
 
+        public override Translator CreateGeneric(string name)
+        {
+            return new GenericTranslator(name, this);
+        }
+
+        public override Translator CreateArgument(string name)
+        {
+            return new ArgumentTranslator(name, this);
         }
 
         /*public override void BuildCode()
@@ -21,6 +33,15 @@ namespace Dlight.CilTranslate
             base.BuildCode();
             Generator = Builder.GetILGenerator();
             Generator.Emit(OpCodes.Ret);
+        }
+
+        public override Translator CreateRoutine(FullName gen)
+        {
+            MethodAttributes attr = MethodAttributes.Static;
+            MethodBuilder builder = Builder.DefineGlobalMethod(gen.Name, attr, null, null);
+            RoutineTranslator result = new RoutineTranslator(gen, this, builder);
+            Child.Add(result);
+            return result;
         }
 
         public override Translator CreateAttribute(FullName gen, FullName type)

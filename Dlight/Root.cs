@@ -10,12 +10,14 @@ namespace Dlight
     class Root : Element
     {
         public List<Element> Child { get; set; }
+        public Dictionary<Translator, Element> PeirDicthonary { get; set; }
         public int ErrorCount { get; set; }
         public int WarningCount { get; set; }
 
         public Root()
         {
             Child = new List<Element>();
+            PeirDicthonary = new Dictionary<Translator, Element>();
         }
 
         public void Append(Element append)
@@ -36,6 +38,16 @@ namespace Dlight
         public void PreProcess(RootTranslator trans)
         {
             SpreadScope(trans, null);
+        }
+
+        public void RegisterPeir(Element el)
+        {
+            PeirDicthonary.Add(el.Trans, el);
+        }
+
+        public Element GetPeir(Translator trans)
+        {
+            return PeirDicthonary[trans];
         }
 
         public void OutputError(string message)

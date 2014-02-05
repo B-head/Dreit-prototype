@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Dlight.CilTranslate
 {
-    class AttributeTranslator : Translator
+    class ArgumentTranslator : Translator
     {
-        public AttributeTranslator(string name, Translator parent)
+        public ArgumentTranslator(string name, Translator parent)
             : base(name, parent)
         {
 

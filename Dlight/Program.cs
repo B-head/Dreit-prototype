@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Reflection.Emit;
+using System.Reflection;
 using Dlight.LexicalAnalysis;
 using Dlight.SyntacticAnalysis;
 using Dlight.CilTranslate;
@@ -20,7 +20,8 @@ namespace Dlight
             Root root = new Root();
             root.Append(CompileFile(fileName));
             RootTranslator trans = new RootTranslator();
-            RegisterEmbed(trans);
+            trans.RegisterExtern(Assembly.Load("DlightObject"));
+            trans.RegisterExtern(Assembly.Load("mscorlib"));
             root.PreProcess(trans);
             root.CheckSemantic();
             root.CheckDataType();
@@ -39,12 +40,6 @@ namespace Dlight
             List<Token> token = lexer.Lex(text, fileName);
             Parser parser = new Parser();
             return parser.Parse(token, fileName.Replace(".txt", ""));
-        }
-
-        static void RegisterEmbed(RootTranslator trans)
-        {
-            trans.CreateExturn(typeof(DlightObject.Integer32));
-            trans.CreateExturn(typeof(DlightObject.Binary64));
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dlight.CilTranslate;
 
 namespace Dlight
 {
@@ -39,7 +40,7 @@ namespace Dlight
             foreach(Element v in EnumChild())
             {
                 v.Translate();
-                Trans.GenelateStore(null);
+                Trans.GenelateControl(VirtualCodeType.Pop);
             }
         }
     }

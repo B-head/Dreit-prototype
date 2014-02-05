@@ -20,16 +20,6 @@ namespace DlightObject
             return Value.ToString();
         }
 
-        public Binary64 opCall()
-        {
-            return this;
-        }
-
-        public Binary64 opCall(Binary64 arg)
-        {
-            return new Binary64(Value = arg.Value);
-        }
-
         public Binary64 opAdd(Binary64 arg)
         {
             return new Binary64(Value + arg.Value);

@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CilTranslate\AttributeTranslator.cs" />
+    <Compile Include="CilTranslate\ArgumentTranslator.cs" />
     <Compile Include="CilTranslate\ClassTranslator.cs" />
     <Compile Include="CilTranslate\ContextTranslator.cs" />
     <Compile Include="CilTranslate\EnumTranslator.cs" />
@@ -58,7 +58,7 @@
     <Compile Include="ExpressionGrouping.cs" />
     <Compile Include="ExpressionList.cs" />
     <Compile Include="LeftAssign.cs" />
-    <Compile Include="Module.cs" />
+    <Compile Include="ModuleFile.cs" />
     <Compile Include="Identifier.cs" />
     <Compile Include="MonadicExpression.cs" />
     <Compile Include="NumberLiteral.cs" />
@@ -66,12 +66,10 @@
     <Compile Include="Root.cs" />
     <Compile Include="DeclateRoutine.cs" />
     <Compile Include="SyntacticAnalysis\PrimaryParser.cs" />
-    <Compile Include="CilTranslate\PackageTranslator.cs" />
     <Compile Include="CilTranslate\RootTranslator.cs" />
     <Compile Include="CilTranslate\Translator.cs" />
-    <Compile Include="CilTranslate\ExturnTranslator.cs" />
     <Compile Include="CilTranslate\VariantTranslator.cs" />
-    <Compile Include="CilTranslate\ModuleTranslator.cs" />
+    <Compile Include="CilTranslate\NameSpaceTranslator.cs" />
     <Compile Include="CilTranslate\RoutineTranslator.cs" />
     <Compile Include="LexicalAnalysis\Lexer.cs" />
     <Compile Include="LexicalAnalysis\PunctuatorLexer.cs" />

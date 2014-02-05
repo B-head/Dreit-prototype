@@ -6,14 +6,21 @@ using System.Threading.Tasks;
 
 namespace Dlight.CilTranslate
 {
-    abstract class ContextTranslator : Translator
+    abstract partial class ContextTranslator : Translator
     {
-        private List<VirtualCode> Code;
+        private List<VirtualCode> _Code;
+        public IReadOnlyList<VirtualCode> Code { get { return _Code; } }
 
         protected ContextTranslator(string name, Translator parent)
             : base(name, parent)
         {
-            Code = new List<VirtualCode>();
+            _Code = new List<VirtualCode>();
+        }
+
+        private void AppendCode(VirtualCodeType type, object operand = null)
+        {
+            var code = new VirtualCode { Type = type, Operand = operand };
+            _Code.Add(code);
         }
 
         public override Translator CreateClass(string name)
@@ -31,11 +38,6 @@ namespace Dlight.CilTranslate
             return new PolyTranslator(name, this);
         }
 
-        public override Translator CreateGeneric(string name)
-        {
-            return new GenericTranslator(name, this);
-        }
-
         public override Translator CreateRoutine(string name)
         {
             return new RoutineTranslator(name, this);
@@ -51,39 +53,34 @@ namespace Dlight.CilTranslate
             return new VariantTranslator(name, this);
         }
 
-        public override Translator CreateAttribute(string name)
-        {
-            return new AttributeTranslator(name, this);
-        }
-
         public override Translator CreateLabel(string name)
         {
             return new LabelTranslator(name, this);
         }
 
-        public override void GenelatePrimitive(object value)
-        {
-
-        }
-
         public override void GenelateControl(VirtualCodeType type)
         {
+            AppendCode(type);
+        }
 
+        public override void GenelatePrimitive(object value)
+        {
+            AppendCode(VirtualCodeType.Push, value);
         }
 
         public override void GenelateLoad(Translator type)
         {
-
+            AppendCode(VirtualCodeType.Load, type);
         }
 
         public override void GenelateStore(Translator type)
         {
-
+            AppendCode(VirtualCodeType.Store, type);
         }
 
         public override void GenelateCall(Translator type)
         {
-
+            AppendCode(VirtualCodeType.Call, type);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Dlight
 
         protected override string ElementInfo()
         {
-            string temp = " (" + IdentType + ")";
+            string temp = " (" + IdentType.Name + ")";
             if (ExplicitType == null)
             {
                 return base.ElementInfo() + Ident.Value + temp;
@@ -56,6 +56,7 @@ namespace Dlight
             if (ExplicitType != null)
             {
                 IdentType = Trans.NameResolution(ExplicitType.Value);
+                Trans.SetBaseType(IdentType);
             }
             base.CheckDataType();
         }
@@ -65,6 +66,7 @@ namespace Dlight
             if (IdentType == null)
             {
                 IdentType = type;
+                Trans.SetBaseType(IdentType);
             }
             base.CheckDataTypeAssign(type);
         }
@@ -76,12 +78,12 @@ namespace Dlight
 
         public override void Translate()
         {
-            Parent.Trans.GenelateLoad(Ident.Refer);
+            Parent.Trans.GenelateLoad(Trans);
         }
 
         public override void TranslateAssign()
         {
-            Parent.Trans.GenelateStore(Ident.Refer);
+            Parent.Trans.GenelateStore(Trans);
         }
     }
 }

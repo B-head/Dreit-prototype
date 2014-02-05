@@ -44,6 +44,21 @@ namespace Dlight.CilTranslate
             child.Parent = this;
         }
 
+        protected string GetFullName()
+        {
+            if(Parent == null)
+            {
+                return Name;
+            }
+            string temp = Parent.GetFullName();
+            return temp == null ? Name : temp + "." + Name;
+        }
+
+        protected string GetSpecialName(string name)
+        {
+            return "@@" + name + Id;
+        }
+
         public Translator NameResolution(string name)
         {
             if (name == Name)
@@ -62,25 +77,28 @@ namespace Dlight.CilTranslate
             return Parent.NameResolution(name);
         }
 
-        protected virtual void BuildCode()
+        protected virtual void SpreadBuilder()
         {
             foreach (var v in _Child)
             {
-                v.Value.BuildCode();
+                v.Value.SpreadBuilder();
             }
         }
 
-        public virtual Translator CreateExturn(Type type)
+        protected virtual void Translate()
         {
-            throw new NotSupportedException();
+            foreach (var v in _Child)
+            {
+                v.Value.Translate();
+            }
         }
 
-        public virtual Translator CreatePackage(string name)
+        public override string ToString()
         {
-            throw new NotSupportedException();
+            return this.GetType().Name + ": " + GetFullName() + "(" + Id + ")"; 
         }
 
-        public virtual Translator CreateModule(string name)
+        public virtual Translator CreateNameSpace(string name)
         {
             throw new NotSupportedException();
         }
@@ -120,7 +138,7 @@ namespace Dlight.CilTranslate
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateAttribute(string name)
+        public virtual Translator CreateArgument(string name)
         {
             throw new NotSupportedException();
         }
@@ -130,12 +148,17 @@ namespace Dlight.CilTranslate
             throw new NotSupportedException();
         }
 
-        public virtual void GenelatePrimitive(object value)
+        public virtual void SetBaseType(Translator type)
         {
             throw new NotSupportedException();
         }
 
         public virtual void GenelateControl(VirtualCodeType type)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void GenelatePrimitive(object value)
         {
             throw new NotSupportedException();
         }

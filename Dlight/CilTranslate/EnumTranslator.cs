@@ -8,10 +8,16 @@ namespace Dlight.CilTranslate
 {
     class EnumTranslator : Translator
     {
-        public EnumTranslator(string name, Translator parent)
+        public Type TypeInfo { get; private set; }
+
+        public EnumTranslator(string name, Translator parent, Type type = null)
             : base(name, parent)
         {
-
+            TypeInfo = type;
+            if(type != null)
+            {
+                //保留
+            }
         }
     }
 }

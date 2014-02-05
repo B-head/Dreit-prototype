@@ -30,7 +30,14 @@ namespace Dlight
         {
             base.Translate();
             Translator type = Left.GetDataType();
-            //Trans.GenelateOperate(type, Operation);
+            string callName = string.Empty;
+            switch(Operation)
+            {
+                case TokenType.Add: callName = "opAdd"; break;
+                case TokenType.Multiply: callName = "opMultiply"; break;
+                default: throw new Exception();
+            }
+            Trans.GenelateCall(type.NameResolution(callName));
         }
     }
 }

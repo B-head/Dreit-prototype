@@ -7,7 +7,7 @@ using Dlight.CilTranslate;
 
 namespace Dlight
 {
-    class Module : Element
+    class ModuleFile : Element
     {
         public string Name { get; set; }
         public ExpressionList ExpList { get; set; }
@@ -50,7 +50,13 @@ namespace Dlight
 
         protected override Translator CreateTranslator(Translator trans)
         {
-            return trans.CreateModule(Name);
+            return trans.CreateNameSpace(Name);
+        }
+
+        public override void Translate()
+        {
+            base.Translate();
+            //Trans.GenelateControl(VirtualCodeType.Return);
         }
     }
 }

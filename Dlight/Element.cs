@@ -57,6 +57,11 @@ namespace Dlight
             Root.OutputWarning("Warning: " + ErrorInfo() + message);
         }
 
+        protected Element NameResolution(string name)
+        {
+            return Root.GetPeir(Trans.NameResolution(name));
+        }
+
         protected void SpreadScope(Translator trans, Element parent)
         {
             Parent = parent;
@@ -68,6 +73,10 @@ namespace Dlight
             else
             {
                 Root = parent.Root;
+            }
+            if(trans != Trans)
+            {
+                Root.RegisterPeir(this);
             }
             foreach (Element v in EnumChild())
             {
