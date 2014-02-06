@@ -1,11 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dlight", "Dlight\Dlight.csproj", "{76C1B982-7FDC-4223-9E70-59798DD42C73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlightObject", "DlightObject\DlightObject.csproj", "{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalysis", "LexicalAnalysis\LexicalAnalysis.csproj", "{87249519-B003-40BA-AE5A-1E645F48A186}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{5FFA51B1-65E1-4A7D-A79F-31051C0CC99A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CilTranslate", "CilTranslate\CilTranslate.csproj", "{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntacticAnalysis", "SyntacticAnalysis\SyntacticAnalysis.csproj", "{4E625555-55AD-4C76-B124-0E056D055F40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntax", "AbstractSyntax\AbstractSyntax.csproj", "{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +31,26 @@ Global
 		{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87249519-B003-40BA-AE5A-1E645F48A186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87249519-B003-40BA-AE5A-1E645F48A186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87249519-B003-40BA-AE5A-1E645F48A186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87249519-B003-40BA-AE5A-1E645F48A186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FFA51B1-65E1-4A7D-A79F-31051C0CC99A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FFA51B1-65E1-4A7D-A79F-31051C0CC99A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FFA51B1-65E1-4A7D-A79F-31051C0CC99A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FFA51B1-65E1-4A7D-A79F-31051C0CC99A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E625555-55AD-4C76-B124-0E056D055F40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E625555-55AD-4C76-B124-0E056D055F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E625555-55AD-4C76-B124-0E056D055F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E625555-55AD-4C76-B124-0E056D055F40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

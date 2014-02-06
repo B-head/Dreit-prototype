@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
-using Dlight.LexicalAnalysis;
-using Dlight.SyntacticAnalysis;
-using Dlight.CilTranslate;
+using LexicalAnalysis;
+using SyntacticAnalysis;
+using CilTranslate;
+using AbstractSyntax;
+using Common;
 
 namespace Dlight
 {

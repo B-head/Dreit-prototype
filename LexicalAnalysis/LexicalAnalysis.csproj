@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{76C1B982-7FDC-4223-9E70-59798DD42C73}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{87249519-B003-40BA-AE5A-1E645F48A186}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AbstractSyntax</RootNamespace>
-    <AssemblyName>Dlight</AssemblyName>
+    <RootNamespace>LexicalAnalysis</RootNamespace>
+    <AssemblyName>LexicalAnalysis</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,44 +39,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Lexer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PunctuatorLexer.cs" />
+    <Compile Include="TextLexer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Main.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AbstractSyntax\AbstractSyntax.csproj">
-      <Project>{c1681d7b-c0fa-4c9c-8d4a-2a432b2ce764}</Project>
-      <Name>AbstractSyntax</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CilTranslate\CilTranslate.csproj">
-      <Project>{fe6f3528-b4de-4cc9-9554-fbe2b1213041}</Project>
-      <Name>CilTranslate</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{5ffa51b1-65e1-4a7d-a79f-31051c0cc99a}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DlightObject\DlightObject.csproj">
-      <Project>{76f2cbac-8ca0-4feb-af2c-a3bd2cbe0206}</Project>
-      <Name>DlightObject</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LexicalAnalysis\LexicalAnalysis.csproj">
-      <Project>{87249519-b003-40ba-ae5a-1e645f48a186}</Project>
-      <Name>LexicalAnalysis</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SyntacticAnalysis\SyntacticAnalysis.csproj">
-      <Project>{4e625555-55ad-4c76-b124-0e056d055f40}</Project>
-      <Name>SyntacticAnalysis</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
