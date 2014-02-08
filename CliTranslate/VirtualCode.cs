@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection.Emit;
 
-namespace CilTranslate
+namespace CliTranslate
 {
     public struct VirtualCode
     {

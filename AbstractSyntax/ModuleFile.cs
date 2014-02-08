@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
 {
-    public class ModuleFile : Element
+    public class ModuleFile : Scope
     {
-        public string Name { get; set; }
         public ExpressionList ExpList { get; set; }
         public List<Token> ErrorToken { get; set; }
 
@@ -33,7 +32,7 @@ namespace AbstractSyntax
             return base.ElementInfo() + "ErrorToken = " + ErrorToken.Count;
         }
 
-        public override void CheckSemantic()
+        internal override void CheckSemantic()
         {
             foreach (Token v in ErrorToken)
             {
@@ -49,12 +48,12 @@ namespace AbstractSyntax
             base.CheckSemantic();
         }
 
-        protected override Translator CreateTranslator(Translator trans)
+        internal override Translator CreateTranslator(Translator trans)
         {
             return trans.CreateNameSpace(Name);
         }
 
-        public override void Translate()
+        internal override void Translate()
         {
             base.Translate();
             //Trans.GenelateControl(VirtualCodeType.Return);

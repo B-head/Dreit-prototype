@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
@@ -35,7 +35,7 @@ namespace AbstractSyntax
             return Child[index];
         }
 
-        public override void Translate()
+        internal override void Translate()
         {
             foreach(Element v in EnumChild())
             {

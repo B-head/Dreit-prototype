@@ -31,7 +31,7 @@ namespace AbstractSyntax
             return base.ElementInfo() + (Operation == TokenType.Special ? string.Empty : Enum.GetName(typeof(TokenType), Operation));
         }
 
-        public override void CheckSemantic()
+        internal override void CheckSemantic()
         {
             foreach (Element v in EnumChild())
             {

@@ -3,60 +3,60 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
-    public class Root : Element
+    public class Root : Scope
     {
-        public List<Element> Child { get; set; }
-        public Dictionary<Translator, Element> PeirDicthonary { get; set; }
-        public int ErrorCount { get; set; }
-        public int WarningCount { get; set; }
+        private List<Element> _Child;
+        public IReadOnlyList<Element> Child { get { return _Child; } }
+        public RootTranslator RootTrans { get; private set; }
+        public int ErrorCount { get; private set; }
+        public int WarningCount { get; private set; }
 
         public Root()
         {
-            Child = new List<Element>();
-            PeirDicthonary = new Dictionary<Translator, Element>();
+            _Child = new List<Element>();
+            Name = string.Empty;
         }
 
         public void Append(Element append)
         {
-            Child.Add(append);
+            _Child.Add(append);
         }
 
         public override int ChildCount
         {
-            get { return Child.Count; }
+            get { return _Child.Count; }
         }
 
         public override Element GetChild(int index)
         {
-            return Child[index];
+            return _Child[index];
         }
 
-        public void PreProcess(RootTranslator trans)
+        public void SemanticAnalysis()
         {
-            SpreadScope(trans, null);
+            SpreadScope(null);
+            CheckSemantic();
+            CheckDataType();
         }
 
-        public void RegisterPeir(Element el)
+        public void TranslateTo(RootTranslator trans)
         {
-            PeirDicthonary.Add(el.Trans, el);
+            RootTrans = trans;
+            SpreadTranslate();
+            Translate();
         }
 
-        public Element GetPeir(Translator trans)
-        {
-            return PeirDicthonary[trans];
-        }
-
-        public void OutputError(string message)
+        internal void OutputError(string message)
         {
             Console.WriteLine(message);
             ErrorCount++;
         }
 
-        public void OutputWarning(string message)
+        internal void OutputWarning(string message)
         {
             Console.WriteLine(message);
             WarningCount++;

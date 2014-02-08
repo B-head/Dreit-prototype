@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CilTranslate
+namespace CliTranslate
 {
     public abstract partial class ContextTranslator : Translator
     {

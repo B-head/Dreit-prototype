@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CilTranslate
+namespace CliTranslate
 {
     public class RootTranslator : NameSpaceTranslator
     {

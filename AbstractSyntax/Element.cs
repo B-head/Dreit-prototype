@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
@@ -13,6 +13,7 @@ namespace AbstractSyntax
         public TextPosition Position { get; set; }
         public Element Parent { get; private set; }
         public Root Root { get; private set; }
+        public Scope Scope { get; private set; }
         public Translator Trans { get; private set; }
 
         public virtual bool IsReference
@@ -32,7 +33,7 @@ namespace AbstractSyntax
 
         public IEnumerable<Element> EnumChild()
         {
-            for(int i = 0; i < ChildCount; i++)
+            for (int i = 0; i < ChildCount; i++)
             {
                 yield return GetChild(i);
             }
@@ -58,114 +59,7 @@ namespace AbstractSyntax
             Root.OutputWarning("Warning: " + ErrorInfo() + message);
         }
 
-        protected Element NameResolution(string name)
-        {
-            return Root.GetPeir(Trans.NameResolution(name));
-        }
-
-        protected void SpreadScope(Translator trans, Element parent)
-        {
-            Parent = parent;
-            Trans = CreateTranslator(trans);
-            if (parent == null)
-            {
-                Root = (Root)this;
-            }
-            else
-            {
-                Root = parent.Root;
-            }
-            if(trans != Trans)
-            {
-                Root.RegisterPeir(this);
-            }
-            foreach (Element v in EnumChild())
-            {
-                if (v != null)
-                {
-                    v.SpreadScope(Trans, this);
-                }
-            }
-        }
-
-        protected virtual Translator CreateTranslator(Translator trans)
-        {
-            return trans;
-        }
-
-        public virtual void CheckSemantic()
-        {
-            if (Trans.Parent == null && !(Trans is RootTranslator))
-            {
-                CompileError("このスコープには識別子 " + Trans.Name + " が既に宣言されています。");
-            }
-            foreach (Element v in EnumChild())
-            {
-                if (v != null)
-                {
-                    v.CheckSemantic();
-                }
-            }
-        }
-
-        public virtual void CheckDataType()
-        {
-            foreach (Element v in EnumChild())
-            {
-                if (v != null)
-                {
-                    v.CheckDataType();
-                }
-            }
-        }
-
-        public virtual void CheckDataTypeAssign(Translator type)
-        {
-            foreach (Element v in EnumChild())
-            {
-                if (v == null)
-                {
-                    continue;
-                }
-                if (v.IsReference)
-                {
-                    v.CheckDataTypeAssign(type);
-                }
-            }
-        }
-
-        public virtual Translator GetDataType()
-        {
-            throw new NotSupportedException();
-        }
-
-        public virtual void Translate()
-        {
-            foreach (Element v in EnumChild())
-            {
-                if (v != null)
-                {
-                    v.Translate();
-                }
-            }
-        }
-
-        public virtual void TranslateAssign()
-        {
-            foreach (Element v in EnumChild())
-            {
-                if(v == null)
-                {
-                    continue;
-                }
-                if (v.IsReference)
-                {
-                    v.TranslateAssign();
-                }
-            }
-        }
-
-        public string Indent(int indent)
+        protected string Indent(int indent)
         {
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < indent; i++)
@@ -194,6 +88,127 @@ namespace AbstractSyntax
                 result.Append(v.ToString(indent + 1));
             }
             return result.ToString();
+        }
+
+        internal virtual void SpreadScope(Element parent)
+        {
+            Parent = parent;
+            if (parent == null)
+            {
+                Root = (Root)this;
+                Scope = (Scope)this;
+            }
+            else
+            {
+                Root = parent.Root;
+                if (this is Scope)
+                {
+                    Scope = (Scope)this;
+                }
+                else
+                {
+                    Scope = parent.Scope;
+                }
+            }
+            foreach (Element v in EnumChild())
+            {
+                if (v != null)
+                {
+                    v.SpreadScope(this);
+                }
+            }
+        }
+
+        internal virtual void CheckSemantic()
+        {
+            foreach (Element v in EnumChild())
+            {
+                if (v != null)
+                {
+                    v.CheckSemantic();
+                }
+            }
+        }
+
+        internal virtual void CheckDataType()
+        {
+            foreach (Element v in EnumChild())
+            {
+                if (v != null)
+                {
+                    v.CheckDataType();
+                }
+            }
+        }
+
+        internal virtual void CheckDataTypeAssign(Translator type)
+        {
+            foreach (Element v in EnumChild())
+            {
+                if (v == null)
+                {
+                    continue;
+                }
+                if (v.IsReference)
+                {
+                    v.CheckDataTypeAssign(type);
+                }
+            }
+        }
+
+        internal virtual Translator GetDataType()
+        {
+            throw new NotSupportedException();
+        }
+
+        internal virtual void SpreadTranslate()
+        {
+            if (Parent != null)
+            {
+                Trans = CreateTranslator(Parent.Trans);
+            }
+            else
+            {
+                Trans = ((Root)this).RootTrans;
+            }
+            foreach (Element v in EnumChild())
+            {
+                if (v != null)
+                {
+                    v.SpreadTranslate();
+                }
+            }
+        }
+
+        internal virtual Translator CreateTranslator(Translator trans)
+        {
+            return trans;
+        }
+
+        internal virtual void Translate()
+        {
+            foreach (Element v in EnumChild())
+            {
+                if (v != null)
+                {
+                    v.Translate();
+                }
+            }
+        }
+
+        internal virtual void TranslateAssign()
+        {
+            foreach (Element v in EnumChild())
+            {
+                if (v == null)
+                {
+                    continue;
+                }
+                if (v.IsReference)
+                {
+                    v.TranslateAssign();
+                }
+            }
         }
     }
 }

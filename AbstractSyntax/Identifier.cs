@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
     public class Identifier : Element
     {
         public string Value { get; set; }
-        public Element Refer { get; set; }
+        public Scope Refer { get; set; }
 
         public override bool IsReference
         {
@@ -22,9 +22,9 @@ namespace AbstractSyntax
             return base.ElementInfo() + Value;
         }
 
-        public override void CheckSemantic()
+        internal override void CheckSemantic()
         {
-            Refer = NameResolution(Value);
+            Refer = Scope.NameResolution(Value);
             if (Refer == null)
             {
                 CompileError("このスコープで識別子 " + Value + " が宣言されていません。");
@@ -33,18 +33,18 @@ namespace AbstractSyntax
             base.CheckSemantic();
         }
 
-        public override Translator GetDataType()
+        internal override Translator GetDataType()
         {
             return Refer.GetDataType();
         }
 
-        public override void Translate()
+        internal override void Translate()
         {
             Trans.GenelateLoad(Refer.Trans);
             base.Translate();
         }
 
-        public override void TranslateAssign()
+        internal override void TranslateAssign()
         {
             Trans.GenelateStore(Refer.Trans);
             base.TranslateAssign();

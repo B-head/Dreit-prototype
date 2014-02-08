@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
@@ -25,7 +25,7 @@ namespace AbstractSyntax
             }
         }
 
-        public override void CheckSemantic()
+        internal override void CheckSemantic()
         {
             Parse(Integral);
             if(Fraction != null)
@@ -35,7 +35,7 @@ namespace AbstractSyntax
             base.CheckSemantic();
         }
 
-        public override Translator GetDataType()
+        internal override Translator GetDataType()
         {
             if(Fraction == null)
             {
@@ -47,7 +47,7 @@ namespace AbstractSyntax
             }
         }
 
-        public override void Translate()
+        internal override void Translate()
         {
             if (Fraction == null)
             {

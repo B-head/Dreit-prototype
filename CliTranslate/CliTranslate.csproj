@@ -7,8 +7,8 @@
     <ProjectGuid>{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CilTranslate</RootNamespace>
-    <AssemblyName>CilTranslate</AssemblyName>
+    <RootNamespace>CliTranslate</RootNamespace>
+    <AssemblyName>CliTranslate</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

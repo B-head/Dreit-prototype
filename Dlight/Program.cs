@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using LexicalAnalysis;
 using SyntacticAnalysis;
-using CilTranslate;
+using CliTranslate;
 using AbstractSyntax;
 using Common;
 
@@ -24,13 +24,11 @@ namespace Dlight
             RootTranslator trans = new RootTranslator();
             trans.RegisterExtern(Assembly.Load("DlightObject"));
             trans.RegisterExtern(Assembly.Load("mscorlib"));
-            root.PreProcess(trans);
-            root.CheckSemantic();
-            root.CheckDataType();
+            root.SemanticAnalysis();
             Console.WriteLine(root);
             if (root.ErrorCount == 0)
             {
-                root.Translate();
+                root.TranslateTo(trans);
                 trans.Save(fileName.Replace(".txt", ""));
             }
         }

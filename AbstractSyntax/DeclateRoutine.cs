@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
-    public class DeclateRoutine : Element
+    public class DeclateRoutine : Scope
     {
         public Identifier Ident { get; set; }
         public Element AttribuleList { get; set; }
@@ -45,7 +45,7 @@ namespace AbstractSyntax
             }
         }
 
-        protected override Translator CreateTranslator(Translator trans)
+        internal override Translator CreateTranslator(Translator trans)
         {
             return trans.CreateRoutine(Ident.Value);
         }

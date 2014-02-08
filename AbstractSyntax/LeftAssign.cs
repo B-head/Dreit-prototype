@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
     public class LeftAssign : DyadicExpression
     {
-        public override void CheckSemantic()
+        internal override void CheckSemantic()
         {
             if(Right != null && Right is RightAssign)
             {
@@ -22,7 +22,7 @@ namespace AbstractSyntax
             base.CheckSemantic();
         }
 
-        public override void CheckDataType()
+        internal override void CheckDataType()
         {
             if (Right != null && Left != null)
             {
@@ -32,12 +32,12 @@ namespace AbstractSyntax
             base.CheckDataType();
         }
 
-        public override Translator GetDataType()
+        internal override Translator GetDataType()
         {
             return Right.GetDataType();
         }
 
-        public override void Translate()
+        internal override void Translate()
         {
             Right.Translate();
             Left.TranslateAssign();

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
-    public class DeclareVariant : Element
+    public class DeclareVariant : Scope
     {
         public Identifier Ident { get; set; }
         public Identifier ExplicitType { get; set; }
@@ -46,12 +46,12 @@ namespace AbstractSyntax
             }
         }
 
-        protected override Translator CreateTranslator(Translator trans)
+        internal override Translator CreateTranslator(Translator trans)
         {
             return trans.CreateVariant(Ident.Value);
         }
 
-        public override void CheckDataType()
+        internal override void CheckDataType()
         {
             if (ExplicitType != null)
             {
@@ -61,7 +61,7 @@ namespace AbstractSyntax
             base.CheckDataType();
         }
 
-        public override void CheckDataTypeAssign(Translator type)
+        internal override void CheckDataTypeAssign(Translator type)
         {
             if (IdentType == null)
             {
@@ -71,17 +71,17 @@ namespace AbstractSyntax
             base.CheckDataTypeAssign(type);
         }
 
-        public override Translator GetDataType()
+        internal override Translator GetDataType()
         {
             return IdentType;
         }
 
-        public override void Translate()
+        internal override void Translate()
         {
             Parent.Trans.GenelateLoad(Trans);
         }
 
-        public override void TranslateAssign()
+        internal override void TranslateAssign()
         {
             Parent.Trans.GenelateStore(Trans);
         }

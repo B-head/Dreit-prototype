@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 
 namespace AbstractSyntax
 {
     public class ExpressionGrouping : MonadicExpression
     {
-        public override Translator GetDataType()
+        internal override Translator GetDataType()
         {
             return Child.GetDataType();
         }

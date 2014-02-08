@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CilTranslate;
+using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
 {
     public class DyadicCalculate : DyadicExpression
     {
-        public override void CheckDataType()
+        internal override void CheckDataType()
         {
             Translator l = Left.GetDataType();
             Translator r = Right.GetDataType();
@@ -21,13 +21,13 @@ namespace AbstractSyntax
             base.CheckDataType();
         }
 
-        public override Translator GetDataType()
+        internal override Translator GetDataType()
         {
             // 式の結果の型を渡すようにしないと・・・
             return Left.GetDataType();
         }
 
-        public override void Translate()
+        internal override void Translate()
         {
             base.Translate();
             Translator type = Left.GetDataType();

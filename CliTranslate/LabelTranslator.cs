@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CilTranslate
+namespace CliTranslate
 {
-    public class ArgumentTranslator : Translator
+    public class LabelTranslator : Translator
     {
-        public ArgumentTranslator(string name, Translator parent)
+        public LabelTranslator(string name, Translator parent)
             : base(name, parent)
         {
 
