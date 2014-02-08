@@ -8,10 +8,15 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public class ModuleFile : Scope
+    public class NameSpace : Scope
     {
         public ExpressionList ExpList { get; set; }
         public List<Token> ErrorToken { get; set; }
+
+        public NameSpace()
+        {
+            ErrorToken = new List<Token>();
+        }
 
         public override int ChildCount
         {

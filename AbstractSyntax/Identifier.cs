@@ -35,7 +35,7 @@ namespace AbstractSyntax
 
         internal override Scope GetDataType()
         {
-            return Refer.GetDataType();
+            return Refer == null ? null : Refer.GetDataType();
         }
 
         internal override void Translate()

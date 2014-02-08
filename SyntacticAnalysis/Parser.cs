@@ -21,7 +21,7 @@ namespace SyntacticAnalysis
             int c = 0;
             SkipSpaser(c);
             ExpressionList exp = ExpressionList(ref c, true);
-            return new ModuleFile { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
+            return new NameSpace { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
         }
 
         private bool IsReadable(int c)

@@ -106,7 +106,7 @@ namespace SyntacticAnalysis
                 retType = Identifier(ref c);
             }
             block = Block(ref c);
-            return new DeclateRoutine { Ident = ident, AttribuleList = attr, ResultExplicitType = retType, Block = block, Position = ident.Position };
+            return new DeclateRoutine { Ident = ident, ArgumentList = attr, ExplicitResultType = retType, Block = block, Position = ident.Position };
         }
 
         private DeclareVariant VariantSetting(ref int c)
@@ -118,7 +118,7 @@ namespace SyntacticAnalysis
                 SkipSpaser(++c);
                 explType = Identifier(ref c);
             }
-            return new DeclareVariant { Ident = ident, ExplicitType = explType, Position = ident.Position };
+            return new DeclareVariant { Ident = ident, ExplicitDataType = explType, Position = ident.Position };
         }
 
         private Element Block(ref int c)

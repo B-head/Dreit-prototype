@@ -57,6 +57,10 @@
       <Project>{c1681d7b-c0fa-4c9c-8d4a-2a432b2ce764}</Project>
       <Name>AbstractSyntax</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CliImport\CliImport.csproj">
+      <Project>{bff534b0-b156-476e-b079-5a70a20dd41b}</Project>
+      <Name>CliImport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CliTranslate\CliTranslate.csproj">
       <Project>{fe6f3528-b4de-4cc9-9554-fbe2b1213041}</Project>
       <Name>CliTranslate</Name>

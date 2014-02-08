@@ -18,6 +18,10 @@ namespace AbstractSyntax
 
         public void Append(Element append)
         {
+            if (append == null)
+            {
+                return;
+            }
             if(Child.Count == 0)
             {
                 Position = append.Position;

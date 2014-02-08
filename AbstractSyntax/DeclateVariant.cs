@@ -10,8 +10,8 @@ namespace AbstractSyntax
     public class DeclareVariant : Scope
     {
         public Identifier Ident { get; set; }
-        public Identifier ExplicitType { get; set; }
-        public Scope IdentType { get; set; }
+        public Identifier ExplicitDataType { get; set; }
+        public Scope DataType { get; set; }
 
         public override bool IsReference
         {
@@ -28,22 +28,31 @@ namespace AbstractSyntax
             switch (index)
             {
                 case 0: return Ident;
-                case 1: return ExplicitType;
+                case 1: return ExplicitDataType;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
 
         protected override string ElementInfo()
         {
-            string temp = " (" + IdentType.Name + ")";
-            if (ExplicitType == null)
+            StringBuilder builder = new StringBuilder(base.ElementInfo());
+            if(Ident != null)
             {
-                return base.ElementInfo() + Ident.Value + temp;
+                builder.Append(Ident.Value);
+            }
+            if(ExplicitDataType != null)
+            {
+                builder.Append(ExplicitDataType.Value);
+            }
+            if(DataType != null)
+            {
+                builder.Append(" (" + DataType.Name + ")");
             }
             else
             {
-                return base.ElementInfo() + Ident.Value + ":" + ExplicitType.Value + temp;
+                builder.Append(" (<null>)");
             }
+            return builder.ToString();
         }
 
         internal override Translator CreateTranslator(Translator trans)
@@ -53,27 +62,30 @@ namespace AbstractSyntax
 
         internal override void CheckDataType()
         {
-            if (ExplicitType != null)
+            if (ExplicitDataType != null)
             {
-                IdentType = NameResolution(ExplicitType.Value);
-                Trans.SetBaseType(IdentType.FullPath);
+                DataType = NameResolution(ExplicitDataType.Value);
+                if (DataType != null)
+                {
+                    Trans.SetBaseType(DataType.FullPath);
+                }
             }
             base.CheckDataType();
         }
 
         internal override void CheckDataTypeAssign(Scope type)
         {
-            if (IdentType == null)
+            if (DataType == null && type != null)
             {
-                IdentType = type;
-                Trans.SetBaseType(IdentType.FullPath);
+                DataType = type;
+                Trans.SetBaseType(DataType.FullPath);
             }
             base.CheckDataTypeAssign(type);
         }
 
         internal override Scope GetDataType()
         {
-            return IdentType;
+            return DataType;
         }
 
         internal override void Translate()

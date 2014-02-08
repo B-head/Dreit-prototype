@@ -39,7 +39,7 @@ namespace AbstractSyntax
         {
             if(Fraction == null)
             {
-                return Scope.NameResolution("DlightObject").NameResolution("Integer32");
+                return Scope/*.NameResolution("DlightObject")*/.NameResolution("Integer32");
             }
             else
             {

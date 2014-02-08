@@ -10,14 +10,15 @@ namespace AbstractSyntax
     public class DeclateRoutine : Scope
     {
         public Identifier Ident { get; set; }
-        public Element AttribuleList { get; set; }
-        public Identifier ResultExplicitType { get; set; }
+        public Element GenericList { get; set; }
+        public Element ArgumentList { get; set; }
+        public Identifier ExplicitResultType { get; set; }
         public Element Block { get; set; }
-        public Translator ResultType { get; set; }
+        public Scope ResultType { get; set; }
 
         public override int ChildCount
         {
-            get { return 4; }
+            get { return 5; }
         }
 
         public override Element GetChild(int index)
@@ -25,9 +26,10 @@ namespace AbstractSyntax
             switch (index)
             {
                 case 0: return Ident;
-                case 1: return AttribuleList;
-                case 2: return ResultExplicitType;
-                case 3: return Block;
+                case 1: return GenericList;
+                case 2: return ArgumentList;
+                case 3: return ExplicitResultType;
+                case 4: return Block;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -35,13 +37,13 @@ namespace AbstractSyntax
         protected override string ElementInfo()
         {
             string temp = " (" + ResultType + ")";
-            if (ResultExplicitType == null)
+            if (ExplicitResultType == null)
             {
                 return base.ElementInfo() + Ident.Value + temp;
             }
             else
             {
-                return base.ElementInfo() + Ident.Value + ":" + ResultExplicitType.Value + temp;
+                return base.ElementInfo() + Ident.Value + ":" + ExplicitResultType.Value + temp;
             }
         }
 

@@ -8,7 +8,7 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public class Scope : Element, PathNode
+    public abstract class Scope : Element, PathNode
     {
         private static int NextId = 1;
         public int Id { get; private set; }
@@ -17,6 +17,7 @@ namespace AbstractSyntax
         public Scope ScopeParent { get; private set; }
         private Dictionary<string, Scope> _ScopeChild;
         public IReadOnlyDictionary<string, Scope> ScopeChild { get { return _ScopeChild; } }
+        public bool IsImport { get; set; }
 
         public Scope()
         {

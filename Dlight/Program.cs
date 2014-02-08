@@ -9,6 +9,7 @@ using LexicalAnalysis;
 using SyntacticAnalysis;
 using CliTranslate;
 using AbstractSyntax;
+using CliImport;
 using Common;
 
 namespace Dlight
@@ -20,14 +21,14 @@ namespace Dlight
             string fileName = args[0];
             Func<string, string> lambda = x => x + fileName;
             Root root = new Root();
+            ImportManager.ImportAssembly(root, Assembly.Load("DlightObject"));
+            //ImportManager.ImportAssembly(root, Assembly.Load("mscorlib"));
             root.Append(CompileFile(fileName));
-            RootTranslator trans = new RootTranslator();
-            //trans.RegisterExtern(Assembly.Load("DlightObject"));
-            //trans.RegisterExtern(Assembly.Load("mscorlib"));
             root.SemanticAnalysis();
             Console.WriteLine(root);
             if (root.ErrorCount == 0)
             {
+                RootTranslator trans = new RootTranslator();
                 root.TranslateTo(trans);
                 trans.Save(fileName.Replace(".txt", ""));
             }

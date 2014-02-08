@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntax", "AbstractS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliTranslate", "CliTranslate\CliTranslate.csproj", "{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliImport", "CliImport\CliImport.csproj", "{BFF534B0-B156-476E-B079-5A70A20DD41B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFF534B0-B156-476E-B079-5A70A20DD41B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFF534B0-B156-476E-B079-5A70A20DD41B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFF534B0-B156-476E-B079-5A70A20DD41B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFF534B0-B156-476E-B079-5A70A20DD41B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
