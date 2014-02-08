@@ -9,7 +9,7 @@ namespace AbstractSyntax
 {
     public class ExpressionGrouping : MonadicExpression
     {
-        internal override Translator GetDataType()
+        internal override Scope GetDataType()
         {
             return Child.GetDataType();
         }

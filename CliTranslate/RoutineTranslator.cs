@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using Common;
 
 namespace CliTranslate
 {
@@ -12,20 +13,20 @@ namespace CliTranslate
     {
         public MethodInfo Method { get; private set; }
 
-        public RoutineTranslator(string name, Translator parent, MethodInfo method = null)
-            : base(name, parent)
+        public RoutineTranslator(FullPath path, Translator parent, MethodInfo method = null)
+            : base(path, parent)
         {
             Method = method;
         }
 
-        public override Translator CreateGeneric(string name)
+        public override Translator CreateGeneric(FullPath path)
         {
-            return new GenericTranslator(name, this);
+            return new GenericTranslator(path, this);
         }
 
-        public override Translator CreateArgument(string name)
+        public override Translator CreateArgument(FullPath path)
         {
-            return new ArgumentTranslator(name, this);
+            return new ArgumentTranslator(path, this);
         }
 
         /*public override void BuildCode()

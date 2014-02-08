@@ -32,6 +32,11 @@ namespace Common
             get { return _Path[_Path.Count - 1].Name; }
         }
 
+        public int Id
+        {
+            get { return _Path[_Path.Count - 1].Id; }
+        }
+
         public bool Equals(FullPath other)
         {
             if (Object.ReferenceEquals(other, null))

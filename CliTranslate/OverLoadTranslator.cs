@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using Common;
 
 namespace CliTranslate
 {
@@ -13,22 +14,22 @@ namespace CliTranslate
         private List<Translator> _OverLoad;
         public IReadOnlyList<Translator> OverLoad { get { return _OverLoad; } }
 
-        public OverLoadTranslator(string name, Translator parent)
-            : base(name, parent)
+        public OverLoadTranslator(FullPath path, Translator parent)
+            : base(path, parent)
         {
             _OverLoad = new List<Translator>();
         }
 
         public void AppendRoutine(string name, MethodInfo method = null)
         {
-            var temp = new RoutineTranslator(name, this, method);
-            _OverLoad.Add(temp);
+            //var temp = new RoutineTranslator(name, this, method);
+            //_OverLoad.Add(temp);
         }
 
         public void AppendClass(string name, Type type = null)
         {
-            var temp = new ClassTranslator(name, this, type);
-            _OverLoad.Add(temp);
+            //var temp = new ClassTranslator(name, this, type);
+            //_OverLoad.Add(temp);
         }
 
         public Translator TypeResolution(params Translator[] trans)

@@ -47,7 +47,7 @@ namespace AbstractSyntax
 
         internal override Translator CreateTranslator(Translator trans)
         {
-            return trans.CreateRoutine(Ident.Value);
+            return trans.CreateRoutine(FullPath);
         }
     }
 }

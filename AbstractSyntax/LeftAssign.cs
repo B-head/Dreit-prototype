@@ -26,13 +26,13 @@ namespace AbstractSyntax
         {
             if (Right != null && Left != null)
             {
-                Translator temp = Right.GetDataType();
+                Scope temp = Right.GetDataType();
                 Left.CheckDataTypeAssign(temp);
             }
             base.CheckDataType();
         }
 
-        internal override Translator GetDataType()
+        internal override Scope GetDataType()
         {
             return Right.GetDataType();
         }

@@ -33,20 +33,20 @@ namespace AbstractSyntax
             base.CheckSemantic();
         }
 
-        internal override Translator GetDataType()
+        internal override Scope GetDataType()
         {
             return Refer.GetDataType();
         }
 
         internal override void Translate()
         {
-            Trans.GenelateLoad(Refer.Trans);
+            Trans.GenelateLoad(Refer.FullPath);
             base.Translate();
         }
 
         internal override void TranslateAssign()
         {
-            Trans.GenelateStore(Refer.Trans);
+            Trans.GenelateStore(Refer.FullPath);
             base.TranslateAssign();
         }
     }

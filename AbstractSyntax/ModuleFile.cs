@@ -50,7 +50,7 @@ namespace AbstractSyntax
 
         internal override Translator CreateTranslator(Translator trans)
         {
-            return trans.CreateNameSpace(Name);
+            return trans.CreateNameSpace(FullPath);
         }
 
         internal override void Translate()

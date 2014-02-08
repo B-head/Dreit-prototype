@@ -35,15 +35,15 @@ namespace AbstractSyntax
             base.CheckSemantic();
         }
 
-        internal override Translator GetDataType()
+        internal override Scope GetDataType()
         {
             if(Fraction == null)
             {
-                return Trans.NameResolution("DlightObject").NameResolution("Integer32");
+                return Scope.NameResolution("DlightObject").NameResolution("Integer32");
             }
             else
             {
-                return Trans.NameResolution("DlightObject").NameResolution("Binary64");
+                return Scope.NameResolution("DlightObject").NameResolution("Binary64");
             }
         }
 
@@ -53,7 +53,7 @@ namespace AbstractSyntax
             {
                 int number = (int)Parse(Integral);
                 Trans.GenelatePrimitive(number);
-                Trans.GenelateCall(GetDataType());
+                Trans.GenelateCall(GetDataType().FullPath);
             }
             else
             {
@@ -61,7 +61,7 @@ namespace AbstractSyntax
                 int count, b;
                 number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
                 Trans.GenelatePrimitive(number);
-                Trans.GenelateCall(GetDataType());
+                Trans.GenelateCall(GetDataType().FullPath);
             }
             base.Translate();
         }

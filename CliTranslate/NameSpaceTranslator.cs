@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using Common;
 
 namespace CliTranslate
 {
@@ -13,18 +14,18 @@ namespace CliTranslate
         public TypeBuilder GlobalField { get; private set; }
         public MethodBuilder EntryContext { get; private set; }
 
-        public NameSpaceTranslator(string name, Translator parent)
-            : base(name, parent)
+        public NameSpaceTranslator(FullPath path, Translator parent)
+            : base(path, parent)
         {
 
         }
 
-        public override Translator CreateNameSpace(string name)
+        public override Translator CreateNameSpace(FullPath path)
         {
-            return new NameSpaceTranslator(name, this);
+            return new NameSpaceTranslator(path, this);
         }
 
-        protected void RegisterField(List<string> name, FieldInfo field)
+        /*protected void RegisterField(List<string> name, FieldInfo field)
         {
             if (name.Count <= 1)
             {
@@ -77,9 +78,9 @@ namespace CliTranslate
             }
             name.RemoveAt(0);
             ((NameSpaceTranslator)next).RegisterType(name, type);
-        }
+        }*/
 
-        protected override void SpreadBuilder()
+        protected void SpreadBuilder()
         {
             if(Code.Count > 0)
             {
@@ -87,7 +88,7 @@ namespace CliTranslate
                 EntryContext = Root.Module.DefineGlobalMethod(GetSpecialName("entry"), MethodAttributes.SpecialName | MethodAttributes.Static, null, null);
                 Root.Assembly.SetEntryPoint(EntryContext);
             }
-            base.SpreadBuilder();
+            //base.SpreadBuilder();
         }
 
         protected override void Translate()
@@ -96,11 +97,11 @@ namespace CliTranslate
             {
                 var gen = EntryContext.GetILGenerator();
                 BuildCode(gen);
-                var stdout = NameResolution("stdout");
+                /*var stdout = NameResolution("stdout");
                 if(stdout != null && stdout is VariantTranslator)
                 {
                     gen.EmitWriteLine(((VariantTranslator)stdout).Field);
-                }
+                }*/
                 gen.Emit(OpCodes.Ret);
             }
             base.Translate();

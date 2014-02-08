@@ -22,8 +22,8 @@ namespace Dlight
             Root root = new Root();
             root.Append(CompileFile(fileName));
             RootTranslator trans = new RootTranslator();
-            trans.RegisterExtern(Assembly.Load("DlightObject"));
-            trans.RegisterExtern(Assembly.Load("mscorlib"));
+            //trans.RegisterExtern(Assembly.Load("DlightObject"));
+            //trans.RegisterExtern(Assembly.Load("mscorlib"));
             root.SemanticAnalysis();
             Console.WriteLine(root);
             if (root.ErrorCount == 0)

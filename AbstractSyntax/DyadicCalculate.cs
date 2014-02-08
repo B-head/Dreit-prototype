@@ -12,8 +12,8 @@ namespace AbstractSyntax
     {
         internal override void CheckDataType()
         {
-            Translator l = Left.GetDataType();
-            Translator r = Right.GetDataType();
+            Scope l = Left.GetDataType();
+            Scope r = Right.GetDataType();
             if (l != r)
             {
                 CompileError(l + " 型と " + r + " 型を演算することは出来ません。");
@@ -21,7 +21,7 @@ namespace AbstractSyntax
             base.CheckDataType();
         }
 
-        internal override Translator GetDataType()
+        internal override Scope GetDataType()
         {
             // 式の結果の型を渡すようにしないと・・・
             return Left.GetDataType();
@@ -30,7 +30,7 @@ namespace AbstractSyntax
         internal override void Translate()
         {
             base.Translate();
-            Translator type = Left.GetDataType();
+            Scope type = Left.GetDataType();
             string callName = string.Empty;
             switch(Operation)
             {
@@ -38,7 +38,7 @@ namespace AbstractSyntax
                 case TokenType.Multiply: callName = "opMultiply"; break;
                 default: throw new Exception();
             }
-            Trans.GenelateCall(type.NameResolution(callName));
+            Trans.GenelateCall(type.NameResolution(callName).FullPath);
         }
     }
 }

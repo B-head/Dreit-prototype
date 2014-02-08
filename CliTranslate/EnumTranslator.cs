@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common;
 
 namespace CliTranslate
 {
@@ -10,8 +11,8 @@ namespace CliTranslate
     {
         public Type TypeInfo { get; private set; }
 
-        public EnumTranslator(string name, Translator parent, Type type = null)
-            : base(name, parent)
+        public EnumTranslator(FullPath path, Translator parent, Type type = null)
+            : base(path, parent)
         {
             TypeInfo = type;
             if(type != null)

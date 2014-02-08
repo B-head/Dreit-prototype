@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using Common;
 
 namespace CliTranslate
 {
@@ -14,21 +15,21 @@ namespace CliTranslate
         public LocalBuilder Local { get; private set; }
         public FieldInfo Field { get; private set; }
 
-        public VariantTranslator(string name, Translator parent, FieldInfo field = null)
-            : base(name, parent)
+        public VariantTranslator(FullPath path, Translator parent, FieldInfo field = null)
+            : base(path, parent)
         {
             Field = field;
         }
 
-        protected override void SpreadBuilder()
+        protected void SpreadBuilder()
         {
             CreateBuilder((dynamic)Parent);
-            base.SpreadBuilder();
+            //base.SpreadBuilder();
         }
 
         private void CreateBuilder(NameSpaceTranslator trans)
         {
-            Field = trans.GlobalField.DefineField(Name, GetDataType(), FieldAttributes.Static);
+            Field = trans.GlobalField.DefineField(Path.Name, GetDataType(), FieldAttributes.Static);
         }
 
         private void CreateBuilder(ClassTranslator trans)
@@ -41,9 +42,9 @@ namespace CliTranslate
 
         }
 
-        public override void SetBaseType(Translator type)
+        public override void SetBaseType(FullPath type)
         {
-            TypeTrans = type;
+            //TypeTrans = type;
         }
 
         private Type GetDataType()

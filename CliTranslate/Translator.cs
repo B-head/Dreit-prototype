@@ -5,24 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using Common;
 
 namespace CliTranslate
 {
     public abstract class Translator
     {
-        private static int NextId;
-        public int Id { get; private set; }
-        public string Name { get; private set; }
         public RootTranslator Root { get; private set; }
         public Translator Parent { get; private set; }
-        private Dictionary<string, Translator> _Child;
-        public IReadOnlyDictionary<string, Translator> Child { get { return _Child; } }
+        private List<Translator> _Child;
+        public IReadOnlyList<Translator> Child { get { return _Child; } }
+        public FullPath Path { get; private set; }
 
-        protected Translator(string name, Translator parent)
+        protected Translator(FullPath path, Translator parent)
         {
-            Id = NextId++;
-            Name = name;
-            _Child = new Dictionary<string, Translator>();
+            Path = path;
+            _Child = new List<Translator>();
             if(parent == null)
             {
                 Root = (RootTranslator)this;
@@ -36,94 +34,75 @@ namespace CliTranslate
 
         private void AddChild(Translator child)
         {
-            if (_Child.ContainsKey(child.Name))
-            {
-                return;
-            }
-            _Child.Add(child.Name, child);
+            _Child.Add(child);
             child.Parent = this;
-        }
-
-        protected string GetFullName()
-        {
-            if(Parent == null)
-            {
-                return Name;
-            }
-            string temp = Parent.GetFullName();
-            return temp == null ? Name : temp + "." + Name;
         }
 
         protected string GetSpecialName(string name)
         {
-            return "@@" + name + Id;
-        }
-
-        public Translator NameResolution(string name)
-        {
-            if (name == Name)
-            {
-                return this;
-            }
-            Translator temp;
-            if (_Child.TryGetValue(name, out temp))
-            {
-                return temp;
-            }
-            if (Parent == null)
-            {
-                return null;
-            }
-            return Parent.NameResolution(name);
-        }
-
-        protected virtual void SpreadBuilder()
-        {
-            foreach (var v in _Child)
-            {
-                v.Value.SpreadBuilder();
-            }
+            return "@@" + name + Path.Id;
         }
 
         protected virtual void Translate()
         {
             foreach (var v in _Child)
             {
-                v.Value.Translate();
+                v.Translate();
             }
+        }
+
+        private string Indent(int indent)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < indent; i++)
+            {
+                result.Append(" ");
+            }
+            return result.ToString();
         }
 
         public override string ToString()
         {
-            return this.GetType().Name + ": " + GetFullName() + "(" + Id + ")"; 
+            return ToString(0);
         }
 
-        public virtual Translator CreateNameSpace(string name)
+        public string ToString(int indent)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(Indent(indent) + this.GetType().Name + ": " + Path.ToString() + "(" + Path.Id + ")");
+            foreach (var v in _Child)
+            {
+                builder.Append(v.ToString(indent + 1));
+            }
+            return builder.ToString(); 
+        }
+
+        public virtual Translator CreateNameSpace(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateClass(string name)
+        public virtual Translator CreateClass(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateEnum(string name)
+        public virtual Translator CreateEnum(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreatePoly(string name)
+        public virtual Translator CreatePoly(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateGeneric(string name)
+        public virtual Translator CreateGeneric(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateRoutine(string name)
+        public virtual Translator CreateRoutine(FullPath path)
         {
             throw new NotSupportedException();
         }
@@ -133,22 +112,22 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateVariant(string name)
+        public virtual Translator CreateVariant(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateArgument(string name)
+        public virtual Translator CreateArgument(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateLabel(string name)
+        public virtual Translator CreateLabel(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void SetBaseType(Translator type)
+        public virtual void SetBaseType(FullPath type)
         {
             throw new NotSupportedException();
         }
@@ -163,17 +142,17 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateLoad(Translator type)
+        public virtual void GenelateLoad(FullPath type)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateStore(Translator type)
+        public virtual void GenelateStore(FullPath type)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void GenelateCall(Translator type)
+        public virtual void GenelateCall(FullPath type)
         {
             throw new NotSupportedException();
         }

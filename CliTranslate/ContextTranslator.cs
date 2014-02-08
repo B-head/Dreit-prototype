@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common;
 
 namespace CliTranslate
 {
@@ -11,8 +12,8 @@ namespace CliTranslate
         private List<VirtualCode> _Code;
         public IReadOnlyList<VirtualCode> Code { get { return _Code; } }
 
-        protected ContextTranslator(string name, Translator parent)
-            : base(name, parent)
+        protected ContextTranslator(FullPath path, Translator parent)
+            : base(path, parent)
         {
             _Code = new List<VirtualCode>();
         }
@@ -23,24 +24,24 @@ namespace CliTranslate
             _Code.Add(code);
         }
 
-        public override Translator CreateClass(string name)
+        public override Translator CreateClass(FullPath path)
         {
-            return new ClassTranslator(name, this);
+            return new ClassTranslator(path, this);
         }
 
-        public override Translator CreateEnum(string name)
+        public override Translator CreateEnum(FullPath path)
         {
-            return new EnumTranslator(name, this);
+            return new EnumTranslator(path, this);
         }
 
-        public override Translator CreatePoly(string name)
+        public override Translator CreatePoly(FullPath path)
         {
-            return new PolyTranslator(name, this);
+            return new PolyTranslator(path, this);
         }
 
-        public override Translator CreateRoutine(string name)
+        public override Translator CreateRoutine(FullPath path)
         {
-            return new RoutineTranslator(name, this);
+            return new RoutineTranslator(path, this);
         }
 
         public override Translator CreateOperation(VirtualCodeType operation)
@@ -48,14 +49,14 @@ namespace CliTranslate
             return new OperationTranslator(operation, this);
         }
 
-        public override Translator CreateVariant(string name)
+        public override Translator CreateVariant(FullPath path)
         {
-            return new VariantTranslator(name, this);
+            return new VariantTranslator(path, this);
         }
 
-        public override Translator CreateLabel(string name)
+        public override Translator CreateLabel(FullPath path)
         {
-            return new LabelTranslator(name, this);
+            return new LabelTranslator(path, this);
         }
 
         public override void GenelateControl(VirtualCodeType type)
@@ -68,17 +69,17 @@ namespace CliTranslate
             AppendCode(VirtualCodeType.Push, value);
         }
 
-        public override void GenelateLoad(Translator type)
+        public override void GenelateLoad(FullPath type)
         {
             AppendCode(VirtualCodeType.Load, type);
         }
 
-        public override void GenelateStore(Translator type)
+        public override void GenelateStore(FullPath type)
         {
             AppendCode(VirtualCodeType.Store, type);
         }
 
-        public override void GenelateCall(Translator type)
+        public override void GenelateCall(FullPath type)
         {
             AppendCode(VirtualCodeType.Call, type);
         }

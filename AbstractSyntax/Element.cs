@@ -59,7 +59,7 @@ namespace AbstractSyntax
             Root.OutputWarning("Warning: " + ErrorInfo() + message);
         }
 
-        protected string Indent(int indent)
+        private string Indent(int indent)
         {
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < indent; i++)
@@ -141,7 +141,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual void CheckDataTypeAssign(Translator type)
+        internal virtual void CheckDataTypeAssign(Scope type)
         {
             foreach (Element v in EnumChild())
             {
@@ -156,7 +156,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual Translator GetDataType()
+        internal virtual Scope GetDataType()
         {
             throw new NotSupportedException();
         }

@@ -19,7 +19,7 @@ namespace CliTranslate
             
         }
 
-        public void RegisterExtern(Assembly assembly)
+        /*public void RegisterExtern(Assembly assembly)
         {
             var module = assembly.GetModules();
             foreach(var v in module)
@@ -55,7 +55,7 @@ namespace CliTranslate
                     RegisterType(name, t);
                 }
             }
-        }
+        }*/
 
         public void Save(string saveName)
         {
