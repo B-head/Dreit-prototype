@@ -12,6 +12,7 @@ namespace AbstractSyntax
     {
         internal override void CheckDataType(Scope scope)
         {
+            base.CheckDataType(scope);
             Scope l = Left.DataType;
             Scope r = Right.DataType;
             if (l != r)
@@ -22,21 +23,23 @@ namespace AbstractSyntax
             {
                 DataType = l;
             }
-            base.CheckDataType(scope);
         }
 
-        internal override void Translate()
+        internal override void Translate(Translator trans)
         {
-            base.Translate();
+            base.Translate(trans);
             Scope type = Left.DataType;
             string callName = string.Empty;
             switch(Operation)
             {
                 case TokenType.Add: callName = "opAdd"; break;
+                case TokenType.Subtract: callName = "opSubtract"; break;
                 case TokenType.Multiply: callName = "opMultiply"; break;
+                case TokenType.Divide: callName = "opDivide"; break;
+                case TokenType.Modulo: callName = "opModulo"; break;
                 default: throw new Exception();
             }
-            //Trans.GenelateCall(type.NameResolution(callName).FullPath);
+            trans.GenelateCall(type.NameResolution(callName).FullPath);
         }
     }
 }

@@ -43,16 +43,16 @@ namespace AbstractSyntax
             }
         }
 
-        internal override void Translate()
+        internal override void Translate(Translator trans)
         {
-            //GetTranslator().GenelateLoad(Refer.FullPath);
-            base.Translate();
+            trans.GenelateLoad(Refer.FullPath);
+            base.Translate(trans);
         }
 
-        internal override void TranslateAssign()
+        internal override void TranslateAssign(Translator trans)
         {
-            //GetTranslator().GenelateStore(Refer.FullPath);
-            base.TranslateAssign();
+            trans.GenelateStore(Refer.FullPath);
+            base.TranslateAssign(trans);
         }
     }
 }

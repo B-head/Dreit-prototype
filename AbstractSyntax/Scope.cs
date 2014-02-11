@@ -17,7 +17,6 @@ namespace AbstractSyntax
         public Scope ScopeParent { get; private set; }
         private Dictionary<string, List<Scope>> _ScopeChild;
         public IReadOnlyDictionary<string, List<Scope>> ScopeChild { get { return _ScopeChild; } }
-        public bool IsImport { get; set; }
 
         public Scope()
         {
@@ -27,6 +26,10 @@ namespace AbstractSyntax
 
         public void AddChild(Scope child)
         {
+            if(child.Name == null)
+            {
+                throw new ArgumentException();
+            }
             child.ScopeParent = this;
             List<Scope> temp;
             if (!_ScopeChild.TryGetValue(child.Name, out temp))
@@ -100,6 +103,20 @@ namespace AbstractSyntax
             FullPath = GetFullPath();
         }
 
+        internal virtual void SpreadTranslate(Translator trans)
+        {
+            foreach (var list in _ScopeChild)
+            {
+                foreach (var v in list.Value)
+                {
+                    if (v != null)
+                    {
+                        v.SpreadTranslate(trans);
+                    }
+                }
+            }
+        }
+
         protected override void CheckSyntax()
         {
             if (Name == null || Name == string.Empty)
@@ -109,10 +126,10 @@ namespace AbstractSyntax
                     CompileError(this.GetType().Name + "(ID" + Id + ") の識別子は空です。");
                 }
             }
-            /*else if (!(this is Root) && false)
+            else if (!(this is Root) && false)
             {
                 CompileError("識別子 " + Name + " は既に宣言されています。");
-            }*/
+            }
         }
 
         internal override void CheckDataType(Scope scope)

@@ -118,7 +118,7 @@ namespace SyntacticAnalysis
                 SkipSpaser(++c);
                 explType = Identifier(ref c);
             }
-            return new DeclareVariant { Ident = ident, ExplicitDataType = explType, Position = ident.Position };
+            return new DeclareVariant { Ident = ident, ExplicitVariantType = explType, Position = ident.Position };
         }
 
         private Element Block(ref int c)

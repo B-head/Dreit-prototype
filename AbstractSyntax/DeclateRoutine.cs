@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CliTranslate;
+using Common;
 
 namespace AbstractSyntax
 {
     public class DeclateRoutine : Scope
     {
+        public bool IsImport { get; set; }
+        public RoutineTranslator RoutineTrans { get; private set; }
         public Identifier Ident { get; set; }
         public Element GenericList { get; set; }
         public Element ArgumentList { get; set; }
@@ -37,6 +40,25 @@ namespace AbstractSyntax
         protected override string CreateName()
         {
             return Ident == null ? null : Ident.Value;
+        }
+
+        internal override void SpreadTranslate(Translator trans)
+        {
+            if (IsImport)
+            {
+                trans.ImportRoutine(FullPath);
+                base.SpreadTranslate(trans);
+            }
+            else
+            {
+                RoutineTrans = trans.CreateRoutine(FullPath);
+                base.SpreadTranslate(RoutineTrans);
+            }
+        }
+
+        internal override void Translate(Translator trans)
+        {
+            base.Translate(RoutineTrans);
         }
     }
 }

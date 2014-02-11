@@ -23,19 +23,19 @@ namespace AbstractSyntax
 
         internal override void CheckDataType(Scope scope)
         {
+            base.CheckDataType(scope);
             if (Right != null && Left != null)
             {
                 DataType = Right.DataType;
                 Left.CheckDataTypeAssign(DataType);
             }
-            base.CheckDataType(scope);
         }
 
-        internal override void Translate()
+        internal override void Translate(Translator trans)
         {
-            Right.Translate();
-            Left.TranslateAssign();
-            Left.Translate();
+            Right.Translate(trans);
+            Left.TranslateAssign(trans);
+            Left.Translate(trans);
         }
     }
 }

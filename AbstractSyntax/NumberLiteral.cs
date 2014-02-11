@@ -36,36 +36,37 @@ namespace AbstractSyntax
 
         internal override void CheckDataType(Scope scope)
         {
+            var temp = scope.NameResolution("DlightObject");
             if(Fraction == null)
             {
-                DataType = scope.NameResolution("Integer32");
+                DataType = temp.NameResolution("Integer32");
             }
             else
             {
-                DataType = scope.NameResolution("Binary64");
+                DataType = temp.NameResolution("Binary64");
             }
             base.CheckDataType(scope);
         }
 
-        internal override void Translate()
+        internal override void Translate(Translator trans)
         {
-            /*
             if (Fraction == null)
             {
                 int number = (int)Parse(Integral);
-                Trans.GenelatePrimitive(number);
-                Trans.GenelateCall(GetDataType().FullPath);
+                trans.GenelatePrimitive(number);
+                var ctor = DataType.NameResolution(".ctor");
+                trans.GenelateCall(ctor.FullPath);
             }
             else
             {
                 double number = (double)Parse(Integral);
                 int count, b;
                 number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
-                Trans.GenelatePrimitive(number);
-                Trans.GenelateCall(GetDataType().FullPath);
+                trans.GenelatePrimitive(number);
+                var ctor = DataType.NameResolution(".ctor");
+                trans.GenelateCall(ctor.FullPath);
             }
-            */
-            base.Translate();
+            base.Translate(trans);
         }
 
         private BigInteger Parse(string text)

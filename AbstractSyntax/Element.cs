@@ -163,29 +163,18 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual void SpreadTranslate()
+        internal virtual void Translate(Translator trans)
         {
             foreach (Element v in EnumChild())
             {
                 if (v != null)
                 {
-                    v.SpreadTranslate();
+                    v.Translate(trans);
                 }
             }
         }
 
-        internal virtual void Translate()
-        {
-            foreach (Element v in EnumChild())
-            {
-                if (v != null)
-                {
-                    v.Translate();
-                }
-            }
-        }
-
-        internal virtual void TranslateAssign()
+        internal virtual void TranslateAssign(Translator trans)
         {
             foreach (Element v in EnumChild())
             {
@@ -195,7 +184,7 @@ namespace AbstractSyntax
                 }
                 if (v.IsReference)
                 {
-                    v.TranslateAssign();
+                    v.TranslateAssign(trans);
                 }
             }
         }

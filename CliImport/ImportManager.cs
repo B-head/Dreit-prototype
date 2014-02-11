@@ -126,7 +126,7 @@ namespace CliImport
             {
                 exp.Append(ImportType(n));
             }
-            return new DeclateClass { Ident = ident, GenericList = generic, InheritList = inherit, Block = exp };
+            return new DeclateClass { Ident = ident, GenericList = generic, InheritList = inherit, Block = exp, IsImport = true };
         }
 
         private static Element CreateGenericList(List<Type> generic)
@@ -151,7 +151,7 @@ namespace CliImport
         private static DeclareVariant ConvertGeneric(Type generic)
         {
             var ident = new Identifier { Value = generic.GetPureName() };
-            return new DeclareVariant { Ident = ident };//型制約を扱えるようにする必要あり。
+            return new DeclareVariant { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
         private static Element CreateInheritList(List<Type> inherit)
@@ -202,20 +202,20 @@ namespace CliImport
             var ident = new Identifier { Value = ctor.Name };
             var argument = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
-            return new DeclateRoutine { Ident = ident, ArgumentList = argument, ExplicitResultType = expl };
+            return new DeclateRoutine { Ident = ident, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
         }
 
         private static Element ConvertEvent(EventInfo eve)
         {
             var ident = new Identifier { Value = eve.Name };
             var expl = CreateAccess(eve.DeclaringType);
-            return new DeclareVariant { Ident = ident, ExplicitDataType = expl };
+            return new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
         }
 
         private static Element ImportEnum(Type enumType)
         {
             var ident = new Identifier { Value = enumType.GetPureName() };
-            return new DeclareVariant { Ident = ident };
+            return new DeclareVariant { Ident = ident, IsImport = true };
         }
 
         private static DeclateRoutine ImportMethod(MethodInfo method)
@@ -224,7 +224,7 @@ namespace CliImport
             var generic = CreateGenericList(method.GetGenericList());
             var argument = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
-            return new DeclateRoutine { Ident = ident, GenericList = generic, ArgumentList = argument, ExplicitResultType = expl };
+            return new DeclateRoutine { Ident = ident, GenericList = generic, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
         }
 
         private static Element CreateArgumentList(List<ParameterInfo> argument)
@@ -250,14 +250,14 @@ namespace CliImport
         {
             var ident = new Identifier { Value = argument.Name };
             var expl = CreateAccess(argument.ParameterType);
-            return new DeclareVariant { Ident = ident, ExplicitDataType = expl };
+            return new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
         }
 
         private static DeclareVariant ImportField(FieldInfo field)
         {
             var ident = new Identifier { Value = field.Name };
             var expl = CreateAccess(field.FieldType);
-            return new DeclareVariant { Ident = ident, ExplicitDataType = expl };
+            return new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
         }
     }
 

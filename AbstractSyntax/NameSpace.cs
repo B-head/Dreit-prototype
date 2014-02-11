@@ -10,53 +10,41 @@ namespace AbstractSyntax
 {
     public class NameSpace : Scope
     {
-        public ExpressionList ExpList { get; set; }
-        public List<Token> ErrorToken { get; set; }
+        public List<Element> _Child { get; set; }
 
         public NameSpace()
         {
-            ExpList = new ExpressionList();
-            ErrorToken = new List<Token>();
+            _Child = new List<Element>();
         }
 
         public void Append(Element append)
         {
-            ExpList.Append(append);
+            _Child.Add(append);
         }
 
         public override int ChildCount
         {
-            get { return 1; }
+            get { return _Child.Count; }
         }
 
         public override Element GetChild(int index)
         {
-            switch (index)
-            {
-                case 0: return ExpList;
-                default: throw new ArgumentOutOfRangeException();
-            }
+            return _Child[index];
         }
 
-        protected override void CheckSyntax()
+        internal override void Translate(Translator trans)
         {
-            foreach (Token v in ErrorToken)
+            foreach (Element v in EnumChild())
             {
-                if (v.Type == TokenType.OtherString)
+                if (v == null)
                 {
-                    CompileError(": 文字列 " + v.Text + " は有効なトークンではありません。");
+                    continue;
                 }
-                else
+                if (v is NameSpace || v is DeclateModule)
                 {
-                    CompileError(": トークン " + v.Text + " をこの位置に書くことは出来ません。");
+                    v.Translate(trans);
                 }
             }
-        }
-
-        internal override void Translate()
-        {
-            base.Translate();
-            //Trans.GenelateControl(VirtualCodeType.Return);
         }
     }
 }

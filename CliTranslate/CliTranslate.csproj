@@ -39,22 +39,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgumentTranslator.cs" />
     <Compile Include="ClassTranslator.cs" />
-    <Compile Include="ContextTranslator.cs" />
-    <Compile Include="EnumTranslator.cs" />
-    <Compile Include="GenericTranslator.cs" />
-    <Compile Include="LabelTranslator.cs" />
-    <Compile Include="NameSpaceTranslator.cs" />
-    <Compile Include="OperationTranslator.cs" />
-    <Compile Include="OverLoadTranslator.cs" />
-    <Compile Include="PolyTranslator.cs" />
+    <Compile Include="ModuleTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RootTranslator.cs" />
     <Compile Include="RoutineTranslator.cs" />
     <Compile Include="Translator.cs" />
-    <Compile Include="VariantTranslator.cs" />
-    <Compile Include="VirtualCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

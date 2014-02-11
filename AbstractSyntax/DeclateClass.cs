@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CliTranslate;
+using Common;
 
 namespace AbstractSyntax
 {
     public class DeclateClass : Scope
     {
+        public bool IsImport { get; set; }
+        public ClassTranslator ClassTrans { get; private set; }
         public Identifier Ident { get; set; }
         public Element GenericList { get; set; }
         public Element InheritList { get; set; }
@@ -33,6 +37,25 @@ namespace AbstractSyntax
         protected override string CreateName()
         {
             return Ident == null ? null : Ident.Value;
+        }
+
+        internal override void SpreadTranslate(Translator trans)
+        {
+            if (IsImport)
+            {
+                trans.ImportClass(FullPath);
+                base.SpreadTranslate(trans);
+            }
+            else
+            {
+                ClassTrans = trans.CreateClass(FullPath);
+                base.SpreadTranslate(ClassTrans);
+            }
+        }
+
+        internal override void Translate(Translator trans)
+        {
+            base.Translate(ClassTrans);
         }
     }
 }

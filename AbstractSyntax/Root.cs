@@ -28,8 +28,8 @@ namespace AbstractSyntax
         public void TranslateTo(RootTranslator trans)
         {
             RootTrans = trans;
-            SpreadTranslate();
-            Translate();
+            SpreadTranslate(RootTrans);
+            Translate(trans);
         }
 
         internal void OutputError(string message)

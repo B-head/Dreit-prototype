@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace Common
 {
+    public enum CodeType
+    {
+        Nop,
+        Pop,
+        Ret,
+        Add,
+        Sub,
+        Mul,
+        Div,
+        Mod,
+    }
+
     public interface PathNode
     {
         string Name { get; }
@@ -80,6 +92,20 @@ namespace Common
         {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < _Path.Count; i++)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(".");
+                }
+                builder.Append(_Path[i].Name);
+            }
+            return builder.ToString();
+        }
+
+        public string GetNameSpace()
+        {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < _Path.Count - 1; i++)
             {
                 if (builder.Length > 0)
                 {

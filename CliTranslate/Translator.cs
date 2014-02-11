@@ -16,6 +16,7 @@ namespace CliTranslate
         private List<Translator> _Child;
         public IReadOnlyList<Translator> Child { get { return _Child; } }
         public FullPath Path { get; private set; }
+        protected ILGenerator Generator;
 
         protected Translator(FullPath path, Translator parent)
         {
@@ -38,16 +39,16 @@ namespace CliTranslate
             child.Parent = this;
         }
 
-        protected string GetSpecialName(string name)
+        internal virtual TypeBuilder CreateLexicalBuilder()
         {
-            return "@@" + name + Path.Id;
+            throw new NotSupportedException();
         }
 
-        protected virtual void Translate()
+        public virtual void Save()
         {
             foreach (var v in _Child)
             {
-                v.Translate();
+                v.Save();
             }
         }
 
@@ -77,84 +78,215 @@ namespace CliTranslate
             return builder.ToString(); 
         }
 
-        public virtual Translator CreateNameSpace(FullPath path)
+        public virtual ModuleTranslator CreateModule(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateClass(FullPath path)
+        public virtual RoutineTranslator CreateRoutine(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateEnum(FullPath path)
+        public void ImportRoutine(FullPath path)
+        {
+            var type = Root.GetImportType(path.GetNameSpace());
+            if (type == null)
+            {
+                return;
+                throw new Exception();
+            }
+            var member = type.GetMember(path.Name);
+            if(member == null || member.Length == 0)
+            {
+                return;
+            }
+            Root.RegisterBuilder(path, member[0]);
+            //var ctor = type.GetConstructors()[0];
+            //Root.RegisterBuilder(path, ctor); //手抜きｗ
+        }
+
+        public virtual RoutineTranslator CreateOperation(CodeType operation)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreatePoly(FullPath path)
+        public virtual ClassTranslator CreateClass(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateGeneric(FullPath path)
+        public void ImportClass(FullPath path)
+        {
+            var type = Root.GetImportType(path.ToString());
+            if(type == null)
+            {
+                return;
+                throw new Exception();
+            }
+            Root.RegisterBuilder(path, type);
+        }
+
+        public virtual void CreateEnum(FullPath path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateRoutine(FullPath path)
+        public virtual void CreateVariant(FullPath path, FullPath type)
         {
             throw new NotSupportedException();
         }
 
-        public virtual Translator CreateOperation(VirtualCodeType operation)
+        public void CreateLabel(FullPath path)
         {
-            throw new NotSupportedException();
+            var builder = Generator.DefineLabel();
+            Root.RegisterBuilder(path, builder);
         }
 
-        public virtual Translator CreateVariant(FullPath path)
+        public void GenelateControl(CodeType type)
         {
-            throw new NotSupportedException();
+            switch (type)
+            {
+                case CodeType.Nop: Generator.Emit(OpCodes.Nop); break;
+                case CodeType.Pop: Generator.Emit(OpCodes.Pop); break;
+                case CodeType.Ret: Generator.Emit(OpCodes.Ret); break;
+                case CodeType.Add: Generator.Emit(OpCodes.Add); break;
+                case CodeType.Sub: Generator.Emit(OpCodes.Sub); break;
+                case CodeType.Mul: Generator.Emit(OpCodes.Mul); break;
+                case CodeType.Div: Generator.Emit(OpCodes.Div); break;
+                case CodeType.Mod: Generator.Emit(OpCodes.Rem); break;
+                default: throw new ArgumentException();
+            }
         }
 
-        public virtual Translator CreateArgument(FullPath path)
+        public void GenelatePrimitive(int value)
         {
-            throw new NotSupportedException();
+            if (value <= 127 && value >= -128)
+            {
+                switch (value)
+                {
+                    case 0: Generator.Emit(OpCodes.Ldc_I4_0); break;
+                    case 1: Generator.Emit(OpCodes.Ldc_I4_1); break;
+                    case 2: Generator.Emit(OpCodes.Ldc_I4_2); break;
+                    case 3: Generator.Emit(OpCodes.Ldc_I4_3); break;
+                    case 4: Generator.Emit(OpCodes.Ldc_I4_4); break;
+                    case 5: Generator.Emit(OpCodes.Ldc_I4_5); break;
+                    case 6: Generator.Emit(OpCodes.Ldc_I4_6); break;
+                    case 7: Generator.Emit(OpCodes.Ldc_I4_7); break;
+                    case 8: Generator.Emit(OpCodes.Ldc_I4_8); break;
+                    case -1: Generator.Emit(OpCodes.Ldc_I4_M1); break;
+                    default: Generator.Emit(OpCodes.Ldc_I4_S, (byte)value); break;
+                }
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Ldc_I4, value);
+            }
         }
 
-        public virtual Translator CreateLabel(FullPath path)
+        public void GenelatePrimitive(long value)
         {
-            throw new NotSupportedException();
+            Generator.Emit(OpCodes.Ldc_I8, value);
         }
 
-        public virtual void SetBaseType(FullPath type)
+        public void GenelatePrimitive(float value)
         {
-            throw new NotSupportedException();
+            Generator.Emit(OpCodes.Ldc_R4, value);
         }
 
-        public virtual void GenelateControl(VirtualCodeType type)
+        public void GenelatePrimitive(double value)
         {
-            throw new NotSupportedException();
+            Generator.Emit(OpCodes.Ldc_R8, value);
         }
 
-        public virtual void GenelatePrimitive(object value)
+        public void GenelatePrimitive(string value)
         {
-            throw new NotSupportedException();
+            Generator.Emit(OpCodes.Ldstr, value);
         }
 
-        public virtual void GenelateLoad(FullPath type)
+        public void GenelateLoad(FullPath name)
         {
-            throw new NotSupportedException();
+            BuildLoad(Root.GetBuilder(name));
         }
 
-        public virtual void GenelateStore(FullPath type)
+        private void BuildLoad(LocalBuilder local)
         {
-            throw new NotSupportedException();
+            if (local.LocalIndex <= 255)
+            {
+                switch (local.LocalIndex)
+                {
+                    case 0: Generator.Emit(OpCodes.Ldloc_0); break;
+                    case 1: Generator.Emit(OpCodes.Ldloc_1); break;
+                    case 2: Generator.Emit(OpCodes.Ldloc_2); break;
+                    case 3: Generator.Emit(OpCodes.Ldloc_3); break;
+                    default: Generator.Emit(OpCodes.Ldloc_S, local); break;
+                }
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Ldloc, local);
+            }
         }
 
-        public virtual void GenelateCall(FullPath type)
+        private void BuildLoad(FieldBuilder field)
         {
-            throw new NotSupportedException();
+            if (field.IsStatic)
+            {
+                Generator.Emit(OpCodes.Ldsfld, field);
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Ldfld, field);
+            }
+        }
+
+        public virtual void GenelateStore(FullPath name)
+        {
+            BuildStore(Root.GetBuilder(name));
+        }
+
+        private void BuildStore(LocalBuilder local)
+        {
+            if (local.LocalIndex <= 255)
+            {
+                switch (local.LocalIndex)
+                {
+                    case 0: Generator.Emit(OpCodes.Stloc_0); break;
+                    case 1: Generator.Emit(OpCodes.Stloc_1); break;
+                    case 2: Generator.Emit(OpCodes.Stloc_2); break;
+                    case 3: Generator.Emit(OpCodes.Stloc_3); break;
+                    default: Generator.Emit(OpCodes.Stloc_S, local); break;
+                }
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Stloc, local);
+            }
+        }
+
+        private void BuildStore(FieldBuilder field)
+        {
+            if (field.IsStatic)
+            {
+                Generator.Emit(OpCodes.Stsfld, field);
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Stfld, field);
+            }
+        }
+
+        public virtual void GenelateCall(FullPath name)
+        {
+            var temp = Root.GetBuilder(name);
+            if (temp is ConstructorInfo)
+            {
+                Generator.Emit(OpCodes.Newobj, temp);
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Call, temp);
+            }
         }
     }
 }

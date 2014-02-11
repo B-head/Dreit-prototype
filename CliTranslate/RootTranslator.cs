@@ -5,67 +5,84 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using Common;
 
 namespace CliTranslate
 {
-    public class RootTranslator : NameSpaceTranslator
+    public class RootTranslator : Translator
     {
-        public AssemblyBuilder Assembly { get; private set; }
-        public ModuleBuilder Module { get; private set; }
+        private Dictionary<FullPath, dynamic> BuilderDictonary;
+        private List<Assembly> ImportAssembly;
+        private AssemblyBuilder Assembly;
+        private ModuleBuilder Module;
+        public string Name { get; private set; }
+        public string FileName { get; private set; }
 
-        public RootTranslator()
+        public RootTranslator(string name)
             : base(null, null)
         {
-            
+            BuilderDictonary = new Dictionary<FullPath, object>();
+            ImportAssembly = new List<Assembly>();
+            Name = name;
+            FileName = name + ".exe";
+            Assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave);
+            Module = Assembly.DefineDynamicModule(Name, FileName);
         }
 
-        /*public void RegisterExtern(Assembly assembly)
+        public void AppendAssembly(Assembly assembly)
         {
-            var module = assembly.GetModules();
-            foreach(var v in module)
+            ImportAssembly.Add(assembly);
+        }
+
+        internal dynamic GetBuilder(FullPath path)
+        {
+            if(path == null)
             {
-                var field = v.GetFields();
-                foreach(var f in field)
+                throw new ArgumentNullException();
+            }
+            return BuilderDictonary[path];
+        }
+
+        internal void RegisterBuilder(FullPath path, dynamic builder)
+        {
+            if(path == null || builder == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (!BuilderDictonary.ContainsKey(path))
+            {
+                BuilderDictonary.Add(path, builder);
+            }
+        }
+
+        internal Type GetImportType(string name)
+        {
+            foreach(var v in ImportAssembly)
+            {
+                var t = v.GetType(name);
+                if(t != null)
                 {
-                    if(!f.IsPublic)
-                    {
-                        continue;
-                    }
-                    var name = f.Name.Split('.').ToList();
-                    RegisterField(name, f);
-                }
-                var method = v.GetMethods();
-                foreach(var m in method)
-                {
-                    if (!m.IsPublic)
-                    {
-                        continue;
-                    }
-                    var name = m.Name.Split('.').ToList();
-                    RegisterMethod(name, m);
-                }
-                var type = v.GetTypes();
-                foreach(var t in type)
-                {
-                    if(!t.IsPublic)
-                    {
-                        continue;
-                    }
-                    var name = t.FullName.Split('.').ToList();
-                    RegisterType(name, t);
+                    return t;
                 }
             }
-        }*/
+            return null;
+        }
 
-        public void Save(string saveName)
+        public override ModuleTranslator CreateModule(FullPath path)
         {
-            var fileName = saveName + ".exe";
-            Assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(saveName), AssemblyBuilderAccess.RunAndSave);
-            Module = Assembly.DefineDynamicModule(saveName, fileName);
-            base.SpreadBuilder();
-            base.Translate();
+            return new ModuleTranslator(path, this, Module);
+        }
+
+        public override void Save()
+        {
+            base.Save();
             Module.CreateGlobalFunctions();
-            Assembly.Save(fileName);
+            Assembly.Save(FileName);
+        }
+
+        internal void SetEntryPoint(MethodBuilder entry)
+        {
+            Assembly.SetEntryPoint(entry);
         }
     }
 }

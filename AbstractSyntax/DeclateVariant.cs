@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CliTranslate;
+using Common;
 
 namespace AbstractSyntax
 {
     public class DeclareVariant : Scope
     {
+        public bool IsImport { get; set; }
         public Identifier Ident { get; set; }
-        public Element ExplicitDataType { get; set; }
+        public Element ExplicitVariantType { get; set; }
 
         public override bool IsReference
         {
@@ -27,7 +29,7 @@ namespace AbstractSyntax
             switch (index)
             {
                 case 0: return Ident;
-                case 1: return ExplicitDataType;
+                case 1: return ExplicitVariantType;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -37,15 +39,20 @@ namespace AbstractSyntax
             return Ident == null ? null : Ident.Value;
         }
 
+        internal override void SpreadTranslate(Translator trans)
+        {
+            if (!IsImport)
+            {
+                trans.CreateVariant(FullPath, DataType.FullPath);
+                base.SpreadTranslate(trans);
+            }
+        }
+
         internal override void CheckDataType(Scope scope)
         {
-            if (ExplicitDataType != null)
+            if (ExplicitVariantType != null)
             {
-                //DataType = NameResolution(ExplicitDataType.Value);
-                if (DataType != null)
-                {
-                    //Trans.SetBaseType(DataType.FullPath);
-                }
+                DataType = ExplicitVariantType.DataType;
             }
             base.CheckDataType(scope);
         }
@@ -55,19 +62,18 @@ namespace AbstractSyntax
             if (DataType == null && type != null)
             {
                 DataType = type;
-                //Trans.SetBaseType(DataType.FullPath);
             }
             base.CheckDataTypeAssign(type);
         }
 
-        internal override void Translate()
+        internal override void Translate(Translator trans)
         {
-            //Parent.Trans.GenelateLoad(FullPath);
+            trans.GenelateLoad(FullPath);
         }
 
-        internal override void TranslateAssign()
+        internal override void TranslateAssign(Translator trans)
         {
-            //Parent.Trans.GenelateStore(FullPath);
+            trans.GenelateStore(FullPath);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CliTranslate;
+using Common;
 
 namespace AbstractSyntax
 {
@@ -39,13 +40,14 @@ namespace AbstractSyntax
             return Child[index];
         }
 
-        internal override void Translate()
+        internal override void Translate(Translator trans)
         {
             foreach(Element v in EnumChild())
             {
-                v.Translate();
-                //GetTranslator().GenelateControl(VirtualCodeType.Pop);
+                v.Translate(trans);
+                trans.GenelateControl(CodeType.Pop);
             }
+            trans.GenelateControl(CodeType.Ret);
         }
     }
 }

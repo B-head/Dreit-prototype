@@ -3,45 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.Reflection.Emit;
 using Common;
 
 namespace CliTranslate
 {
-    public class ClassTranslator : ContextTranslator
+    public class ClassTranslator : Translator
     {
-        public Type TypeInfo { get; private set; }
+        private TypeBuilder Class;
+        private MethodBuilder ClassContext;
 
-        public ClassTranslator(FullPath path, Translator parent, Type type = null)
+        public ClassTranslator(FullPath path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
-            TypeInfo = type;
-            if (type != null)
-            {
-                foreach(var f in type.GetFields())
-                {
-                    //new VariantTranslator(f.Name, this, f);
-                }
-                foreach(var m in type.GetMethods())
-                {
-                    //new RoutineTranslator(m.Name, this, m);
-                }
-                foreach(var t in type.GetNestedTypes())
-                {
-                    if(t.IsEnum)
-                    {
-                        ///new EnumTranslator(t.Name, this, t);
-                    }
-                    else
-                    {
-                        //new ClassTranslator(t.Name, this, t);
-                    }
-                }
-            }
+            Class = builder;
+            ClassContext = Class.DefineMethod("@@class", MethodAttributes.SpecialName | MethodAttributes.Static);
+            Generator = ClassContext.GetILGenerator();
+            Root.RegisterBuilder(path, Class);
         }
 
-        public override Translator CreateGeneric(FullPath path)
+        internal override TypeBuilder CreateLexicalBuilder()
         {
-            return new GenericTranslator(path, this);
+            return Class.DefineNestedType("@@lexical", TypeAttributes.SpecialName);
+        }
+
+        public override void Save()
+        {
+            base.Save();
+            Class.CreateType();
+        }
+
+        public override RoutineTranslator CreateRoutine(FullPath path)
+        {
+            var builder = Class.DefineMethod(path.Name, MethodAttributes.Public);
+            return new RoutineTranslator(path, this, builder);
+        }
+
+        public override ClassTranslator CreateClass(FullPath path)
+        {
+            var builder = Class.DefineNestedType(path.Name);
+            return new ClassTranslator(path, this, builder);
+        }
+
+        public override void CreateVariant(FullPath path, FullPath type)
+        {
+            var builder = Class.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Public);
+            Root.RegisterBuilder(path, builder);
         }
     }
 }
