@@ -19,18 +19,18 @@ namespace Dlight
         static void Main(string[] args)
         {
             string fileName = args[0];
-            Func<string, string> lambda = x => x + fileName;
             Root root = new Root();
             ImportManager.ImportAssembly(root, Assembly.Load("DlightObject"));
-            //ImportManager.ImportAssembly(root, Assembly.Load("mscorlib"));
+            ImportManager.ImportAssembly(root, Assembly.Load("mscorlib"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
-            Console.WriteLine(root);
+            Console.WriteLine(root.CompileResult());
+            //Console.WriteLine(root);
             if (root.ErrorCount == 0)
             {
                 RootTranslator trans = new RootTranslator();
-                root.TranslateTo(trans);
-                trans.Save(fileName.Replace(".txt", ""));
+                //root.TranslateTo(trans);
+                //trans.Save(fileName.Replace(".txt", ""));
             }
         }
 

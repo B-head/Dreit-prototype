@@ -7,9 +7,9 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public class TupleExpression : DyadicExpression
+    public class TupleList : DyadicExpression
     {
-        public TupleExpression()
+        public TupleList()
         {
             Operation = TokenType.List;
         }

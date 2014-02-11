@@ -7,40 +7,22 @@ using CliTranslate;
 
 namespace AbstractSyntax
 {
-    public class Root : Scope
+    public class Root : NameSpace
     {
-        private List<Element> _Child;
-        public IReadOnlyList<Element> Child { get { return _Child; } }
         public RootTranslator RootTrans { get; private set; }
         public int ErrorCount { get; private set; }
         public int WarningCount { get; private set; }
 
         public Root()
         {
-            _Child = new List<Element>();
             Name = string.Empty;
-        }
-
-        public void Append(Element append)
-        {
-            _Child.Add(append);
-        }
-
-        public override int ChildCount
-        {
-            get { return _Child.Count; }
-        }
-
-        public override Element GetChild(int index)
-        {
-            return _Child[index];
         }
 
         public void SemanticAnalysis()
         {
-            SpreadScope(null);
-            CheckSemantic();
-            CheckDataType();
+            SpreadElement(null, null);
+            CheckSyntax();
+            CheckDataType(null);
         }
 
         public void TranslateTo(RootTranslator trans)
@@ -67,20 +49,9 @@ namespace AbstractSyntax
             return "Error = " + ErrorCount + ", Warning = " + WarningCount;
         }
 
-        public override string ToString(int indent)
+        protected override string AdditionalInfo()
         {
-            StringBuilder result = new StringBuilder();
-            result.AppendLine(CompileResult());
-            foreach (Element v in EnumChild())
-            {
-                if (v == null)
-                {
-                    result.AppendLine("<null>");
-                    continue;
-                }
-                result.Append(v.ToString(indent));
-            }
-            return result.ToString();
+            return null;
         }
     }
 }

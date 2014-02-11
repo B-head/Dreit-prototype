@@ -9,7 +9,7 @@ namespace AbstractSyntax
 {
     public class LeftAssign : DyadicExpression
     {
-        internal override void CheckSemantic()
+        protected override void CheckSyntax()
         {
             if(Right != null && Right is RightAssign)
             {
@@ -19,22 +19,16 @@ namespace AbstractSyntax
             {
                 CompileError("割り当て可能な式である必要があります。");
             }
-            base.CheckSemantic();
         }
 
-        internal override void CheckDataType()
+        internal override void CheckDataType(Scope scope)
         {
             if (Right != null && Left != null)
             {
-                Scope temp = Right.GetDataType();
-                Left.CheckDataTypeAssign(temp);
+                DataType = Right.DataType;
+                Left.CheckDataTypeAssign(DataType);
             }
-            base.CheckDataType();
-        }
-
-        internal override Scope GetDataType()
-        {
-            return Right.GetDataType();
+            base.CheckDataType(scope);
         }
 
         internal override void Translate()

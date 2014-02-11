@@ -94,7 +94,7 @@ namespace SyntacticAnalysis
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
                 SkipSpaser(++c);
-                attr = RightAssociative<TupleExpression>(ref c, VariantSetting, TokenType.List);
+                attr = RightAssociative<TupleList>(ref c, VariantSetting, TokenType.List);
                 if (CheckToken(c, TokenType.RightParenthesis))
                 {
                     SkipSpaser(++c);

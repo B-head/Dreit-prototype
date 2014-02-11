@@ -12,7 +12,7 @@ namespace AbstractSyntax
         public Identifier Ident { get; set; }
         public Element GenericList { get; set; }
         public Element ArgumentList { get; set; }
-        public Identifier ExplicitResultType { get; set; }
+        public Element ExplicitResultType { get; set; }
         public Element Block { get; set; }
         public Scope ResultType { get; set; }
 
@@ -34,22 +34,9 @@ namespace AbstractSyntax
             }
         }
 
-        protected override string ElementInfo()
+        protected override string CreateName()
         {
-            string temp = " (" + ResultType + ")";
-            if (ExplicitResultType == null)
-            {
-                return base.ElementInfo() + Ident.Value + temp;
-            }
-            else
-            {
-                return base.ElementInfo() + Ident.Value + ":" + ExplicitResultType.Value + temp;
-            }
-        }
-
-        internal override Translator CreateTranslator(Translator trans)
-        {
-            return trans.CreateRoutine(FullPath);
+            return Ident == null ? null : Ident.Value;
         }
     }
 }

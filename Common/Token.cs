@@ -37,7 +37,14 @@ namespace Common
 
         public override string ToString()
         {
-            return File + "(" + Line + "," + Row + ")";
+            if (File == null || File == string.Empty)
+            {
+                return "<empty>" + "(" + Line + "," + Row + ")";
+            }
+            else
+            {
+                return File + "(" + Line + "," + Row + ")";
+            }
         }
     }
 

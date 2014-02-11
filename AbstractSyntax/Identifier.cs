@@ -12,41 +12,46 @@ namespace AbstractSyntax
         public string Value { get; set; }
         public Scope Refer { get; set; }
 
+        internal override Scope AccessType
+        {
+            get { return Refer; }
+        }
+
         public override bool IsReference
         {
             get { return true; }
         }
 
-        protected override string ElementInfo()
+        protected override string AdditionalInfo()
         {
-            return base.ElementInfo() + Value;
+            return Value;
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckDataType(Scope scope)
         {
-            Refer = Scope.NameResolution(Value);
+            if (scope != null)
+            {
+                Refer = scope.NameResolution(Value);
+            }
             if (Refer == null)
             {
-                CompileError("このスコープで識別子 " + Value + " が宣言されていません。");
-                return;
+                CompileError("識別子 " + Value + " が宣言されていません。");
             }
-            base.CheckSemantic();
-        }
-
-        internal override Scope GetDataType()
-        {
-            return Refer == null ? null : Refer.GetDataType();
+            else
+            {
+                DataType = Refer.DataType;
+            }
         }
 
         internal override void Translate()
         {
-            Trans.GenelateLoad(Refer.FullPath);
+            //GetTranslator().GenelateLoad(Refer.FullPath);
             base.Translate();
         }
 
         internal override void TranslateAssign()
         {
-            Trans.GenelateStore(Refer.FullPath);
+            //GetTranslator().GenelateStore(Refer.FullPath);
             base.TranslateAssign();
         }
     }

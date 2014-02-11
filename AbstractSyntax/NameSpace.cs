@@ -15,7 +15,13 @@ namespace AbstractSyntax
 
         public NameSpace()
         {
+            ExpList = new ExpressionList();
             ErrorToken = new List<Token>();
+        }
+
+        public void Append(Element append)
+        {
+            ExpList.Append(append);
         }
 
         public override int ChildCount
@@ -32,12 +38,7 @@ namespace AbstractSyntax
             }
         }
 
-        protected override string ElementInfo()
-        {
-            return base.ElementInfo() + "ErrorToken = " + ErrorToken.Count;
-        }
-
-        internal override void CheckSemantic()
+        protected override void CheckSyntax()
         {
             foreach (Token v in ErrorToken)
             {
@@ -50,12 +51,6 @@ namespace AbstractSyntax
                     CompileError(": トークン " + v.Text + " をこの位置に書くことは出来ません。");
                 }
             }
-            base.CheckSemantic();
-        }
-
-        internal override Translator CreateTranslator(Translator trans)
-        {
-            return trans.CreateNameSpace(FullPath);
         }
 
         internal override void Translate()

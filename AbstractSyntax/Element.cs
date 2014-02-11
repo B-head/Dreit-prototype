@@ -13,8 +13,12 @@ namespace AbstractSyntax
         public TextPosition Position { get; set; }
         public Element Parent { get; private set; }
         public Root Root { get; private set; }
-        public Scope Scope { get; private set; }
-        public Translator Trans { get; private set; }
+        public Scope DataType { get; protected set; }
+
+        internal virtual Scope AccessType
+        {
+            get { return DataType; }
+        }
 
         public virtual bool IsReference
         {
@@ -39,12 +43,23 @@ namespace AbstractSyntax
             }
         }
 
-        protected virtual string ElementInfo()
+        protected virtual string AdditionalInfo()
         {
-            return Position + " " + this.GetType().Name + ": ";
+            return null;
         }
 
-        protected virtual string ErrorInfo()
+        private string ElementInfo()
+        {
+            StringBuilder builder = new StringBuilder(Position + " " + this.GetType().Name);
+            var add = AdditionalInfo();
+            if(add != null)
+            {
+                builder.Append("(" + add + ")");
+            }
+            return builder.ToString();
+        }
+
+        private string ErrorInfo()
         {
             return Position + ": ";
         }
@@ -90,53 +105,45 @@ namespace AbstractSyntax
             return result.ToString();
         }
 
-        internal virtual void SpreadScope(Element parent)
+        protected void SpreadElement(Element parent, Scope scope)
         {
             Parent = parent;
             if (parent == null)
             {
                 Root = (Root)this;
-                Scope = (Scope)this;
             }
             else
             {
                 Root = parent.Root;
-                if (this is Scope)
-                {
-                    Scope = (Scope)this;
-                }
-                else
-                {
-                    Scope = parent.Scope;
-                }
+            }
+            if(this is Scope)
+            {
+                var temp = (Scope)this;
+                temp.SpreadScope(scope);
+                scope = temp;
             }
             foreach (Element v in EnumChild())
             {
                 if (v != null)
                 {
-                    v.SpreadScope(this);
+                    v.SpreadElement(this, scope);
                 }
             }
+            CheckSyntax();
         }
 
-        internal virtual void CheckSemantic()
+        protected virtual void CheckSyntax()
+        {
+            return;
+        }
+
+        internal virtual void CheckDataType(Scope scope)
         {
             foreach (Element v in EnumChild())
             {
                 if (v != null)
                 {
-                    v.CheckSemantic();
-                }
-            }
-        }
-
-        internal virtual void CheckDataType()
-        {
-            foreach (Element v in EnumChild())
-            {
-                if (v != null)
-                {
-                    v.CheckDataType();
+                    v.CheckDataType(scope);
                 }
             }
         }
@@ -149,28 +156,15 @@ namespace AbstractSyntax
                 {
                     continue;
                 }
-                if (v.IsReference)
+                if (v != null && v.IsReference)
                 {
                     v.CheckDataTypeAssign(type);
                 }
             }
         }
 
-        internal virtual Scope GetDataType()
-        {
-            throw new NotSupportedException();
-        }
-
         internal virtual void SpreadTranslate()
         {
-            if (Parent != null)
-            {
-                Trans = CreateTranslator(Parent.Trans);
-            }
-            else
-            {
-                Trans = ((Root)this).RootTrans;
-            }
             foreach (Element v in EnumChild())
             {
                 if (v != null)
@@ -178,11 +172,6 @@ namespace AbstractSyntax
                     v.SpreadTranslate();
                 }
             }
-        }
-
-        internal virtual Translator CreateTranslator(Translator trans)
-        {
-            return trans;
         }
 
         internal virtual void Translate()

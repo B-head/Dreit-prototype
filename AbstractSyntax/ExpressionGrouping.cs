@@ -9,9 +9,10 @@ namespace AbstractSyntax
 {
     public class ExpressionGrouping : MonadicExpression
     {
-        internal override Scope GetDataType()
+        internal override void CheckDataType(Scope scope)
         {
-            return Child.GetDataType();
+            base.CheckDataType(scope);
+            DataType = Child.DataType;
         }
     }
 }

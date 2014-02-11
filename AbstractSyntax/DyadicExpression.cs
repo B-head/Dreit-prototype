@@ -28,12 +28,12 @@ namespace AbstractSyntax
             }
         }
 
-        protected override string ElementInfo()
+        protected override string AdditionalInfo()
         {
-            return base.ElementInfo() + (Operation == TokenType.Special ? string.Empty : Enum.GetName(typeof(TokenType), Operation));
+            return Enum.GetName(typeof(TokenType), Operation);
         }
 
-        internal override void CheckSemantic()
+        protected override void CheckSyntax()
         {
             foreach (Element v in EnumChild())
             {
@@ -43,7 +43,6 @@ namespace AbstractSyntax
                     continue;
                 }
             }
-            base.CheckSemantic();
         }
     }
 }

@@ -15,33 +15,31 @@ namespace AbstractSyntax
         public string Name { get; set; }
         public FullPath FullPath { get; private set; }
         public Scope ScopeParent { get; private set; }
-        private Dictionary<string, Scope> _ScopeChild;
-        public IReadOnlyDictionary<string, Scope> ScopeChild { get { return _ScopeChild; } }
+        private Dictionary<string, List<Scope>> _ScopeChild;
+        public IReadOnlyDictionary<string, List<Scope>> ScopeChild { get { return _ScopeChild; } }
         public bool IsImport { get; set; }
 
         public Scope()
         {
             Id = NextId++;
-            _ScopeChild = new Dictionary<string, Scope>();
+            _ScopeChild = new Dictionary<string, List<Scope>>();
         }
 
-        private void AddChild(Scope child)
+        public void AddChild(Scope child)
         {
-            if(child.Name == null)
-            {
-                return;
-            }
-            if (_ScopeChild.ContainsKey(child.Name))
-            {
-                return;
-            }
-            _ScopeChild.Add(child.Name, child);
             child.ScopeParent = this;
+            List<Scope> temp;
+            if (!_ScopeChild.TryGetValue(child.Name, out temp))
+            {
+                temp = new List<Scope>();
+                _ScopeChild.Add(child.Name, temp);
+            }
+            temp.Add(child);
         }
 
         private FullPath GetFullPath()
         {
-            if (Parent == null)
+            if (ScopeParent == null)
             {
                 return CreateFullPath();
             }
@@ -63,10 +61,17 @@ namespace AbstractSyntax
             {
                 return this;
             }
-            Scope temp;
+            List<Scope> temp;
             if (_ScopeChild.TryGetValue(name, out temp))
             {
-                return temp;
+                if (temp.Count > 1)
+                {
+                    return temp[0];
+                }
+                else
+                {
+                    return temp[0];
+                }
             }
             if (ScopeParent == null)
             {
@@ -75,28 +80,44 @@ namespace AbstractSyntax
             return ScopeParent.NameResolution(name);
         }
 
-        internal override void SpreadScope(Element parent)
+        protected override string AdditionalInfo()
         {
-            if (parent != null)
-            {
-                parent.Scope.AddChild(this);
-            }
-            base.SpreadScope(parent);
+            return Name;
         }
 
-        internal override void CheckSemantic()
+        protected virtual string CreateName()
         {
-            if (ScopeParent == null && !(this is Root))
-            {
-                CompileError("このスコープには識別子 " + Name + " が既に宣言されています。");
-            }
-            base.CheckSemantic();
+            return Name;
         }
 
-        internal override void SpreadTranslate()
+        internal void SpreadScope(Scope scope)
         {
+            Name = CreateName();
+            if (scope != null)
+            {
+                scope.AddChild(this);
+            }
             FullPath = GetFullPath();
-            base.SpreadTranslate();
+        }
+
+        protected override void CheckSyntax()
+        {
+            if (Name == null || Name == string.Empty)
+            {
+                if (!(this is Root))
+                {
+                    CompileError(this.GetType().Name + "(ID" + Id + ") の識別子は空です。");
+                }
+            }
+            /*else if (!(this is Root) && false)
+            {
+                CompileError("識別子 " + Name + " は既に宣言されています。");
+            }*/
+        }
+
+        internal override void CheckDataType(Scope scope)
+        {
+            base.CheckDataType(this);
         }
     }
 }

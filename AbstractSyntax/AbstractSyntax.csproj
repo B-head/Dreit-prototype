@@ -50,6 +50,7 @@
     <Compile Include="ExpressionList.cs" />
     <Compile Include="Identifier.cs" />
     <Compile Include="LeftAssign.cs" />
+    <Compile Include="MemberAccess.cs" />
     <Compile Include="NameSpace.cs" />
     <Compile Include="MonadicExpression.cs" />
     <Compile Include="NumberLiteral.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
-    <Compile Include="TupleExpression.cs" />
+    <Compile Include="TupleList.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CliTranslate\CliTranslate.csproj">

@@ -13,42 +13,43 @@ namespace AbstractSyntax
         public string Integral { get; set; }
         public string Fraction { get; set; }
 
-        protected override string ElementInfo()
+        protected override string AdditionalInfo()
         {
             if (Fraction == null)
             {
-                return base.ElementInfo() + Integral;
+                return Integral;
             }
             else
             {
-                return base.ElementInfo() + Integral + "." + Fraction;
+                return Integral + "." + Fraction;
             }
         }
 
-        internal override void CheckSemantic()
+        protected override void CheckSyntax()
         {
             Parse(Integral);
             if(Fraction != null)
             {
                 Parse(Fraction);
             }
-            base.CheckSemantic();
         }
 
-        internal override Scope GetDataType()
+        internal override void CheckDataType(Scope scope)
         {
             if(Fraction == null)
             {
-                return Scope/*.NameResolution("DlightObject")*/.NameResolution("Integer32");
+                DataType = scope.NameResolution("Integer32");
             }
             else
             {
-                return Scope.NameResolution("DlightObject").NameResolution("Binary64");
+                DataType = scope.NameResolution("Binary64");
             }
+            base.CheckDataType(scope);
         }
 
         internal override void Translate()
         {
+            /*
             if (Fraction == null)
             {
                 int number = (int)Parse(Integral);
@@ -63,6 +64,7 @@ namespace AbstractSyntax
                 Trans.GenelatePrimitive(number);
                 Trans.GenelateCall(GetDataType().FullPath);
             }
+            */
             base.Translate();
         }
 

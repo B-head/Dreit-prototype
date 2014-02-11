@@ -44,7 +44,7 @@ namespace AbstractSyntax
             foreach(Element v in EnumChild())
             {
                 v.Translate();
-                Trans.GenelateControl(VirtualCodeType.Pop);
+                //GetTranslator().GenelateControl(VirtualCodeType.Pop);
             }
         }
     }

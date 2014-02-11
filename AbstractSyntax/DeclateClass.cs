@@ -29,5 +29,10 @@ namespace AbstractSyntax
                 default: throw new ArgumentOutOfRangeException();
             }
         }
+
+        protected override string CreateName()
+        {
+            return Ident == null ? null : Ident.Value;
+        }
     }
 }
