@@ -14,15 +14,20 @@ namespace AbstractSyntax
             Operation = TokenType.Access;
         }
 
+        internal override Scope DataType
+        {
+            get { return Right.DataType; }
+        }
+
         internal override Scope AccessType
         {
             get { return Right.AccessType; }
         }
 
-        internal override void CheckDataType(Scope scope)
+        internal override void SpreadReference(Scope scope)
         {
-            Left.CheckDataType(scope);
-            Right.CheckDataType(Left.AccessType);
+            Left.SpreadReference(scope);
+            Right.SpreadReference(Left.AccessType);
         }
     }
 }

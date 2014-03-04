@@ -10,7 +10,12 @@ namespace AbstractSyntax
     public class Identifier : Element
     {
         public string Value { get; set; }
-        public Scope Refer { get; set; }
+        public Scope Refer { get; private set; }
+
+        internal override Scope DataType
+        {
+            get { return Refer.DataType; }
+        }
 
         internal override Scope AccessType
         {
@@ -27,8 +32,9 @@ namespace AbstractSyntax
             return Value;
         }
 
-        internal override void CheckDataType(Scope scope)
+        internal override void SpreadReference(Scope scope)
         {
+            base.SpreadReference(scope);
             if (scope != null)
             {
                 Refer = scope.NameResolution(Value);
@@ -36,10 +42,6 @@ namespace AbstractSyntax
             if (Refer == null)
             {
                 CompileError("識別子 " + Value + " が宣言されていません。");
-            }
-            else
-            {
-                DataType = Refer.DataType;
             }
         }
 

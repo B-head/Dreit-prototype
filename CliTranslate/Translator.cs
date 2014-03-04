@@ -88,24 +88,6 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public void ImportRoutine(FullPath path)
-        {
-            var type = Root.GetImportType(path.GetNameSpace());
-            if (type == null)
-            {
-                return;
-                throw new Exception();
-            }
-            var member = type.GetMember(path.Name);
-            if(member == null || member.Length == 0)
-            {
-                return;
-            }
-            Root.RegisterBuilder(path, member[0]);
-            //var ctor = type.GetConstructors()[0];
-            //Root.RegisterBuilder(path, ctor); //手抜きｗ
-        }
-
         public virtual RoutineTranslator CreateOperation(CodeType operation)
         {
             throw new NotSupportedException();
@@ -114,17 +96,6 @@ namespace CliTranslate
         public virtual ClassTranslator CreateClass(FullPath path)
         {
             throw new NotSupportedException();
-        }
-
-        public void ImportClass(FullPath path)
-        {
-            var type = Root.GetImportType(path.ToString());
-            if(type == null)
-            {
-                return;
-                throw new Exception();
-            }
-            Root.RegisterBuilder(path, type);
         }
 
         public virtual void CreateEnum(FullPath path)
@@ -155,6 +126,7 @@ namespace CliTranslate
                 case CodeType.Mul: Generator.Emit(OpCodes.Mul); break;
                 case CodeType.Div: Generator.Emit(OpCodes.Div); break;
                 case CodeType.Mod: Generator.Emit(OpCodes.Rem); break;
+                case CodeType.Echo: Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(Object) })); break;
                 default: throw new ArgumentException();
             }
         }
@@ -206,7 +178,8 @@ namespace CliTranslate
 
         public void GenelateLoad(FullPath name)
         {
-            BuildLoad(Root.GetBuilder(name));
+            dynamic temp = Root.GetBuilder(name);
+            BuildLoad(temp);
         }
 
         private void BuildLoad(LocalBuilder local)
@@ -242,7 +215,8 @@ namespace CliTranslate
 
         public virtual void GenelateStore(FullPath name)
         {
-            BuildStore(Root.GetBuilder(name));
+            dynamic temp = Root.GetBuilder(name);
+            BuildStore(temp);
         }
 
         private void BuildStore(LocalBuilder local)

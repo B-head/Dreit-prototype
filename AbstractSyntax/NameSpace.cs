@@ -22,19 +22,19 @@ namespace AbstractSyntax
             _Child.Add(append);
         }
 
-        public override int ChildCount
+        public override int Count
         {
             get { return _Child.Count; }
         }
 
-        public override Element GetChild(int index)
+        public override Element Child(int index)
         {
             return _Child[index];
         }
 
         internal override void Translate(Translator trans)
         {
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v == null)
                 {

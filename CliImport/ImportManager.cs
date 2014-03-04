@@ -5,21 +5,41 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using AbstractSyntax;
+using CliTranslate;
 
 namespace CliImport
 {
-    public static class ImportManager
+    public class ImportManager
     {
-        public static void ImportAssembly(Root root, Assembly assembly)
+        private Root Root;
+        private List<InfoPeir> Peir;
+        private ImportNameSpace NameSpace;
+
+        public ImportManager(Root root)
+        {
+            Root = root;
+            Peir = new List<InfoPeir>();
+            NameSpace = new ImportNameSpace { NameSpace = Root };
+        }
+
+        public void ImportAssembly(Assembly assembly)
         {
             var module = assembly.GetModules();
             foreach(var m in module)
             {
-                ImportModule(root, m);
+                ImportModule(m);
             }
         }
 
-        private static void ImportModule(Root root, Module module)
+        public void TranslateImport(RootTranslator trans)
+        {
+            foreach(var v in Peir)
+            {
+                trans.RegisterBuilder(v.Scope.FullPath, v.Info);
+            }
+        }
+
+        private void ImportModule(Module module)
         {
             var type = module.GetTypes();
             foreach(var t in type)
@@ -28,7 +48,7 @@ namespace CliImport
                 {
                     continue;
                 }
-                var ns = GetNameSpace(root, t.Namespace.Split('.').ToList());
+                var ns = GetNameSpace(t.Namespace.Split('.').ToList());
                 if(t.IsEnum)
                 {
                     ns.Append(ImportEnum(t));
@@ -45,7 +65,7 @@ namespace CliImport
                 {
                     continue;
                 }
-                root.Append(ImportMethod(m));
+                Root.Append(ImportMethod(m));
             }
             var field = module.GetFields();
             foreach(var f in field)
@@ -54,41 +74,31 @@ namespace CliImport
                 {
                     continue;
                 }
-                root.Append(ImportField(f));
+                Root.Append(ImportField(f));
             }
         }
 
-        private static NameSpace GetNameSpace(NameSpace parent, IList<string> fullName)
+        private NameSpace GetNameSpace(IList<string> fullName)
         {
-            if (fullName.Count > 0)
+            ImportNameSpace current = NameSpace;
+            foreach(var v in fullName)
             {
-                NameSpace current;
-                List<Scope> temp;
-                if(parent.ScopeChild.TryGetValue(fullName[0], out temp))
-                {
-                    current = (NameSpace)temp[0];
-                }
-                else
-                {
-                    current = new NameSpace { Name = fullName[0] };
-                    parent.Append(current);
-                    parent.AddChild(current);
-                }
-                fullName.RemoveAt(0);
-                return GetNameSpace(current, fullName);
+                current = current.GetImportNameSpace(v);
             }
-            else
-            {
-                return parent;
-            }
+            return current.NameSpace;
         }
 
-        private static DeclateClass ImportType(Type type)
+        private void AppendPeir(Scope scope, dynamic info)
         {
-            var ident = new Identifier { Value = type.GetPureName() };
+            Peir.Add(new InfoPeir { Scope = scope, Info = info });
+        }
+
+        private DeclateClass ImportType(Type type)
+        {
+            var ident = new Identifier { Value = type.GetPureName(), IsImport = true };
             var generic = CreateGenericList(type.GetGenericList());
             var inherit = CreateInheritList(type.GetInheritList());
-            var exp = new ExpressionList();
+            var exp = new DirectiveList { IsImport = true };
             var ctor = type.GetConstructors();
             foreach(var c in ctor)
             {
@@ -126,17 +136,22 @@ namespace CliImport
             {
                 exp.Append(ImportType(n));
             }
-            return new DeclateClass { Ident = ident, GenericList = generic, InheritList = inherit, Block = exp, IsImport = true };
+            DeclateClass result = new DeclateClass { Ident = ident, Generic = generic, Inherit = inherit, Block = exp, IsImport = true };
+            AppendPeir(result, type);
+            return result;
         }
 
-        private static Element CreateGenericList(List<Type> generic)
+        private Element CreateGenericList(List<Type> generic)
         {
             if(generic.Count > 1)
             {
-                var left = ConvertGeneric(generic[0]);
-                generic.RemoveAt(0);
-                var right = CreateGenericList(generic);
-                return new TupleList { Left = left, Right = right };
+                var tuple = new TupleList { IsImport = true };
+                foreach(var v in generic)
+                {
+                    var temp = ConvertGeneric(v);
+                    tuple.Append(temp);
+                }
+                return tuple;
             }
             else if (generic.Count > 0)
             {
@@ -148,20 +163,23 @@ namespace CliImport
             }
         }
 
-        private static DeclareVariant ConvertGeneric(Type generic)
+        private DeclareVariant ConvertGeneric(Type generic)
         {
-            var ident = new Identifier { Value = generic.GetPureName() };
+            var ident = new Identifier { Value = generic.GetPureName(), IsImport = true };
             return new DeclareVariant { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
-        private static Element CreateInheritList(List<Type> inherit)
+        private Element CreateInheritList(List<Type> inherit)
         {
             if (inherit.Count > 1)
             {
-                var left = CreateAccess(inherit[0]);
-                inherit.RemoveAt(0);
-                var right = CreateInheritList(inherit);
-                return new TupleList { Left = left, Right = right };
+                var tuple = new TupleList { IsImport = true };
+                foreach (var v in inherit)
+                {
+                    var temp = CreateAccess(v);
+                    tuple.Append(temp);
+                }
+                return tuple;
             }
             else if (inherit.Count > 0)
             {
@@ -173,23 +191,23 @@ namespace CliImport
             }
         }
 
-        private static Element CreateAccess(Type type)
+        private Element CreateAccess(Type type)
         {
             return CreateAccess(type.GetPureFullName());
         }
 
-        private static Element CreateAccess(List<string> pureFullName)
+        private Element CreateAccess(List<string> pureFullName)
         {
             if (pureFullName.Count > 1)
             {
-                var right = new Identifier { Value = pureFullName[pureFullName.Count - 1] };
+                var right = new Identifier { Value = pureFullName[pureFullName.Count - 1], IsImport = true };
                 pureFullName.RemoveAt(pureFullName.Count - 1);
                 var left = CreateAccess(pureFullName);
-                return new MemberAccess { Left = left, Right = right };
+                return new MemberAccess { Left = left, Right = right, IsImport = true };
             }
             else if (pureFullName.Count > 0)
             {
-                return new Identifier { Value = pureFullName[0] };
+                return new Identifier { Value = pureFullName[0], IsImport = true };
             }
             else
             {
@@ -197,44 +215,55 @@ namespace CliImport
             }
         }
 
-        private static Element ConvertConstructor(ConstructorInfo ctor)
+        private Element ConvertConstructor(ConstructorInfo ctor)
         {
-            var ident = new Identifier { Value = ctor.Name };
+            var ident = new Identifier { Value = ctor.Name, IsImport = true };
             var argument = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
-            return new DeclateRoutine { Ident = ident, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Ident = ident, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
+            AppendPeir(result, ctor);
+            return result;
         }
 
-        private static Element ConvertEvent(EventInfo eve)
+        private Element ConvertEvent(EventInfo eve)
         {
-            var ident = new Identifier { Value = eve.Name };
+            var ident = new Identifier { Value = eve.Name, IsImport = true };
             var expl = CreateAccess(eve.DeclaringType);
-            return new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            DeclareVariant result = new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            AppendPeir(result, eve);
+            return result;
         }
 
-        private static Element ImportEnum(Type enumType)
+        private Element ImportEnum(Type enumType)
         {
-            var ident = new Identifier { Value = enumType.GetPureName() };
-            return new DeclareVariant { Ident = ident, IsImport = true };
+            var ident = new Identifier { Value = enumType.GetPureName(), IsImport = true };
+            DeclareVariant result = new DeclareVariant { Ident = ident, IsImport = true };
+            AppendPeir(result, enumType);
+            return result;
         }
 
-        private static DeclateRoutine ImportMethod(MethodInfo method)
+        private DeclateRoutine ImportMethod(MethodInfo method)
         {
-            var ident = new Identifier { Value = method.GetPureName() };
+            var ident = new Identifier { Value = method.GetPureName(), IsImport = true };
             var generic = CreateGenericList(method.GetGenericList());
             var argument = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
-            return new DeclateRoutine { Ident = ident, GenericList = generic, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Ident = ident, GenericList = generic, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
+            AppendPeir(result, method);
+            return result;
         }
 
-        private static Element CreateArgumentList(List<ParameterInfo> argument)
+        private Element CreateArgumentList(List<ParameterInfo> argument)
         {
             if (argument.Count > 1)
             {
-                var left = ConvertArgument(argument[0]);
-                argument.RemoveAt(0);
-                var right = CreateArgumentList(argument);
-                return new TupleList { Left = left, Right = right };
+                var tuple = new TupleList { IsImport = true };
+                foreach (var v in argument)
+                {
+                    var temp = ConvertArgument(v);
+                    tuple.Append(temp);
+                }
+                return tuple;
             }
             else if (argument.Count > 0)
             {
@@ -246,18 +275,53 @@ namespace CliImport
             }
         }
 
-        private static DeclareVariant ConvertArgument(ParameterInfo argument)
+        private DeclareVariant ConvertArgument(ParameterInfo argument)
         {
-            var ident = new Identifier { Value = argument.Name };
+            var ident = new Identifier { Value = argument.Name, IsImport = true };
             var expl = CreateAccess(argument.ParameterType);
-            return new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            DeclareVariant result = new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            AppendPeir(result, argument);
+            return result;
         }
 
-        private static DeclareVariant ImportField(FieldInfo field)
+        private DeclareVariant ImportField(FieldInfo field)
         {
-            var ident = new Identifier { Value = field.Name };
+            var ident = new Identifier { Value = field.Name, IsImport = true };
             var expl = CreateAccess(field.FieldType);
-            return new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            DeclareVariant result = new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            AppendPeir(result, field);
+            return result;
+        }
+
+        private struct InfoPeir
+        {
+            public Scope Scope { get; set; }
+            public dynamic Info { get; set; }
+        }
+
+        private class ImportNameSpace
+        {
+            public NameSpace NameSpace { get; set; }
+            private Dictionary<string, ImportNameSpace> Child;
+
+            public ImportNameSpace()
+            {
+                Child = new Dictionary<string, ImportNameSpace>();
+            }
+
+            public ImportNameSpace GetImportNameSpace(string name)
+            {
+                ImportNameSpace result;
+                if(Child.TryGetValue(name, out result))
+                {
+                    return result;
+                }
+                NameSpace temp = new NameSpace { Name = name, IsImport = true };
+                NameSpace.Append(temp);
+                result = new ImportNameSpace { NameSpace = temp };
+                Child.Add(name, result);
+                return result;
+            }
         }
     }
 

@@ -24,14 +24,14 @@ namespace SyntacticAnalysis
             }
             TextPosition position = Read(temp).Position;
             SkipSpaser(++temp);
-            Element exp = ExpressionList(ref temp);
+            Element exp = DirectiveList(ref temp);
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
             }
             SkipSpaser(++temp);
             c = temp;
-            return new ExpressionGrouping { Child = exp, Operation = TokenType.Special, Position = position };
+            return new ExpressionGrouping { _Child = exp, Operation = TokenType.Special, Position = position };
         }
 
         private NumberLiteral Number(ref int c)
@@ -94,7 +94,7 @@ namespace SyntacticAnalysis
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
                 SkipSpaser(++c);
-                attr = RightAssociative<TupleList>(ref c, VariantSetting, TokenType.List);
+                attr = ParseTuple(ref c, VariantSetting);
                 if (CheckToken(c, TokenType.RightParenthesis))
                 {
                     SkipSpaser(++c);
@@ -112,11 +112,11 @@ namespace SyntacticAnalysis
         private DeclareVariant VariantSetting(ref int c)
         {
             Identifier ident = Identifier(ref c);
-            Identifier explType = null;
+            Element explType = null;
             if (CheckToken(c, TokenType.Peir))
             {
                 SkipSpaser(++c);
-                explType = Identifier(ref c);
+                explType = MemberAccess(ref c);
             }
             return new DeclareVariant { Ident = ident, ExplicitVariantType = explType, Position = ident.Position };
         }
@@ -127,12 +127,12 @@ namespace SyntacticAnalysis
             if (CheckToken(c, TokenType.Separator))
             {
                 SkipSpaser(++c);
-                result = Expression(ref c);
+                result = Directive(ref c);
             }
             else if (CheckToken(c, TokenType.LeftBrace))
             {
                 SkipSpaser(++c);
-                result = ExpressionList(ref c);
+                result = DirectiveList(ref c);
                 if (CheckToken(c, TokenType.RightBrace))
                 {
                     SkipSpaser(++c);

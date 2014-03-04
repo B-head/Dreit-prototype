@@ -9,16 +9,26 @@ namespace AbstractSyntax
 {
     public class LeftAssign : DyadicExpression
     {
-        protected override void CheckSyntax()
+        internal override Scope DataType
+        {
+            get { return Right.DataType; }
+        }
+
+        internal override void CheckSyntax()
         {
             if(Right != null && Right is RightAssign)
             {
                 CompileError("式中では割り当て演算子の向きが揃っている必要があります。");
             }
-            if(Left != null && !Left.IsReference)
+            if (Left != null && Left is RightAssign)
+            {
+                CompileError("式中では割り当て演算子の向きが揃っている必要があります。");
+            }
+            else if(Left != null && !Left.IsReference)
             {
                 CompileError("割り当て可能な式である必要があります。");
             }
+            base.CheckSyntax();
         }
 
         internal override void CheckDataType(Scope scope)
@@ -26,7 +36,6 @@ namespace AbstractSyntax
             base.CheckDataType(scope);
             if (Right != null && Left != null)
             {
-                DataType = Right.DataType;
                 Left.CheckDataTypeAssign(DataType);
             }
         }

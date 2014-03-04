@@ -60,10 +60,6 @@ namespace AbstractSyntax
 
         internal Scope NameResolution(string name)
         {
-            if (name == Name)
-            {
-                return this;
-            }
             List<Scope> temp;
             if (_ScopeChild.TryGetValue(name, out temp))
             {
@@ -75,6 +71,10 @@ namespace AbstractSyntax
                 {
                     return temp[0];
                 }
+            }
+            if (name == Name)
+            {
+                return this;
             }
             if (ScopeParent == null)
             {
@@ -117,7 +117,7 @@ namespace AbstractSyntax
             }
         }
 
-        protected override void CheckSyntax()
+        internal override void CheckSyntax()
         {
             if (Name == null || Name == string.Empty)
             {
@@ -130,6 +130,7 @@ namespace AbstractSyntax
             {
                 CompileError("識別子 " + Name + " は既に宣言されています。");
             }
+            base.CheckSyntax();
         }
 
         internal override void CheckDataType(Scope scope)

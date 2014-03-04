@@ -11,12 +11,12 @@ namespace AbstractSyntax
     public class DeclateModule : Scope
     {
         public ModuleTranslator ModuleTrans { get; private set; }
-        public ExpressionList ExpList { get; set; }
+        public DirectiveList ExpList { get; set; }
         public List<Token> ErrorToken { get; set; }
 
         public DeclateModule()
         {
-            ExpList = new ExpressionList();
+            ExpList = new DirectiveList();
             ErrorToken = new List<Token>();
         }
 
@@ -25,12 +25,12 @@ namespace AbstractSyntax
             ExpList.Append(append);
         }
 
-        public override int ChildCount
+        public override int Count
         {
             get { return 1; }
         }
 
-        public override Element GetChild(int index)
+        public override Element Child(int index)
         {
             switch (index)
             {
@@ -45,7 +45,7 @@ namespace AbstractSyntax
             base.SpreadTranslate(ModuleTrans);
         }
 
-        protected override void CheckSyntax()
+        internal override void CheckSyntax()
         {
             foreach (Token v in ErrorToken)
             {
@@ -58,6 +58,7 @@ namespace AbstractSyntax
                     CompileError(": トークン " + v.Text + " をこの位置に書くことは出来ません。");
                 }
             }
+            base.CheckSyntax();
         }
 
         internal override void Translate(Translator trans)

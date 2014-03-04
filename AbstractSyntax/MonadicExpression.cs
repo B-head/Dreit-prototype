@@ -9,19 +9,19 @@ namespace AbstractSyntax
 {
     public abstract class MonadicExpression : Element
     {
-        public Element Child { get; set; }
+        public Element _Child { get; set; }
         public TokenType Operation { get; set; }
 
-        public override int ChildCount
+        public override int Count
         {
             get { return 1; }
         }
 
-        public override Element GetChild(int index)
+        public override Element Child(int index)
         {
             switch (index)
             {
-                case 0: return Child;
+                case 0: return _Child;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -31,9 +31,9 @@ namespace AbstractSyntax
             return Enum.GetName(typeof(TokenType), Operation);
         }
 
-        protected override void CheckSyntax()
+        internal override void CheckSyntax()
         {
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v == null)
                 {
@@ -41,6 +41,7 @@ namespace AbstractSyntax
                     continue;
                 }
             }
+            base.CheckSyntax();
         }
     }
 }

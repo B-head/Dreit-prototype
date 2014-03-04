@@ -13,12 +13,12 @@ namespace AbstractSyntax
         public Element Right { get; set; }
         public TokenType Operation { get; set; }
 
-        public override int ChildCount
+        public override int Count
         {
             get { return 2; }
         }
 
-        public override Element GetChild(int index)
+        public override Element Child(int index)
         {
             switch (index)
             {
@@ -33,9 +33,9 @@ namespace AbstractSyntax
             return Enum.GetName(typeof(TokenType), Operation);
         }
 
-        protected override void CheckSyntax()
+        internal override void CheckSyntax()
         {
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v == null)
                 {
@@ -43,6 +43,7 @@ namespace AbstractSyntax
                     continue;
                 }
             }
+            base.CheckSyntax();
         }
     }
 }

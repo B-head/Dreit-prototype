@@ -20,7 +20,7 @@ namespace SyntacticAnalysis
             ErrorToken = new List<Token>();
             int c = 0;
             SkipSpaser(c);
-            ExpressionList exp = ExpressionList(ref c, true);
+            DirectiveList exp = DirectiveList(ref c, true);
             return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
         }
 
@@ -135,6 +135,34 @@ namespace SyntacticAnalysis
             SkipSpaser(++c);
             Element right = RightAssociative<R>(ref c, next, type);
             return new R { Left = left, Right = right, Operation = match, Position = left.Position };
+        }
+
+        private Element ParseTuple(ref int c, ParserFunction next)
+        {
+            TupleList tuple = new TupleList();
+            while (IsReadable(c))
+            {
+                Element temp = next(ref c);
+                tuple.Append(temp);
+                if (!CheckToken(c, TokenType.List))
+                {
+                    break;
+                }
+                SkipSpaser(++c);
+            }
+            if (tuple.Count > 1)
+            {
+                tuple.Position = tuple[0].Position;
+                return tuple;
+            }
+            if (tuple.Count > 0)
+            {
+                return tuple.Child(0);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

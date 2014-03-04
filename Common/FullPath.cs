@@ -16,6 +16,7 @@ namespace Common
         Mul,
         Div,
         Mod,
+        Echo,
     }
 
     public interface PathNode

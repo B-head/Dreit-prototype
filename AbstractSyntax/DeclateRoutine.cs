@@ -10,7 +10,6 @@ namespace AbstractSyntax
 {
     public class DeclateRoutine : Scope
     {
-        public bool IsImport { get; set; }
         public RoutineTranslator RoutineTrans { get; private set; }
         public Identifier Ident { get; set; }
         public Element GenericList { get; set; }
@@ -19,12 +18,12 @@ namespace AbstractSyntax
         public Element Block { get; set; }
         public Scope ResultType { get; set; }
 
-        public override int ChildCount
+        public override int Count
         {
             get { return 5; }
         }
 
-        public override Element GetChild(int index)
+        public override Element Child(int index)
         {
             switch (index)
             {
@@ -46,7 +45,6 @@ namespace AbstractSyntax
         {
             if (IsImport)
             {
-                trans.ImportRoutine(FullPath);
                 base.SpreadTranslate(trans);
             }
             else

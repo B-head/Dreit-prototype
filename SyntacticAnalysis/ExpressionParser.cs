@@ -10,39 +10,9 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private ExpressionList ExpressionList(ref int c, bool root = false)
-        {
-            ExpressionList result = new ExpressionList();
-            while (IsReadable(c))
-            {
-                if (CheckToken(c, TokenType.EndExpression))
-                {
-                    SkipSpaser(++c);
-                    continue;
-                }
-                Element temp = Expression(ref c);
-                if (temp == null)
-                {
-                    if(!root && CheckToken(c, TokenType.RightBrace))
-                    {
-                        break;
-                    }
-                    SkipError(c);
-                    continue;
-                }
-                result.Append(temp);
-            }
-            return result;
-        }
-
         private Element Expression(ref int c)
         {
-            Element temp = LeftAssign(ref c);
-            if (CheckToken(c, TokenType.EndExpression))
-            {
-                SkipSpaser(++c);
-            }
-            return temp;
+            return LeftAssign(ref c);
         }
 
         private Element LeftAssign(ref int c)
@@ -52,7 +22,12 @@ namespace SyntacticAnalysis
 
         private Element RightAssign(ref int c)
         {
-            return LeftAssociative<RightAssign>(ref c, Addtive, TokenType.RightAssign);
+            return LeftAssociative<RightAssign>(ref c, TupleList, TokenType.RightAssign);
+        }
+
+        private Element TupleList(ref int c)
+        {
+            return ParseTuple(ref c, Addtive);
         }
 
         private Element Addtive(ref int c)
@@ -67,7 +42,31 @@ namespace SyntacticAnalysis
 
         private Element Exponentive(ref int c)
         {
-            return RightAssociative<DyadicCalculate>(ref c, Primary, TokenType.Exponent);
+            return RightAssociative<DyadicCalculate>(ref c, CallRoutine, TokenType.Exponent);
+        }
+
+        private Element CallRoutine(ref int c)
+        {
+            var access = MemberAccess(ref c);
+            int temp = c;
+            if (!CheckToken(temp, TokenType.LeftParenthesis))
+            {
+                return access;
+            }
+            SkipSpaser(++temp);
+            var argument = TupleList(ref temp);
+            if (!CheckToken(temp, TokenType.RightParenthesis))
+            {
+                return access;
+            }
+            SkipSpaser(++temp);
+            c = temp;
+            return new CallRoutine { Access = access, Argument = argument, Position = access.Position };
+        }
+
+        private Element MemberAccess(ref int c)
+        {
+            return LeftAssociative<MemberAccess>(ref c, Primary, TokenType.Access);
         }
     }
 }

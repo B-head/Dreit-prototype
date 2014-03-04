@@ -12,6 +12,12 @@ namespace AbstractSyntax
     {
         public string Integral { get; set; }
         public string Fraction { get; set; }
+        private Scope _DataType;
+
+        internal override Scope DataType
+        {
+            get { return _DataType; }
+        }
 
         protected override string AdditionalInfo()
         {
@@ -25,13 +31,14 @@ namespace AbstractSyntax
             }
         }
 
-        protected override void CheckSyntax()
+        internal override void CheckSyntax()
         {
             Parse(Integral);
             if(Fraction != null)
             {
                 Parse(Fraction);
             }
+            base.CheckSyntax();
         }
 
         internal override void CheckDataType(Scope scope)
@@ -39,11 +46,11 @@ namespace AbstractSyntax
             var temp = scope.NameResolution("DlightObject");
             if(Fraction == null)
             {
-                DataType = temp.NameResolution("Integer32");
+                _DataType = temp.NameResolution("Integer32");
             }
             else
             {
-                DataType = temp.NameResolution("Binary64");
+                _DataType = temp.NameResolution("Binary64");
             }
             base.CheckDataType(scope);
         }

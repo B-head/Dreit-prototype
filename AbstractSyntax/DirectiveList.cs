@@ -8,13 +8,13 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public class ExpressionList : Element
+    public class DirectiveList : Element
     {
-        public List<Element> Child { get; set; }
+        public List<Element> _Child { get; set; }
 
-        public ExpressionList()
+        public DirectiveList()
         {
-            Child = new List<Element>();
+            _Child = new List<Element>();
         }
 
         public void Append(Element append)
@@ -23,26 +23,26 @@ namespace AbstractSyntax
             {
                 return;
             }
-            if(Child.Count == 0)
+            if(_Child.Count == 0)
             {
                 Position = append.Position;
             }
-            Child.Add(append);
+            _Child.Add(append);
         }
 
-        public override int ChildCount
+        public override int Count
         {
-            get { return Child.Count; }
+            get { return _Child.Count; }
         }
 
-        public override Element GetChild(int index)
+        public override Element Child(int index)
         {
-            return Child[index];
+            return _Child[index];
         }
 
         internal override void Translate(Translator trans)
         {
-            foreach(Element v in EnumChild())
+            foreach(Element v in this)
             {
                 v.Translate(trans);
                 trans.GenelateControl(CodeType.Pop);

@@ -20,17 +20,17 @@ namespace Dlight
         {
             string fileName = args[0];
             Root root = new Root();
-            ImportManager.ImportAssembly(root, Assembly.Load("mscorlib"));
-            ImportManager.ImportAssembly(root, Assembly.Load("DlightObject"));
+            ImportManager import = new ImportManager(root);
+            import.ImportAssembly(Assembly.Load("mscorlib"));
+            import.ImportAssembly(Assembly.Load("DlightObject"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(root.CompileResult());
-            //Console.WriteLine(root);
+            Console.WriteLine(root);
             if (root.ErrorCount == 0)
             {
                 RootTranslator trans = new RootTranslator(fileName.Replace(".txt", ""));
-                trans.AppendAssembly(Assembly.Load("mscorlib"));
-                trans.AppendAssembly(Assembly.Load("DlightObject"));
+                import.TranslateImport(trans);
                 root.TranslateTo(trans);
                 trans.Save();
             }

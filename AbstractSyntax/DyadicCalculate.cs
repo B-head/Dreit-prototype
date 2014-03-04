@@ -10,6 +10,11 @@ namespace AbstractSyntax
 {
     public class DyadicCalculate : DyadicExpression
     {
+        internal override Scope DataType
+        {
+            get { return Left.DataType; }
+        }
+
         internal override void CheckDataType(Scope scope)
         {
             base.CheckDataType(scope);
@@ -19,16 +24,12 @@ namespace AbstractSyntax
             {
                 CompileError(l + " 型と " + r + " 型を演算することは出来ません。");
             }
-            else
-            {
-                DataType = l;
-            }
         }
 
         internal override void Translate(Translator trans)
         {
             base.Translate(trans);
-            Scope type = Left.DataType;
+            Scope type = DataType;
             string callName = string.Empty;
             switch(Operation)
             {

@@ -12,7 +12,6 @@ namespace CliTranslate
     public class RootTranslator : Translator
     {
         private Dictionary<FullPath, dynamic> BuilderDictonary;
-        private List<Assembly> ImportAssembly;
         private AssemblyBuilder Assembly;
         private ModuleBuilder Module;
         public string Name { get; private set; }
@@ -22,16 +21,10 @@ namespace CliTranslate
             : base(null, null)
         {
             BuilderDictonary = new Dictionary<FullPath, object>();
-            ImportAssembly = new List<Assembly>();
             Name = name;
             FileName = name + ".exe";
             Assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave);
             Module = Assembly.DefineDynamicModule(Name, FileName);
-        }
-
-        public void AppendAssembly(Assembly assembly)
-        {
-            ImportAssembly.Add(assembly);
         }
 
         internal dynamic GetBuilder(FullPath path)
@@ -43,7 +36,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal void RegisterBuilder(FullPath path, dynamic builder)
+        public void RegisterBuilder(FullPath path, dynamic builder)
         {
             if(path == null || builder == null)
             {
@@ -53,19 +46,6 @@ namespace CliTranslate
             {
                 BuilderDictonary.Add(path, builder);
             }
-        }
-
-        internal Type GetImportType(string name)
-        {
-            foreach(var v in ImportAssembly)
-            {
-                var t = v.GetType(name);
-                if(t != null)
-                {
-                    return t;
-                }
-            }
-            return null;
         }
 
         public override ModuleTranslator CreateModule(FullPath path)

@@ -8,12 +8,17 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public abstract class Element
+    public abstract class Element : IReadOnlyList<Element>
     {
         public TextPosition Position { get; set; }
         public Element Parent { get; private set; }
         public Root Root { get; private set; }
-        public Scope DataType { get; protected set; }
+        public bool IsImport { get; set; }
+
+        internal virtual Scope DataType
+        {
+            get { return null; }
+        }
 
         internal virtual Scope AccessType
         {
@@ -25,22 +30,32 @@ namespace AbstractSyntax
             get { return false; }
         }
 
-        public virtual int ChildCount
+        public virtual int Count
         {
             get { return 0; }
         }
 
-        public virtual Element GetChild(int index)
+        public virtual Element Child(int index)
         {
             throw new ArgumentOutOfRangeException();
         }
 
-        public IEnumerable<Element> EnumChild()
+        public Element this[int index]
         {
-            for (int i = 0; i < ChildCount; i++)
+            get { return Child(index); }
+        }
+
+        public IEnumerator<Element> GetEnumerator()
+        {
+            for (int i = 0; i < Count; i++)
             {
-                yield return GetChild(i);
+                yield return Child(i);
             }
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         protected virtual string AdditionalInfo()
@@ -93,11 +108,15 @@ namespace AbstractSyntax
         {
             StringBuilder result = new StringBuilder();
             result.AppendLine(Indent(indent) + ElementInfo());
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v == null)
                 {
                     result.AppendLine(Indent(indent + 1) + "<null>");
+                    continue;
+                }
+                if(v.IsImport)
+                {
                     continue;
                 }
                 result.Append(v.ToString(indent + 1));
@@ -122,24 +141,44 @@ namespace AbstractSyntax
                 temp.SpreadScope(scope);
                 scope = temp;
             }
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v != null)
                 {
                     v.SpreadElement(this, scope);
                 }
             }
-            CheckSyntax();
         }
 
-        protected virtual void CheckSyntax()
+        internal virtual void SpreadReference(Scope scope)
         {
-            return;
+            if (this is Scope)
+            {
+                scope = (Scope)this;
+            }
+            foreach (Element v in this)
+            {
+                if (v != null)
+                {
+                    v.SpreadReference(scope);
+                }
+            }
+        }
+
+        internal virtual void CheckSyntax()
+        {
+            foreach (Element v in this)
+            {
+                if (v != null)
+                {
+                    v.CheckSyntax();
+                }
+            }
         }
 
         internal virtual void CheckDataType(Scope scope)
         {
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v != null)
                 {
@@ -150,7 +189,7 @@ namespace AbstractSyntax
 
         internal virtual void CheckDataTypeAssign(Scope type)
         {
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v == null)
                 {
@@ -165,7 +204,7 @@ namespace AbstractSyntax
 
         internal virtual void Translate(Translator trans)
         {
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v != null)
                 {
@@ -176,7 +215,7 @@ namespace AbstractSyntax
 
         internal virtual void TranslateAssign(Translator trans)
         {
-            foreach (Element v in EnumChild())
+            foreach (Element v in this)
             {
                 if (v == null)
                 {

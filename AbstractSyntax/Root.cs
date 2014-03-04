@@ -21,6 +21,7 @@ namespace AbstractSyntax
         public void SemanticAnalysis()
         {
             SpreadElement(null, null);
+            SpreadReference(null);
             CheckSyntax();
             CheckDataType(null);
         }

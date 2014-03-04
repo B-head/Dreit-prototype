@@ -10,21 +10,26 @@ namespace AbstractSyntax
 {
     public class DeclareVariant : Scope
     {
-        public bool IsImport { get; set; }
         public Identifier Ident { get; set; }
         public Element ExplicitVariantType { get; set; }
+        private Scope _DataType;
+
+        internal override Scope DataType
+        {
+            get { return _DataType; }
+        }
 
         public override bool IsReference
         {
             get { return true; }
         }
 
-        public override int ChildCount
+        public override int Count
         {
             get { return 2; }
         }
 
-        public override Element GetChild(int index)
+        public override Element Child(int index)
         {
             switch (index)
             {
@@ -48,20 +53,20 @@ namespace AbstractSyntax
             }
         }
 
-        internal override void CheckDataType(Scope scope)
+        internal override void SpreadReference(Scope scope)
         {
+            base.SpreadReference(scope);
             if (ExplicitVariantType != null)
             {
-                DataType = ExplicitVariantType.DataType;
+                _DataType = ExplicitVariantType.DataType;
             }
-            base.CheckDataType(scope);
         }
 
         internal override void CheckDataTypeAssign(Scope type)
         {
-            if (DataType == null && type != null)
+            if (_DataType == null && type != null)
             {
-                DataType = type;
+                _DataType = type;
             }
             base.CheckDataTypeAssign(type);
         }

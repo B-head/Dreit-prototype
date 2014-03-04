@@ -1,2 +1,6 @@
-﻿1 + 2 * 3 =: var a =: var b
-var stdout := a * b
+﻿test(11, 22)
+
+routine test(a:DlightObject.Integer32, b:DlightObject.Integer32):void
+{
+	echo a * b
+}
