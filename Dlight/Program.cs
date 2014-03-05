@@ -26,7 +26,7 @@ namespace Dlight
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(root.CompileResult());
-            Console.WriteLine(root);
+            Console.WriteLine(root.ToString(true));
             if (root.ErrorCount == 0)
             {
                 RootTranslator trans = new RootTranslator(fileName.Replace(".txt", ""));

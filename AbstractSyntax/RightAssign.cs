@@ -16,7 +16,7 @@ namespace AbstractSyntax
 
         internal override void CheckSyntax()
         {
-            if (Right != null && !Right.IsReference)
+            if (Right != null && !Right.IsAssignable)
             {
                 CompileError("割り当て可能な式である必要があります。");
             }

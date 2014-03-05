@@ -83,6 +83,11 @@ namespace AbstractSyntax
             return ScopeParent.NameResolution(name);
         }
 
+        internal override Scope DataType
+        {
+            get { return this; }
+        }
+
         protected override string AdditionalInfo()
         {
             return Name;

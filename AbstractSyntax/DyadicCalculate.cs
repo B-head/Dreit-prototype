@@ -40,7 +40,7 @@ namespace AbstractSyntax
                 case TokenType.Modulo: callName = "opModulo"; break;
                 default: throw new Exception();
             }
-            trans.GenelateCall(type.NameResolution(callName).FullPath);
+            trans.GenerateCall(type.NameResolution(callName).FullPath);
         }
     }
 }

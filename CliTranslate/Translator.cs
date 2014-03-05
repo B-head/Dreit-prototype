@@ -83,7 +83,7 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual RoutineTranslator CreateRoutine(FullPath path)
+        public virtual RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
         {
             throw new NotSupportedException();
         }
@@ -114,11 +114,12 @@ namespace CliTranslate
             Root.RegisterBuilder(path, builder);
         }
 
-        public void GenelateControl(CodeType type)
+        public void GenerateControl(CodeType type)
         {
             switch (type)
             {
                 case CodeType.Nop: Generator.Emit(OpCodes.Nop); break;
+                case CodeType.Void: Generator.Emit(OpCodes.Ldc_I4_0); break;
                 case CodeType.Pop: Generator.Emit(OpCodes.Pop); break;
                 case CodeType.Ret: Generator.Emit(OpCodes.Ret); break;
                 case CodeType.Add: Generator.Emit(OpCodes.Add); break;
@@ -131,7 +132,7 @@ namespace CliTranslate
             }
         }
 
-        public void GenelatePrimitive(int value)
+        public void GeneratePrimitive(int value)
         {
             if (value <= 127 && value >= -128)
             {
@@ -156,33 +157,33 @@ namespace CliTranslate
             }
         }
 
-        public void GenelatePrimitive(long value)
+        public void GeneratePrimitive(long value)
         {
             Generator.Emit(OpCodes.Ldc_I8, value);
         }
 
-        public void GenelatePrimitive(float value)
+        public void GeneratePrimitive(float value)
         {
             Generator.Emit(OpCodes.Ldc_R4, value);
         }
 
-        public void GenelatePrimitive(double value)
+        public void GeneratePrimitive(double value)
         {
             Generator.Emit(OpCodes.Ldc_R8, value);
         }
 
-        public void GenelatePrimitive(string value)
+        public void GeneratePrimitive(string value)
         {
             Generator.Emit(OpCodes.Ldstr, value);
         }
 
-        public void GenelateLoad(FullPath name)
+        public virtual void GenerateLoad(FullPath name)
         {
             dynamic temp = Root.GetBuilder(name);
             BuildLoad(temp);
         }
 
-        private void BuildLoad(LocalBuilder local)
+        protected void BuildLoad(LocalBuilder local)
         {
             if (local.LocalIndex <= 255)
             {
@@ -201,7 +202,7 @@ namespace CliTranslate
             }
         }
 
-        private void BuildLoad(FieldBuilder field)
+        protected void BuildLoad(FieldBuilder field)
         {
             if (field.IsStatic)
             {
@@ -213,13 +214,33 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenelateStore(FullPath name)
+        protected void BuildLoad(ParameterBuilder param)
+        {
+            int index = param.Position - 1;
+            if (index <= 255)
+            {
+                switch (index)
+                {
+                    case 0: Generator.Emit(OpCodes.Ldarg_0); break;
+                    case 1: Generator.Emit(OpCodes.Ldarg_1); break;
+                    case 2: Generator.Emit(OpCodes.Ldarg_2); break;
+                    case 3: Generator.Emit(OpCodes.Ldarg_3); break;
+                    default: Generator.Emit(OpCodes.Ldarg_S, index); break;
+                }
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Ldarg, index);
+            }
+        }
+
+        public virtual void GenerateStore(FullPath name)
         {
             dynamic temp = Root.GetBuilder(name);
             BuildStore(temp);
         }
 
-        private void BuildStore(LocalBuilder local)
+        protected void BuildStore(LocalBuilder local)
         {
             if (local.LocalIndex <= 255)
             {
@@ -238,7 +259,7 @@ namespace CliTranslate
             }
         }
 
-        private void BuildStore(FieldBuilder field)
+        protected void BuildStore(FieldBuilder field)
         {
             if (field.IsStatic)
             {
@@ -250,7 +271,20 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenelateCall(FullPath name)
+        protected void BuildStore(ParameterBuilder param)
+        {
+            int index = param.Position - 1;
+            if (index <= 255)
+            {
+                Generator.Emit(OpCodes.Starg_S, index);
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Starg, index);
+            }
+        }
+
+        public virtual void GenerateCall(FullPath name)
         {
             var temp = Root.GetBuilder(name);
             if (temp is ConstructorInfo)

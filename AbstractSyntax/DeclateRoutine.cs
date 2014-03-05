@@ -12,11 +12,12 @@ namespace AbstractSyntax
     {
         public RoutineTranslator RoutineTrans { get; private set; }
         public Identifier Ident { get; set; }
-        public Element GenericList { get; set; }
-        public Element ArgumentList { get; set; }
+        public Element Generic { get; set; }
+        public Element Argument { get; set; }
         public Element ExplicitResultType { get; set; }
         public Element Block { get; set; }
-        public Scope ResultType { get; set; }
+        public List<Scope> ArgumentType { get; set; }
+        public Scope ReturnType { get; set; }
 
         public override int Count
         {
@@ -28,8 +29,8 @@ namespace AbstractSyntax
             switch (index)
             {
                 case 0: return Ident;
-                case 1: return GenericList;
-                case 2: return ArgumentList;
+                case 1: return Generic;
+                case 2: return Argument;
                 case 3: return ExplicitResultType;
                 case 4: return Block;
                 default: throw new ArgumentOutOfRangeException();
@@ -41,6 +42,26 @@ namespace AbstractSyntax
             return Ident == null ? null : Ident.Value;
         }
 
+        internal override void SpreadReference(Scope scope)
+        {
+            base.SpreadReference(scope);
+            var refer = new List<Scope>();
+            if (Argument is TupleList)
+            {
+                foreach (var v in Argument)
+                {
+                    var temp = v.DataType;
+                    refer.Add(temp);
+                }
+            }
+            else if (Argument != null)
+            {
+                var temp = Argument.DataType;
+                refer.Add(temp);
+            }
+            ArgumentType = refer;
+        }
+
         internal override void SpreadTranslate(Translator trans)
         {
             if (IsImport)
@@ -49,14 +70,17 @@ namespace AbstractSyntax
             }
             else
             {
-                RoutineTrans = trans.CreateRoutine(FullPath);
+                FullPath returnType = ReturnType == null ? null : ReturnType.FullPath;
+                RoutineTrans = trans.CreateRoutine(FullPath, returnType);
                 base.SpreadTranslate(RoutineTrans);
+                RoutineTrans.SaveArgument();
             }
         }
 
         internal override void Translate(Translator trans)
         {
-            base.Translate(RoutineTrans);
+            Block.Translate(RoutineTrans);
+            trans.GenerateControl(CodeType.Void);
         }
     }
 }

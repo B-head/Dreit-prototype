@@ -45,9 +45,9 @@ namespace AbstractSyntax
             foreach(Element v in this)
             {
                 v.Translate(trans);
-                trans.GenelateControl(CodeType.Pop);
+                trans.GenerateControl(CodeType.Pop);
             }
-            trans.GenelateControl(CodeType.Ret);
+            trans.GenerateControl(CodeType.Ret);
         }
     }
 }

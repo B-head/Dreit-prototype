@@ -60,18 +60,18 @@ namespace AbstractSyntax
             if (Fraction == null)
             {
                 int number = (int)Parse(Integral);
-                trans.GenelatePrimitive(number);
+                trans.GeneratePrimitive(number);
                 var ctor = DataType.NameResolution(".ctor");
-                trans.GenelateCall(ctor.FullPath);
+                trans.GenerateCall(ctor.FullPath);
             }
             else
             {
                 double number = (double)Parse(Integral);
                 int count, b;
                 number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
-                trans.GenelatePrimitive(number);
+                trans.GeneratePrimitive(number);
                 var ctor = DataType.NameResolution(".ctor");
-                trans.GenelateCall(ctor.FullPath);
+                trans.GenerateCall(ctor.FullPath);
             }
             base.Translate(trans);
         }

@@ -24,7 +24,7 @@ namespace AbstractSyntax
             {
                 CompileError("式中では割り当て演算子の向きが揃っている必要があります。");
             }
-            else if(Left != null && !Left.IsReference)
+            else if(Left != null && !Left.IsAssignable)
             {
                 CompileError("割り当て可能な式である必要があります。");
             }

@@ -17,11 +17,6 @@ namespace AbstractSyntax
         public Element Block { get; set; }
         public List<DeclateClass> InheritRefer { get; private set; }
 
-        internal override Scope DataType
-        {
-            get { return this; }
-        }
-
         public override int Count
         {
             get { return 4; }
@@ -42,19 +37,6 @@ namespace AbstractSyntax
         protected override string CreateName()
         {
             return Ident == null ? null : Ident.Value;
-        }
-
-        internal override void SpreadTranslate(Translator trans)
-        {
-            if (IsImport)
-            {
-                base.SpreadTranslate(trans);
-            }
-            else
-            {
-                ClassTrans = trans.CreateClass(FullPath);
-                base.SpreadTranslate(ClassTrans);
-            }
         }
 
         internal override void SpreadReference(Scope scope)
@@ -83,6 +65,19 @@ namespace AbstractSyntax
                 refer.Add(temp);
             }
             InheritRefer = refer;
+        }
+
+        internal override void SpreadTranslate(Translator trans)
+        {
+            if (IsImport)
+            {
+                base.SpreadTranslate(trans);
+            }
+            else
+            {
+                ClassTrans = trans.CreateClass(FullPath);
+                base.SpreadTranslate(ClassTrans);
+            }
         }
 
         internal override void Translate(Translator trans)

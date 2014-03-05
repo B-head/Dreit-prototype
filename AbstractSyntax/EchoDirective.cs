@@ -29,8 +29,8 @@ namespace AbstractSyntax
         internal override void Translate(Translator trans)
         {
             base.Translate(trans);
-            trans.GenelateControl(CodeType.Echo);
-            trans.GenelatePrimitive(0);
+            trans.GenerateControl(CodeType.Echo);
+            trans.GenerateControl(CodeType.Void);
         }
     }
 }

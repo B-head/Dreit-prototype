@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="CallRoutine.cs" />
     <Compile Include="DataType.cs" />
+    <Compile Include="DeclateArgument.cs" />
     <Compile Include="DeclateClass.cs" />
     <Compile Include="DeclateModule.cs" />
     <Compile Include="DeclateRoutine.cs" />

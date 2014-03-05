@@ -8,10 +8,10 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public class DeclateVariant : Scope
+    public class DeclateArgument : Scope
     {
         public Identifier Ident { get; set; }
-        public Element ExplicitVariantType { get; set; }
+        public Element ExplicitArgumentType { get; set; }
         private Scope _DataType;
 
         internal override Scope DataType
@@ -34,7 +34,7 @@ namespace AbstractSyntax
             switch (index)
             {
                 case 0: return Ident;
-                case 1: return ExplicitVariantType;
+                case 1: return ExplicitArgumentType;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -48,7 +48,8 @@ namespace AbstractSyntax
         {
             if (!IsImport)
             {
-                trans.CreateVariant(FullPath, DataType.FullPath);
+                RoutineTranslator routTrans = trans as RoutineTranslator;
+                routTrans.CreateArgument(FullPath, DataType.FullPath);
                 base.SpreadTranslate(trans);
             }
         }
@@ -56,29 +57,10 @@ namespace AbstractSyntax
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
-            if (ExplicitVariantType != null)
+            if (ExplicitArgumentType != null)
             {
-                _DataType = ExplicitVariantType.DataType;
+                _DataType = ExplicitArgumentType.DataType;
             }
-        }
-
-        internal override void CheckDataTypeAssign(Scope type)
-        {
-            if (_DataType == null && type != null)
-            {
-                _DataType = type;
-            }
-            base.CheckDataTypeAssign(type);
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            Ident.Translate(trans);
-        }
-
-        internal override void TranslateAssign(Translator trans)
-        {
-            Ident.TranslateAssign(trans);
         }
     }
 }

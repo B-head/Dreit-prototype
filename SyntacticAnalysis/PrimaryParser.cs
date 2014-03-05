@@ -70,14 +70,21 @@ namespace SyntacticAnalysis
             return new Identifier { Value = t.Text, Position = t.Position };
         }
 
-        private DeclareVariant DeclareVariant(ref int c)
+        private DeclateVariant DeclareVariant(ref int c)
         {
             if (!CheckText(c, "var", "variant"))
             {
                 return null;
             }
             SkipSpaser(++c);
-            return VariantSetting(ref c);
+            Identifier ident = Identifier(ref c);
+            Element explType = null;
+            if (CheckToken(c, TokenType.Peir))
+            {
+                SkipSpaser(++c);
+                explType = MemberAccess(ref c);
+            }
+            return new DeclateVariant { Ident = ident, ExplicitVariantType = explType, Position = ident.Position };
         }
 
         private DeclateRoutine DeclateRoutine(ref int c)
@@ -94,7 +101,7 @@ namespace SyntacticAnalysis
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
                 SkipSpaser(++c);
-                attr = ParseTuple(ref c, VariantSetting);
+                attr = ParseTuple(ref c, DeclateArgument);
                 if (CheckToken(c, TokenType.RightParenthesis))
                 {
                     SkipSpaser(++c);
@@ -106,10 +113,10 @@ namespace SyntacticAnalysis
                 retType = Identifier(ref c);
             }
             block = Block(ref c);
-            return new DeclateRoutine { Ident = ident, ArgumentList = attr, ExplicitResultType = retType, Block = block, Position = ident.Position };
+            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitResultType = retType, Block = block, Position = ident.Position };
         }
 
-        private DeclareVariant VariantSetting(ref int c)
+        private DeclateArgument DeclateArgument(ref int c)
         {
             Identifier ident = Identifier(ref c);
             Element explType = null;
@@ -118,7 +125,7 @@ namespace SyntacticAnalysis
                 SkipSpaser(++c);
                 explType = MemberAccess(ref c);
             }
-            return new DeclareVariant { Ident = ident, ExplicitVariantType = explType, Position = ident.Position };
+            return new DeclateArgument { Ident = ident, ExplicitArgumentType = explType, Position = ident.Position };
         }
 
         private Element Block(ref int c)

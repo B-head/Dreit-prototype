@@ -15,7 +15,7 @@ namespace AbstractSyntax
 
         public Root()
         {
-            Name = string.Empty;
+            Name = "global";
         }
 
         public void SemanticAnalysis()
@@ -48,11 +48,6 @@ namespace AbstractSyntax
         public string CompileResult()
         {
             return "Error = " + ErrorCount + ", Warning = " + WarningCount;
-        }
-
-        protected override string AdditionalInfo()
-        {
-            return null;
         }
     }
 }

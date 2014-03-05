@@ -34,10 +34,10 @@ namespace CliTranslate
             Class.CreateType();
         }
 
-        public override RoutineTranslator CreateRoutine(FullPath path)
+        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
         {
             var builder = Class.DefineMethod(path.Name, MethodAttributes.Public);
-            return new RoutineTranslator(path, this, builder);
+            return new RoutineTranslator(path, this, builder, returnType);
         }
 
         public override ClassTranslator CreateClass(FullPath path)

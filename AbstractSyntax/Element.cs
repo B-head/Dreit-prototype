@@ -20,12 +20,7 @@ namespace AbstractSyntax
             get { return null; }
         }
 
-        internal virtual Scope AccessType
-        {
-            get { return DataType; }
-        }
-
-        public virtual bool IsReference
+        public virtual bool IsAssignable
         {
             get { return false; }
         }
@@ -101,10 +96,10 @@ namespace AbstractSyntax
 
         public override string ToString()
         {
-            return ToString(0);
+            return ToString(false);
         }
 
-        public virtual string ToString(int indent)
+        public virtual string ToString(bool hideImport, int indent = 0)
         {
             StringBuilder result = new StringBuilder();
             result.AppendLine(Indent(indent) + ElementInfo());
@@ -115,11 +110,11 @@ namespace AbstractSyntax
                     result.AppendLine(Indent(indent + 1) + "<null>");
                     continue;
                 }
-                if(v.IsImport)
+                if(hideImport && v.IsImport)
                 {
                     continue;
                 }
-                result.Append(v.ToString(indent + 1));
+                result.Append(v.ToString(hideImport, indent + 1));
             }
             return result.ToString();
         }
@@ -195,7 +190,7 @@ namespace AbstractSyntax
                 {
                     continue;
                 }
-                if (v != null && v.IsReference)
+                if (v != null && v.IsAssignable)
                 {
                     v.CheckDataTypeAssign(type);
                 }
@@ -221,7 +216,7 @@ namespace AbstractSyntax
                 {
                     continue;
                 }
-                if (v.IsReference)
+                if (v.IsAssignable)
                 {
                     v.TranslateAssign(trans);
                 }

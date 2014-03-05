@@ -19,15 +19,10 @@ namespace AbstractSyntax
             get { return Right.DataType; }
         }
 
-        internal override Scope AccessType
-        {
-            get { return Right.AccessType; }
-        }
-
         internal override void SpreadReference(Scope scope)
         {
             Left.SpreadReference(scope);
-            Right.SpreadReference(Left.AccessType);
+            Right.SpreadReference(Left.DataType);
         }
     }
 }

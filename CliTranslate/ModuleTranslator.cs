@@ -36,10 +36,10 @@ namespace CliTranslate
             GlobalField.CreateType();
         }
 
-        public override RoutineTranslator CreateRoutine(FullPath path)
+        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
         {
             var builder = Module.DefineGlobalMethod(path.Name, MethodAttributes.Static, null, null);
-            return new RoutineTranslator(path, this, builder); //モジュールに直接レキシカルオブジェクトを作りたい。
+            return new RoutineTranslator(path, this, builder, returnType); //モジュールに直接レキシカルオブジェクトを作りたい。
         }
 
         public override ClassTranslator CreateClass(FullPath path)

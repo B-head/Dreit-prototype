@@ -163,10 +163,10 @@ namespace CliImport
             }
         }
 
-        private DeclareVariant ConvertGeneric(Type generic)
+        private DeclateVariant ConvertGeneric(Type generic)
         {
             var ident = new Identifier { Value = generic.GetPureName(), IsImport = true };
-            return new DeclareVariant { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
+            return new DeclateVariant { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
         private Element CreateInheritList(List<Type> inherit)
@@ -220,7 +220,7 @@ namespace CliImport
             var ident = new Identifier { Value = ctor.Name, IsImport = true };
             var argument = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
-            DeclateRoutine result = new DeclateRoutine { Ident = ident, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Ident = ident, Argument = argument, ExplicitResultType = expl, IsImport = true };
             AppendPeir(result, ctor);
             return result;
         }
@@ -229,7 +229,7 @@ namespace CliImport
         {
             var ident = new Identifier { Value = eve.Name, IsImport = true };
             var expl = CreateAccess(eve.DeclaringType);
-            DeclareVariant result = new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
             AppendPeir(result, eve);
             return result;
         }
@@ -237,7 +237,7 @@ namespace CliImport
         private Element ImportEnum(Type enumType)
         {
             var ident = new Identifier { Value = enumType.GetPureName(), IsImport = true };
-            DeclareVariant result = new DeclareVariant { Ident = ident, IsImport = true };
+            DeclateVariant result = new DeclateVariant { Ident = ident, IsImport = true };
             AppendPeir(result, enumType);
             return result;
         }
@@ -248,7 +248,7 @@ namespace CliImport
             var generic = CreateGenericList(method.GetGenericList());
             var argument = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
-            DeclateRoutine result = new DeclateRoutine { Ident = ident, GenericList = generic, ArgumentList = argument, ExplicitResultType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Ident = ident, Generic = generic, Argument = argument, ExplicitResultType = expl, IsImport = true };
             AppendPeir(result, method);
             return result;
         }
@@ -275,20 +275,20 @@ namespace CliImport
             }
         }
 
-        private DeclareVariant ConvertArgument(ParameterInfo argument)
+        private DeclateVariant ConvertArgument(ParameterInfo argument)
         {
             var ident = new Identifier { Value = argument.Name, IsImport = true };
             var expl = CreateAccess(argument.ParameterType);
-            DeclareVariant result = new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
             AppendPeir(result, argument);
             return result;
         }
 
-        private DeclareVariant ImportField(FieldInfo field)
+        private DeclateVariant ImportField(FieldInfo field)
         {
             var ident = new Identifier { Value = field.Name, IsImport = true };
             var expl = CreateAccess(field.FieldType);
-            DeclareVariant result = new DeclareVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
             AppendPeir(result, field);
             return result;
         }
@@ -369,7 +369,9 @@ namespace CliImport
                 temp.Add(type.GetPureName());
                 return temp;
             }
-            var result = type.Namespace.Split('.').ToList();
+            var result = new List<string>();
+            result.Add("global");
+            result.AddRange(type.Namespace.Split('.'));
             result.AddRange(type.GetNestedName());
             return result;
         }

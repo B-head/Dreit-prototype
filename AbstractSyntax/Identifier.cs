@@ -14,15 +14,17 @@ namespace AbstractSyntax
 
         internal override Scope DataType
         {
-            get { return Refer.DataType; }
+            get 
+            { 
+                if(Refer == null)
+                {
+                    return null;
+                }
+                return Refer.DataType; 
+            }
         }
 
-        internal override Scope AccessType
-        {
-            get { return Refer; }
-        }
-
-        public override bool IsReference
+        public override bool IsAssignable
         {
             get { return true; }
         }
@@ -47,13 +49,13 @@ namespace AbstractSyntax
 
         internal override void Translate(Translator trans)
         {
-            trans.GenelateLoad(Refer.FullPath);
+            trans.GenerateLoad(Refer.FullPath);
             base.Translate(trans);
         }
 
         internal override void TranslateAssign(Translator trans)
         {
-            trans.GenelateStore(Refer.FullPath);
+            trans.GenerateStore(Refer.FullPath);
             base.TranslateAssign(trans);
         }
     }
