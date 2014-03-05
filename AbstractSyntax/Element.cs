@@ -25,6 +25,11 @@ namespace AbstractSyntax
             get { return false; }
         }
 
+        public virtual bool IsVoidValue
+        {
+            get { return false; }
+        }
+
         public virtual int Count
         {
             get { return 0; }

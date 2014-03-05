@@ -119,7 +119,6 @@ namespace CliTranslate
             switch (type)
             {
                 case CodeType.Nop: Generator.Emit(OpCodes.Nop); break;
-                case CodeType.Void: Generator.Emit(OpCodes.Ldc_I4_0); break;
                 case CodeType.Pop: Generator.Emit(OpCodes.Pop); break;
                 case CodeType.Ret: Generator.Emit(OpCodes.Ret); break;
                 case CodeType.Add: Generator.Emit(OpCodes.Add); break;

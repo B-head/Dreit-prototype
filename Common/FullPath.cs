@@ -9,7 +9,6 @@ namespace Common
     public enum CodeType
     {
         Nop,
-        Void,
         Pop,
         Ret,
         Add,

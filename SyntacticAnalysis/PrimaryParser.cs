@@ -96,7 +96,7 @@ namespace SyntacticAnalysis
             SkipSpaser(++c);
             Identifier ident = Identifier(ref c);
             Element attr = null;
-            Identifier retType = null;
+            Element retType = null;
             Element block = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
@@ -110,7 +110,7 @@ namespace SyntacticAnalysis
             if (CheckToken(c, TokenType.Peir))
             {
                 SkipSpaser(++c);
-                retType = Identifier(ref c);
+                retType = MemberAccess(ref c);
             }
             block = Block(ref c);
             return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitResultType = retType, Block = block, Position = ident.Position };

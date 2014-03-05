@@ -8,7 +8,7 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public class EchoDirective : Element
+    public class ReturnDirective : Element
     {
         public Element Exp { get; set; }
 
@@ -34,7 +34,7 @@ namespace AbstractSyntax
         internal override void Translate(Translator trans)
         {
             base.Translate(trans);
-            trans.GenerateControl(CodeType.Echo);
+            trans.GenerateControl(CodeType.Ret);
         }
     }
 }

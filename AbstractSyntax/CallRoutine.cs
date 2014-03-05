@@ -13,7 +13,12 @@ namespace AbstractSyntax
         public Element Access { get; set; }
         public Element Argument { get; set; }
         public List<Scope> ArgumentType { get; set; }
-        private bool IsVoidReturn = false;
+        private bool _IsVoidValue = false;
+
+        public override bool IsVoidValue
+        {
+            get { return _IsVoidValue; }
+        }
 
         public override int Count
         {
@@ -73,7 +78,7 @@ namespace AbstractSyntax
                 }
                 if(rout.ReturnType == null)
                 {
-                    IsVoidReturn = true;
+                    _IsVoidValue = true;
                 }
             }
         }
@@ -82,10 +87,6 @@ namespace AbstractSyntax
         {
             Argument.Translate(trans);
             trans.GenerateCall(Access.DataType.FullPath);
-            if(IsVoidReturn)
-            {
-                trans.GenerateControl(CodeType.Void);
-            }
         }
     }
 }

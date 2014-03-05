@@ -19,6 +19,11 @@ namespace AbstractSyntax
         public List<Scope> ArgumentType { get; set; }
         public Scope ReturnType { get; set; }
 
+        public override bool IsVoidValue
+        {
+            get { return true; }
+        }
+
         public override int Count
         {
             get { return 5; }
@@ -60,6 +65,7 @@ namespace AbstractSyntax
                 refer.Add(temp);
             }
             ArgumentType = refer;
+            ReturnType = ExplicitResultType.DataType;
         }
 
         internal override void SpreadTranslate(Translator trans)
@@ -80,7 +86,6 @@ namespace AbstractSyntax
         internal override void Translate(Translator trans)
         {
             Block.Translate(RoutineTrans);
-            trans.GenerateControl(CodeType.Void);
         }
     }
 }

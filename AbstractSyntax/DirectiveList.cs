@@ -45,9 +45,15 @@ namespace AbstractSyntax
             foreach(Element v in this)
             {
                 v.Translate(trans);
-                trans.GenerateControl(CodeType.Pop);
+                if (!v.IsVoidValue)
+                {
+                    trans.GenerateControl(CodeType.Pop);
+                }
             }
-            trans.GenerateControl(CodeType.Ret);
+            if (!(_Child[_Child.Count - 1] is ReturnDirective))
+            {
+                trans.GenerateControl(CodeType.Ret);
+            }
         }
     }
 }

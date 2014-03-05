@@ -1,8 +1,7 @@
 ﻿1 + 2 * 3 =: var a =: var b
-test(a, b + 11)
+echo test(a + 11, b)
 
-routine test(a:DlightObject.Integer32, b:DlightObject.Integer32)
+routine test(a:DlightObject.Integer32, b:DlightObject.Integer32):DlightObject.Integer32
 {
-	a - b =: var c
-	echo c
+	return a - b
 }

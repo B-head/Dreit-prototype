@@ -37,7 +37,7 @@ namespace SyntacticAnalysis
 
         private Element Directive(ref int c)
         {
-            Element temp = CoalesceParser(ref c, Echo, Expression);;
+            Element temp = CoalesceParser(ref c, Echo, Return, Expression);;
             if (CheckToken(c, TokenType.EndExpression))
             {
                 SkipSpaser(++c);
@@ -54,6 +54,17 @@ namespace SyntacticAnalysis
             SkipSpaser(++c);
             Element exp = Expression(ref c);
             return new EchoDirective { Exp = exp, Position = exp.Position };
+        }
+
+        private Element Return(ref int c)
+        {
+            if (!CheckText(c, "return"))
+            {
+                return null;
+            }
+            SkipSpaser(++c);
+            Element exp = Expression(ref c);
+            return new ReturnDirective { Exp = exp, Position = exp.Position };
         }
     }
 }

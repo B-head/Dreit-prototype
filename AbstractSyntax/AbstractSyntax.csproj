@@ -49,6 +49,7 @@
     <Compile Include="DeclateVariant.cs" />
     <Compile Include="DyadicCalculate.cs" />
     <Compile Include="DyadicExpression.cs" />
+    <Compile Include="ReturnDirective.cs" />
     <Compile Include="EchoDirective.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ExpressionGrouping.cs" />
