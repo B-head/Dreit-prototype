@@ -206,7 +206,7 @@ namespace AbstractSyntax
         {
             foreach (Element v in this)
             {
-                if (v != null)
+                if (v != null && !v.IsImport)
                 {
                     v.Translate(trans);
                 }

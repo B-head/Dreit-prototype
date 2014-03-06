@@ -29,7 +29,8 @@ namespace AbstractSyntax
         public void TranslateTo(RootTranslator trans)
         {
             RootTrans = trans;
-            SpreadTranslate(RootTrans);
+            PreSpreadTranslate(RootTrans);
+            PostSpreadTranslate(RootTrans);
             Translate(trans);
         }
 

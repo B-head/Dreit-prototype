@@ -12,6 +12,7 @@ namespace CliTranslate
     public class RootTranslator : Translator
     {
         private Dictionary<FullPath, dynamic> BuilderDictonary;
+        private Dictionary<FullPath, ConstructorInfo> CtorDictonary;
         private AssemblyBuilder Assembly;
         private ModuleBuilder Module;
         public string Name { get; private set; }
@@ -20,7 +21,8 @@ namespace CliTranslate
         public RootTranslator(string name)
             : base(null, null)
         {
-            BuilderDictonary = new Dictionary<FullPath, object>();
+            BuilderDictonary = new Dictionary<FullPath, dynamic>();
+            CtorDictonary = new Dictionary<FullPath, ConstructorInfo>();
             Name = name;
             FileName = name + ".exe";
             Assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave);
@@ -36,15 +38,34 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
+        internal ConstructorInfo GetConstructor(FullPath path)
+        {
+            if (path == null)
+            {
+                throw new ArgumentNullException();
+            }
+            return CtorDictonary[path];
+        }
+
         public void RegisterBuilder(FullPath path, dynamic builder)
         {
             if(path == null || builder == null)
             {
                 throw new ArgumentNullException();
             }
-            if (!BuilderDictonary.ContainsKey(path))
+            if(builder is ConstructorInfo)
             {
-                BuilderDictonary.Add(path, builder);
+                if (!CtorDictonary.ContainsKey(path))
+                {
+                    CtorDictonary.Add(path, builder);
+                }
+            }
+            else
+            {
+                if (!BuilderDictonary.ContainsKey(path))
+                {
+                    BuilderDictonary.Add(path, builder);
+                }
             }
         }
 

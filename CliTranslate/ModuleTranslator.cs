@@ -25,15 +25,15 @@ namespace CliTranslate
             Root.SetEntryPoint(EntryContext);
         }
 
-        internal override TypeBuilder CreateLexicalBuilder()
-        {
-            return Module.DefineType("@@lexical", TypeAttributes.SpecialName);
-        }
-
         public override void Save()
         {
             base.Save();
             GlobalField.CreateType();
+        }
+
+        internal override TypeBuilder CreateLexical()
+        {
+            return Module.DefineType("@@lexical", TypeAttributes.SpecialName);
         }
 
         public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)

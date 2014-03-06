@@ -45,6 +45,26 @@ namespace SyntacticAnalysis
             return temp;
         }
 
+        private Element Block(ref int c)
+        {
+            Element result = null;
+            if (CheckToken(c, TokenType.Separator))
+            {
+                SkipSpaser(++c);
+                result = Directive(ref c);
+            }
+            else if (CheckToken(c, TokenType.LeftBrace))
+            {
+                SkipSpaser(++c);
+                result = DirectiveList(ref c);
+                if (CheckToken(c, TokenType.RightBrace))
+                {
+                    SkipSpaser(++c);
+                }
+            }
+            return result;
+        }
+
         private Element Echo(ref int c)
         {
             if (!CheckText(c, "echo"))

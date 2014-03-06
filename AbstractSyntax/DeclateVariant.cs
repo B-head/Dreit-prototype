@@ -44,15 +44,6 @@ namespace AbstractSyntax
             return Ident == null ? null : Ident.Value;
         }
 
-        internal override void SpreadTranslate(Translator trans)
-        {
-            if (!IsImport)
-            {
-                trans.CreateVariant(FullPath, DataType.FullPath);
-                base.SpreadTranslate(trans);
-            }
-        }
-
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
@@ -69,6 +60,12 @@ namespace AbstractSyntax
                 _DataType = type;
             }
             base.CheckDataTypeAssign(type);
+        }
+
+        internal override void PostSpreadTranslate(Translator trans)
+        {
+            trans.CreateVariant(FullPath, DataType.FullPath);
+            base.PostSpreadTranslate(trans);
         }
 
         internal override void Translate(Translator trans)

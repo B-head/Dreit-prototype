@@ -39,12 +39,6 @@ namespace AbstractSyntax
             }
         }
 
-        internal override void SpreadTranslate(Translator trans)
-        {
-            ModuleTrans = trans.CreateModule(FullPath);
-            base.SpreadTranslate(ModuleTrans);
-        }
-
         internal override void CheckSyntax()
         {
             foreach (Token v in ErrorToken)
@@ -59,6 +53,17 @@ namespace AbstractSyntax
                 }
             }
             base.CheckSyntax();
+        }
+
+        internal override void PreSpreadTranslate(Translator trans)
+        {
+            ModuleTrans = trans.CreateModule(FullPath);
+            base.PreSpreadTranslate(ModuleTrans);
+        }
+
+        internal override void PostSpreadTranslate(Translator trans)
+        {
+            base.PostSpreadTranslate(ModuleTrans);
         }
 
         internal override void Translate(Translator trans)

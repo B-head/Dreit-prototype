@@ -1,7 +1,23 @@
 ﻿1 + 2 * 3 =: var a =: var b
-echo test(a + 11, b)
+echo test(a + 11, b + 22)
 
-routine test(a:DlightObject.Integer32, b:DlightObject.Integer32):DlightObject.Integer32
+routine test(c:DlightObject.Integer32, d:DlightObject.Integer32):DlightObject.Integer32
 {
-	return a - b
+	return a * b + c - d 
+}
+
+Rand() =: var rand:Rand
+echo rand.value
+echo rand.gen()
+echo rand.gen()
+echo rand.gen()
+
+class Rand
+{
+	var value:DlightObject.Integer32 := 98765
+
+	routine gen():DlightObject.Integer32
+	{
+		return value := value * 1103515245 + 12345
+	}
 }

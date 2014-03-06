@@ -65,27 +65,29 @@ namespace AbstractSyntax
                 refer.Add(temp);
             }
             ArgumentType = refer;
-            ReturnType = ExplicitResultType.DataType;
+            if (ExplicitResultType != null)
+            {
+                ReturnType = ExplicitResultType.DataType;
+            }
         }
 
-        internal override void SpreadTranslate(Translator trans)
+        internal override void PostSpreadTranslate(Translator trans)
         {
-            if (IsImport)
+            FullPath returnType = ReturnType == null ? null : ReturnType.FullPath;
+            RoutineTrans = trans.CreateRoutine(FullPath, returnType);
+            base.PostSpreadTranslate(RoutineTrans);
+            if (RoutineTrans != null)
             {
-                base.SpreadTranslate(trans);
-            }
-            else
-            {
-                FullPath returnType = ReturnType == null ? null : ReturnType.FullPath;
-                RoutineTrans = trans.CreateRoutine(FullPath, returnType);
-                base.SpreadTranslate(RoutineTrans);
                 RoutineTrans.SaveArgument();
             }
         }
 
         internal override void Translate(Translator trans)
         {
-            Block.Translate(RoutineTrans);
+            if (Block != null)
+            {
+                Block.Translate(RoutineTrans);
+            }
         }
     }
 }

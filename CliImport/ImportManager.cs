@@ -102,7 +102,7 @@ namespace CliImport
             var ctor = type.GetConstructors();
             foreach(var c in ctor)
             {
-                exp.Append(ConvertConstructor(c));
+                //exp.Append(ConvertConstructor(c));
             }
             var eve = type.GetEvents();
             foreach(var e in eve)
@@ -138,6 +138,10 @@ namespace CliImport
             }
             DeclateClass result = new DeclateClass { Ident = ident, Generic = generic, Inherit = inherit, Block = exp, IsImport = true };
             AppendPeir(result, type);
+            foreach (var c in ctor)
+            {
+                AppendPeir(result, c);
+            }
             return result;
         }
 

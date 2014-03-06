@@ -31,22 +31,6 @@ namespace CliTranslate
             Root.RegisterBuilder(path, Method);
         }
 
-        private void PrepareLexical()
-        {
-            if(Lexical == null)
-            {
-                Lexical = Parent.CreateLexicalBuilder();
-                LexicalInstance = Generator.DeclareLocal(Lexical);
-                Generator.Emit(OpCodes.Newobj, Lexical.DefineDefaultConstructor(MethodAttributes.PrivateScope));
-                BuildStore(LexicalInstance);
-            }
-        }
-
-        internal override TypeBuilder CreateLexicalBuilder()
-        {
-            return Lexical.DefineNestedType("@@lexical", TypeAttributes.SpecialName);
-        }
-
         public override void Save()
         {
             base.Save();
@@ -65,6 +49,22 @@ namespace CliTranslate
                 var builder = Method.DefineParameter(next++, ParameterAttributes.None, v.Name);
                 Root.RegisterBuilder(v, builder);
             }
+        }
+
+        private void PrepareLexical()
+        {
+            if(Lexical == null)
+            {
+                Lexical = Parent.CreateLexical();
+                LexicalInstance = Generator.DeclareLocal(Lexical);
+                Generator.Emit(OpCodes.Newobj, Lexical.DefineDefaultConstructor(MethodAttributes.PrivateScope));
+                BuildStore(LexicalInstance);
+            }
+        }
+
+        internal override TypeBuilder CreateLexical()
+        {
+            return Lexical.DefineNestedType("@@lexical", TypeAttributes.SpecialName);
         }
 
         public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
@@ -102,6 +102,10 @@ namespace CliTranslate
             {
                 BuildLoad(LexicalInstance);
             }
+            else if (field != null && field.DeclaringType == Method.DeclaringType)
+            {
+                Generator.Emit(OpCodes.Ldarg_0);
+            }
             BuildLoad(temp);
         }
 
@@ -114,6 +118,13 @@ namespace CliTranslate
                 LocalBuilder local = Generator.DeclareLocal(field.FieldType);
                 BuildStore(local);
                 BuildLoad(LexicalInstance);
+                BuildLoad(local);
+            }
+            else if (field != null && field.DeclaringType == Method.DeclaringType)
+            {
+                LocalBuilder local = Generator.DeclareLocal(field.FieldType);
+                BuildStore(local);
+                Generator.Emit(OpCodes.Ldarg_0);
                 BuildLoad(local);
             }
             BuildStore(temp);

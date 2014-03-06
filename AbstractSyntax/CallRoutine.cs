@@ -20,6 +20,11 @@ namespace AbstractSyntax
             get { return _IsVoidValue; }
         }
 
+        internal override Scope DataType
+        {
+            get { return Access.DataType.DataType; }
+        }
+
         public override int Count
         {
             get { return 2; }
@@ -58,7 +63,19 @@ namespace AbstractSyntax
                 refer.Add(temp);
             }
             ArgumentType = refer;
-            DeclateRoutine rout = Access.DataType as DeclateRoutine;
+            var call = Access.DataType;
+            if(call is DeclateRoutine)
+            {
+                CheckCall((DeclateRoutine)call);
+            }
+            else if(call is DeclateClass)
+            {
+                CheckCall((DeclateClass)call);
+            }
+        }
+
+        private void CheckCall(DeclateRoutine rout)
+        {
             if(rout == null)
             {
                 CompileError("関数ではありません。");
@@ -83,9 +100,25 @@ namespace AbstractSyntax
             }
         }
 
+        private void CheckCall(DeclateClass cls)
+        {
+            if (ArgumentType.Count != 0)
+            {
+                CompileError("引数の数が合っていません。");
+            }
+        }
+
         internal override void Translate(Translator trans)
         {
-            Argument.Translate(trans);
+            if (Argument != null)
+            {
+                Argument.Translate(trans);
+            }
+            var temp = Access as MemberAccess;
+            if(temp != null)
+            {
+                temp.TranslateAccess(trans);
+            }
             trans.GenerateCall(Access.DataType.FullPath);
         }
     }

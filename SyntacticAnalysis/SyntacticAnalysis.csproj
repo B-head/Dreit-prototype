@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeclateParser.cs" />
     <Compile Include="DirectiveParser.cs" />
     <Compile Include="ExpressionParser.cs" />
     <Compile Include="Parser.cs" />

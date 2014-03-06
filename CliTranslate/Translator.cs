@@ -39,11 +39,6 @@ namespace CliTranslate
             child.Parent = this;
         }
 
-        internal virtual TypeBuilder CreateLexicalBuilder()
-        {
-            throw new NotSupportedException();
-        }
-
         public virtual void Save()
         {
             foreach (var v in _Child)
@@ -76,6 +71,11 @@ namespace CliTranslate
                 builder.Append(v.ToString(indent + 1));
             }
             return builder.ToString(); 
+        }
+
+        internal virtual TypeBuilder CreateLexical()
+        {
+            throw new NotSupportedException();
         }
 
         public virtual ModuleTranslator CreateModule(FullPath path)
@@ -112,6 +112,11 @@ namespace CliTranslate
         {
             var builder = Generator.DefineLabel();
             Root.RegisterBuilder(path, builder);
+        }
+
+        internal void BuildInitCall(MethodBuilder method)
+        {
+            Generator.Emit(OpCodes.Call, method);
         }
 
         public void GenerateControl(CodeType type)
@@ -286,9 +291,10 @@ namespace CliTranslate
         public virtual void GenerateCall(FullPath name)
         {
             var temp = Root.GetBuilder(name);
-            if (temp is ConstructorInfo)
+            if (temp is Type)
             {
-                Generator.Emit(OpCodes.Newobj, temp);
+                var ctor = Root.GetConstructor(name);
+                Generator.Emit(OpCodes.Newobj, ctor);
             }
             else
             {

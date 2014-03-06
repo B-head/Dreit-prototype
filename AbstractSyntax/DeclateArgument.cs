@@ -44,13 +44,13 @@ namespace AbstractSyntax
             return Ident == null ? null : Ident.Value;
         }
 
-        internal override void SpreadTranslate(Translator trans)
+        internal override void PostSpreadTranslate(Translator trans)
         {
             if (!IsImport)
             {
                 RoutineTranslator routTrans = trans as RoutineTranslator;
                 routTrans.CreateArgument(FullPath, DataType.FullPath);
-                base.SpreadTranslate(trans);
+                base.PostSpreadTranslate(trans);
             }
         }
 

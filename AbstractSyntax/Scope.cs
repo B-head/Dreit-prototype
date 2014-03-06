@@ -44,16 +44,9 @@ namespace AbstractSyntax
         {
             if (ScopeParent == null)
             {
-                return CreateFullPath();
+                return new FullPath();
             }
             var temp = ScopeParent.GetFullPath();
-            temp.Append(this);
-            return temp;
-        }
-
-        private FullPath CreateFullPath()
-        {
-            var temp = new FullPath();
             temp.Append(this);
             return temp;
         }
@@ -108,15 +101,29 @@ namespace AbstractSyntax
             FullPath = GetFullPath();
         }
 
-        internal virtual void SpreadTranslate(Translator trans)
+        internal virtual void PreSpreadTranslate(Translator trans)
         {
             foreach (var list in _ScopeChild)
             {
                 foreach (var v in list.Value)
                 {
-                    if (v != null)
+                    if (v != null && !v.IsImport)
                     {
-                        v.SpreadTranslate(trans);
+                        v.PreSpreadTranslate(trans);
+                    }
+                }
+            }
+        }
+
+        internal virtual void PostSpreadTranslate(Translator trans)
+        {
+            foreach (var list in _ScopeChild)
+            {
+                foreach (var v in list.Value)
+                {
+                    if (v != null && !v.IsImport)
+                    {
+                        v.PostSpreadTranslate(trans);
                     }
                 }
             }

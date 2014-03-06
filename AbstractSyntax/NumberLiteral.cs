@@ -61,8 +61,7 @@ namespace AbstractSyntax
             {
                 int number = (int)Parse(Integral);
                 trans.GeneratePrimitive(number);
-                var ctor = DataType.NameResolution(".ctor");
-                trans.GenerateCall(ctor.FullPath);
+                trans.GenerateCall(DataType.FullPath);
             }
             else
             {
@@ -70,8 +69,7 @@ namespace AbstractSyntax
                 int count, b;
                 number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
                 trans.GeneratePrimitive(number);
-                var ctor = DataType.NameResolution(".ctor");
-                trans.GenerateCall(ctor.FullPath);
+                trans.GenerateCall(DataType.FullPath);
             }
             base.Translate(trans);
         }

@@ -17,6 +17,11 @@ namespace AbstractSyntax
         public Element Block { get; set; }
         public List<DeclateClass> InheritRefer { get; private set; }
 
+        public override bool IsVoidValue
+        {
+            get { return true; }
+        }
+
         public override int Count
         {
             get { return 4; }
@@ -67,22 +72,20 @@ namespace AbstractSyntax
             InheritRefer = refer;
         }
 
-        internal override void SpreadTranslate(Translator trans)
+        internal override void PreSpreadTranslate(Translator trans)
         {
-            if (IsImport)
-            {
-                base.SpreadTranslate(trans);
-            }
-            else
-            {
-                ClassTrans = trans.CreateClass(FullPath);
-                base.SpreadTranslate(ClassTrans);
-            }
+            ClassTrans = trans.CreateClass(FullPath);
+            base.PreSpreadTranslate(ClassTrans);
+        }
+
+        internal override void PostSpreadTranslate(Translator trans)
+        {
+            base.PostSpreadTranslate(ClassTrans);
         }
 
         internal override void Translate(Translator trans)
         {
-            base.Translate(ClassTrans);
+            Block.Translate(ClassTrans);
         }
 
         public bool IsContain(DeclateClass other)
