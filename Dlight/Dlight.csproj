@@ -51,7 +51,7 @@
     <None Include="lib\primitive.dl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Main.dl">
+    <None Include="main.dl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

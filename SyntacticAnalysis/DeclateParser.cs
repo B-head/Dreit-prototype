@@ -88,7 +88,7 @@ namespace SyntacticAnalysis
                 retType = MemberAccess(ref c);
             }
             var block = Block(ref c);
-            return new DeclateOperator { Operator = op.Type, Argument = attr, ExplicitResultType = retType, Block = block, Position = op.Position };
+            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitResultType = retType, Block = block, Position = op.Position };
         }
 
         private DeclateArgument DeclateArgument(ref int c)
@@ -115,8 +115,18 @@ namespace SyntacticAnalysis
             }
             SkipSpaser(++c);
             Identifier ident = Identifier(ref c);
+            TupleList inherit = null;
+            if (CheckToken(c, TokenType.Peir))
+            {
+                SkipSpaser(++c);
+                inherit = ParseTuple(ref c, MemberAccess);
+            }
+            else
+            {
+                inherit = new TupleList();
+            }
             var block = Block(ref c);
-            return new DeclateClass { Ident = ident, Block = block, Position = ident.Position };
+            return new DeclateClass { Ident = ident, Inherit = inherit, Block = block, Position = ident.Position };
         }
     }
 }

@@ -16,7 +16,14 @@ namespace AbstractSyntax
 
         internal override Scope DataType
         {
-            get { return _DataType; }
+            get
+            {
+                if (_DataType == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return _DataType;
+            }
         }
 
         protected override string AdditionalInfo()

@@ -26,10 +26,6 @@ namespace AbstractSyntax
 
         public void AddChild(Scope child)
         {
-            if(child.Name == null)
-            {
-                throw new ArgumentException();
-            }
             child.ScopeParent = this;
             Scope temp;
             if (!_ScopeChild.TryGetValue(child.Name, out temp))

@@ -13,14 +13,15 @@ namespace AbstractSyntax
         public bool IsPragma { get; set; }
         public Scope Refer { get; private set; }
 
+        public Identifier()
+        {
+            Refer = new VoidScope();
+        }
+
         internal override Scope DataType
         {
             get 
             { 
-                if(Refer == null)
-                {
-                    return null;
-                }
                 return Refer.DataType; 
             }
         }
@@ -32,19 +33,27 @@ namespace AbstractSyntax
 
         protected override string AdditionalInfo()
         {
-            return Value;
+            if (IsPragma)
+            {
+                return "@@" + Value;
+            }
+            else
+            {
+                return Value;
+            }
         }
 
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
-            if (scope != null)
-            {
-                Refer = scope.NameResolution(Value);
-            }
-            if (Refer == null)
+            var temp  = scope.NameResolution(Value);
+            if (temp == null)
             {
                 CompileError("識別子 " + Value + " が宣言されていません。");
+            }
+            else
+            {
+                Refer = temp;
             }
         }
 

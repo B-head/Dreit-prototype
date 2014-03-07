@@ -22,8 +22,8 @@ namespace Dlight
             Root root = new Root();
             ImportManager import = new ImportManager(root);
             import.ImportAssembly(Assembly.Load("mscorlib"));
-            import.ImportAssembly(Assembly.Load("DlightObject"));
-            //root.Append(CompileFile("lib/primitive.dl"));
+            //import.ImportAssembly(Assembly.Load("DlightObject"));
+            root.Append(CompileFile("lib/primitive.dl"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(root.ToString(true));
@@ -43,7 +43,7 @@ namespace Dlight
             Lexer lexer = new Lexer();
             List<Token> token = lexer.Lex(text, fileName);
             Parser parser = new Parser();
-            return parser.Parse(token, fileName.Replace(".dl", ""));
+            return parser.Parse(token, fileName.Replace(".dl", "").Split('/').Last());
         }
     }
 }

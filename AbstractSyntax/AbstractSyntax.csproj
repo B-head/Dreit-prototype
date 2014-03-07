@@ -41,9 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CallRoutine.cs" />
-    <Compile Include="DataType.cs" />
     <Compile Include="DeclateArgument.cs" />
     <Compile Include="DeclateClass.cs" />
+    <Compile Include="DeclateEnum.cs" />
+    <Compile Include="DeclateGeneric.cs" />
     <Compile Include="DeclateModule.cs" />
     <Compile Include="DeclateOperator.cs" />
     <Compile Include="DeclateRoutine.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="TupleList.cs" />
+    <Compile Include="VoidScope.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CliTranslate\CliTranslate.csproj">

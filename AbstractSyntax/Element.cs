@@ -17,7 +17,7 @@ namespace AbstractSyntax
 
         internal virtual Scope DataType
         {
-            get { return null; }
+            get { throw new NotSupportedException(); }
         }
 
         public virtual bool IsAssignable
@@ -69,7 +69,7 @@ namespace AbstractSyntax
             var add = AdditionalInfo();
             if(add != null)
             {
-                builder.Append("(" + add + ")");
+                builder.Append(": " + add);
             }
             return builder.ToString();
         }
@@ -82,6 +82,11 @@ namespace AbstractSyntax
         protected void CompileError(string message)
         {
             Root.OutputError("Error: " + ErrorInfo() + message);
+        }
+
+        protected void CompileError(string message, TextPosition position)
+        {
+            Root.OutputError("Error: " + position + ": " + message);
         }
 
         protected void CompileWarning(string message)

@@ -43,15 +43,22 @@ namespace AbstractSyntax
 
         internal override void Translate(Translator trans)
         {
-            foreach(Element v in this)
+            if (IsInline)
             {
-                v.Translate(trans);
-                if (!v.IsVoidValue)
+                Child[0].Translate(trans);
+            }
+            else
+            {
+                foreach (Element v in this)
                 {
-                    trans.GenerateControl(CodeType.Pop);
+                    v.Translate(trans);
+                    if (!v.IsVoidValue)
+                    {
+                        trans.GenerateControl(CodeType.Pop);
+                    }
                 }
             }
-            if (!(Child[Child.Count - 1] is ReturnDirective))
+            if (!(Child.Last() is ReturnDirective))
             {
                 trans.GenerateControl(CodeType.Ret);
             }

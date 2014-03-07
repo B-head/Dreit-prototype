@@ -156,10 +156,10 @@ namespace CliImport
             return tuple;
         }
 
-        private DeclateVariant ConvertGeneric(Type generic)
+        private DeclateGeneric ConvertGeneric(Type generic)
         {
             var ident = new Identifier { Value = generic.GetPureName(), IsImport = true };
-            return new DeclateVariant { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
+            return new DeclateGeneric { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
         private TupleList CreateInheritList(List<Type> inherit)
@@ -216,10 +216,10 @@ namespace CliImport
             return result;
         }
 
-        private Element ImportEnum(Type enumType)
+        private DeclateEnum ImportEnum(Type enumType)
         {
             var ident = new Identifier { Value = enumType.GetPureName(), IsImport = true };
-            DeclateVariant result = new DeclateVariant { Ident = ident, IsImport = true };
+            var result = new DeclateEnum { Ident = ident, IsImport = true }; //後で作る。
             AppendPeir(result, enumType);
             return result;
         }
