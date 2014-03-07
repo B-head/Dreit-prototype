@@ -45,13 +45,14 @@ namespace SyntacticAnalysis
             return temp;
         }
 
-        private Element Block(ref int c)
+        private DirectiveList Block(ref int c)
         {
-            Element result = null;
+            DirectiveList result = null;
             if (CheckToken(c, TokenType.Separator))
             {
                 SkipSpaser(++c);
-                result = Directive(ref c);
+                result = new DirectiveList { IsInline = true };
+                result.Append(Directive(ref c));
             }
             else if (CheckToken(c, TokenType.LeftBrace))
             {

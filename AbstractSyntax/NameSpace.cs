@@ -27,7 +27,7 @@ namespace AbstractSyntax
             get { return _Child.Count; }
         }
 
-        public override Element Child(int index)
+        public override Element GetChild(int index)
         {
             return _Child[index];
         }

@@ -30,7 +30,7 @@ namespace AbstractSyntax
             get { return 1; }
         }
 
-        public override Element Child(int index)
+        public override Element GetChild(int index)
         {
             switch (index)
             {

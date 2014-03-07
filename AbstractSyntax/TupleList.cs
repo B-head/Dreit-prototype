@@ -9,26 +9,26 @@ namespace AbstractSyntax
 {
     public class TupleList<E> : Element where E : Element
     {
-        public List<E> _Child { get; set; }
+        public List<E> Child { get; set; }
 
         public TupleList()
         {
-            _Child = new List<E>();
+            Child = new List<E>();
         }
 
         public void Append(E append)
         {
-            _Child.Add(append);
+            Child.Add(append);
         }
 
         public override int Count
         {
-            get { return _Child.Count; }
+            get { return Child.Count; }
         }
 
-        public override Element Child(int index)
+        public override Element GetChild(int index)
         {
-            return _Child[index];
+            return Child[index];
         }
     }
 }

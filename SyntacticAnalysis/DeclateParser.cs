@@ -37,7 +37,6 @@ namespace SyntacticAnalysis
             Identifier ident = Identifier(ref c);
             TupleList<DeclateArgument> attr = null;
             Element retType = null;
-            Element block = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
                 SkipSpaser(++c);
@@ -52,7 +51,7 @@ namespace SyntacticAnalysis
                 SkipSpaser(++c);
                 retType = MemberAccess(ref c);
             }
-            block = Block(ref c);
+            var block = Block(ref c);
             return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitResultType = retType, Block = block, Position = ident.Position };
         }
 
@@ -80,7 +79,7 @@ namespace SyntacticAnalysis
             }
             SkipSpaser(++c);
             Identifier ident = Identifier(ref c);
-            Element block = Block(ref c);
+            var block = Block(ref c);
             return new DeclateClass { Ident = ident, Block = block, Position = ident.Position };
         }
     }

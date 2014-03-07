@@ -35,21 +35,21 @@ namespace AbstractSyntax
             get { return 0; }
         }
 
-        public virtual Element Child(int index)
+        public virtual Element GetChild(int index)
         {
             throw new ArgumentOutOfRangeException();
         }
 
         public Element this[int index]
         {
-            get { return Child(index); }
+            get { return GetChild(index); }
         }
 
         public IEnumerator<Element> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
             {
-                yield return Child(i);
+                yield return GetChild(i);
             }
         }
 

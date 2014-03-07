@@ -15,7 +15,7 @@ namespace AbstractSyntax
         public TupleList<Element> Generic { get; set; }
         public TupleList<DeclateArgument> Argument { get; set; }
         public Element ExplicitResultType { get; set; }
-        public Element Block { get; set; }
+        public DirectiveList Block { get; set; }
         public List<Scope> ArgumentType { get; set; }
         public Scope ReturnType { get; set; }
 
@@ -29,7 +29,7 @@ namespace AbstractSyntax
             get { return 5; }
         }
 
-        public override Element Child(int index)
+        public override Element GetChild(int index)
         {
             switch (index)
             {

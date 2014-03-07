@@ -14,7 +14,7 @@ namespace AbstractSyntax
         public Identifier Ident { get; set; }
         public TupleList<Element> Generic { get; set; }
         public TupleList<Element> Inherit { get; set; }
-        public Element Block { get; set; }
+        public DirectiveList Block { get; set; }
         public List<DeclateClass> InheritRefer { get; private set; }
 
         public override bool IsVoidValue
@@ -27,7 +27,7 @@ namespace AbstractSyntax
             get { return 4; }
         }
 
-        public override Element Child(int index)
+        public override Element GetChild(int index)
         {
             switch (index)
             {

@@ -10,11 +10,12 @@ namespace AbstractSyntax
 {
     public class DirectiveList : Element
     {
-        public List<Element> _Child { get; set; }
+        public List<Element> Child { get; set; }
+        public bool IsInline { get; set; }
 
         public DirectiveList()
         {
-            _Child = new List<Element>();
+            Child = new List<Element>();
         }
 
         public void Append(Element append)
@@ -23,21 +24,21 @@ namespace AbstractSyntax
             {
                 return;
             }
-            if(_Child.Count == 0)
+            if(Child.Count == 0)
             {
                 Position = append.Position;
             }
-            _Child.Add(append);
+            Child.Add(append);
         }
 
         public override int Count
         {
-            get { return _Child.Count; }
+            get { return Child.Count; }
         }
 
-        public override Element Child(int index)
+        public override Element GetChild(int index)
         {
-            return _Child[index];
+            return Child[index];
         }
 
         internal override void Translate(Translator trans)
@@ -50,7 +51,7 @@ namespace AbstractSyntax
                     trans.GenerateControl(CodeType.Pop);
                 }
             }
-            if (!(_Child[_Child.Count - 1] is ReturnDirective))
+            if (!(Child[Child.Count - 1] is ReturnDirective))
             {
                 trans.GenerateControl(CodeType.Ret);
             }

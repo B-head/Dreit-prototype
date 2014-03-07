@@ -34,7 +34,7 @@ namespace SyntacticAnalysis
             }
             if (tuple.Count > 0)
             {
-                return tuple.Child(0);
+                return tuple.GetChild(0);
             }
             else
             {
