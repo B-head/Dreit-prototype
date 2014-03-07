@@ -1,0 +1,36 @@
+﻿alias Integer32 Int32
+class Integer32
+{
+	var value:@@Integer32
+
+	rout new(v:@@Integer32)
+	{
+		value = v
+		return this
+	}
+
+	operator +(other:Integer32)
+	{
+		return Integer32(@@add(value, other.value))
+	}
+
+	operator -(other:Integer32)
+	{
+		return Integer32(@@sub(value, other.value))
+	}
+
+	operator *(other:Integer32)
+	{
+		return Integer32(@@mul(value, other.value))
+	}
+
+	operator /(other:Integer32)
+	{
+		return Integer32(@@div(value, other.value))
+	}
+
+	operator %(other:Integer32)
+	{
+		return Integer32(@@mod(value, other.value))
+	}
+}
