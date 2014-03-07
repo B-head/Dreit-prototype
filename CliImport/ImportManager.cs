@@ -145,9 +145,9 @@ namespace CliImport
             return result;
         }
 
-        private TupleList<Element> CreateGenericList(List<Type> generic)
+        private TupleList CreateGenericList(List<Type> generic)
         {
-            var tuple = new TupleList<Element> { IsImport = true };
+            var tuple = new TupleList { IsImport = true };
             foreach(var v in generic)
             {
                 var temp = ConvertGeneric(v);
@@ -162,9 +162,9 @@ namespace CliImport
             return new DeclateVariant { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
-        private TupleList<Element> CreateInheritList(List<Type> inherit)
+        private TupleList CreateInheritList(List<Type> inherit)
         {
-            var tuple = new TupleList<Element> { IsImport = true };
+            var tuple = new TupleList { IsImport = true };
             foreach (var v in inherit)
             {
                 var temp = CreateAccess(v);
@@ -235,9 +235,9 @@ namespace CliImport
             return result;
         }
 
-        private TupleList<DeclateArgument> CreateArgumentList(List<ParameterInfo> argument)
+        private TupleList CreateArgumentList(List<ParameterInfo> argument)
         {
-            var tuple = new TupleList<DeclateArgument> { IsImport = true };
+            var tuple = new TupleList { IsImport = true };
             foreach (var v in argument)
             {
                 var temp = ConvertArgument(v);

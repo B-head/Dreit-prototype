@@ -12,8 +12,8 @@ namespace AbstractSyntax
     {
         public ClassTranslator ClassTrans { get; private set; }
         public Identifier Ident { get; set; }
-        public TupleList<Element> Generic { get; set; }
-        public TupleList<Element> Inherit { get; set; }
+        public TupleList Generic { get; set; }
+        public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
         public List<DeclateClass> InheritRefer { get; private set; }
 

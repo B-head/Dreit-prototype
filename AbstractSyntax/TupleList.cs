@@ -7,16 +7,16 @@ using Common;
 
 namespace AbstractSyntax
 {
-    public class TupleList<E> : Element where E : Element
+    public class TupleList : Element
     {
-        public List<E> Child { get; set; }
+        public List<Element> Child { get; set; }
 
         public TupleList()
         {
-            Child = new List<E>();
+            Child = new List<Element>();
         }
 
-        public void Append(E append)
+        public void Append(Element append)
         {
             Child.Add(append);
         }

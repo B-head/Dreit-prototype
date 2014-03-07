@@ -11,7 +11,7 @@ namespace AbstractSyntax
     public class CallRoutine : Element
     {
         public Element Access { get; set; }
-        public TupleList<Element> Argument { get; set; }
+        public TupleList Argument { get; set; }
         public List<Scope> ArgumentType { get; set; }
         private bool _IsVoidValue = false;
 

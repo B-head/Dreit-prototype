@@ -12,8 +12,8 @@ namespace AbstractSyntax
     {
         public RoutineTranslator RoutineTrans { get; private set; }
         public Identifier Ident { get; set; }
-        public TupleList<Element> Generic { get; set; }
-        public TupleList<DeclateArgument> Argument { get; set; }
+        public TupleList Generic { get; set; }
+        public TupleList Argument { get; set; }
         public Element ExplicitResultType { get; set; }
         public DirectiveList Block { get; set; }
         public List<Scope> ArgumentType { get; set; }

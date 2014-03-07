@@ -138,12 +138,12 @@ namespace SyntacticAnalysis
             return new R { Left = left, Right = right, Operation = match, Position = left.Position };
         }
 
-        private TupleList<E> ParseTuple<E>(ref int c, ParserFunction<E> next) where E : Element
+        private TupleList ParseTuple(ref int c, ParserFunction next)
         {
-            TupleList<E> tuple = new TupleList<E>();
+            TupleList tuple = new TupleList();
             while (IsReadable(c))
             {
-                E temp = next(ref c);
+                var temp = next(ref c);
                 if(temp == null)
                 {
                     break;

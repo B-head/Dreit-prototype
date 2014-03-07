@@ -35,7 +35,7 @@ namespace SyntacticAnalysis
             }
             SkipSpaser(++c);
             Identifier ident = Identifier(ref c);
-            TupleList<DeclateArgument> attr = null;
+            TupleList attr = null;
             Element retType = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
@@ -45,6 +45,10 @@ namespace SyntacticAnalysis
                 {
                     SkipSpaser(++c);
                 }
+            }
+            else
+            {
+                attr = new TupleList();
             }
             if (CheckToken(c, TokenType.Peir))
             {

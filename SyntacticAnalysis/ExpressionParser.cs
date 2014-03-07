@@ -27,7 +27,7 @@ namespace SyntacticAnalysis
 
         private Element TupleList(ref int c)
         {
-            var tuple = ParseTuple<Element>(ref c, Addtive);
+            var tuple = ParseTuple(ref c, Addtive);
             if (tuple.Count > 1)
             {
                 return tuple;
