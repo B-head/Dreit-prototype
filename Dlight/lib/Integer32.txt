@@ -1,4 +1,4 @@
-﻿alias Integer32 Int32
+﻿//alias Integer32 Int32
 class Integer32
 {
 	var value:@@Integer32

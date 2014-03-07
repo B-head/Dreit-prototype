@@ -15,13 +15,13 @@ namespace AbstractSyntax
         public string Name { get; set; }
         public FullPath FullPath { get; private set; }
         public Scope ScopeParent { get; private set; }
-        private Dictionary<string, List<Scope>> _ScopeChild;
-        public IReadOnlyDictionary<string, List<Scope>> ScopeChild { get { return _ScopeChild; } }
+        private Dictionary<string, Scope> _ScopeChild;
+        public IReadOnlyDictionary<string, Scope> ScopeChild { get { return _ScopeChild; } }
 
         public Scope()
         {
             Id = NextId++;
-            _ScopeChild = new Dictionary<string, List<Scope>>();
+            _ScopeChild = new Dictionary<string, Scope>();
         }
 
         public void AddChild(Scope child)
@@ -31,13 +31,11 @@ namespace AbstractSyntax
                 throw new ArgumentException();
             }
             child.ScopeParent = this;
-            List<Scope> temp;
+            Scope temp;
             if (!_ScopeChild.TryGetValue(child.Name, out temp))
             {
-                temp = new List<Scope>();
-                _ScopeChild.Add(child.Name, temp);
+                _ScopeChild.Add(child.Name, child);
             }
-            temp.Add(child);
         }
 
         private FullPath GetFullPath()
@@ -53,17 +51,10 @@ namespace AbstractSyntax
 
         internal Scope NameResolution(string name)
         {
-            List<Scope> temp;
-            if (_ScopeChild.TryGetValue(name, out temp))
+            Scope temp = ChildNameResolution(name);
+            if(temp != null)
             {
-                if (temp.Count > 1)
-                {
-                    return temp[0];
-                }
-                else
-                {
-                    return temp[0];
-                }
+                return temp;
             }
             if (name == Name)
             {
@@ -76,9 +67,36 @@ namespace AbstractSyntax
             return ScopeParent.NameResolution(name);
         }
 
+        private Scope ChildNameResolution(string name)
+        {
+            Scope temp;
+            if (_ScopeChild.TryGetValue(name, out temp))
+            {
+                return temp;
+            }
+            foreach(var peir in _ScopeChild)
+            {
+                var v = peir.Value;
+                if (v.IsContainer)
+                {
+                    temp = v.ChildNameResolution(name);
+                    if(temp != null)
+                    {
+                        return temp;
+                    }
+                }
+            }
+            return null;
+        }
+
         internal override Scope DataType
         {
             get { return this; }
+        }
+
+        internal virtual bool IsContainer
+        {
+            get { return false; }
         }
 
         protected override string AdditionalInfo()
@@ -103,28 +121,24 @@ namespace AbstractSyntax
 
         internal virtual void PreSpreadTranslate(Translator trans)
         {
-            foreach (var list in _ScopeChild)
+            foreach (var peir in _ScopeChild)
             {
-                foreach (var v in list.Value)
+                var v = peir.Value;
+                if (v != null && !v.IsImport)
                 {
-                    if (v != null && !v.IsImport)
-                    {
-                        v.PreSpreadTranslate(trans);
-                    }
+                    v.PreSpreadTranslate(trans);
                 }
             }
         }
 
         internal virtual void PostSpreadTranslate(Translator trans)
         {
-            foreach (var list in _ScopeChild)
+            foreach (var peir in _ScopeChild)
             {
-                foreach (var v in list.Value)
+                var v = peir.Value;
+                if (v != null && !v.IsImport)
                 {
-                    if (v != null && !v.IsImport)
-                    {
-                        v.PostSpreadTranslate(trans);
-                    }
+                    v.PostSpreadTranslate(trans);
                 }
             }
         }

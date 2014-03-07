@@ -1,7 +1,7 @@
 ﻿1 + 2 * 3 =: var a =: var b
 echo test(a + 11, b + 22)
 
-rout test(c:DlightObject.Integer32, d:DlightObject.Integer32):DlightObject.Integer32
+rout test(c:Integer32, d:Integer32):Integer32
 {
 	return a * b + c - d 
 }
@@ -14,9 +14,9 @@ echo rand.gen()
 
 class Rand
 {
-	var value:DlightObject.Integer32 := 98765
+	var value:Integer32 := 98765
 
-	routine gen():DlightObject.Integer32
+	routine gen():Integer32
 	{
 		return value := value * 1103515245 + 12345
 	}

@@ -39,6 +39,11 @@ namespace AbstractSyntax
             }
         }
 
+        internal override bool IsContainer
+        {
+            get { return true; }
+        }
+
         internal override void CheckSyntax()
         {
             foreach (Token v in ErrorToken)

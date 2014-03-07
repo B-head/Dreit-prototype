@@ -32,6 +32,11 @@ namespace AbstractSyntax
             return _Child[index];
         }
 
+        internal override bool IsContainer
+        {
+            get { return true; }
+        }
+
         internal override void Translate(Translator trans)
         {
             foreach (Element v in this)

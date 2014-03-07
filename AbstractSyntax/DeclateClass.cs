@@ -39,6 +39,11 @@ namespace AbstractSyntax
             }
         }
 
+        internal override bool IsContainer
+        {
+            get { return false; } //仮
+        }
+
         protected override string CreateName()
         {
             return Ident == null ? null : Ident.Value;
