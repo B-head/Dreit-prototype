@@ -10,6 +10,7 @@ namespace AbstractSyntax
     public class Identifier : Element
     {
         public string Value { get; set; }
+        public bool IsPragma { get; set; }
         public Scope Refer { get; private set; }
 
         internal override Scope DataType

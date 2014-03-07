@@ -45,9 +45,9 @@ namespace AbstractSyntax
             base.SpreadReference(scope);
         }
 
-        internal override void CheckDataType(Scope scope)
+        internal override void CheckDataType()
         {
-            base.CheckDataType(scope);
+            base.CheckDataType();
             var refer = new List<Scope>();
             foreach (var v in Argument)
             {

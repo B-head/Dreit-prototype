@@ -23,7 +23,7 @@ namespace AbstractSyntax
             SpreadElement(null, null);
             SpreadReference(null);
             CheckSyntax();
-            CheckDataType(null);
+            CheckDataType();
         }
 
         public void TranslateTo(RootTranslator trans)

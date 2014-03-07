@@ -31,6 +31,19 @@ namespace AbstractSyntax
             }
         }
 
+        internal override void SpreadReference(Scope scope)
+        {
+            if(Fraction == null)
+            {
+                _DataType = scope.NameResolution("Integer32");
+            }
+            else
+            {
+                _DataType = scope.NameResolution("Binary64");
+            }
+            base.SpreadReference(scope);
+        }
+
         internal override void CheckSyntax()
         {
             Parse(Integral);
@@ -39,20 +52,6 @@ namespace AbstractSyntax
                 Parse(Fraction);
             }
             base.CheckSyntax();
-        }
-
-        internal override void CheckDataType(Scope scope)
-        {
-            var temp = scope.NameResolution("DlightObject");
-            if(Fraction == null)
-            {
-                _DataType = temp.NameResolution("Integer32");
-            }
-            else
-            {
-                _DataType = temp.NameResolution("Binary64");
-            }
-            base.CheckDataType(scope);
         }
 
         internal override void Translate(Translator trans)

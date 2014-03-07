@@ -77,7 +77,7 @@ namespace AbstractSyntax
             foreach(var peir in _ScopeChild)
             {
                 var v = peir.Value;
-                if (v.IsContainer)
+                if (v.IsNameSpace)
                 {
                     temp = v.ChildNameResolution(name);
                     if(temp != null)
@@ -94,7 +94,7 @@ namespace AbstractSyntax
             get { return this; }
         }
 
-        internal virtual bool IsContainer
+        internal virtual bool IsNameSpace
         {
             get { return false; }
         }
@@ -157,11 +157,6 @@ namespace AbstractSyntax
                 CompileError("識別子 " + Name + " は既に宣言されています。");
             }
             base.CheckSyntax();
-        }
-
-        internal override void CheckDataType(Scope scope)
-        {
-            base.CheckDataType(this);
         }
     }
 }

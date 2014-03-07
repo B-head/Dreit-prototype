@@ -15,9 +15,9 @@ namespace AbstractSyntax
             get { return Left.DataType; }
         }
 
-        internal override void CheckDataType(Scope scope)
+        internal override void CheckDataType()
         {
-            base.CheckDataType(scope);
+            base.CheckDataType();
             Scope l = Left.DataType;
             Scope r = Right.DataType;
             if (l != r)

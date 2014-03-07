@@ -39,7 +39,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override bool IsContainer
+        internal override bool IsNameSpace
         {
             get { return true; }
         }

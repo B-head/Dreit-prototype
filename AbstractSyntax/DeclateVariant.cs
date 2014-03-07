@@ -39,6 +39,11 @@ namespace AbstractSyntax
             }
         }
 
+        public void SetDataType(Scope type)
+        {
+            _DataType = type;
+        }
+
         protected override string CreateName()
         {
             return Ident == null ? null : Ident.Value;
@@ -51,15 +56,6 @@ namespace AbstractSyntax
             {
                 _DataType = ExplicitVariantType.DataType;
             }
-        }
-
-        internal override void CheckDataTypeAssign(Scope type)
-        {
-            if (_DataType == null && type != null)
-            {
-                _DataType = type;
-            }
-            base.CheckDataTypeAssign(type);
         }
 
         internal override void PostSpreadTranslate(Translator trans)

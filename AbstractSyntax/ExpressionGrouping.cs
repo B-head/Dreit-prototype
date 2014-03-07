@@ -13,10 +13,5 @@ namespace AbstractSyntax
         {
             get { return _Child.DataType; }
         }
-
-        internal override void CheckDataType(Scope scope)
-        {
-            base.CheckDataType(scope);
-        }
     }
 }

@@ -66,7 +66,7 @@ namespace SyntacticAnalysis
                 return access;
             }
             SkipSpaser(++temp);
-            var argument = ParseTuple(ref temp, Directive);
+            var argument = ParseTuple(ref temp, Addtive); // 仮
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return access;

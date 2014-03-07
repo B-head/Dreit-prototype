@@ -31,12 +31,16 @@ namespace AbstractSyntax
             base.CheckSyntax();
         }
 
-        internal override void CheckDataType(Scope scope)
+        internal override void CheckDataType()
         {
-            base.CheckDataType(scope);
+            base.CheckDataType();
             if (Right != null && Left != null)
             {
-                Left.CheckDataTypeAssign(DataType);
+                DeclateVariant temp = Left as DeclateVariant;
+                if(temp != null)
+                {
+                    temp.SetDataType(DataType);
+                }
             }
         }
 

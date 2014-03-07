@@ -176,28 +176,13 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual void CheckDataType(Scope scope)
+        internal virtual void CheckDataType()
         {
             foreach (Element v in this)
             {
                 if (v != null)
                 {
-                    v.CheckDataType(scope);
-                }
-            }
-        }
-
-        internal virtual void CheckDataTypeAssign(Scope type)
-        {
-            foreach (Element v in this)
-            {
-                if (v == null)
-                {
-                    continue;
-                }
-                if (v != null && v.IsAssignable)
-                {
-                    v.CheckDataTypeAssign(type);
+                    v.CheckDataType();
                 }
             }
         }

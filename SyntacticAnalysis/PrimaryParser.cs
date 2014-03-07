@@ -12,7 +12,7 @@ namespace SyntacticAnalysis
     {
         private Element Primary(ref int c)
         {
-            return CoalesceParser(ref c, Group, Number, DeclateClass, DeclateRoutine, DeclareVariant, Identifier);
+            return CoalesceParser(ref c, Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, Identifier);
         }
 
         private ExpressionGrouping Group(ref int c)
@@ -61,13 +61,19 @@ namespace SyntacticAnalysis
 
         private Identifier Identifier(ref int c)
         {
+            bool pragma = false;
+            if (CheckToken(c, TokenType.Pragma))
+            {
+                pragma = true;
+                SkipSpaser(++c);
+            }
             if (!CheckToken(c, TokenType.LetterStartString))
             {
                 return null;
             }
             Token t = Read(c);
             SkipSpaser(++c);
-            return new Identifier { Value = t.Text, Position = t.Position };
+            return new Identifier { Value = t.Text, IsPragma = pragma, Position = t.Position };
         }
     }
 }

@@ -32,7 +32,7 @@ namespace AbstractSyntax
             return _Child[index];
         }
 
-        internal override bool IsContainer
+        internal override bool IsNameSpace
         {
             get { return true; }
         }
