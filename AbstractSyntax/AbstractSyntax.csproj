@@ -45,6 +45,7 @@
     <Compile Include="DeclateArgument.cs" />
     <Compile Include="DeclateClass.cs" />
     <Compile Include="DeclateModule.cs" />
+    <Compile Include="DeclateOperator.cs" />
     <Compile Include="DeclateRoutine.cs" />
     <Compile Include="DeclateVariant.cs" />
     <Compile Include="DyadicCalculate.cs" />

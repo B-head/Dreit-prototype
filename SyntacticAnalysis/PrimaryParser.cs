@@ -31,7 +31,7 @@ namespace SyntacticAnalysis
             }
             SkipSpaser(++temp);
             c = temp;
-            return new ExpressionGrouping { _Child = exp, Operation = TokenType.Special, Position = position };
+            return new ExpressionGrouping { _Child = exp, Operator = TokenType.Special, Position = position };
         }
 
         private NumberLiteral Number(ref int c)

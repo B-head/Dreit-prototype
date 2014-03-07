@@ -31,7 +31,7 @@ namespace AbstractSyntax
             base.Translate(trans);
             Scope type = DataType;
             string callName = string.Empty;
-            switch(Operation)
+            switch(Operator)
             {
                 case TokenType.Add: callName = "opAdd"; break;
                 case TokenType.Subtract: callName = "opSubtract"; break;

@@ -11,7 +11,7 @@ namespace AbstractSyntax
     {
         public Element Left { get; set; }
         public Element Right { get; set; }
-        public TokenType Operation { get; set; }
+        public TokenType Operator { get; set; }
 
         public override int Count
         {
@@ -30,7 +30,7 @@ namespace AbstractSyntax
 
         protected override string AdditionalInfo()
         {
-            return Enum.GetName(typeof(TokenType), Operation);
+            return Enum.GetName(typeof(TokenType), Operator);
         }
 
         internal override void CheckSyntax()

@@ -12,7 +12,7 @@ namespace AbstractSyntax
     {
         public MemberAccess()
         {
-            Operation = TokenType.Access;
+            Operator = TokenType.Access;
         }
 
         internal override Scope DataType

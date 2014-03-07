@@ -120,7 +120,7 @@ namespace SyntacticAnalysis
             {
                 SkipSpaser(++c);
                 Element right = next(ref c);
-                left = new R { Left = left, Right = right, Operation = match, Position = left.Position };
+                left = new R { Left = left, Right = right, Operator = match, Position = left.Position };
             }
             return left;
         }
@@ -135,7 +135,7 @@ namespace SyntacticAnalysis
             }
             SkipSpaser(++c);
             Element right = RightAssociative<R>(ref c, next, type);
-            return new R { Left = left, Right = right, Operation = match, Position = left.Position };
+            return new R { Left = left, Right = right, Operator = match, Position = left.Position };
         }
 
         private TupleList ParseTuple(ref int c, ParserFunction next)

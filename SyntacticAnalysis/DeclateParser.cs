@@ -12,7 +12,7 @@ namespace SyntacticAnalysis
     {
         private DeclateVariant DeclareVariant(ref int c)
         {
-            if (!CheckText(c, "var", "variant"))
+            if (!CheckText(c, "var"))
             {
                 return null;
             }
@@ -57,6 +57,38 @@ namespace SyntacticAnalysis
             }
             var block = Block(ref c);
             return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitResultType = retType, Block = block, Position = ident.Position };
+        }
+
+        private DeclateOperator DeclateOperator(ref int c)
+        {
+            if (!CheckText(c, "operator"))
+            {
+                return null;
+            }
+            SkipSpaser(++c);
+            Token op = Read(c++);
+            TupleList attr = null;
+            Element retType = null;
+            if (CheckToken(c, TokenType.LeftParenthesis))
+            {
+                SkipSpaser(++c);
+                attr = ParseTuple(ref c, DeclateArgument);
+                if (CheckToken(c, TokenType.RightParenthesis))
+                {
+                    SkipSpaser(++c);
+                }
+            }
+            else
+            {
+                attr = new TupleList();
+            }
+            if (CheckToken(c, TokenType.Peir))
+            {
+                SkipSpaser(++c);
+                retType = MemberAccess(ref c);
+            }
+            var block = Block(ref c);
+            return new DeclateOperator { Operator = op.Type, Argument = attr, ExplicitResultType = retType, Block = block, Position = op.Position };
         }
 
         private DeclateArgument DeclateArgument(ref int c)
