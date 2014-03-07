@@ -19,8 +19,8 @@ namespace CliTranslate
             : base(path, parent)
         {
             Module = module;
-            GlobalField = Module.DefineType("@@global", TypeAttributes.SpecialName);
-            EntryContext = Module.DefineGlobalMethod("@@entry", MethodAttributes.SpecialName | MethodAttributes.Static, null, null);
+            GlobalField = Module.DefineType(path.Name + ".@@global", TypeAttributes.SpecialName);
+            EntryContext = Module.DefineGlobalMethod(path.Name + ".@@entry", MethodAttributes.SpecialName | MethodAttributes.Static, null, null);
             Generator = EntryContext.GetILGenerator();
             Root.SetEntryPoint(EntryContext);
         }
@@ -38,7 +38,7 @@ namespace CliTranslate
 
         public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
         {
-            var builder = Module.DefineGlobalMethod(path.Name, MethodAttributes.Static, null, null);
+            var builder = Module.DefineGlobalMethod(path.ToString(), MethodAttributes.Static, null, null);
             return new RoutineTranslator(path, this, builder, returnType); //モジュールに直接レキシカルオブジェクトを作りたい。
         }
 

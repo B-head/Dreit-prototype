@@ -58,7 +58,7 @@ namespace AbstractSyntax
                     }
                 }
             }
-            if (!(Child.Last() is ReturnDirective))
+            if (Child.Count <= 0 || !(Child.Last() is ReturnDirective))
             {
                 trans.GenerateControl(CodeType.Ret);
             }

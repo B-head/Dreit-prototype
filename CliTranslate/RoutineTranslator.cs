@@ -96,6 +96,11 @@ namespace CliTranslate
 
         public override void GenerateLoad(FullPath name)
         {
+            if(name.Name == "this")
+            {
+                Generator.Emit(OpCodes.Ldarg_0);
+                return;
+            }
             dynamic temp = Root.GetBuilder(name);
             FieldBuilder field = temp as FieldBuilder;
             if(field != null && field.DeclaringType == Lexical)
@@ -111,6 +116,11 @@ namespace CliTranslate
 
         public override void GenerateStore(FullPath name)
         {
+            if (name.Name == "this")
+            {
+                Generator.Emit(OpCodes.Ldarg_0);
+                return;
+            }
             dynamic temp = Root.GetBuilder(name);
             FieldBuilder field = temp as FieldBuilder;
             if (field != null && field.DeclaringType == Lexical)

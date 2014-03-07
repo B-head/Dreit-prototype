@@ -33,11 +33,11 @@ namespace AbstractSyntax
             string callName = string.Empty;
             switch(Operator)
             {
-                case TokenType.Add: callName = "opAdd"; break;
-                case TokenType.Subtract: callName = "opSubtract"; break;
-                case TokenType.Multiply: callName = "opMultiply"; break;
-                case TokenType.Divide: callName = "opDivide"; break;
-                case TokenType.Modulo: callName = "opModulo"; break;
+                case TokenType.Add: callName = "+"; break;
+                case TokenType.Subtract: callName = "-"; break;
+                case TokenType.Multiply: callName = "*"; break;
+                case TokenType.Divide: callName = "/"; break;
+                case TokenType.Modulo: callName = "%"; break;
                 default: throw new Exception();
             }
             trans.GenerateCall(type.NameResolution(callName).FullPath);

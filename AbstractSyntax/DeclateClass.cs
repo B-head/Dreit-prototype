@@ -15,7 +15,13 @@ namespace AbstractSyntax
         public TupleList Generic { get; set; }
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
+        public ThisScope This { get; set; }
         public List<DeclateClass> InheritRefer { get; private set; }
+
+        public DeclateClass()
+        {
+            This = new ThisScope();
+        }
 
         public override bool IsVoidValue
         {
@@ -24,7 +30,7 @@ namespace AbstractSyntax
 
         public override int Count
         {
-            get { return 4; }
+            get { return 5; }
         }
 
         public override Element GetChild(int index)
@@ -35,6 +41,7 @@ namespace AbstractSyntax
                 case 1: return Generic;
                 case 2: return Inherit;
                 case 3: return Block;
+                case 4: return This;
                 default: throw new ArgumentOutOfRangeException();
             }
         }

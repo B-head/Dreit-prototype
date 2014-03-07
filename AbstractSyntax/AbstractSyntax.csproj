@@ -70,6 +70,7 @@
     <Compile Include="RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="ThisScope.cs" />
     <Compile Include="TupleList.cs" />
     <Compile Include="VoidScope.cs" />
   </ItemGroup>
