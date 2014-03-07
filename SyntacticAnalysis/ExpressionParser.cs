@@ -27,7 +27,19 @@ namespace SyntacticAnalysis
 
         private Element TupleList(ref int c)
         {
-            return ParseTuple(ref c, Addtive);
+            var tuple = ParseTuple<Element>(ref c, Addtive);
+            if (tuple.Count > 1)
+            {
+                return tuple;
+            }
+            if (tuple.Count > 0)
+            {
+                return tuple.Child(0);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private Element Addtive(ref int c)
@@ -54,7 +66,7 @@ namespace SyntacticAnalysis
                 return access;
             }
             SkipSpaser(++temp);
-            var argument = TupleList(ref temp);
+            var argument = ParseTuple(ref temp, Directive);
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return access;

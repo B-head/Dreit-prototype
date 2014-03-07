@@ -145,26 +145,15 @@ namespace CliImport
             return result;
         }
 
-        private Element CreateGenericList(List<Type> generic)
+        private TupleList<Element> CreateGenericList(List<Type> generic)
         {
-            if(generic.Count > 1)
+            var tuple = new TupleList<Element> { IsImport = true };
+            foreach(var v in generic)
             {
-                var tuple = new TupleList { IsImport = true };
-                foreach(var v in generic)
-                {
-                    var temp = ConvertGeneric(v);
-                    tuple.Append(temp);
-                }
-                return tuple;
+                var temp = ConvertGeneric(v);
+                tuple.Append(temp);
             }
-            else if (generic.Count > 0)
-            {
-                return ConvertGeneric(generic[0]);
-            }
-            else
-            {
-                return null;
-            }
+            return tuple;
         }
 
         private DeclateVariant ConvertGeneric(Type generic)
@@ -173,26 +162,15 @@ namespace CliImport
             return new DeclateVariant { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
-        private Element CreateInheritList(List<Type> inherit)
+        private TupleList<Element> CreateInheritList(List<Type> inherit)
         {
-            if (inherit.Count > 1)
+            var tuple = new TupleList<Element> { IsImport = true };
+            foreach (var v in inherit)
             {
-                var tuple = new TupleList { IsImport = true };
-                foreach (var v in inherit)
-                {
-                    var temp = CreateAccess(v);
-                    tuple.Append(temp);
-                }
-                return tuple;
+                var temp = CreateAccess(v);
+                tuple.Append(temp);
             }
-            else if (inherit.Count > 0)
-            {
-                return CreateAccess(inherit[0]);
-            }
-            else
-            {
-                return null;
-            }
+            return tuple;
         }
 
         private Element CreateAccess(Type type)
@@ -257,33 +235,22 @@ namespace CliImport
             return result;
         }
 
-        private Element CreateArgumentList(List<ParameterInfo> argument)
+        private TupleList<DeclateArgument> CreateArgumentList(List<ParameterInfo> argument)
         {
-            if (argument.Count > 1)
+            var tuple = new TupleList<DeclateArgument> { IsImport = true };
+            foreach (var v in argument)
             {
-                var tuple = new TupleList { IsImport = true };
-                foreach (var v in argument)
-                {
-                    var temp = ConvertArgument(v);
-                    tuple.Append(temp);
-                }
-                return tuple;
+                var temp = ConvertArgument(v);
+                tuple.Append(temp);
             }
-            else if (argument.Count > 0)
-            {
-                return ConvertArgument(argument[0]);
-            }
-            else
-            {
-                return null;
-            }
+            return tuple;
         }
 
-        private DeclateVariant ConvertArgument(ParameterInfo argument)
+        private DeclateArgument ConvertArgument(ParameterInfo argument)
         {
             var ident = new Identifier { Value = argument.Name, IsImport = true };
             var expl = CreateAccess(argument.ParameterType);
-            DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
+            DeclateArgument result = new DeclateArgument { Ident = ident, ExplicitArgumentType = expl, IsImport = true };
             AppendPeir(result, argument);
             return result;
         }

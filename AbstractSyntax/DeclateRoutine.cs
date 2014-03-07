@@ -12,8 +12,8 @@ namespace AbstractSyntax
     {
         public RoutineTranslator RoutineTrans { get; private set; }
         public Identifier Ident { get; set; }
-        public Element Generic { get; set; }
-        public Element Argument { get; set; }
+        public TupleList<Element> Generic { get; set; }
+        public TupleList<DeclateArgument> Argument { get; set; }
         public Element ExplicitResultType { get; set; }
         public Element Block { get; set; }
         public List<Scope> ArgumentType { get; set; }
@@ -51,17 +51,9 @@ namespace AbstractSyntax
         {
             base.SpreadReference(scope);
             var refer = new List<Scope>();
-            if (Argument is TupleList)
+            foreach (var v in Argument)
             {
-                foreach (var v in Argument)
-                {
-                    var temp = v.DataType;
-                    refer.Add(temp);
-                }
-            }
-            else if (Argument != null)
-            {
-                var temp = Argument.DataType;
+                var temp = v.DataType;
                 refer.Add(temp);
             }
             ArgumentType = refer;

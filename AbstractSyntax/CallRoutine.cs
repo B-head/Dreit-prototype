@@ -11,7 +11,7 @@ namespace AbstractSyntax
     public class CallRoutine : Element
     {
         public Element Access { get; set; }
-        public Element Argument { get; set; }
+        public TupleList<Element> Argument { get; set; }
         public List<Scope> ArgumentType { get; set; }
         private bool _IsVoidValue = false;
 
@@ -49,17 +49,9 @@ namespace AbstractSyntax
         {
             base.CheckDataType(scope);
             var refer = new List<Scope>();
-            if (Argument is TupleList)
+            foreach (var v in Argument)
             {
-                foreach (var v in Argument)
-                {
-                    var temp = v.DataType;
-                    refer.Add(temp);
-                }
-            }
-            else if (Argument != null)
-            {
-                var temp = Argument.DataType;
+                var temp = v.DataType;
                 refer.Add(temp);
             }
             ArgumentType = refer;

@@ -12,8 +12,8 @@ namespace AbstractSyntax
     {
         public ClassTranslator ClassTrans { get; private set; }
         public Identifier Ident { get; set; }
-        public Element Generic { get; set; }
-        public Element Inherit { get; set; }
+        public TupleList<Element> Generic { get; set; }
+        public TupleList<Element> Inherit { get; set; }
         public Element Block { get; set; }
         public List<DeclateClass> InheritRefer { get; private set; }
 
@@ -47,22 +47,14 @@ namespace AbstractSyntax
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
-            var refer = new List<DeclateClass>();
-            if (Inherit is TupleList)
+            if(Inherit == null)
             {
-                foreach (var v in Inherit)
-                {
-                    var temp = v.DataType as DeclateClass;
-                    if (temp == null)
-                    {
-                        CompileError("継承元はクラスである必要があります。");
-                    }
-                    refer.Add(temp);
-                }
+                return;
             }
-            else if(Inherit != null)
+            var refer = new List<DeclateClass>();
+            foreach (var v in Inherit)
             {
-                var temp = Inherit.DataType as DeclateClass;
+                var temp = v.DataType as DeclateClass;
                 if (temp == null)
                 {
                     CompileError("継承元はクラスである必要があります。");

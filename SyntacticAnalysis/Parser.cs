@@ -11,6 +11,7 @@ namespace SyntacticAnalysis
     public partial class Parser
     {
         private delegate Element ParserFunction(ref int c);
+        private delegate E ParserFunction<E>(ref int c) where E : Element;
         private List<Token> InputToken;
         private List<Token> ErrorToken;
 
@@ -137,12 +138,20 @@ namespace SyntacticAnalysis
             return new R { Left = left, Right = right, Operation = match, Position = left.Position };
         }
 
-        private Element ParseTuple(ref int c, ParserFunction next)
+        private TupleList<E> ParseTuple<E>(ref int c, ParserFunction<E> next) where E : Element
         {
-            TupleList tuple = new TupleList();
+            TupleList<E> tuple = new TupleList<E>();
             while (IsReadable(c))
             {
-                Element temp = next(ref c);
+                E temp = next(ref c);
+                if(temp == null)
+                {
+                    break;
+                }
+                if(tuple.Count <= 0)
+                {
+                    tuple.Position = temp.Position;
+                }
                 tuple.Append(temp);
                 if (!CheckToken(c, TokenType.List))
                 {
@@ -150,19 +159,7 @@ namespace SyntacticAnalysis
                 }
                 SkipSpaser(++c);
             }
-            if (tuple.Count > 1)
-            {
-                tuple.Position = tuple[0].Position;
-                return tuple;
-            }
-            if (tuple.Count > 0)
-            {
-                return tuple.Child(0);
-            }
-            else
-            {
-                return null;
-            }
+            return tuple;
         }
     }
 }

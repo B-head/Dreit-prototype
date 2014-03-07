@@ -35,7 +35,7 @@ namespace SyntacticAnalysis
             }
             SkipSpaser(++c);
             Identifier ident = Identifier(ref c);
-            Element attr = null;
+            TupleList<DeclateArgument> attr = null;
             Element retType = null;
             Element block = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
