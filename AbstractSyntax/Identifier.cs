@@ -45,28 +45,40 @@ namespace AbstractSyntax
 
         internal override void SpreadReference(Scope scope)
         {
-            base.SpreadReference(scope);
-            var temp  = scope.NameResolution(Value);
-            if (temp == null)
+            if (IsPragma)
             {
-                CompileError("識別子 " + Value + " が宣言されていません。");
+                var temp = Root.GetPragma(Value);
+                if (temp == null)
+                {
+                    CompileError("プラグマ @@" + Value + " は定義されていません。");
+                }
+                else
+                {
+                    Refer = temp;
+                }
             }
             else
             {
-                Refer = temp;
+                var temp = scope.NameResolution(Value);
+                if (temp == null)
+                {
+                    CompileError("識別子 " + Value + " は宣言されていません。");
+                }
+                else
+                {
+                    Refer = temp;
+                }
             }
         }
 
         internal override void Translate(Translator trans)
         {
             trans.GenerateLoad(Refer.FullPath);
-            base.Translate(trans);
         }
 
         internal override void TranslateAssign(Translator trans)
         {
             trans.GenerateStore(Refer.FullPath);
-            base.TranslateAssign(trans);
         }
     }
 }

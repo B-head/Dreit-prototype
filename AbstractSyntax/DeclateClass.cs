@@ -54,12 +54,13 @@ namespace AbstractSyntax
             var refer = new List<DeclateClass>();
             foreach (var v in Inherit)
             {
-                var temp = v.DataType as DeclateClass;
-                if (temp == null)
+                var cls = v.DataType as DeclateClass;
+                var prim = v.DataType as PrimitivePragma;
+                if (cls == null && prim == null)
                 {
                     CompileError("継承元はクラスである必要があります。");
                 }
-                refer.Add(temp);
+                refer.Add(cls);
             }
             InheritRefer = refer;
         }

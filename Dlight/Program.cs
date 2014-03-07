@@ -21,7 +21,7 @@ namespace Dlight
             string fileName = args[0];
             Root root = new Root();
             ImportManager import = new ImportManager(root);
-            import.ImportAssembly(Assembly.Load("mscorlib"));
+            //import.ImportAssembly(Assembly.Load("mscorlib"));
             //import.ImportAssembly(Assembly.Load("DlightObject"));
             root.Append(CompileFile("lib/primitive.dl"));
             root.Append(CompileFile(fileName));

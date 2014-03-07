@@ -102,16 +102,24 @@ namespace AbstractSyntax
 
         internal override void Translate(Translator trans)
         {
+            var access = Access as MemberAccess;
+            if(access != null)
+            {
+                access.TranslateAccess(trans);
+            }
             if (Argument != null)
             {
                 Argument.Translate(trans);
             }
-            var temp = Access as MemberAccess;
-            if(temp != null)
+            var pragma = Access.DataType as Pragma;
+            if (pragma == null)
             {
-                temp.TranslateAccess(trans);
+                trans.GenerateCall(Access.DataType.FullPath);
             }
-            trans.GenerateCall(Access.DataType.FullPath);
+            else
+            {
+                pragma.Translate(trans);
+            }
         }
     }
 }

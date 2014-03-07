@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalculatePragma.cs" />
     <Compile Include="CallRoutine.cs" />
     <Compile Include="DeclateArgument.cs" />
     <Compile Include="DeclateClass.cs" />
@@ -51,6 +52,8 @@
     <Compile Include="DeclateVariant.cs" />
     <Compile Include="DyadicCalculate.cs" />
     <Compile Include="DyadicExpression.cs" />
+    <Compile Include="Pragma.cs" />
+    <Compile Include="PrimitivePragma.cs" />
     <Compile Include="ReturnDirective.cs" />
     <Compile Include="EchoDirective.cs" />
     <Compile Include="Element.cs" />
