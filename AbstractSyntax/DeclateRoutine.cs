@@ -44,7 +44,7 @@ namespace AbstractSyntax
 
         protected override string CreateName()
         {
-            return Ident == null ? null : Ident.Value;
+            return Ident == null ? Name : Ident.Value;
         }
 
         internal override void SpreadReference(Scope scope)

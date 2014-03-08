@@ -12,14 +12,33 @@ namespace AbstractSyntax
         public RootTranslator RootTrans { get; private set; }
         public int ErrorCount { get; private set; }
         public int WarningCount { get; private set; }
-        private Dictionary<string, Pragma> _PragmaDictionary;
-        public IReadOnlyDictionary<string, Pragma> PragmaDictionary { get; set; }
+        private List<Scope> PragmaList;
+        private Dictionary<string, Scope> _PragmaDictionary;
+        public IReadOnlyDictionary<string, Scope> PragmaDictionary { get; set; }
 
         public Root()
         {
             Name = "global";
-            _PragmaDictionary = new Dictionary<string, Pragma>();
+            PragmaList = new List<Scope>();
+            _PragmaDictionary = new Dictionary<string, Scope>();
             CreatePragma();
+        }
+
+        public override int Count
+        {
+            get { return Child.Count + PragmaList.Count; }
+        }
+
+        public override Element GetChild(int index)
+        {
+            if (index < Child.Count)
+            {
+                return Child[index];
+            }
+            else
+            {
+                return PragmaList[index - Child.Count];
+            }
         }
 
         public void SemanticAnalysis()
@@ -38,22 +57,29 @@ namespace AbstractSyntax
             Translate(trans);
         }
 
-        internal Pragma GetPragma(string name)
+        internal Scope GetPragma(string name)
         {
-            Pragma temp;
+            Scope temp;
             _PragmaDictionary.TryGetValue(name, out temp);
             return temp;
         }
 
+        private void AppendPragma(string name, Scope pragma)
+        {
+            pragma.Name = "@@" + name;
+            PragmaList.Add(pragma);
+            _PragmaDictionary.Add(name, pragma);
+        }
+
         private void CreatePragma()
         {
-            _PragmaDictionary.Add("add", new CalculatePragma(CalculatePragmaType.Add));
-            _PragmaDictionary.Add("sub", new CalculatePragma(CalculatePragmaType.Sub));
-            _PragmaDictionary.Add("mul", new CalculatePragma(CalculatePragmaType.Mul));
-            _PragmaDictionary.Add("div", new CalculatePragma(CalculatePragmaType.Div));
-            _PragmaDictionary.Add("mod", new CalculatePragma(CalculatePragmaType.Mod));
-            _PragmaDictionary.Add("Root", new PrimitivePragma(PrimitivePragmaType.Root));
-            _PragmaDictionary.Add("Integer32", new PrimitivePragma(PrimitivePragmaType.Integer32));
+            AppendPragma("add", new CalculatePragma(CalculatePragmaType.Add));
+            AppendPragma("sub", new CalculatePragma(CalculatePragmaType.Sub));
+            AppendPragma("mul", new CalculatePragma(CalculatePragmaType.Mul));
+            AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
+            AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
+            AppendPragma("Root", new PrimitivePragma(PrimitivePragmaType.Root));
+            AppendPragma("Integer32", new PrimitivePragma(PrimitivePragmaType.Integer32));
         }
 
         internal void OutputError(string message)

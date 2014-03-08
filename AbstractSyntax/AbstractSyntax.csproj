@@ -52,7 +52,6 @@
     <Compile Include="DeclateVariant.cs" />
     <Compile Include="DyadicCalculate.cs" />
     <Compile Include="DyadicExpression.cs" />
-    <Compile Include="Pragma.cs" />
     <Compile Include="PrimitivePragma.cs" />
     <Compile Include="ReturnDirective.cs" />
     <Compile Include="EchoDirective.cs" />

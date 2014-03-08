@@ -20,7 +20,8 @@ namespace AbstractSyntax
 
         public DeclateClass()
         {
-            This = new ThisScope();
+            InheritRefer = new List<DeclateClass>();
+            This = new ThisScope(this);
         }
 
         public override bool IsVoidValue
@@ -48,7 +49,7 @@ namespace AbstractSyntax
 
         protected override string CreateName()
         {
-            return Ident == null ? null : Ident.Value;
+            return Ident == null ? Name : Ident.Value;
         }
 
         internal override void SpreadReference(Scope scope)
@@ -58,18 +59,17 @@ namespace AbstractSyntax
             {
                 return;
             }
-            var refer = new List<DeclateClass>();
             foreach (var v in Inherit)
             {
-                var cls = v.DataType as DeclateClass;
-                var prim = v.DataType as PrimitivePragma;
-                if (cls == null && prim == null)
+                if(v.DataType is DeclateClass)
+                {
+                    InheritRefer.Add((DeclateClass)v.DataType);
+                }
+                else
                 {
                     CompileError("継承元はクラスである必要があります。");
                 }
-                refer.Add(cls);
             }
-            InheritRefer = refer;
         }
 
         internal override void PreSpreadTranslate(Translator trans)

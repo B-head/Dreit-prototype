@@ -24,7 +24,7 @@ namespace AbstractSyntax
             _ScopeChild = new Dictionary<string, Scope>();
         }
 
-        public void AddChild(Scope child)
+        public void AppendChild(Scope child)
         {
             child.ScopeParent = this;
             Scope temp;
@@ -70,6 +70,18 @@ namespace AbstractSyntax
             {
                 return temp;
             }
+            var deccls = this as DeclateClass;
+            if(deccls != null)
+            {
+                foreach(var v in deccls.InheritRefer)
+                {
+                    temp = v.ChildNameResolution(name);
+                    if (temp != null)
+                    {
+                        return temp;
+                    }
+                }
+            }
             foreach(var peir in _ScopeChild)
             {
                 var v = peir.Value;
@@ -110,7 +122,7 @@ namespace AbstractSyntax
             Name = CreateName();
             if (scope != null)
             {
-                scope.AddChild(this);
+                scope.AppendChild(this);
             }
             FullPath = GetFullPath();
         }

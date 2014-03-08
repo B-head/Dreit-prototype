@@ -111,14 +111,14 @@ namespace AbstractSyntax
             {
                 Argument.Translate(trans);
             }
-            var pragma = Access.DataType as Pragma;
+            var pragma = Access.DataType as CalculatePragma;
             if (pragma == null)
             {
                 trans.GenerateCall(Access.DataType.FullPath);
             }
             else
             {
-                pragma.Translate(trans);
+                pragma.PragmaTranslate(trans, Argument);
             }
         }
     }

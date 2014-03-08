@@ -8,9 +8,17 @@ namespace AbstractSyntax
 {
     public class ThisScope : Scope
     {
-        public ThisScope()
+        private DeclateClass _DataType;
+
+        public ThisScope(DeclateClass dataType)
         {
             Name = "this";
+            _DataType = dataType;
+        }
+
+        internal override Scope DataType
+        {
+            get { return _DataType; }
         }
     }
 }
