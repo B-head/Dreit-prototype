@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
@@ -35,21 +34,6 @@ namespace AbstractSyntax
         internal override bool IsNameSpace
         {
             get { return true; }
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            foreach (Element v in this)
-            {
-                if (v == null)
-                {
-                    continue;
-                }
-                if (v is NameSpace || v is DeclateModule)
-                {
-                    v.Translate(trans);
-                }
-            }
         }
     }
 }

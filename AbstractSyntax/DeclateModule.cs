@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
 {
     public class DeclateModule : Scope
     {
-        public ModuleTranslator ModuleTrans { get; private set; }
         public DirectiveList ExpList { get; set; }
         public List<Token> ErrorToken { get; set; }
 
@@ -58,22 +56,6 @@ namespace AbstractSyntax
                 }
             }
             base.CheckSyntax();
-        }
-
-        internal override void PreSpreadTranslate(Translator trans)
-        {
-            ModuleTrans = trans.CreateModule(FullPath);
-            base.PreSpreadTranslate(ModuleTrans);
-        }
-
-        internal override void PostSpreadTranslate(Translator trans)
-        {
-            base.PostSpreadTranslate(ModuleTrans);
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            base.Translate(ModuleTrans);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
@@ -125,30 +124,6 @@ namespace AbstractSyntax
                 scope.AppendChild(this);
             }
             FullPath = GetFullPath();
-        }
-
-        internal virtual void PreSpreadTranslate(Translator trans)
-        {
-            foreach (var peir in _ScopeChild)
-            {
-                var v = peir.Value;
-                if (v != null && !v.IsImport)
-                {
-                    v.PreSpreadTranslate(trans);
-                }
-            }
-        }
-
-        internal virtual void PostSpreadTranslate(Translator trans)
-        {
-            foreach (var peir in _ScopeChild)
-            {
-                var v = peir.Value;
-                if (v != null && !v.IsImport)
-                {
-                    v.PostSpreadTranslate(trans);
-                }
-            }
         }
 
         internal override void CheckSyntax()

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
@@ -39,29 +38,6 @@ namespace AbstractSyntax
         public override Element GetChild(int index)
         {
             return Child[index];
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            if (IsInline)
-            {
-                Child[0].Translate(trans);
-            }
-            else
-            {
-                foreach (Element v in this)
-                {
-                    v.Translate(trans);
-                    if (!v.IsVoidValue)
-                    {
-                        trans.GenerateControl(CodeType.Pop);
-                    }
-                }
-            }
-            if (Child.Count <= 0 || !(Child.Last() is ReturnDirective))
-            {
-                trans.GenerateControl(CodeType.Ret);
-            }
         }
     }
 }

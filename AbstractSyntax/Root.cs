@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 
 namespace AbstractSyntax
 {
     public class Root : NameSpace
     {
-        public RootTranslator RootTrans { get; private set; }
         public int ErrorCount { get; private set; }
         public int WarningCount { get; private set; }
         private List<Scope> PragmaList;
@@ -47,14 +45,6 @@ namespace AbstractSyntax
             SpreadReference(null);
             CheckSyntax();
             CheckDataType();
-        }
-
-        public void TranslateTo(RootTranslator trans)
-        {
-            RootTrans = trans;
-            PreSpreadTranslate(RootTrans);
-            PostSpreadTranslate(RootTrans);
-            Translate(trans);
         }
 
         internal Scope GetPragma(string name)
