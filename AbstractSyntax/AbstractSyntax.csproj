@@ -74,10 +74,6 @@
     <Compile Include="VoidScope.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CliTranslate\CliTranslate.csproj">
-      <Project>{fe6f3528-b4de-4cc9-9554-fbe2b1213041}</Project>
-      <Name>CliTranslate</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{5ffa51b1-65e1-4a7d-a79f-31051c0cc99a}</Project>
       <Name>Common</Name>

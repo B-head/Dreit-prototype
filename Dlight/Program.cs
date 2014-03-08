@@ -9,7 +9,6 @@ using LexicalAnalysis;
 using SyntacticAnalysis;
 using CliTranslate;
 using AbstractSyntax;
-using CliImport;
 using Common;
 
 namespace Dlight
