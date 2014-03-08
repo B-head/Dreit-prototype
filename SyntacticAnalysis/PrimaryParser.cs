@@ -59,7 +59,7 @@ namespace SyntacticAnalysis
             return new NumberLiteral { Integral = i.Text, Position = i.Position };
         }
 
-        private Identifier Identifier(ref int c)
+        private IdentifierAccess Identifier(ref int c)
         {
             bool pragma = false;
             if (CheckToken(c, TokenType.Pragma))
@@ -73,7 +73,7 @@ namespace SyntacticAnalysis
             }
             Token t = Read(c);
             SkipSpaser(++c);
-            return new Identifier { Value = t.Text, IsPragma = pragma, Position = t.Position };
+            return new IdentifierAccess { Value = t.Text, IsPragma = pragma, Position = t.Position };
         }
     }
 }

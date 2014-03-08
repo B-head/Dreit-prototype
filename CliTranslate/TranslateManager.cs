@@ -50,6 +50,27 @@ namespace CliTranslate
             ChildSpreadTranslate(scope, temp);
         }
 
+        internal virtual void SpreadTranslate(DeclateClass scope, Translator trans)
+        {
+            var temp = trans.CreateClass(scope.FullPath);
+            TransDictionary.Add(scope, temp);
+            ChildSpreadTranslate(scope, temp);
+        }
+
+        internal virtual void SpreadTranslate(DeclateRoutine scope, Translator trans)
+        {
+            var temp = trans.CreateRoutine(scope.FullPath, scope.ReturnType.FullPath);
+            TransDictionary.Add(scope, temp);
+            ChildSpreadTranslate(scope, temp);
+            temp.SaveArgument();
+        }
+
+        internal virtual void SpreadTranslate(DeclateVariant scope, Translator trans)
+        {
+            trans.CreateVariant(scope.FullPath, scope.DataType.FullPath);
+            ChildSpreadTranslate(scope, trans);
+        }
+
         private void ChildTranslate(Element element, Translator trans)
         {
             foreach(var v in element)
@@ -81,6 +102,26 @@ namespace CliTranslate
             {
                 trans.GenerateControl(CodeType.Ret);
             }
+        }
+
+        private void Translate(DeclateClass element, Translator trans)
+        {
+            var temp = TransDictionary[element];
+            Translate(element.Block, temp);
+            ChildTranslate(element, temp);
+        }
+
+        private void Translate(DeclateRoutine element, Translator trans)
+        {
+            var temp = TransDictionary[element];
+            Translate(element.Block, temp);
+            ChildTranslate(element, temp);
+        }
+
+        private void Translate(DeclateVariant element, Translator trans)
+        {
+            element.Ident.Translate(trans);
+            ChildTranslate(element, trans);
         }
     }
 }

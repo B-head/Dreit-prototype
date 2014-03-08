@@ -10,7 +10,7 @@ namespace AbstractSyntax
 {
     public class DeclateArgument : Scope
     {
-        public Identifier Ident { get; set; }
+        public IdentifierAccess Ident { get; set; }
         public Element ExplicitArgumentType { get; set; }
         private Scope _DataType;
 

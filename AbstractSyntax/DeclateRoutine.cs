@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
 {
     public class DeclateRoutine : Scope
     {
-        public RoutineTranslator RoutineTrans { get; private set; }
-        public Identifier Ident { get; set; }
+        public IdentifierAccess Ident { get; set; }
         public TupleList Generic { get; set; }
         public TupleList Argument { get; set; }
         public Element ExplicitResultType { get; set; }
         public DirectiveList Block { get; set; }
         public List<Scope> ArgumentType { get; set; }
         public Scope ReturnType { get; set; }
+
+        public DeclateRoutine()
+        {
+            ReturnType = new VoidScope();
+        }
 
         public override bool IsVoidValue
         {
@@ -60,25 +63,6 @@ namespace AbstractSyntax
             if (ExplicitResultType != null)
             {
                 ReturnType = ExplicitResultType.DataType;
-            }
-        }
-
-        internal override void PostSpreadTranslate(Translator trans)
-        {
-            FullPath returnType = ReturnType == null ? null : ReturnType.FullPath;
-            RoutineTrans = trans.CreateRoutine(FullPath, returnType);
-            base.PostSpreadTranslate(RoutineTrans);
-            if (RoutineTrans != null)
-            {
-                RoutineTrans.SaveArgument();
-            }
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            if (Block != null)
-            {
-                Block.Translate(RoutineTrans);
             }
         }
     }

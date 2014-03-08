@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
 {
     public class DeclateVariant : Scope
     {
-        public Identifier Ident { get; set; }
+        public IdentifierAccess Ident { get; set; }
         public Element ExplicitVariantType { get; set; }
         public Scope _DataType { get; set; }
 
@@ -63,22 +62,6 @@ namespace AbstractSyntax
             {
                 _DataType = ExplicitVariantType.DataType;
             }
-        }
-
-        internal override void PostSpreadTranslate(Translator trans)
-        {
-            trans.CreateVariant(FullPath, DataType.FullPath);
-            base.PostSpreadTranslate(trans);
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            Ident.Translate(trans);
-        }
-
-        internal override void TranslateAssign(Translator trans)
-        {
-            Ident.TranslateAssign(trans);
         }
     }
 }

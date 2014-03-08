@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
 {
     public class DeclateClass : Scope
     {
-        public ClassTranslator ClassTrans { get; private set; }
-        public Identifier Ident { get; set; }
+        public IdentifierAccess Ident { get; set; }
         public TupleList Generic { get; set; }
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
@@ -70,22 +68,6 @@ namespace AbstractSyntax
                     CompileError("継承元はクラスである必要があります。");
                 }
             }
-        }
-
-        internal override void PreSpreadTranslate(Translator trans)
-        {
-            ClassTrans = trans.CreateClass(FullPath);
-            base.PreSpreadTranslate(ClassTrans);
-        }
-
-        internal override void PostSpreadTranslate(Translator trans)
-        {
-            base.PostSpreadTranslate(ClassTrans);
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            Block.Translate(ClassTrans);
         }
 
         public bool IsContain(DeclateClass other)

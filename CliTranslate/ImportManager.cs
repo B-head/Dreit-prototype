@@ -94,7 +94,7 @@ namespace CliTranslate
 
         private DeclateClass ImportType(Type type)
         {
-            var ident = new Identifier { Value = type.GetPureName(), IsImport = true };
+            var ident = new IdentifierAccess { Value = type.GetPureName(), IsImport = true };
             var generic = CreateGenericList(type.GetGenericList());
             var inherit = CreateInheritList(type.GetInheritList());
             var exp = new DirectiveList { IsImport = true };
@@ -157,7 +157,7 @@ namespace CliTranslate
 
         private DeclateGeneric ConvertGeneric(Type generic)
         {
-            var ident = new Identifier { Value = generic.GetPureName(), IsImport = true };
+            var ident = new IdentifierAccess { Value = generic.GetPureName(), IsImport = true };
             return new DeclateGeneric { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
@@ -181,14 +181,14 @@ namespace CliTranslate
         {
             if (pureFullName.Count > 1)
             {
-                var right = new Identifier { Value = pureFullName[pureFullName.Count - 1], IsImport = true };
+                var right = new IdentifierAccess { Value = pureFullName[pureFullName.Count - 1], IsImport = true };
                 pureFullName.RemoveAt(pureFullName.Count - 1);
                 var left = CreateAccess(pureFullName);
                 return new MemberAccess { Left = left, Right = right, IsImport = true };
             }
             else if (pureFullName.Count > 0)
             {
-                return new Identifier { Value = pureFullName[0], IsImport = true };
+                return new IdentifierAccess { Value = pureFullName[0], IsImport = true };
             }
             else
             {
@@ -198,7 +198,7 @@ namespace CliTranslate
 
         private Element ConvertConstructor(ConstructorInfo ctor)
         {
-            var ident = new Identifier { Value = ctor.Name, IsImport = true };
+            var ident = new IdentifierAccess { Value = ctor.Name, IsImport = true };
             var argument = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
             DeclateRoutine result = new DeclateRoutine { Ident = ident, Argument = argument, ExplicitResultType = expl, IsImport = true };
@@ -208,7 +208,7 @@ namespace CliTranslate
 
         private Element ConvertEvent(EventInfo eve)
         {
-            var ident = new Identifier { Value = eve.Name, IsImport = true };
+            var ident = new IdentifierAccess { Value = eve.Name, IsImport = true };
             var expl = CreateAccess(eve.DeclaringType);
             DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
             AppendPeir(result, eve);
@@ -217,7 +217,7 @@ namespace CliTranslate
 
         private DeclateEnum ImportEnum(Type enumType)
         {
-            var ident = new Identifier { Value = enumType.GetPureName(), IsImport = true };
+            var ident = new IdentifierAccess { Value = enumType.GetPureName(), IsImport = true };
             var result = new DeclateEnum { Ident = ident, IsImport = true }; //後で作る。
             AppendPeir(result, enumType);
             return result;
@@ -225,7 +225,7 @@ namespace CliTranslate
 
         private DeclateRoutine ImportMethod(MethodInfo method)
         {
-            var ident = new Identifier { Value = method.GetPureName(), IsImport = true };
+            var ident = new IdentifierAccess { Value = method.GetPureName(), IsImport = true };
             var generic = CreateGenericList(method.GetGenericList());
             var argument = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
@@ -247,7 +247,7 @@ namespace CliTranslate
 
         private DeclateArgument ConvertArgument(ParameterInfo argument)
         {
-            var ident = new Identifier { Value = argument.Name, IsImport = true };
+            var ident = new IdentifierAccess { Value = argument.Name, IsImport = true };
             var expl = CreateAccess(argument.ParameterType);
             DeclateArgument result = new DeclateArgument { Ident = ident, ExplicitArgumentType = expl, IsImport = true };
             AppendPeir(result, argument);
@@ -256,7 +256,7 @@ namespace CliTranslate
 
         private DeclateVariant ImportField(FieldInfo field)
         {
-            var ident = new Identifier { Value = field.Name, IsImport = true };
+            var ident = new IdentifierAccess { Value = field.Name, IsImport = true };
             var expl = CreateAccess(field.FieldType);
             DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitVariantType = expl, IsImport = true };
             AppendPeir(result, field);

@@ -58,7 +58,7 @@
     <Compile Include="Element.cs" />
     <Compile Include="ExpressionGrouping.cs" />
     <Compile Include="DirectiveList.cs" />
-    <Compile Include="Identifier.cs" />
+    <Compile Include="IdentifierAccess.cs" />
     <Compile Include="LeftAssign.cs" />
     <Compile Include="MemberAccess.cs" />
     <Compile Include="NameSpace.cs" />

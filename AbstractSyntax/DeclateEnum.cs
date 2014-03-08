@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
 {
     public class DeclateEnum : Scope
     {
-        public Identifier Ident { get; set; }
+        public IdentifierAccess Ident { get; set; }
 
         public override int Count
         {
@@ -28,7 +27,7 @@ namespace AbstractSyntax
 
         protected override string CreateName()
         {
-            return Ident == null ? null : Ident.Value;
+            return Ident == null ? Name : Ident.Value;
         }
     }
 }

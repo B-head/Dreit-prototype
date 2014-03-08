@@ -17,7 +17,7 @@ namespace SyntacticAnalysis
                 return null;
             }
             SkipSpaser(++c);
-            Identifier ident = Identifier(ref c);
+            IdentifierAccess ident = Identifier(ref c);
             Element explType = null;
             if (CheckToken(c, TokenType.Peir))
             {
@@ -34,7 +34,7 @@ namespace SyntacticAnalysis
                 return null;
             }
             SkipSpaser(++c);
-            Identifier ident = Identifier(ref c);
+            IdentifierAccess ident = Identifier(ref c);
             TupleList attr = null;
             Element retType = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
@@ -93,7 +93,7 @@ namespace SyntacticAnalysis
 
         private DeclateArgument DeclateArgument(ref int c)
         {
-            Identifier ident = Identifier(ref c);
+            IdentifierAccess ident = Identifier(ref c);
             if(ident == null)
             {
                 return null;
@@ -114,7 +114,7 @@ namespace SyntacticAnalysis
                 return null;
             }
             SkipSpaser(++c);
-            Identifier ident = Identifier(ref c);
+            IdentifierAccess ident = Identifier(ref c);
             TupleList inherit = null;
             if (CheckToken(c, TokenType.Peir))
             {

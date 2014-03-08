@@ -7,13 +7,13 @@ using CliTranslate;
 
 namespace AbstractSyntax
 {
-    public class Identifier : Element
+    public class IdentifierAccess : Element
     {
         public string Value { get; set; }
         public bool IsPragma { get; set; }
         public Scope Refer { get; private set; }
 
-        public Identifier()
+        public IdentifierAccess()
         {
             Refer = new VoidScope();
         }
