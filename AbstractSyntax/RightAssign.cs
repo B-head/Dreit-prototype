@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 
 namespace AbstractSyntax
 {
@@ -34,13 +33,6 @@ namespace AbstractSyntax
                     temp.SetDataType(DataType);
                 }
             }
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            Left.Translate(trans);
-            Right.TranslateAssign(trans);
-            Right.Translate(trans);
         }
     }
 }

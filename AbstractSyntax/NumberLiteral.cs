@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
-using CliTranslate;
 
 namespace AbstractSyntax
 {
@@ -61,23 +60,17 @@ namespace AbstractSyntax
             base.CheckSyntax();
         }
 
-        internal override void Translate(Translator trans)
+        public dynamic Parse()
         {
             if (Fraction == null)
             {
-                int number = (int)Parse(Integral);
-                trans.GeneratePrimitive(number);
-                trans.GenerateCall(DataType.FullPath);
+                return (int)Parse(Integral);
             }
             else
             {
-                double number = (double)Parse(Integral);
                 int count, b;
-                number += (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
-                trans.GeneratePrimitive(number);
-                trans.GenerateCall(DataType.FullPath);
+                return (double)Parse(Integral) + (double)Parse(Fraction, out count, out b) / Math.Pow(b, count);
             }
-            base.Translate(trans);
         }
 
         private BigInteger Parse(string text)

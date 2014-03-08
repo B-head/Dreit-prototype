@@ -10,7 +10,7 @@ namespace AbstractSyntax
     public class DeclateVariant : Scope
     {
         public IdentifierAccess Ident { get; set; }
-        public Element ExplicitVariantType { get; set; }
+        public Element ExplicitType { get; set; }
         public Scope _DataType { get; set; }
 
         internal override Scope DataType
@@ -40,7 +40,7 @@ namespace AbstractSyntax
             switch (index)
             {
                 case 0: return Ident;
-                case 1: return ExplicitVariantType;
+                case 1: return ExplicitType;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -58,9 +58,9 @@ namespace AbstractSyntax
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
-            if (ExplicitVariantType != null)
+            if (ExplicitType != null)
             {
-                _DataType = ExplicitVariantType.DataType;
+                _DataType = ExplicitType.DataType;
             }
         }
     }

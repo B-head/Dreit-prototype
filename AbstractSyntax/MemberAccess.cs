@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
@@ -15,6 +14,27 @@ namespace AbstractSyntax
             Operator = TokenType.Access;
         }
 
+        public Scope Refer
+        {
+            get
+            {
+                var ident = Right as IdentifierAccess;
+                var member = Right as MemberAccess;
+                if (ident != null)
+                {
+                    return ident.Refer;
+                }
+                else if (member != null)
+                {
+                    return member.Refer;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
         internal override Scope DataType
         {
             get { return Right.DataType; }
@@ -24,16 +44,6 @@ namespace AbstractSyntax
         {
             Left.SpreadReference(scope);
             Right.SpreadReference(Left.DataType);
-        }
-
-        public void TranslateAccess(Translator trans)
-        {
-            Left.Translate(trans);
-            var temp = Right as MemberAccess;
-            if(temp != null)
-            {
-                temp.TranslateAccess(trans);
-            }
         }
     }
 }

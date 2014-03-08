@@ -24,7 +24,7 @@ namespace SyntacticAnalysis
                 SkipSpaser(++c);
                 explType = MemberAccess(ref c);
             }
-            return new DeclateVariant { Ident = ident, ExplicitVariantType = explType, Position = ident.Position };
+            return new DeclateVariant { Ident = ident, ExplicitType = explType, Position = ident.Position };
         }
 
         private DeclateRoutine DeclateRoutine(ref int c)
@@ -56,7 +56,7 @@ namespace SyntacticAnalysis
                 retType = MemberAccess(ref c);
             }
             var block = Block(ref c);
-            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitResultType = retType, Block = block, Position = ident.Position };
+            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitType = retType, Block = block, Position = ident.Position };
         }
 
         private DeclateOperator DeclateOperator(ref int c)
@@ -88,7 +88,7 @@ namespace SyntacticAnalysis
                 retType = MemberAccess(ref c);
             }
             var block = Block(ref c);
-            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitResultType = retType, Block = block, Position = op.Position };
+            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitType = retType, Block = block, Position = op.Position };
         }
 
         private DeclateArgument DeclateArgument(ref int c)
@@ -104,7 +104,7 @@ namespace SyntacticAnalysis
                 SkipSpaser(++c);
                 explType = MemberAccess(ref c);
             }
-            return new DeclateArgument { Ident = ident, ExplicitArgumentType = explType, Position = ident.Position };
+            return new DeclateArgument { Ident = ident, ExplicitType = explType, Position = ident.Position };
         }
 
         private DeclateClass DeclateClass(ref int c)

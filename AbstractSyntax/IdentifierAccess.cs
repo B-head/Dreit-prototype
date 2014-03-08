@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 
 namespace AbstractSyntax
 {
@@ -69,16 +68,6 @@ namespace AbstractSyntax
                     Refer = temp;
                 }
             }
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            trans.GenerateLoad(Refer.FullPath);
-        }
-
-        internal override void TranslateAssign(Translator trans)
-        {
-            trans.GenerateStore(Refer.FullPath);
         }
     }
 }

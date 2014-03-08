@@ -71,6 +71,13 @@ namespace CliTranslate
             ChildSpreadTranslate(scope, trans);
         }
 
+        internal virtual void SpreadTranslate(DeclateArgument scope, Translator trans)
+        {
+            RoutineTranslator routTrans = trans as RoutineTranslator;
+            routTrans.CreateArgument(scope.FullPath, scope.DataType.FullPath);
+            ChildSpreadTranslate(scope, trans);
+        }
+
         private void ChildTranslate(Element element, Translator trans)
         {
             foreach(var v in element)
@@ -108,20 +115,81 @@ namespace CliTranslate
         {
             var temp = TransDictionary[element];
             Translate(element.Block, temp);
-            ChildTranslate(element, temp);
         }
 
         private void Translate(DeclateRoutine element, Translator trans)
         {
             var temp = TransDictionary[element];
             Translate(element.Block, temp);
-            ChildTranslate(element, temp);
         }
 
         private void Translate(DeclateVariant element, Translator trans)
         {
-            element.Ident.Translate(trans);
+            Translate(element.Ident, trans);
+        }
+
+        private void Translate(IdentifierAccess element, Translator trans)
+        {
+            trans.GenerateLoad(element.Refer.FullPath);
+        }
+
+        private void TranslateAssign(IdentifierAccess element, Translator trans)
+        {
+            trans.GenerateStore(element.Refer.FullPath);
+        }
+
+        private Element TranslateAccess(MemberAccess element, Translator trans)
+        {
+            Translate(element.Left, trans);
+            var temp = element.Right as MemberAccess;
+            if (temp != null)
+            {
+                return TranslateAccess(temp, trans);
+            }
+            return element.Right;
+        }
+
+        private void Translate(DyadicCalculate element, Translator trans)
+        {
             ChildTranslate(element, trans);
+            trans.GenerateCall(element.ReferOp.FullPath);
+        }
+
+        private void Translate(LeftAssign element, Translator trans)
+        {
+            var member = element.Left as MemberAccess;
+            var refer = member == null ? element.Left : TranslateAccess(member, trans);
+            Translate(element.Right, trans);
+            TranslateAssign((IdentifierAccess)refer, trans);
+            Translate((IdentifierAccess)refer, trans);
+        }
+
+        private void Translate(RightAssign element, Translator trans)
+        {
+            var member = element.Right as MemberAccess;
+            var refer = member == null ? element.Right : TranslateAccess(member, trans);
+            Translate(element.Left, trans);
+            TranslateAssign((IdentifierAccess)refer, trans);
+            Translate((IdentifierAccess)refer, trans);
+        }
+
+        private void Translate(NumberLiteral element, Translator trans)
+        {
+            dynamic number = element.Parse();
+            trans.GeneratePrimitive(number);
+            trans.GenerateCall(element.DataType.FullPath);
+        }
+
+        private void Translate(ReturnDirective element, Translator trans)
+        {
+            ChildTranslate(element, trans);
+            trans.GenerateControl(CodeType.Ret);
+        }
+
+        private void Translate(EchoDirective element, Translator trans)
+        {
+            ChildTranslate(element, trans);
+            trans.GenerateControl(CodeType.Echo);
         }
     }
 }

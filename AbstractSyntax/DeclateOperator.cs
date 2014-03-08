@@ -21,9 +21,9 @@ namespace AbstractSyntax
                 refer.Add(temp);
             }
             ArgumentType = refer;
-            if (ExplicitResultType != null)
+            if (ExplicitType != null)
             {
-                ReturnType = ExplicitResultType.DataType;
+                ReturnType = ExplicitType.DataType;
             }
         }
     }

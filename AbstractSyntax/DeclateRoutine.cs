@@ -12,7 +12,7 @@ namespace AbstractSyntax
         public IdentifierAccess Ident { get; set; }
         public TupleList Generic { get; set; }
         public TupleList Argument { get; set; }
-        public Element ExplicitResultType { get; set; }
+        public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
         public List<Scope> ArgumentType { get; set; }
         public Scope ReturnType { get; set; }
@@ -39,7 +39,7 @@ namespace AbstractSyntax
                 case 0: return Ident;
                 case 1: return Generic;
                 case 2: return Argument;
-                case 3: return ExplicitResultType;
+                case 3: return ExplicitType;
                 case 4: return Block;
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -60,9 +60,9 @@ namespace AbstractSyntax
                 refer.Add(temp);
             }
             ArgumentType = refer;
-            if (ExplicitResultType != null)
+            if (ExplicitType != null)
             {
-                ReturnType = ExplicitResultType.DataType;
+                ReturnType = ExplicitType.DataType;
             }
         }
     }
