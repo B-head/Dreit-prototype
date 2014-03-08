@@ -9,6 +9,21 @@ using Common;
 
 namespace CliTranslate
 {
+    public enum CodeType
+    {
+        Nop,
+        Pop,
+        Ret,
+        Add,
+        Sub,
+        Mul,
+        Div,
+        Mod,
+        Echo,
+        LdPrim,
+        StPrim,
+    }
+
     public abstract class Translator
     {
         public RootTranslator Root { get; private set; }

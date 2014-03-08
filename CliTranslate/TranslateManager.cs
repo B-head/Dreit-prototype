@@ -173,11 +173,47 @@ namespace CliTranslate
             Translate((IdentifierAccess)refer, trans);
         }
 
+        private void Translate(CallRoutine element, Translator trans)
+        {
+            var pragma = element.Access as CalculatePragma;
+            if(pragma != null)
+            {
+                PragmaTranslate(pragma, element.Argument, trans);
+                return;
+            }
+            var access = element.Access as MemberAccess;
+            if (access != null)
+            {
+                TranslateAccess(access, trans);
+            }
+            Translate((dynamic)element.Argument, trans);
+            trans.GenerateCall(element.Access.DataType.FullPath);
+        }
+
+        private void PragmaTranslate(CalculatePragma element, TupleList argument, Translator trans)
+        {
+            foreach (var v in argument)
+            {
+                Translate((dynamic)v, trans);
+                trans.GenerateControl(CodeType.LdPrim);
+            }
+            switch (element.Type)
+            {
+                case CalculatePragmaType.Add: trans.GenerateControl(CodeType.Add); break;
+                case CalculatePragmaType.Sub: trans.GenerateControl(CodeType.Sub); break;
+                case CalculatePragmaType.Mul: trans.GenerateControl(CodeType.Mul); break;
+                case CalculatePragmaType.Div: trans.GenerateControl(CodeType.Div); break;
+                case CalculatePragmaType.Mod: trans.GenerateControl(CodeType.Mod); break;
+                default: throw new Exception();
+            }
+        }
+
         private void Translate(NumberLiteral element, Translator trans)
         {
             dynamic number = element.Parse();
             trans.GeneratePrimitive(number);
             trans.GenerateCall(element.DataType.FullPath);
+            trans.GenerateControl(CodeType.StPrim);
         }
 
         private void Translate(ReturnDirective element, Translator trans)

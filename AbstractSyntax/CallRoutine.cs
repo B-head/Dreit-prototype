@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CliTranslate;
 using Common;
 
 namespace AbstractSyntax
@@ -97,28 +96,6 @@ namespace AbstractSyntax
             if (ArgumentType.Count != 0)
             {
                 CompileError("引数の数が合っていません。");
-            }
-        }
-
-        internal override void Translate(Translator trans)
-        {
-            var access = Access as MemberAccess;
-            if(access != null)
-            {
-                access.TranslateAccess(trans);
-            }
-            if (Argument != null)
-            {
-                Argument.Translate(trans);
-            }
-            var pragma = Access.DataType as CalculatePragma;
-            if (pragma == null)
-            {
-                trans.GenerateCall(Access.DataType.FullPath);
-            }
-            else
-            {
-                pragma.PragmaTranslate(trans, Argument);
             }
         }
     }

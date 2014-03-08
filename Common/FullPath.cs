@@ -6,19 +6,6 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public enum CodeType
-    {
-        Nop,
-        Pop,
-        Ret,
-        Add,
-        Sub,
-        Mul,
-        Div,
-        Mod,
-        Echo,
-    }
-
     public interface PathNode
     {
         string Name { get; }
