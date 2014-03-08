@@ -191,31 +191,5 @@ namespace AbstractSyntax
                 }
             }
         }
-
-        internal virtual void Translate(Translator trans)
-        {
-            foreach (Element v in this)
-            {
-                if (v != null && !v.IsImport)
-                {
-                    v.Translate(trans);
-                }
-            }
-        }
-
-        internal virtual void TranslateAssign(Translator trans)
-        {
-            foreach (Element v in this)
-            {
-                if (v == null)
-                {
-                    continue;
-                }
-                if (v.IsAssignable)
-                {
-                    v.TranslateAssign(trans);
-                }
-            }
-        }
     }
 }

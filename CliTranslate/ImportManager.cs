@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using AbstractSyntax;
 
-namespace CliImport
+namespace CliTranslate
 {
     public class ImportManager
     {
@@ -30,11 +30,11 @@ namespace CliImport
             }
         }
 
-        public void TranslateImport(RootTranslator trans)
+        public void TranslateImport(RootTranslator root)
         {
             foreach(var v in Peir)
             {
-                trans.RegisterBuilder(v.Scope.FullPath, v.Info);
+                root.RegisterBuilder(v.Scope.FullPath, v.Info);
             }
         }
 
