@@ -11,6 +11,6 @@ echo rand.gen()
 
 class Rand
 {
-	var value:Integer32 := 98765
+	var value := 98765
 	routine gen():Integer32 :: value := value * 1103515245 + 12345
 }

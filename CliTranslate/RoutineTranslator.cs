@@ -73,7 +73,7 @@ namespace CliTranslate
 
         public void CreateArguments(FullPath[] path)
         {
-            int next = 1;
+            int next = Parent is PrimitiveTranslator ? 2 : 1;
             foreach (var v in path)
             {
                 var builder = Method.DefineParameter(next++, ParameterAttributes.None, v.Name);
@@ -83,46 +83,22 @@ namespace CliTranslate
 
         public override void GenerateLoad(FullPath name)
         {
-            if(name.Name == "this")
-            {
-                Generator.Emit(OpCodes.Ldarg_0);
-                return;
-            }
             dynamic temp = Root.GetBuilder(name);
             FieldBuilder field = temp as FieldBuilder;
             if(field != null && field.DeclaringType == Lexical)
             {
                 BuildLoad(LexicalInstance);
             }
-            else if (field != null && field.DeclaringType == Method.DeclaringType)
-            {
-                Generator.Emit(OpCodes.Ldarg_0);
-            }
             BuildLoad(temp);
         }
 
         public override void GenerateStore(FullPath name)
         {
-            if (name.Name == "this")
-            {
-                Generator.Emit(OpCodes.Ldarg_0);
-                return;
-            }
             dynamic temp = Root.GetBuilder(name);
             FieldBuilder field = temp as FieldBuilder;
             if (field != null && field.DeclaringType == Lexical)
             {
-                LocalBuilder local = Generator.DeclareLocal(field.FieldType);
-                BuildStore(local);
                 BuildLoad(LexicalInstance);
-                BuildLoad(local);
-            }
-            else if (field != null && field.DeclaringType == Method.DeclaringType)
-            {
-                LocalBuilder local = Generator.DeclareLocal(field.FieldType);
-                BuildStore(local);
-                Generator.Emit(OpCodes.Ldarg_0);
-                BuildLoad(local);
             }
             BuildStore(temp);
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using AbstractSyntax;
 using Common;
 
 namespace CliTranslate
@@ -48,6 +49,12 @@ namespace CliTranslate
         {
             var builder = Module.DefineType(path.ToString());
             return new ClassTranslator(path, this, builder);
+        }
+
+        public override PrimitiveTranslator CreatePrimitive(FullPath path, PrimitivePragmaType type)
+        {
+            var builder = Module.DefineType(path.ToString());
+            return new PrimitiveTranslator(path, this, builder, type);
         }
 
         public override void CreateVariant(FullPath path, FullPath type)

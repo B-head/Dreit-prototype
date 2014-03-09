@@ -58,6 +58,7 @@ namespace CliTranslate
             ChildSpreadTranslate(root, Root);
             EnumSpreadTranslate();
             Translate(root, Root);
+            Root.Save();
         }
 
         private void EnumSpreadTranslate()
@@ -97,9 +98,23 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateClass scope, Translator trans)
         {
-            var temp = trans.CreateClass(scope.FullPath);
-            TransDictionary.Add(scope, temp);
-            ChildSpreadTranslate(scope, temp);
+            PrimitivePragma prim = null;
+            if (scope.InheritRefer.Count == 1)
+            {
+                prim = scope.InheritRefer[0] as PrimitivePragma;
+            }
+            if (prim != null)
+            {
+                var temp = trans.CreatePrimitive(scope.FullPath, prim.Type);
+                TransDictionary.Add(scope, temp);
+                ChildSpreadTranslate(scope, temp);
+            }
+            else
+            {
+                var temp = trans.CreateClass(scope.FullPath);
+                TransDictionary.Add(scope, temp);
+                ChildSpreadTranslate(scope, temp);
+            }
         }
 
         private void SpreadTranslate(DeclateRoutine scope, Translator trans)
@@ -157,7 +172,7 @@ namespace CliTranslate
             foreach (Element v in element)
             {
                 Translate((dynamic)v, trans);
-                if (!v.IsVoidValue && element.IsInline)
+                if (!v.IsVoidValue && !element.IsInline)
                 {
                     trans.GenerateControl(CodeType.Pop);
                 }
@@ -177,28 +192,40 @@ namespace CliTranslate
         private void Translate(DeclateClass element, Translator trans)
         {
             var temp = TransDictionary[element];
-            Translate(element.Block, temp);
+            Translate((dynamic)element.Block, temp);
         }
 
         private void Translate(DeclateRoutine element, Translator trans)
         {
             var temp = TransDictionary[element];
-            Translate(element.Block, temp);
+            Translate((dynamic)element.Block, temp);
         }
 
         private void Translate(DeclateVariant element, Translator trans)
         {
-            Translate(element.Ident, trans);
+            Translate((dynamic)element.Ident, trans);
         }
 
         private void TranslateAssign(DeclateVariant element, Translator trans)
         {
-            TranslateAssign(element.Ident, trans);
+            TranslateAssign((dynamic)element.Ident, trans);
         }
 
         private void Translate(IdentifierAccess element, Translator trans)
         {
-            trans.GenerateLoad(element.Refer.FullPath);
+            if(element.Refer is ThisScope)
+            {
+                trans.GenerateControl(CodeType.This);
+            }
+            else if (element.IsTacitThis)
+            {
+                trans.GenerateControl(CodeType.This);
+                trans.GenerateLoad(element.Refer.FullPath);
+            }
+            else
+            {
+                trans.GenerateLoad(element.Refer.FullPath);
+            }
         }
 
         private void TranslateAssign(IdentifierAccess element, Translator trans)
@@ -206,15 +233,29 @@ namespace CliTranslate
             trans.GenerateStore(element.Refer.FullPath);
         }
 
+        private Element TranslateAccess(IdentifierAccess element, Translator trans)
+        {
+            if (element.IsTacitThis)
+            {
+                trans.GenerateControl(CodeType.This);
+            }
+            return element;
+        }
+
         private Element TranslateAccess(MemberAccess element, Translator trans)
         {
-            Translate(element.Left, trans);
+            Translate((dynamic)element.Left, trans);
             var temp = element.Right as MemberAccess;
             if (temp != null)
             {
                 return TranslateAccess(temp, trans);
             }
             return element.Right;
+        }
+
+        private Element TranslateAccess(Element element, Translator trans)
+        {
+            return element;
         }
 
         private void Translate(DyadicCalculate element, Translator trans)
@@ -225,8 +266,7 @@ namespace CliTranslate
 
         private void Translate(LeftAssign element, Translator trans)
         {
-            var member = element.Left as MemberAccess;
-            var refer = member == null ? element.Left : TranslateAccess(member, trans);
+            var refer = TranslateAccess((dynamic)element.Left, trans);
             Translate((dynamic)element.Right, trans);
             TranslateAssign((dynamic)refer, trans);
             Translate((dynamic)refer, trans);
@@ -234,8 +274,7 @@ namespace CliTranslate
 
         private void Translate(RightAssign element, Translator trans)
         {
-            var member = element.Right as MemberAccess;
-            var refer = member == null ? element.Right : TranslateAccess(member, trans);
+            var refer = TranslateAccess((dynamic)element.Right, trans);
             Translate((dynamic)element.Left, trans);
             TranslateAssign((dynamic)refer, trans);
             Translate((dynamic)refer, trans);
@@ -249,11 +288,7 @@ namespace CliTranslate
                 PragmaTranslate(pragma, element.Argument, trans);
                 return;
             }
-            var access = element.Access as MemberAccess;
-            if (access != null)
-            {
-                TranslateAccess(access, trans);
-            }
+            TranslateAccess((dynamic)element.Access, trans);
             Translate((dynamic)element.Argument, trans);
             trans.GenerateCall(element.Access.DataType.FullPath);
         }
@@ -263,7 +298,6 @@ namespace CliTranslate
             foreach (var v in argument)
             {
                 Translate((dynamic)v, trans);
-                //trans.GenerateControl(CodeType.LdPrim);
             }
             switch (element.Type)
             {
@@ -280,8 +314,6 @@ namespace CliTranslate
         {
             dynamic number = element.Parse();
             trans.GeneratePrimitive(number);
-            trans.GenerateCall(element.DataType.FullPath);
-            //trans.GenerateControl(CodeType.StPrim);
         }
 
         private void Translate(ReturnDirective element, Translator trans)

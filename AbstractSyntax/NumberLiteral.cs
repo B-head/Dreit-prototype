@@ -47,7 +47,6 @@ namespace AbstractSyntax
             {
                 _DataType = scope.NameResolution("Binary64");
             }
-            base.SpreadReference(scope);
         }
 
         internal override void CheckSyntax()

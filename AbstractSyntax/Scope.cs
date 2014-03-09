@@ -13,7 +13,6 @@ namespace AbstractSyntax
         public int Id { get; private set; }
         public string Name { get; set; }
         public FullPath FullPath { get; private set; }
-        public Scope ScopeParent { get; private set; }
         private Dictionary<string, Scope> _ScopeChild;
         public IReadOnlyDictionary<string, Scope> ScopeChild { get { return _ScopeChild; } }
 
@@ -25,7 +24,6 @@ namespace AbstractSyntax
 
         public void AppendChild(Scope child)
         {
-            child.ScopeParent = this;
             Scope temp;
             if (!_ScopeChild.TryGetValue(child.Name, out temp))
             {

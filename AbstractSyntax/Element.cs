@@ -11,6 +11,7 @@ namespace AbstractSyntax
     {
         public TextPosition Position { get; set; }
         public Element Parent { get; private set; }
+        public Scope ScopeParent { get; private set; }
         public Root Root { get; private set; }
         public bool IsImport { get; set; }
 
@@ -136,6 +137,7 @@ namespace AbstractSyntax
         protected void SpreadElement(Element parent, Scope scope)
         {
             Parent = parent;
+            ScopeParent = scope;
             if (parent == null)
             {
                 Root = (Root)this;

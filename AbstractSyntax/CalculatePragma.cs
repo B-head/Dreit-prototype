@@ -21,6 +21,12 @@ namespace AbstractSyntax
         {
             get { return true; }
         }
+
+        internal override void SpreadReference(Scope scope)
+        {
+            base.SpreadReference(scope);
+            ReturnType = scope.NameResolution("Integer32");
+        }
     }
 
     public enum CalculatePragmaType

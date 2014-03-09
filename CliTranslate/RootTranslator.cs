@@ -49,12 +49,19 @@ namespace CliTranslate
 
         internal Type[] GetArgumentBuilders(params FullPath[] path)
         {
-            if (path == null)
-            {
-                throw new ArgumentNullException();
-            }
             List<Type> result = new List<Type>();
             foreach(var v in path)
+            {
+                result.Add(GetBuilder(v));
+            }
+            return result.ToArray();
+        }
+
+        internal Type[] GetArgumentBuilders(Type prim, params FullPath[] path)
+        {
+            List<Type> result = new List<Type>();
+            result.Add(prim);
+            foreach (var v in path)
             {
                 result.Add(GetBuilder(v));
             }

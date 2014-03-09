@@ -10,6 +10,7 @@ namespace AbstractSyntax
     {
         public string Value { get; set; }
         public bool IsPragma { get; set; }
+        public bool IsTacitThis { get; private set; } 
         public Scope Refer { get; private set; }
 
         public IdentifierAccess()
@@ -68,6 +69,24 @@ namespace AbstractSyntax
                     Refer = temp;
                 }
             }
+            if (ScopeParent is DeclateRoutine && Refer.ScopeParent == GetParentClass())
+            {
+                IsTacitThis = true;
+            }
+        }
+
+        private Scope GetParentClass()
+        {
+            var current = ScopeParent;
+            while(current != null)
+            {
+                if(current is DeclateClass)
+                {
+                    break;
+                }
+                current = current.ScopeParent;
+            }
+            return current;
         }
     }
 }

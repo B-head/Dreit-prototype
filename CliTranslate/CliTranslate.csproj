@@ -42,6 +42,7 @@
     <Compile Include="ClassTranslator.cs" />
     <Compile Include="ImportManager.cs" />
     <Compile Include="ModuleTranslator.cs" />
+    <Compile Include="PrimitiveTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RootTranslator.cs" />
     <Compile Include="RoutineTranslator.cs" />

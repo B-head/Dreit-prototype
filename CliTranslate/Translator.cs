@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
+using AbstractSyntax;
 using Common;
 
 namespace CliTranslate
@@ -19,9 +20,8 @@ namespace CliTranslate
         Mul,
         Div,
         Mod,
+        This,
         Echo,
-        LdPrim,
-        StPrim,
     }
 
     public abstract class Translator
@@ -113,6 +113,11 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
+        public virtual PrimitiveTranslator CreatePrimitive(FullPath path, PrimitivePragmaType type)
+        {
+            throw new NotSupportedException();
+        }
+
         public virtual void CreateEnum(FullPath path)
         {
             throw new NotSupportedException();
@@ -146,7 +151,8 @@ namespace CliTranslate
                 case CodeType.Mul: Generator.Emit(OpCodes.Mul); break;
                 case CodeType.Div: Generator.Emit(OpCodes.Div); break;
                 case CodeType.Mod: Generator.Emit(OpCodes.Rem); break;
-                case CodeType.Echo: Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(Object) })); break;
+                case CodeType.This: Generator.Emit(OpCodes.Ldarg_0); break;
+                case CodeType.Echo: Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(Int32) })); break;
                 default: throw new ArgumentException();
             }
         }
