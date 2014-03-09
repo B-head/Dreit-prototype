@@ -12,7 +12,7 @@ namespace SyntacticAnalysis
     {
         private Element Primary(ref int c)
         {
-            return CoalesceParser(ref c, Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, Identifier);
+            return CoalesceParser(ref c, Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, IdentifierAccess);
         }
 
         private ExpressionGrouping Group(ref int c)
@@ -59,7 +59,7 @@ namespace SyntacticAnalysis
             return new NumberLiteral { Integral = i.Text, Position = i.Position };
         }
 
-        private IdentifierAccess Identifier(ref int c)
+        private IdentifierAccess IdentifierAccess(ref int c)
         {
             bool pragma = false;
             if (CheckToken(c, TokenType.Pragma))

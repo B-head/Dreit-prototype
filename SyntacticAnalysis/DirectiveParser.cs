@@ -35,16 +35,6 @@ namespace SyntacticAnalysis
             return result;
         }
 
-        private Element Directive(ref int c)
-        {
-            Element temp = CoalesceParser(ref c, Echo, Return, Expression);;
-            if (CheckToken(c, TokenType.EndExpression))
-            {
-                SkipSpaser(++c);
-            }
-            return temp;
-        }
-
         private DirectiveList Block(ref int c)
         {
             DirectiveList result = null;
@@ -66,7 +56,17 @@ namespace SyntacticAnalysis
             return result;
         }
 
-        private Element Echo(ref int c)
+        private Element Directive(ref int c)
+        {
+            Element temp = CoalesceParser(ref c, Echo, Alias, Return, Expression);;
+            if (CheckToken(c, TokenType.EndExpression))
+            {
+                SkipSpaser(++c);
+            }
+            return temp;
+        }
+
+        private EchoDirective Echo(ref int c)
         {
             if (!CheckText(c, "echo"))
             {
@@ -77,7 +77,19 @@ namespace SyntacticAnalysis
             return new EchoDirective { Exp = exp, Position = exp.Position };
         }
 
-        private Element Return(ref int c)
+        private AliasDirective Alias(ref int c)
+        {
+            if (!CheckText(c, "alias"))
+            {
+                return null;
+            }
+            SkipSpaser(++c);
+            var from = IdentifierAccess(ref c);
+            var to = IdentifierAccess(ref c);
+            return new AliasDirective { From = from, To = to, Position = from.Position };
+        }
+
+        private ReturnDirective Return(ref int c)
         {
             if (!CheckText(c, "return"))
             {

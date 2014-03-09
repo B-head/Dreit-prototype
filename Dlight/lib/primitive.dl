@@ -1,4 +1,4 @@
-﻿//alias Integer32 Int32
+﻿alias Integer32 Int32
 class Integer32 : @@Integer32
 {
 	operator +(other:Integer32):Integer32 :: @@add(this, other)
