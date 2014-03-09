@@ -25,6 +25,16 @@ namespace AbstractSyntax
     public enum PrimitivePragmaType
     {
         Root,
+        Boolean,
+        Integer8,
+        Integer16,
         Integer32,
+        Integer64,
+        Natural8,
+        Natural16,
+        Natural32,
+        Natural64,
+        Binary32,
+        Binary64,
     }
 }

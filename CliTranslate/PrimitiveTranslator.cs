@@ -31,7 +31,18 @@ namespace CliTranslate
         {
             switch(type)
             {
+                case PrimitivePragmaType.Root: return typeof(Object);
+                case PrimitivePragmaType.Boolean: return typeof(Boolean);
+                case PrimitivePragmaType.Integer8: return typeof(SByte);
+                case PrimitivePragmaType.Integer16: return typeof(Int16);
                 case PrimitivePragmaType.Integer32: return typeof(Int32);
+                case PrimitivePragmaType.Integer64: return typeof(Int64);
+                case PrimitivePragmaType.Natural8: return typeof(Byte);
+                case PrimitivePragmaType.Natural16: return typeof(UInt16);
+                case PrimitivePragmaType.Natural32: return typeof(UInt32);
+                case PrimitivePragmaType.Natural64: return typeof(UInt64);
+                case PrimitivePragmaType.Binary32: return typeof(Single);
+                case PrimitivePragmaType.Binary64: return typeof(Double);
                 default: throw new ArgumentException();
             }
         }

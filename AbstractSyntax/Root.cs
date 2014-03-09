@@ -69,7 +69,17 @@ namespace AbstractSyntax
             AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
             AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
             AppendPragma("Root", new PrimitivePragma(PrimitivePragmaType.Root));
+            AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
+            AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));
+            AppendPragma("Integer16", new PrimitivePragma(PrimitivePragmaType.Integer16));
             AppendPragma("Integer32", new PrimitivePragma(PrimitivePragmaType.Integer32));
+            AppendPragma("Integer64", new PrimitivePragma(PrimitivePragmaType.Integer64));
+            AppendPragma("Natural8", new PrimitivePragma(PrimitivePragmaType.Natural8));
+            AppendPragma("Natural16", new PrimitivePragma(PrimitivePragmaType.Natural16));
+            AppendPragma("Natural32", new PrimitivePragma(PrimitivePragmaType.Natural32));
+            AppendPragma("Natural64", new PrimitivePragma(PrimitivePragmaType.Natural64));
+            AppendPragma("Binary32", new PrimitivePragma(PrimitivePragmaType.Binary32));
+            AppendPragma("Binary64", new PrimitivePragma(PrimitivePragmaType.Binary64));
         }
 
         internal void OutputError(string message)

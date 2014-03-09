@@ -89,7 +89,7 @@ namespace AbstractSyntax
             else
             {
                 var ret = Block.FindElements<ReturnDirective>();
-                if(ReturnType is VoidScope)
+                if(ReturnType is VoidScope && ret.Count > 0)
                 {
                     ReturnType = ret[0].DataType;
                 }

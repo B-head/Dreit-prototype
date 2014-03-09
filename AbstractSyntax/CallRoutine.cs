@@ -21,7 +21,17 @@ namespace AbstractSyntax
 
         public override Scope DataType
         {
-            get { return Access.DataType.DataType; }
+            get 
+            {
+                if (Access.Reference is CalculatePragma)
+                {
+                    return ArgumentType[0];
+                }
+                else
+                {
+                    return Access.DataType;
+                }
+            }
         }
 
         public override int Count
@@ -86,7 +96,14 @@ namespace AbstractSyntax
 
         private void CheckCall(CalculatePragma pragma)
         {
-            pragma.CheckCall(ArgumentType);
+            if (ArgumentType.Count != 2)
+            {
+                CompileError("引数の数が合っていません。");
+            }
+            else if (ArgumentType[0] != ArgumentType[1])
+            {
+                CompileError("引数の型が合っていません。");
+            }
         }
 
         private void CheckCall(DeclateClass cls)

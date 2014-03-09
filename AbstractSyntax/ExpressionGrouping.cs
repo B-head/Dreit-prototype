@@ -10,7 +10,7 @@ namespace AbstractSyntax
     {
         public override Scope DataType
         {
-            get { return _Child.DataType; }
+            get { return Child.DataType; }
         }
     }
 }

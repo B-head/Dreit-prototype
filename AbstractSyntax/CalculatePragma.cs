@@ -26,19 +26,6 @@ namespace AbstractSyntax
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
-            ReturnType = scope.NameResolution("Integer32");
-        }
-
-        internal void CheckCall(List<Scope> argumentType)
-        {
-            if (argumentType.Count != 2)
-            {
-                CompileError("引数の数が合っていません。");
-            }
-            else if (argumentType[0] != argumentType[1])
-            {
-                CompileError("引数の型が合っていません。");
-            }
         }
     }
 

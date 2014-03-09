@@ -7,3 +7,12 @@ class Integer32 : @@Integer32
 	operator /(other:Integer32) :: @@div(this, other)
 	operator %(other:Integer32) :: @@mod(this, other)
 }
+
+class Binary64 : @@Binary64
+{
+	operator +(other:Binary64) :: @@add(this, other)
+	operator -(other:Binary64) :: @@sub(this, other)
+	operator *(other:Binary64) :: @@mul(this, other)
+	operator /(other:Binary64) :: @@div(this, other)
+	operator %(other:Binary64) :: @@mod(this, other)
+}

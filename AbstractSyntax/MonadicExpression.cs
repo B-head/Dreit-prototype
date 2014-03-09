@@ -9,7 +9,7 @@ namespace AbstractSyntax
 {
     public abstract class MonadicExpression : Element
     {
-        public Element _Child { get; set; }
+        public Element Child { get; set; }
         public TokenType Operator { get; set; }
 
         public override int Count
@@ -21,7 +21,7 @@ namespace AbstractSyntax
         {
             switch (index)
             {
-                case 0: return _Child;
+                case 0: return Child;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
