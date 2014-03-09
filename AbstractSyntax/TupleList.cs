@@ -30,5 +30,15 @@ namespace AbstractSyntax
         {
             return Child[index];
         }
+
+        public TupleList GetDataTypes()
+        {
+            TupleList result = new TupleList();
+            foreach(var v in Child)
+            {
+                result.Append(v.DataType);
+            }
+            return result;
+        }
     }
 }

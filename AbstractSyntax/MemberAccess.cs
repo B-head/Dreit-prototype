@@ -35,7 +35,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override Scope DataType
+        public override Scope DataType
         {
             get { return Right.DataType; }
         }

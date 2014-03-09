@@ -45,15 +45,17 @@ namespace CliTranslate
             return ctor;
         }
 
-        internal override TypeBuilder CreateLexical()
+        internal override TypeBuilder CreateLexical(string name)
         {
-            return Class.DefineNestedType("@@lexical", TypeAttributes.SpecialName);
+            return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName);
         }
 
-        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
+        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType, FullPath[] argumentType)
         {
-            var builder = Class.DefineMethod(path.Name, MethodAttributes.Public);
-            return new RoutineTranslator(path, this, builder, returnType);
+            var retbld = Root.GetReturnBuilder(returnType);
+            var argbld = Root.GetArgumentBuilders(argumentType);
+            var builder = Class.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
+            return new RoutineTranslator(path, this, builder);
         }
 
         public override ClassTranslator CreateClass(FullPath path)

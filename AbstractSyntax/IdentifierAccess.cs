@@ -17,7 +17,7 @@ namespace AbstractSyntax
             Refer = new VoidScope();
         }
 
-        internal override Scope DataType
+        public override Scope DataType
         {
             get 
             { 

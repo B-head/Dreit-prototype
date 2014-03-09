@@ -88,7 +88,7 @@ namespace CliTranslate
             return builder.ToString(); 
         }
 
-        internal virtual TypeBuilder CreateLexical()
+        internal virtual TypeBuilder CreateLexical(string name)
         {
             throw new NotSupportedException();
         }
@@ -98,7 +98,7 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
+        public virtual RoutineTranslator CreateRoutine(FullPath path, FullPath returnType, FullPath[] argumentType)
         {
             throw new NotSupportedException();
         }

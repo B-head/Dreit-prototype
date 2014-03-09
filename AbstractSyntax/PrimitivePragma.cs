@@ -15,6 +15,11 @@ namespace AbstractSyntax
         {
             Type = type;
         }
+
+        public override bool IsPragma
+        {
+            get { return true; }
+        }
     }
 
     public enum PrimitivePragmaType

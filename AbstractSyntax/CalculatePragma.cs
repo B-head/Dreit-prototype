@@ -16,6 +16,11 @@ namespace AbstractSyntax
             Type = type;
             Argument = new TupleList();
         }
+
+        public override bool IsPragma
+        {
+            get { return true; }
+        }
     }
 
     public enum CalculatePragmaType

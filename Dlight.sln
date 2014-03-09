@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dlight", "Dlight\Dlight.csproj", "{76C1B982-7FDC-4223-9E70-59798DD42C73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlightObject", "DlightObject\DlightObject.csproj", "{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalysis", "LexicalAnalysis\LexicalAnalysis.csproj", "{87249519-B003-40BA-AE5A-1E645F48A186}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{5FFA51B1-65E1-4A7D-A79F-31051C0CC99A}"
@@ -27,10 +25,6 @@ Global
 		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76F2CBAC-8CA0-4FEB-AF2C-A3BD2CBE0206}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87249519-B003-40BA-AE5A-1E645F48A186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87249519-B003-40BA-AE5A-1E645F48A186}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87249519-B003-40BA-AE5A-1E645F48A186}.Release|Any CPU.ActiveCfg = Release|Any CPU

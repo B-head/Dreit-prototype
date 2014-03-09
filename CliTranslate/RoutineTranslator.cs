@@ -12,21 +12,13 @@ namespace CliTranslate
     public class RoutineTranslator : Translator
     {
         private MethodBuilder Method;
-        private List<FullPath> ParamName;
-        private List<Type> ParamType;
         private TypeBuilder Lexical;
         private LocalBuilder LexicalInstance;
 
-        public RoutineTranslator(FullPath path, Translator parent, MethodBuilder method, FullPath returnType)
+        public RoutineTranslator(FullPath path, Translator parent, MethodBuilder method)
             : base(path, parent)
         {
             Method = method;
-            ParamName = new List<FullPath>();
-            ParamType = new List<Type>();
-            if (returnType != null)
-            {
-                Method.SetReturnType(Root.GetBuilder(returnType));
-            }
             Generator = Method.GetILGenerator();
             Root.RegisterBuilder(path, Method);
         }
@@ -40,38 +32,29 @@ namespace CliTranslate
             }
         }
 
-        public void SaveArgument()
-        {
-            Method.SetParameters(ParamType.ToArray());
-            int next = 1;
-            foreach (var v in ParamName)
-            {
-                var builder = Method.DefineParameter(next++, ParameterAttributes.None, v.Name);
-                Root.RegisterBuilder(v, builder);
-            }
-        }
-
         private void PrepareLexical()
         {
             if(Lexical == null)
             {
-                Lexical = Parent.CreateLexical();
+                Lexical = Parent.CreateLexical(Method.Name);
                 LexicalInstance = Generator.DeclareLocal(Lexical);
                 Generator.Emit(OpCodes.Newobj, Lexical.DefineDefaultConstructor(MethodAttributes.PrivateScope));
                 BuildStore(LexicalInstance);
             }
         }
 
-        internal override TypeBuilder CreateLexical()
+        internal override TypeBuilder CreateLexical(string name)
         {
-            return Lexical.DefineNestedType("@@lexical", TypeAttributes.SpecialName);
+            return Lexical.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName);
         }
 
-        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType)
+        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType, FullPath[] argumentType)
         {
             PrepareLexical();
-            var builder = Lexical.DefineMethod(path.Name, MethodAttributes.Public);
-            return new RoutineTranslator(path, this, builder, returnType);
+            var retbld = Root.GetReturnBuilder(returnType);
+            var argbld = Root.GetArgumentBuilders(argumentType);
+            var builder = Lexical.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
+            return new RoutineTranslator(path, this, builder);
         }
 
         public override ClassTranslator CreateClass(FullPath path)
@@ -88,10 +71,14 @@ namespace CliTranslate
             Root.RegisterBuilder(path, builder);
         }
 
-        public void CreateArgument(FullPath path, FullPath type)
+        public void CreateArguments(FullPath[] path)
         {
-            ParamName.Add(path);
-            ParamType.Add(Root.GetBuilder(type));
+            int next = 1;
+            foreach (var v in path)
+            {
+                var builder = Method.DefineParameter(next++, ParameterAttributes.None, v.Name);
+                Root.RegisterBuilder(v, builder);
+            }
         }
 
         public override void GenerateLoad(FullPath name)

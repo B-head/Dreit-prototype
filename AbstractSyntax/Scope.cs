@@ -96,7 +96,7 @@ namespace AbstractSyntax
             return null;
         }
 
-        internal override Scope DataType
+        public override Scope DataType
         {
             get { return this; }
         }

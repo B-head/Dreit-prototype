@@ -21,7 +21,6 @@ namespace Dlight
             Root root = new Root();
             ImportManager import = new ImportManager(root);
             //import.ImportAssembly(Assembly.Load("mscorlib"));
-            //import.ImportAssembly(Assembly.Load("DlightObject"));
             root.Append(CompileFile("lib/primitive.dl"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
@@ -29,10 +28,8 @@ namespace Dlight
             Console.WriteLine(root.CompileResult());
             if (root.ErrorCount == 0)
             {
-                RootTranslator trans = new RootTranslator(fileName.Replace(".dl", ""));
-                import.TranslateImport(trans);
-                root.TranslateTo(trans);
-                trans.Save();
+                TranslateManager trans = new TranslateManager(fileName.Replace(".dl", ""));
+                trans.TranslateTo(root, import);
             }
         }
 

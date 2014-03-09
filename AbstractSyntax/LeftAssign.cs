@@ -8,7 +8,7 @@ namespace AbstractSyntax
 {
     public class LeftAssign : DyadicExpression
     {
-        internal override Scope DataType
+        public override Scope DataType
         {
             get { return Right.DataType; }
         }

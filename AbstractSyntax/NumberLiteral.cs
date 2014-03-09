@@ -13,7 +13,7 @@ namespace AbstractSyntax
         public string Fraction { get; set; }
         private Scope _DataType;
 
-        internal override Scope DataType
+        public override Scope DataType
         {
             get
             {

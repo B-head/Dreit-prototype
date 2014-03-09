@@ -11,25 +11,9 @@ namespace AbstractSyntax
     {
         public Scope ReferOp { get; private set; }
 
-        internal override Scope DataType
+        public override Scope DataType
         {
             get { return Left.DataType; }
-        }
-
-        internal override void SpreadReference(Scope scope)
-        {
-            base.SpreadReference(scope);
-            string callName = string.Empty;
-            switch(Operator)
-            {
-                case TokenType.Add: callName = "+"; break;
-                case TokenType.Subtract: callName = "-"; break;
-                case TokenType.Multiply: callName = "*"; break;
-                case TokenType.Divide: callName = "/"; break;
-                case TokenType.Modulo: callName = "%"; break;
-                default: throw new Exception();
-            }
-            ReferOp = DataType.NameResolution(callName);
         }
 
         internal override void CheckDataType()
@@ -41,6 +25,17 @@ namespace AbstractSyntax
             {
                 CompileError(l + " 型と " + r + " 型を演算することは出来ません。");
             }
+            string callName = string.Empty;
+            switch(Operator)
+            {
+                case TokenType.Add: callName = "+"; break;
+                case TokenType.Subtract: callName = "-"; break;
+                case TokenType.Multiply: callName = "*"; break;
+                case TokenType.Divide: callName = "/"; break;
+                case TokenType.Modulo: callName = "%"; break;
+                default: throw new Exception();
+            }
+            ReferOp = DataType.NameResolution(callName);
         }
     }
 }

@@ -14,9 +14,14 @@ namespace AbstractSyntax
         public Root Root { get; private set; }
         public bool IsImport { get; set; }
 
-        internal virtual Scope DataType
+        public virtual Scope DataType
         {
             get { throw new NotSupportedException(); }
+        }
+
+        public virtual bool IsPragma
+        {
+            get { return false; }
         }
 
         public virtual bool IsAssignable

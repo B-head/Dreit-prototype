@@ -68,10 +68,6 @@
       <Project>{5ffa51b1-65e1-4a7d-a79f-31051c0cc99a}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DlightObject\DlightObject.csproj">
-      <Project>{76f2cbac-8ca0-4feb-af2c-a3bd2cbe0206}</Project>
-      <Name>DlightObject</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LexicalAnalysis\LexicalAnalysis.csproj">
       <Project>{87249519-b003-40ba-ae5a-1e645f48a186}</Project>
       <Name>LexicalAnalysis</Name>

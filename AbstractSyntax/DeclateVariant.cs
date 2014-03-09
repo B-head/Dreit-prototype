@@ -13,7 +13,7 @@ namespace AbstractSyntax
         public Element ExplicitType { get; set; }
         public Scope _DataType { get; set; }
 
-        internal override Scope DataType
+        public override Scope DataType
         {
             get
             {

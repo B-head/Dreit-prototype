@@ -8,7 +8,7 @@ namespace AbstractSyntax
 {
     public class ExpressionGrouping : MonadicExpression
     {
-        internal override Scope DataType
+        public override Scope DataType
         {
             get { return _Child.DataType; }
         }

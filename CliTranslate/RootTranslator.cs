@@ -38,6 +38,29 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
+        internal Type GetReturnBuilder(FullPath path)
+        {
+            if (path == null)
+            {
+                return typeof(void);
+            }
+            return BuilderDictonary[path];
+        }
+
+        internal Type[] GetArgumentBuilders(params FullPath[] path)
+        {
+            if (path == null)
+            {
+                throw new ArgumentNullException();
+            }
+            List<Type> result = new List<Type>();
+            foreach(var v in path)
+            {
+                result.Add(GetBuilder(v));
+            }
+            return result.ToArray();
+        }
+
         internal ConstructorInfo GetConstructor(FullPath path)
         {
             if (path == null)

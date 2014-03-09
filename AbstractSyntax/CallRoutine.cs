@@ -19,7 +19,7 @@ namespace AbstractSyntax
             get { return _IsVoidValue; }
         }
 
-        internal override Scope DataType
+        public override Scope DataType
         {
             get { return Access.DataType.DataType; }
         }
@@ -54,24 +54,17 @@ namespace AbstractSyntax
                 refer.Add(temp);
             }
             ArgumentType = refer;
-            var call = Access.DataType;
-            if(call is DeclateRoutine)
-            {
-                CheckCall((DeclateRoutine)call);
-            }
-            else if(call is DeclateClass)
-            {
-                CheckCall((DeclateClass)call);
-            }
+            CheckCall((dynamic)Access.DataType);
+        }
+
+        private void CheckCall(Scope scope)
+        {
+            CompileError("関数ではありません。");
         }
 
         private void CheckCall(DeclateRoutine rout)
         {
-            if(rout == null)
-            {
-                CompileError("関数ではありません。");
-            }
-            else if(ArgumentType.Count != rout.ArgumentType.Count)
+            if(ArgumentType.Count != rout.ArgumentType.Count)
             {
                 CompileError("引数の数が合っていません。");
             }
@@ -89,6 +82,11 @@ namespace AbstractSyntax
                     _IsVoidValue = true;
                 }
             }
+        }
+
+        private void CheckCall(CalculatePragma pragma)
+        {
+
         }
 
         private void CheckCall(DeclateClass cls)
