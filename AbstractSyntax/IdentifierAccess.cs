@@ -9,7 +9,7 @@ namespace AbstractSyntax
     public class IdentifierAccess : Element
     {
         public string Value { get; set; }
-        public bool IsPragma { get; set; }
+        public bool IsPragmaAccess { get; set; }
         public bool IsTacitThis { get; private set; } 
         public Scope Refer { get; private set; }
 
@@ -26,6 +26,11 @@ namespace AbstractSyntax
             }
         }
 
+        public override Scope Reference
+        {
+            get { return Refer; }
+        }
+
         public override bool IsAssignable
         {
             get { return true; }
@@ -33,7 +38,7 @@ namespace AbstractSyntax
 
         protected override string AdditionalInfo()
         {
-            if (IsPragma)
+            if (IsPragmaAccess)
             {
                 return "@@" + Value;
             }
@@ -45,7 +50,7 @@ namespace AbstractSyntax
 
         internal override void SpreadReference(Scope scope)
         {
-            if (IsPragma)
+            if (IsPragmaAccess)
             {
                 var temp = Root.GetPragma(Value);
                 if (temp == null)

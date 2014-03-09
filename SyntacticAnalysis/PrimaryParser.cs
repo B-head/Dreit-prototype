@@ -73,7 +73,7 @@ namespace SyntacticAnalysis
             }
             Token t = Read(c);
             SkipSpaser(++c);
-            return new IdentifierAccess { Value = t.Text, IsPragma = pragma, Position = t.Position };
+            return new IdentifierAccess { Value = t.Text, IsPragmaAccess = pragma, Position = t.Position };
         }
     }
 }

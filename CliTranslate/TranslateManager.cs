@@ -282,7 +282,7 @@ namespace CliTranslate
 
         private void Translate(CallRoutine element, Translator trans)
         {
-            var pragma = element.Access.DataType as CalculatePragma;
+            var pragma = element.Access.Reference as CalculatePragma;
             if(pragma != null)
             {
                 PragmaTranslate(pragma, element.Argument, trans);
@@ -290,7 +290,7 @@ namespace CliTranslate
             }
             TranslateAccess((dynamic)element.Access, trans);
             Translate((dynamic)element.Argument, trans);
-            trans.GenerateCall(element.Access.DataType.FullPath);
+            trans.GenerateCall(element.Access.Reference.FullPath);
         }
 
         private void PragmaTranslate(CalculatePragma element, TupleList argument, Translator trans)

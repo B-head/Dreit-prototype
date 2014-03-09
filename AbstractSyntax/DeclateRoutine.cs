@@ -27,6 +27,11 @@ namespace AbstractSyntax
             get { return true; }
         }
 
+        public override Scope DataType
+        {
+            get { return ReturnType; }
+        }
+
         public override int Count
         {
             get { return 5; }
@@ -63,6 +68,38 @@ namespace AbstractSyntax
             if (ExplicitType != null)
             {
                 ReturnType = ExplicitType.DataType;
+            }
+        }
+
+        internal override void CheckDataType()
+        {
+            base.CheckDataType();
+            if(Block.IsInline)
+            {
+                var ret = Block[0];
+                if(ReturnType is VoidScope)
+                {
+                    ReturnType = ret.DataType;
+                }
+                else if(ReturnType != ret.DataType)
+                {
+                    CompileError("返り値の型が合っていません。");
+                }
+            }
+            else
+            {
+                var ret = Block.FindElements<ReturnDirective>();
+                if(ReturnType is VoidScope)
+                {
+                    ReturnType = ret[0].DataType;
+                }
+                foreach(var v in ret)
+                {
+                    if (ReturnType != v.DataType)
+                    {
+                        CompileError("返り値の型が合っていません。");
+                    }
+                }
             }
         }
     }

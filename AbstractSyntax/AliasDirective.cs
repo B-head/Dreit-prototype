@@ -10,5 +10,10 @@ namespace AbstractSyntax
     {
         public IdentifierAccess From { get; set; }
         public IdentifierAccess To { get; set; }
+
+        public override bool IsVoidValue
+        {
+            get { return true; }
+        }
     }
 }

@@ -20,6 +20,11 @@ namespace AbstractSyntax
             get { throw new NotSupportedException(); }
         }
 
+        public virtual Scope Reference
+        {
+            get { throw new NotSupportedException(); }
+        }
+
         public virtual bool IsPragma
         {
             get { return false; }

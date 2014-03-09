@@ -99,6 +99,11 @@ namespace AbstractSyntax
             get { return this; }
         }
 
+        public override Scope Reference
+        {
+            get { return this; }
+        }
+
         internal virtual bool IsNameSpace
         {
             get { return false; }

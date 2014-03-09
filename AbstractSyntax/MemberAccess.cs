@@ -14,7 +14,12 @@ namespace AbstractSyntax
             Operator = TokenType.Access;
         }
 
-        public Scope Refer
+        public override Scope DataType
+        {
+            get { return Right.DataType; }
+        }
+
+        public override Scope Reference
         {
             get
             {
@@ -22,22 +27,17 @@ namespace AbstractSyntax
                 var member = Right as MemberAccess;
                 if (ident != null)
                 {
-                    return ident.Refer;
+                    return ident.Reference;
                 }
                 else if (member != null)
                 {
-                    return member.Refer;
+                    return member.Reference;
                 }
                 else
                 {
                     throw new InvalidOperationException();
                 }
             }
-        }
-
-        public override Scope DataType
-        {
-            get { return Right.DataType; }
         }
 
         internal override void SpreadReference(Scope scope)

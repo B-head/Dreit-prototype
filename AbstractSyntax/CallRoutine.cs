@@ -47,14 +47,14 @@ namespace AbstractSyntax
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            var refer = new List<Scope>();
+            var argType = new List<Scope>();
             foreach (var v in Argument)
             {
                 var temp = v.DataType;
-                refer.Add(temp);
+                argType.Add(temp);
             }
-            ArgumentType = refer;
-            CheckCall((dynamic)Access.DataType);
+            ArgumentType = argType;
+            CheckCall((dynamic)Access.Reference);
         }
 
         private void CheckCall(Scope scope)
@@ -86,7 +86,7 @@ namespace AbstractSyntax
 
         private void CheckCall(CalculatePragma pragma)
         {
-
+            pragma.CheckCall(ArgumentType);
         }
 
         private void CheckCall(DeclateClass cls)

@@ -1,9 +1,9 @@
 ﻿alias Integer32 Int32
 class Integer32 : @@Integer32
 {
-	operator +(other:Integer32):Integer32 :: @@add(this, other)
-	operator -(other:Integer32):Integer32 :: @@sub(this, other)
-	operator *(other:Integer32):Integer32 :: @@mul(this, other)
-	operator /(other:Integer32):Integer32 :: @@div(this, other)
-	operator %(other:Integer32):Integer32 :: @@mod(this, other)
+	operator +(other:Integer32) :: @@add(this, other)
+	operator -(other:Integer32) :: @@sub(this, other)
+	operator *(other:Integer32) :: @@mul(this, other)
+	operator /(other:Integer32) :: @@div(this, other)
+	operator %(other:Integer32) :: @@mod(this, other)
 }
