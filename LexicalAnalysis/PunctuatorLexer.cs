@@ -56,10 +56,6 @@ namespace LexicalAnalysis
             string sub = TrySubString(p.Total, 2);
             switch (sub)
             {
-                case "/*": type = TokenType.StartComment; break;
-                case "*/": type = TokenType.EndComment; break;
-                case "//": type = TokenType.StartLineComment; break;
-                case "#!": type = TokenType.StartLineComment; break;
                 case "::": type = TokenType.Separator; break;
                 case "..": type = TokenType.Range; break;
                 case "@@": type = TokenType.Pragma; break;

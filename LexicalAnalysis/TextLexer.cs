@@ -43,7 +43,55 @@ namespace LexicalAnalysis
                 }
                 break;
             }
-            return TakeAddToken(ref p, i, TokenType.WhiteSpace);
+            return SkipToken(ref p, i);
+        }
+
+        private bool BlockComment(ref TextPosition p)
+        {
+            int i = 0, nest = 1;
+            if(!(IsEnable(p, i + 1) && Peek(p, i).Match("/") && Peek(p, i + 1).Match("*")))
+            {
+                return false;
+            }
+            for (i = 2; IsEnable(p, i); i++)
+            {
+                if(IsEnable(p, i + 1) && Peek(p, i).Match("*") && Peek(p, i + 1).Match("/"))
+                {
+                    ++i;
+                    if (--nest == 0)
+                    {
+                        break;
+                    }
+                }
+                if(IsEnable(p, i + 1) && Peek(p, i).Match("/") && Peek(p, i + 1).Match("*"))
+                {
+                    ++i;
+                    ++nest;
+                }
+            }
+            SkipToken(ref p, i);
+            return true;
+        }
+
+        private bool LineCommnet(ref TextPosition p)
+        {
+            int i = 0;
+            if (!(IsEnable(p, i + 1) && Peek(p, i).Match("/") && Peek(p, i + 1).Match("/")))
+            {
+                if (!(IsEnable(p, i + 1) && Peek(p, i).Match("#") && Peek(p, i + 1).Match("!")))
+                {
+                    return false;
+                }
+            }
+            for (i = 2; IsEnable(p, i); i++)
+            {
+                if (IsEnable(p, i) && Peek(p, i).Match("\x0A\x0D"))
+                {
+                    break;
+                }
+            }
+            SkipToken(ref p, i);
+            return true;
         }
 
         private bool LetterStartString(ref TextPosition p)

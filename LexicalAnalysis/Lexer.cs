@@ -25,6 +25,8 @@ namespace LexicalAnalysis
                     ref p,
                     EndOfLine,
                     WhiteSpace,
+                    BlockComment,
+                    LineCommnet,
                     LetterStartString,
                     DigitStartString,
                     QuadruplePunctuator,
@@ -76,6 +78,17 @@ namespace LexicalAnalysis
                 p.Row = 0;
             }
             Token.Add(token);
+            return true;
+        }
+
+        private bool SkipToken(ref TextPosition p, int length)
+        {
+            if (length == 0)
+            {
+                return false;
+            }
+            p.Total += length;
+            p.Row += length;
             return true;
         }
 
