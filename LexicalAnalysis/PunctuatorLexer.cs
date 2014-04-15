@@ -9,7 +9,7 @@ namespace LexicalAnalysis
 {
     public partial class Lexer
     {
-        private Token SinglePunctuator(ref TextPosition p)
+        private bool SinglePunctuator(ref TextPosition p)
         {
             TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 1);
@@ -45,12 +45,12 @@ namespace LexicalAnalysis
                 case "]": type = TokenType.RightBracket; break;
                 case "{": type = TokenType.LeftBrace; break;
                 case "}": type = TokenType.RightBrace; break;
-                default: return null;
+                default: return false;
             }
-            return TakeToken(ref p, 1, type);
+            return TakeAddToken(ref p, 1, type);
         }
 
-        private Token DoublePunctuator(ref TextPosition p)
+        private bool DoublePunctuator(ref TextPosition p)
         {
             TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 2);
@@ -98,12 +98,12 @@ namespace LexicalAnalysis
                 case "**": type = TokenType.Exponent; break;
                 //case "++": type = SyntaxType.Increment; break;
                 //case "--": type = SyntaxType.Decrement; break;
-                default: return null;
+                default: return false;
             }
-            return TakeToken(ref p, 2, type);
+            return TakeAddToken(ref p, 2, type);
         }
 
-        private Token TriplePunctuator(ref TextPosition p)
+        private bool TriplePunctuator(ref TextPosition p)
         {
             TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 3);
@@ -125,12 +125,12 @@ namespace LexicalAnalysis
                 case "**=": type = TokenType.ExponentLeftAssign; break;
                 case "=**": type = TokenType.ExponentRightAssign; break;
                 case "**/": type = TokenType.EndComment; break;
-                default: return null;
+                default: return false;
             }
-            return TakeToken(ref p, 3, type);
+            return TakeAddToken(ref p, 3, type);
         }
 
-        private Token QuadruplePunctuator(ref TextPosition p)
+        private bool QuadruplePunctuator(ref TextPosition p)
         {
             TokenType type = TokenType.Unknoun;
             string sub = TrySubString(p.Total, 3);
@@ -143,9 +143,9 @@ namespace LexicalAnalysis
                 //case ">>>=": type = SyntaxType.RightRotateLeftAssign; break;
                 //case "=>>>": type = SyntaxType.RightRotateRightAssign; break;
                 case "=**/": type = TokenType.EndComment; break;
-                default: return null;
+                default: return false;
             }
-            return TakeToken(ref p, 3, type);
+            return TakeAddToken(ref p, 3, type);
         }
     }
 }

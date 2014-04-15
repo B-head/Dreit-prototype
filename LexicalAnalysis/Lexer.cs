@@ -9,17 +9,18 @@ namespace LexicalAnalysis
 {
     public partial class Lexer
     {
-        private delegate Token LexerFunction(ref TextPosition p);
+        private delegate bool LexerFunction(ref TextPosition p);
         private string Text;
+        private List<Token> Token;
 
         public List<Token> Lex(string text, string fileName)
         {
             Text = text;
+            Token = new List<Token>();
             TextPosition p = new TextPosition { File = fileName, Total = 0, Line = 1, Row = 0 };
-            List<Token> result = new List<Token>();
             while (IsEnable(p, 0))
             {
-                Token token = CoalesceLexer
+                DisjunctionLexer
                     (
                     ref p,
                     EndOfLine,
@@ -32,9 +33,8 @@ namespace LexicalAnalysis
                     SinglePunctuator,
                     OtherString
                     );
-                result.Add(token);
             }
-            return result;
+            return Token;
         }
 
         private bool IsEnable(TextPosition p, int i)
@@ -47,30 +47,27 @@ namespace LexicalAnalysis
             return Text[p.Total + i];
         }
 
-        private Token CoalesceLexer(ref TextPosition p, params LexerFunction[] func)
+        private void DisjunctionLexer(ref TextPosition p, params LexerFunction[] func)
         {
-            Token result = null;
             foreach (LexerFunction f in func)
             {
-                result = f(ref p);
-                if (result != null)
+                if (f(ref p))
                 {
                     break;
                 }
             }
-            return result;
         }
 
-        private Token TakeToken(ref TextPosition p, int length, TokenType type)
+        private bool TakeAddToken(ref TextPosition p, int length, TokenType type)
         {
             if (length == 0)
             {
-                return null;
+                return false;
             }
             string text = TrySubString(p.Total, length);
             TextPosition temp = p;
             temp.Length = length;
-            Token result = new Token { Text = text, Type = type, Position = temp };
+            Token token = new Token { Text = text, Type = type, Position = temp };
             p.Total += length;
             p.Row += length;
             if (type == TokenType.LineTerminator)
@@ -78,7 +75,8 @@ namespace LexicalAnalysis
                 p.Line++;
                 p.Row = 0;
             }
-            return result;
+            Token.Add(token);
+            return true;
         }
 
         private string TrySubString(int startIndex, int length)

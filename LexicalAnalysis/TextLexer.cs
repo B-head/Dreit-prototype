@@ -9,7 +9,7 @@ namespace LexicalAnalysis
 {
     public partial class Lexer
     {
-        private Token EndOfLine(ref TextPosition p)
+        private bool EndOfLine(ref TextPosition p)
         {
             int i = 0;
             if (IsEnable(p, i) && Peek(p, i).Match("\x0A"))
@@ -28,10 +28,10 @@ namespace LexicalAnalysis
                     i++;
                 }
             }
-            return TakeToken(ref p, i, TokenType.LineTerminator);
+            return TakeAddToken(ref p, i, TokenType.LineTerminator);
         }
 
-        private Token WhiteSpace(ref TextPosition p)
+        private bool WhiteSpace(ref TextPosition p)
         {
             int i;
             for (i = 0; IsEnable(p, i); i++)
@@ -43,10 +43,10 @@ namespace LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, TokenType.WhiteSpace);
+            return TakeAddToken(ref p, i, TokenType.WhiteSpace);
         }
 
-        private Token LetterStartString(ref TextPosition p)
+        private bool LetterStartString(ref TextPosition p)
         {
             int i;
             bool escape = false;
@@ -73,10 +73,10 @@ namespace LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, TokenType.LetterStartString);
+            return TakeAddToken(ref p, i, TokenType.LetterStartString);
         }
 
-        private Token DigitStartString(ref TextPosition p)
+        private bool DigitStartString(ref TextPosition p)
         {
             int i;
             bool escape = false;
@@ -103,10 +103,10 @@ namespace LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, TokenType.DigitStartString);
+            return TakeAddToken(ref p, i, TokenType.DigitStartString);
         }
 
-        private Token OtherString(ref TextPosition p)
+        private bool OtherString(ref TextPosition p)
         {
             int i;
             for (i = 0; IsEnable(p, i); i++)
@@ -118,7 +118,12 @@ namespace LexicalAnalysis
                 }
                 break;
             }
-            return TakeToken(ref p, i, TokenType.OtherString);
+            return TakeAddToken(ref p, i, TokenType.OtherString);
+        }
+
+        private bool StringLiteral(ref TextPosition p)
+        {
+            return false;
         }
     }
 }
