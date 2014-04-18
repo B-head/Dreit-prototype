@@ -64,6 +64,10 @@ namespace SyntacticAnalysis
                 }
                 result.Position = SetTextLength(first, last);
             }
+            else
+            {
+                result = new DirectiveList { Position = GetTextPosition(c) };
+            }
             return result;
         }
 

@@ -15,16 +15,25 @@ namespace SyntacticAnalysis
         private delegate E ParserFunction<E>(ref int c) where E : Element;
         private List<Token> InputToken;
         private List<Token> ErrorToken;
+        private Lexer Lexer;
 
         public Element Parse(Lexer lexer, string name)
         {
             InputToken = lexer.Token.ToList();
             ErrorToken = lexer.ErrorToken.ToList();
+            Lexer = lexer;
             int c = -1;
             MoveNextToken(ref c);
             var p = GetTextPosition(c);
             DirectiveList exp = DirectiveList(ref c, true);
-            exp.Position = SetTextLength(p, exp[exp.Count - 1].Position);
+            if (exp.Count > 0)
+            {
+                exp.Position = SetTextLength(p, exp[exp.Count - 1].Position);
+            }
+            else
+            {
+                exp.Position = p;
+            }
             return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = new TextPosition { File = lexer.FileName, Length = lexer.Text.Length } };
         }
 
@@ -74,7 +83,14 @@ namespace SyntacticAnalysis
 
         private TextPosition GetTextPosition(int c)
         {
-            return Read(c).Position;
+            if (IsReadable(c))
+            {
+                return Read(c).Position;
+            }
+            else
+            {
+                return Lexer.LastPosition;
+            }
         }
 
         private TextPosition SetTextLength(TextPosition first, TextPosition last)
@@ -147,9 +163,9 @@ namespace SyntacticAnalysis
             TokenType match;
             while (CheckToken(c, out match, type))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 Element right = next(ref c);
-                left = new R { Left = left, Right = right, Operator = match, Position = left.Position };
+                left = new R { Left = left, Right = right, Operator = match, Position = SetTextLength(left.Position, right.Position) };
             }
             return left;
         }
@@ -162,9 +178,9 @@ namespace SyntacticAnalysis
             {
                 return left;
             }
-            SkipLineTerminator(++c);
+            MoveNextToken(ref c);
             Element right = RightAssociative<R>(ref c, next, type);
-            return new R { Left = left, Right = right, Operator = match, Position = left.Position };
+            return new R { Left = left, Right = right, Operator = match, Position = SetTextLength(left.Position, right.Position) };
         }
 
         private TupleList ParseTuple(ref int c, ParserFunction next)
@@ -177,16 +193,20 @@ namespace SyntacticAnalysis
                 {
                     break;
                 }
-                if(tuple.Count <= 0)
-                {
-                    tuple.Position = temp.Position;
-                }
                 tuple.Append(temp);
                 if (!CheckToken(c, TokenType.List))
                 {
                     break;
                 }
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
+            }
+            if(tuple.Count > 0)
+            {
+                tuple.Position = SetTextLength(tuple[0].Position, tuple[tuple.Count - 1].Position);
+            }
+            else
+            {
+                tuple.Position = GetTextPosition(c);
             }
             return tuple;
         }

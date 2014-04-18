@@ -12,6 +12,7 @@ namespace LexicalAnalysis
         private delegate bool LexerFunction(ref TextPosition p);
         public string Text { get; private set; }
         public string FileName { get; private set; }
+        public TextPosition LastPosition { get; private set; }
         private List<Token> _Token;
         public IReadOnlyList<Token> Token
         {
@@ -48,6 +49,7 @@ namespace LexicalAnalysis
                     OtherString
                     );
             }
+            LastPosition = p;
         }
 
         private bool IsEnable(TextPosition p, int i)
