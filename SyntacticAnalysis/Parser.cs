@@ -16,14 +16,16 @@ namespace SyntacticAnalysis
         private List<Token> InputToken;
         private List<Token> ErrorToken;
 
-        public Element Parse(Lexer input, string name)
+        public Element Parse(Lexer lexer, string name)
         {
-            InputToken = input.Token.ToList();
-            ErrorToken = input.ErrorToken.ToList();
-            int c = 0;
-            SkipLineTerminator(c);
+            InputToken = lexer.Token.ToList();
+            ErrorToken = lexer.ErrorToken.ToList();
+            int c = -1;
+            MoveNextToken(ref c);
+            var p = GetTextPosition(c);
             DirectiveList exp = DirectiveList(ref c, true);
-            return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
+            exp.Position = SetTextLength(p, exp[exp.Count - 1].Position);
+            return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = new TextPosition { File = lexer.FileName, Length = lexer.Text.Length } };
         }
 
         private bool IsReadable(int c)
@@ -33,7 +35,7 @@ namespace SyntacticAnalysis
 
         private Token Read(int c)
         {
-            return IsReadable(c) ? InputToken[c] : null;
+            return InputToken[c];
         }
 
         private void SkipLineTerminator(int c)
@@ -51,16 +53,34 @@ namespace SyntacticAnalysis
             InputToken.RemoveRange(temp, c - temp);
         }
 
-        private void SkipError(int c)
+        private void MoveNextToken(ref int c)
         {
-            SkipLineTerminator(c);
-            AddError(c);
-            InputToken.RemoveAt(c);
+            c++;
+            while (IsReadable(c))
+            {
+                if (CheckToken(c, TokenType.LineTerminator))
+                {
+                    c++;
+                    continue;
+                }
+                break;
+            }
         }
 
         private void AddError(int c)
         {
             ErrorToken.Add(Read(c));
+        }
+
+        private TextPosition GetTextPosition(int c)
+        {
+            return Read(c).Position;
+        }
+
+        private TextPosition SetTextLength(TextPosition first, TextPosition last)
+        {
+            first.Length = last.Length + last.Total - first.Total;
+            return first;
         }
 
         private bool CheckToken(int c, params TokenType[] type)

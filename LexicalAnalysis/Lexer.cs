@@ -10,7 +10,8 @@ namespace LexicalAnalysis
     public partial class Lexer
     {
         private delegate bool LexerFunction(ref TextPosition p);
-        private string Text;
+        public string Text { get; private set; }
+        public string FileName { get; private set; }
         private List<Token> _Token;
         public IReadOnlyList<Token> Token
         {
@@ -25,6 +26,7 @@ namespace LexicalAnalysis
         public void Lex(string text, string fileName)
         {
             Text = text;
+            FileName = fileName;
             _Token = new List<Token>();
             _ErrorToken = new List<Token>();
             TextPosition p = new TextPosition { File = fileName, Total = 0, Line = 1, Row = 0 };
