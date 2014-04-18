@@ -15,9 +15,6 @@ namespace LexicalAnalysis
             string sub = TrySubString(p.Total, 1);
             switch(sub)
             {
-                case "\'": type = TokenType.SingleQuote; break;
-                case "\"": type = TokenType.DoubleQuote; break;
-                case "`": type = TokenType.BackQuote; break;
                 case ";": type = TokenType.EndExpression; break;
                 case ":": type = TokenType.Peir; break;
                 case ",": type = TokenType.List; break;
@@ -92,8 +89,6 @@ namespace LexicalAnalysis
                 case "%=": type = TokenType.ModuloLeftAssign; break;
                 case "=%": type = TokenType.ModuloRightAssign; break;
                 case "**": type = TokenType.Exponent; break;
-                //case "++": type = SyntaxType.Increment; break;
-                //case "--": type = SyntaxType.Decrement; break;
                 default: return false;
             }
             return TakeAddToken(ref p, 2, type);
@@ -115,30 +110,8 @@ namespace LexicalAnalysis
                 case "=<<": type = TokenType.LeftShiftRightAssign; break;
                 case ">>=": type = TokenType.RightShiftLeftAssign; break;
                 case "=>>": type = TokenType.RightShiftRightAssign; break;
-                //case ":>>": type = SyntaxType.ArithRightShift; break;
-                //case "<<<": type = SyntaxType.LeftRotate; break;
-                //case ">>>": type = SyntaxType.RightRotate; break;
                 case "**=": type = TokenType.ExponentLeftAssign; break;
                 case "=**": type = TokenType.ExponentRightAssign; break;
-                case "**/": type = TokenType.EndComment; break;
-                default: return false;
-            }
-            return TakeAddToken(ref p, 3, type);
-        }
-
-        private bool QuadruplePunctuator(ref TextPosition p)
-        {
-            TokenType type = TokenType.Unknoun;
-            string sub = TrySubString(p.Total, 3);
-            switch (sub)
-            {
-                //case ":>>=": type = SyntaxType.ArithRightShiftLeftAssign; break;
-                //case "=:>>": type = SyntaxType.ArithRightShiftRightAssign; break;
-                //case "<<<=": type = SyntaxType.LeftRotateLeftAssign; break;
-                //case "=<<<": type = SyntaxType.LeftRotateRightAssign; break;
-                //case ">>>=": type = SyntaxType.RightRotateLeftAssign; break;
-                //case "=>>>": type = SyntaxType.RightRotateRightAssign; break;
-                case "=**/": type = TokenType.EndComment; break;
                 default: return false;
             }
             return TakeAddToken(ref p, 3, type);

@@ -69,7 +69,7 @@ namespace LexicalAnalysis
                     ++nest;
                 }
             }
-            SkipToken(ref p, i);
+            SkipToken(ref p, ++i);
             return true;
         }
 
@@ -90,7 +90,73 @@ namespace LexicalAnalysis
                     break;
                 }
             }
-            SkipToken(ref p, i);
+            SkipToken(ref p, ++i);
+            return true;
+        }
+
+        private bool StringLiteral(ref TextPosition p)
+        {
+            if (!(IsEnable(p, 0) && Peek(p, 0).Match("\'\"`")))
+            {
+                return false;
+            }
+            string quote = Peek(p, 0).ToString();
+            TakeAddToken(ref p, 1, TokenType.QuoteSeparator);
+            int i;
+            for (i = 0; IsEnable(p, i); i++)
+            {
+                char c = Peek(p, i);
+                if (c.Match(quote))
+                {
+                    TakeAddToken(ref p, i, TokenType.PlainText);
+                    return TakeAddToken(ref p, 1, TokenType.QuoteSeparator);
+                }
+                if (c.Match("{"))
+                {
+                    TakeAddToken(ref p, i, TokenType.PlainText);
+                    BuiltInExpression(ref p);
+                    i = -1;
+                }
+            }
+            return TakeAddToken(ref p, i, TokenType.PlainText);
+        }
+
+        private bool BuiltInExpression(ref TextPosition p)
+        {
+            if (!(IsEnable(p, 0) && Peek(p, 0).Match("{")))
+            {
+                return false;
+            }
+            int nest = 0;
+            while (IsEnable(p, 0))
+            {
+                DisjunctionLexer
+                    (
+                    ref p,
+                    EndOfLine,
+                    WhiteSpace,
+                    BlockComment,
+                    LineCommnet,
+                    StringLiteral,
+                    LetterStartString,
+                    DigitStartString,
+                    TriplePunctuator,
+                    DoublePunctuator,
+                    SinglePunctuator,
+                    OtherString
+                    );
+                if (Token[Token.Count - 1].Type == TokenType.LeftBrace)
+                {
+                    ++nest;
+                }
+                if(Token[Token.Count - 1].Type == TokenType.RightBrace)
+                {
+                    if(--nest == 0)
+                    {
+                        break;
+                    }
+                }
+            }
             return true;
         }
 
@@ -167,11 +233,6 @@ namespace LexicalAnalysis
                 break;
             }
             return TakeAddToken(ref p, i, TokenType.OtherString);
-        }
-
-        private bool StringLiteral(ref TextPosition p)
-        {
-            return false;
         }
     }
 }

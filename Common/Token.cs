@@ -57,6 +57,8 @@ namespace Common
         LetterStartString,
         DigitStartString,
         OtherString,
+        QuoteSeparator,
+        PlainText,
         SingleQuote,
         DoubleQuote,
         BackQuote,
