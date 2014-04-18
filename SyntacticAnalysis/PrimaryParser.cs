@@ -22,16 +22,17 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            TextPosition position = Read(temp).Position;
-            SkipLineTerminator(++temp);
+            var p = GetTextPosition(temp);
+            MoveNextToken(ref temp);
             Element exp = DirectiveList(ref temp);
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
             }
-            SkipLineTerminator(++temp);
+            p = SetTextLength(p, GetTextPosition(c));
+            MoveNextToken(ref temp);
             c = temp;
-            return new ExpressionGrouping { Child = exp, Operator = TokenType.Special, Position = position };
+            return new ExpressionGrouping { Child = exp, Operator = TokenType.Special, Position = p };
         }
 
         private NumberLiteral Number(ref int c)
@@ -43,17 +44,17 @@ namespace SyntacticAnalysis
                 return null;
             }
             Token i = Read(temp);
-            SkipLineTerminator(++temp);
+            MoveNextToken(ref temp);
             c = temp;
             if (CheckToken(temp, TokenType.Access))
             {
-                SkipLineTerminator(++temp);
+                MoveNextToken(ref temp);
                 if (CheckToken(temp, TokenType.DigitStartString))
                 {
                     Token f = Read(temp);
-                    SkipLineTerminator(++temp);
+                    MoveNextToken(ref temp);
                     c = temp;
-                    return new NumberLiteral { Integral = i.Text, Fraction = f.Text, Position = i.Position };
+                    return new NumberLiteral { Integral = i.Text, Fraction = f.Text, Position = SetTextLength(i.Position, f.Position) };
                 }
             }
             return new NumberLiteral { Integral = i.Text, Position = i.Position };
@@ -62,18 +63,19 @@ namespace SyntacticAnalysis
         private IdentifierAccess IdentifierAccess(ref int c)
         {
             bool pragma = false;
+            var p = GetTextPosition(c);
             if (CheckToken(c, TokenType.Pragma))
             {
                 pragma = true;
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
             }
             if (!CheckToken(c, TokenType.LetterStartString))
             {
                 return null;
             }
             Token t = Read(c);
-            SkipLineTerminator(++c);
-            return new IdentifierAccess { Value = t.Text, IsPragmaAccess = pragma, Position = t.Position };
+            MoveNextToken(ref c);
+            return new IdentifierAccess { Value = t.Text, IsPragmaAccess = pragma, Position = SetTextLength(p, t.Position) };
         }
     }
 }

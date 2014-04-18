@@ -47,21 +47,6 @@ namespace SyntacticAnalysis
             return InputToken[c];
         }
 
-        private void SkipLineTerminator(int c)
-        {
-            int temp = c;
-            while (IsReadable(c))
-            {
-                if (CheckToken(c, TokenType.LineTerminator))
-                {
-                    c++;
-                    continue;
-                }
-                break;
-            }
-            InputToken.RemoveRange(temp, c - temp);
-        }
-
         private void MoveNextToken(ref int c)
         {
             c++;
@@ -108,11 +93,11 @@ namespace SyntacticAnalysis
         private bool CheckToken(int c, out TokenType match, params TokenType[] type)
         {
             match = TokenType.Unknoun;
-            Token t = Read(c);
-            if(t == null)
+            if(!IsReadable(c))
             {
                 return false;
             }
+            Token t = Read(c);
             foreach(TokenType v in type)
             {
                 if(t.Type == v)

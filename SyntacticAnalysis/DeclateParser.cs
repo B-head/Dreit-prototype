@@ -16,15 +16,18 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipLineTerminator(++c);
+            var first = GetTextPosition(c);
+            MoveNextToken(ref c);
             IdentifierAccess ident = IdentifierAccess(ref c);
+            var last = ident.Position;
             Element explType = null;
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 explType = MemberAccess(ref c);
+                last = explType.Position;
             }
-            return new DeclateVariant { Ident = ident, ExplicitType = explType, Position = ident.Position };
+            return new DeclateVariant { Ident = ident, ExplicitType = explType, Position = SetTextLength(first, last) };
         }
 
         private DeclateRoutine DeclateRoutine(ref int c)
@@ -33,17 +36,18 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipLineTerminator(++c);
+            var p = GetTextPosition(c);
+            MoveNextToken(ref c);
             IdentifierAccess ident = IdentifierAccess(ref c);
             TupleList attr = null;
             Element retType = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 attr = ParseTuple(ref c, DeclateArgument);
                 if (CheckToken(c, TokenType.RightParenthesis))
                 {
-                    SkipLineTerminator(++c);
+                    MoveNextToken(ref c);
                 }
             }
             else
@@ -52,11 +56,11 @@ namespace SyntacticAnalysis
             }
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 retType = MemberAccess(ref c);
             }
             var block = Block(ref c);
-            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitType = retType, Block = block, Position = ident.Position };
+            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitType = retType, Block = block, Position = SetTextLength(p, block.Position) };
         }
 
         private DeclateOperator DeclateOperator(ref int c)
@@ -65,17 +69,18 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipLineTerminator(++c);
+            var p = GetTextPosition(c);
+            MoveNextToken(ref c);
             Token op = Read(c++);
             TupleList attr = null;
             Element retType = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 attr = ParseTuple(ref c, DeclateArgument);
                 if (CheckToken(c, TokenType.RightParenthesis))
                 {
-                    SkipLineTerminator(++c);
+                    MoveNextToken(ref c);
                 }
             }
             else
@@ -84,11 +89,11 @@ namespace SyntacticAnalysis
             }
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 retType = MemberAccess(ref c);
             }
             var block = Block(ref c);
-            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitType = retType, Block = block, Position = op.Position };
+            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitType = retType, Block = block, Position = SetTextLength(p, block.Position) };
         }
 
         private DeclateArgument DeclateArgument(ref int c)
@@ -98,13 +103,15 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
+            var p = ident.Position;
             Element explType = null;
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 explType = MemberAccess(ref c);
+                p = SetTextLength(p, explType.Position);
             }
-            return new DeclateArgument { Ident = ident, ExplicitType = explType, Position = ident.Position };
+            return new DeclateArgument { Ident = ident, ExplicitType = explType, Position = p };
         }
 
         private DeclateClass DeclateClass(ref int c)
@@ -113,12 +120,13 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipLineTerminator(++c);
+            var p = GetTextPosition(c);
+            MoveNextToken(ref c);
             IdentifierAccess ident = IdentifierAccess(ref c);
             TupleList inherit = null;
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipLineTerminator(++c);
+                MoveNextToken(ref c);
                 inherit = ParseTuple(ref c, MemberAccess);
             }
             else
@@ -126,7 +134,7 @@ namespace SyntacticAnalysis
                 inherit = new TupleList();
             }
             var block = Block(ref c);
-            return new DeclateClass { Ident = ident, Inherit = inherit, Block = block, Position = ident.Position };
+            return new DeclateClass { Ident = ident, Inherit = inherit, Block = block, Position = SetTextLength(p, block.Position) };
         }
     }
 }

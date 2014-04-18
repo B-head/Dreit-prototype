@@ -59,21 +59,23 @@ namespace SyntacticAnalysis
 
         private Element CallRoutine(ref int c)
         {
+            var p = GetTextPosition(c);
             var access = MemberAccess(ref c);
             int temp = c;
             if (!CheckToken(temp, TokenType.LeftParenthesis))
             {
                 return access;
             }
-            SkipLineTerminator(++temp);
+            MoveNextToken(ref temp);
             var argument = ParseTuple(ref temp, Addtive); // 仮
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return access;
             }
-            SkipLineTerminator(++temp);
+            p = SetTextLength(p, GetTextPosition(temp));
+            MoveNextToken(ref temp);
             c = temp;
-            return new CallRoutine { Access = access, Argument = argument, Position = access.Position };
+            return new CallRoutine { Access = access, Argument = argument, Position = p };
         }
 
         private Element MemberAccess(ref int c)
