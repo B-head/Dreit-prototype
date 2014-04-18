@@ -60,6 +60,7 @@ namespace LexicalAnalysis
                     ++i;
                     if (--nest == 0)
                     {
+                        ++i;
                         break;
                     }
                 }
@@ -69,7 +70,7 @@ namespace LexicalAnalysis
                     ++nest;
                 }
             }
-            SkipToken(ref p, ++i);
+            SkipToken(ref p, i);
             return true;
         }
 
@@ -90,7 +91,7 @@ namespace LexicalAnalysis
                     break;
                 }
             }
-            SkipToken(ref p, ++i);
+            SkipToken(ref p, i);
             return true;
         }
 

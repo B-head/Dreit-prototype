@@ -38,8 +38,22 @@ namespace SyntacticAnalysis
         private void SkipSpaser(int c)
         {
             int temp = c;
-            Spacer(ref temp);
-            InputToken.RemoveRange(c, temp - c);
+            while (IsReadable(c))
+            {
+                if (CheckToken(c, TokenType.LineTerminator))
+                {
+                    c++;
+                    continue;
+                }
+                if (CheckToken(c, TokenType.OtherString))
+                {
+                    c++;
+                    AddError(c);
+                    continue;
+                }
+                break;
+            }
+            InputToken.RemoveRange(temp, c - temp);
         }
 
         private void SkipError(int c)
