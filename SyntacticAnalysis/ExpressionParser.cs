@@ -65,13 +65,13 @@ namespace SyntacticAnalysis
             {
                 return access;
             }
-            SkipSpaser(++temp);
+            SkipLineTerminator(++temp);
             var argument = ParseTuple(ref temp, Addtive); // 仮
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return access;
             }
-            SkipSpaser(++temp);
+            SkipLineTerminator(++temp);
             c = temp;
             return new CallRoutine { Access = access, Argument = argument, Position = access.Position };
         }

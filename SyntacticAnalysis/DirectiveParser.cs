@@ -17,7 +17,7 @@ namespace SyntacticAnalysis
             {
                 if (CheckToken(c, TokenType.EndExpression))
                 {
-                    SkipSpaser(++c);
+                    SkipLineTerminator(++c);
                     continue;
                 }
                 Element temp = Directive(ref c);
@@ -40,17 +40,17 @@ namespace SyntacticAnalysis
             DirectiveList result = null;
             if (CheckToken(c, TokenType.Separator))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 result = new DirectiveList { IsInline = true };
                 result.Append(Directive(ref c));
             }
             else if (CheckToken(c, TokenType.LeftBrace))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 result = DirectiveList(ref c);
                 if (CheckToken(c, TokenType.RightBrace))
                 {
-                    SkipSpaser(++c);
+                    SkipLineTerminator(++c);
                 }
             }
             return result;
@@ -61,7 +61,7 @@ namespace SyntacticAnalysis
             Element temp = CoalesceParser(ref c, Echo, Alias, Return, Expression);;
             if (CheckToken(c, TokenType.EndExpression))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
             }
             return temp;
         }
@@ -72,7 +72,7 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             Element exp = Expression(ref c);
             return new EchoDirective { Exp = exp, Position = exp.Position };
         }
@@ -83,7 +83,7 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             var from = IdentifierAccess(ref c);
             var to = IdentifierAccess(ref c);
             return new AliasDirective { From = from, To = to, Position = from.Position };
@@ -95,7 +95,7 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             Element exp = Expression(ref c);
             return new ReturnDirective { Exp = exp, Position = exp.Position };
         }

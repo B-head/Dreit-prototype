@@ -16,12 +16,12 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             IdentifierAccess ident = IdentifierAccess(ref c);
             Element explType = null;
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 explType = MemberAccess(ref c);
             }
             return new DeclateVariant { Ident = ident, ExplicitType = explType, Position = ident.Position };
@@ -33,17 +33,17 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             IdentifierAccess ident = IdentifierAccess(ref c);
             TupleList attr = null;
             Element retType = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 attr = ParseTuple(ref c, DeclateArgument);
                 if (CheckToken(c, TokenType.RightParenthesis))
                 {
-                    SkipSpaser(++c);
+                    SkipLineTerminator(++c);
                 }
             }
             else
@@ -52,7 +52,7 @@ namespace SyntacticAnalysis
             }
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 retType = MemberAccess(ref c);
             }
             var block = Block(ref c);
@@ -65,17 +65,17 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             Token op = Read(c++);
             TupleList attr = null;
             Element retType = null;
             if (CheckToken(c, TokenType.LeftParenthesis))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 attr = ParseTuple(ref c, DeclateArgument);
                 if (CheckToken(c, TokenType.RightParenthesis))
                 {
-                    SkipSpaser(++c);
+                    SkipLineTerminator(++c);
                 }
             }
             else
@@ -84,7 +84,7 @@ namespace SyntacticAnalysis
             }
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 retType = MemberAccess(ref c);
             }
             var block = Block(ref c);
@@ -101,7 +101,7 @@ namespace SyntacticAnalysis
             Element explType = null;
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 explType = MemberAccess(ref c);
             }
             return new DeclateArgument { Ident = ident, ExplicitType = explType, Position = ident.Position };
@@ -113,12 +113,12 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             IdentifierAccess ident = IdentifierAccess(ref c);
             TupleList inherit = null;
             if (CheckToken(c, TokenType.Peir))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 inherit = ParseTuple(ref c, MemberAccess);
             }
             else

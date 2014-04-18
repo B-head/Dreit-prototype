@@ -23,13 +23,13 @@ namespace SyntacticAnalysis
                 return null;
             }
             TextPosition position = Read(temp).Position;
-            SkipSpaser(++temp);
+            SkipLineTerminator(++temp);
             Element exp = DirectiveList(ref temp);
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
             }
-            SkipSpaser(++temp);
+            SkipLineTerminator(++temp);
             c = temp;
             return new ExpressionGrouping { Child = exp, Operator = TokenType.Special, Position = position };
         }
@@ -43,15 +43,15 @@ namespace SyntacticAnalysis
                 return null;
             }
             Token i = Read(temp);
-            SkipSpaser(++temp);
+            SkipLineTerminator(++temp);
             c = temp;
             if (CheckToken(temp, TokenType.Access))
             {
-                SkipSpaser(++temp);
+                SkipLineTerminator(++temp);
                 if (CheckToken(temp, TokenType.DigitStartString))
                 {
                     Token f = Read(temp);
-                    SkipSpaser(++temp);
+                    SkipLineTerminator(++temp);
                     c = temp;
                     return new NumberLiteral { Integral = i.Text, Fraction = f.Text, Position = i.Position };
                 }
@@ -65,14 +65,14 @@ namespace SyntacticAnalysis
             if (CheckToken(c, TokenType.Pragma))
             {
                 pragma = true;
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
             }
             if (!CheckToken(c, TokenType.LetterStartString))
             {
                 return null;
             }
             Token t = Read(c);
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             return new IdentifierAccess { Value = t.Text, IsPragmaAccess = pragma, Position = t.Position };
         }
     }

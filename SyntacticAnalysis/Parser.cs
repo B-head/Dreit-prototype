@@ -21,7 +21,7 @@ namespace SyntacticAnalysis
             InputToken = input.Token.ToList();
             ErrorToken = input.ErrorToken.ToList();
             int c = 0;
-            SkipSpaser(c);
+            SkipLineTerminator(c);
             DirectiveList exp = DirectiveList(ref c, true);
             return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
         }
@@ -36,7 +36,7 @@ namespace SyntacticAnalysis
             return IsReadable(c) ? InputToken[c] : null;
         }
 
-        private void SkipSpaser(int c)
+        private void SkipLineTerminator(int c)
         {
             int temp = c;
             while (IsReadable(c))
@@ -53,7 +53,7 @@ namespace SyntacticAnalysis
 
         private void SkipError(int c)
         {
-            SkipSpaser(c);
+            SkipLineTerminator(c);
             AddError(c);
             InputToken.RemoveAt(c);
         }
@@ -127,7 +127,7 @@ namespace SyntacticAnalysis
             TokenType match;
             while (CheckToken(c, out match, type))
             {
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
                 Element right = next(ref c);
                 left = new R { Left = left, Right = right, Operator = match, Position = left.Position };
             }
@@ -142,7 +142,7 @@ namespace SyntacticAnalysis
             {
                 return left;
             }
-            SkipSpaser(++c);
+            SkipLineTerminator(++c);
             Element right = RightAssociative<R>(ref c, next, type);
             return new R { Left = left, Right = right, Operator = match, Position = left.Position };
         }
@@ -166,7 +166,7 @@ namespace SyntacticAnalysis
                 {
                     break;
                 }
-                SkipSpaser(++c);
+                SkipLineTerminator(++c);
             }
             return tuple;
         }
