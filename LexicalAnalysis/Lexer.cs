@@ -11,12 +11,22 @@ namespace LexicalAnalysis
     {
         private delegate bool LexerFunction(ref TextPosition p);
         private string Text;
-        private List<Token> Token;
+        private List<Token> _Token;
+        public IReadOnlyList<Token> Token
+        {
+            get { return _Token; }
+        }
+        private List<Token> _ErrorToken;
+        public IReadOnlyList<Token> ErrorToken
+        {
+            get { return _ErrorToken; }
+        }
 
-        public List<Token> Lex(string text, string fileName)
+        public void Lex(string text, string fileName)
         {
             Text = text;
-            Token = new List<Token>();
+            _Token = new List<Token>();
+            _ErrorToken = new List<Token>();
             TextPosition p = new TextPosition { File = fileName, Total = 0, Line = 1, Row = 0 };
             while (IsEnable(p, 0))
             {
@@ -36,7 +46,6 @@ namespace LexicalAnalysis
                     OtherString
                     );
             }
-            return Token;
         }
 
         private bool IsEnable(TextPosition p, int i)
@@ -66,6 +75,24 @@ namespace LexicalAnalysis
             {
                 return false;
             }
+            Token token = TakeToken(ref p, length, type);
+            _Token.Add(token);
+            return true;
+        }
+
+        private bool TakeAddErrorToken(ref TextPosition p, int length, TokenType type)
+        {
+            if (length == 0)
+            {
+                return false;
+            }
+            Token token = TakeToken(ref p, length, type);
+            _ErrorToken.Add(token);
+            return true;
+        }
+
+        private Token TakeToken(ref TextPosition p, int length, TokenType type)
+        {
             string text = TrySubString(p.Total, length);
             TextPosition temp = p;
             temp.Length = length;
@@ -77,8 +104,7 @@ namespace LexicalAnalysis
                 p.Line++;
                 p.Row = 0;
             }
-            Token.Add(token);
-            return true;
+            return token;
         }
 
         private bool SkipToken(ref TextPosition p, int length)

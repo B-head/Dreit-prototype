@@ -55,6 +55,10 @@
       <Project>{5ffa51b1-65e1-4a7d-a79f-31051c0cc99a}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LexicalAnalysis\LexicalAnalysis.csproj">
+      <Project>{87249519-b003-40ba-ae5a-1e645f48a186}</Project>
+      <Name>LexicalAnalysis</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

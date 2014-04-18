@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
 using Common;
+using LexicalAnalysis;
 
 namespace SyntacticAnalysis
 {
@@ -15,10 +16,10 @@ namespace SyntacticAnalysis
         private List<Token> InputToken;
         private List<Token> ErrorToken;
 
-        public Element Parse(List<Token> input, string name)
+        public Element Parse(Lexer input, string name)
         {
-            InputToken = input;
-            ErrorToken = new List<Token>();
+            InputToken = input.Token.ToList();
+            ErrorToken = input.ErrorToken.ToList();
             int c = 0;
             SkipSpaser(c);
             DirectiveList exp = DirectiveList(ref c, true);
@@ -43,12 +44,6 @@ namespace SyntacticAnalysis
                 if (CheckToken(c, TokenType.LineTerminator))
                 {
                     c++;
-                    continue;
-                }
-                if (CheckToken(c, TokenType.OtherString))
-                {
-                    c++;
-                    AddError(c);
                     continue;
                 }
                 break;

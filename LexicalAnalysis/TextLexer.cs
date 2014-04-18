@@ -146,11 +146,11 @@ namespace LexicalAnalysis
                     SinglePunctuator,
                     OtherString
                     );
-                if (Token[Token.Count - 1].Type == TokenType.LeftBrace)
+                if (_Token[_Token.Count - 1].Type == TokenType.LeftBrace)
                 {
                     ++nest;
                 }
-                if(Token[Token.Count - 1].Type == TokenType.RightBrace)
+                if(_Token[_Token.Count - 1].Type == TokenType.RightBrace)
                 {
                     if(--nest == 0)
                     {
@@ -233,7 +233,7 @@ namespace LexicalAnalysis
                 }
                 break;
             }
-            return TakeAddToken(ref p, i, TokenType.OtherString);
+            return TakeAddErrorToken(ref p, i, TokenType.OtherString);
         }
     }
 }
