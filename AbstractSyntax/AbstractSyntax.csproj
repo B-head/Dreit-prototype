@@ -53,6 +53,7 @@
     <Compile Include="DeclateVariant.cs" />
     <Compile Include="DyadicCalculate.cs" />
     <Compile Include="DyadicExpression.cs" />
+    <Compile Include="FullPath.cs" />
     <Compile Include="PrimitivePragma.cs" />
     <Compile Include="ReturnDirective.cs" />
     <Compile Include="EchoDirective.cs" />
@@ -70,15 +71,11 @@
     <Compile Include="RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="TextPosition.cs" />
     <Compile Include="ThisScope.cs" />
+    <Compile Include="Token.cs" />
     <Compile Include="TupleList.cs" />
     <Compile Include="VoidScope.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{5ffa51b1-65e1-4a7d-a79f-31051c0cc99a}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

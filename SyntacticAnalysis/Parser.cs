@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
-using Common;
-using LexicalAnalysis;
+using AbstractSyntax;
+using SyntacticAnalysis;
 
 namespace SyntacticAnalysis
 {

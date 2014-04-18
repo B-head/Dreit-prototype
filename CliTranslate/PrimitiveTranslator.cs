@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
-using Common;
+using AbstractSyntax;
 
 namespace CliTranslate
 {
