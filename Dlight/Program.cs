@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using SyntacticAnalysis;
-using SyntacticAnalysis;
 using CliTranslate;
-using AbstractSyntax;
 using AbstractSyntax;
 
 namespace Dlight

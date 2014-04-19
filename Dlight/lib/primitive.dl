@@ -1,4 +1,32 @@
-﻿alias Integer32 Int32
+﻿alias Integer8 Int8
+class Integer8 : @@Integer8
+{
+	operator +(other:Integer8) :: @@add(this, other)
+	operator -(other:Integer8) :: @@sub(this, other)
+	operator *(other:Integer8) :: @@mul(this, other)
+	operator /(other:Integer8) :: @@div(this, other)
+	operator %(other:Integer8) :: @@mod(this, other)
+
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
+}
+
+alias Integer16 Int16
+class Integer16 : @@Integer16
+{
+	operator +(other:Integer16) :: @@add(this, other)
+	operator -(other:Integer16) :: @@sub(this, other)
+	operator *(other:Integer16) :: @@mul(this, other)
+	operator /(other:Integer16) :: @@div(this, other)
+	operator %(other:Integer16) :: @@mod(this, other)
+	
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
+}
+
+alias Integer32 Int32
 class Integer32 : @@Integer32
 {
 	operator +(other:Integer32) :: @@add(this, other)
@@ -6,6 +34,24 @@ class Integer32 : @@Integer32
 	operator *(other:Integer32) :: @@mul(this, other)
 	operator /(other:Integer32) :: @@div(this, other)
 	operator %(other:Integer32) :: @@mod(this, other)
+
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
+}
+
+alias Integer64 Int64
+class Integer64 : @@Integer64
+{
+	operator +(other:Integer64) :: @@add(this, other)
+	operator -(other:Integer64) :: @@sub(this, other)
+	operator *(other:Integer64) :: @@mul(this, other)
+	operator /(other:Integer64) :: @@div(this, other)
+	operator %(other:Integer64) :: @@mod(this, other)
+
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
 }
 
 class Binary64 : @@Binary64
