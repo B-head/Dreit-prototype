@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using AbstractSyntax;
+using AbstractSyntax.Daclate;
+using AbstractSyntax.Expression;
 
 namespace CliTranslate
 {

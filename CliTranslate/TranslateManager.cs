@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
+using AbstractSyntax.Daclate;
+using AbstractSyntax.Pragma;
+using AbstractSyntax.Expression;
 
 namespace CliTranslate
 {

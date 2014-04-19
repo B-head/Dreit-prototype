@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Daclate
 {
     public class DeclateOperator: DeclateRoutine
     {

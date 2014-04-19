@@ -5,23 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Expression
 {
-    public abstract class MonadicExpression : Element
+    public abstract class DyadicExpression : Element
     {
-        public Element Child { get; set; }
+        public Element Left { get; set; }
+        public Element Right { get; set; }
         public TokenType Operator { get; set; }
 
         public override int Count
         {
-            get { return 1; }
+            get { return 2; }
         }
 
         public override Element GetChild(int index)
         {
             switch (index)
             {
-                case 0: return Child;
+                case 0: return Left;
+                case 1: return Right;
                 default: throw new ArgumentOutOfRangeException();
             }
         }

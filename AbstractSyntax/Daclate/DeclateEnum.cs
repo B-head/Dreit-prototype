@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
+using AbstractSyntax.Expression;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Daclate
 {
-    public class DeclateGeneric : Scope
+    public class DeclateEnum : Scope
     {
         public IdentifierAccess Ident { get; set; }
 

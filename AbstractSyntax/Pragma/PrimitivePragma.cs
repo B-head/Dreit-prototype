@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AbstractSyntax;
+using AbstractSyntax.Daclate;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Pragma
 {
     public class PrimitivePragma : DeclateClass
     {

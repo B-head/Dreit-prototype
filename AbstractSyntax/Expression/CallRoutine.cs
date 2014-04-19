@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AbstractSyntax;
+using AbstractSyntax.Daclate;
+using AbstractSyntax.Pragma;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Expression
 {
     public class CallRoutine : Element
     {
