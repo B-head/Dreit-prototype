@@ -22,6 +22,19 @@ namespace AbstractSyntax.Pragma
         {
             get { return true; }
         }
+
+        internal override TypeMatchResult TypeMatch(List<Scope> type)
+        {
+            if (ArgumentType.Count != 2)
+            {
+                return TypeMatchResult.MissMatchCount;
+            }
+            else if (ArgumentType[0] != ArgumentType[1])
+            {
+                return TypeMatchResult.MissMatchType;
+            }
+            return TypeMatchResult.PerfectMatch;
+        }
     }
 
     public enum CalculatePragmaType
@@ -31,6 +44,5 @@ namespace AbstractSyntax.Pragma
         Mul,
         Div,
         Mod,
-        Cast,
     }
 }

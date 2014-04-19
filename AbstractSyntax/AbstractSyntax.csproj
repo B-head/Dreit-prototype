@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AliasDirective.cs" />
+    <Compile Include="DataType.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
     <Compile Include="Expression\CallRoutine.cs" />
     <Compile Include="Daclate\DeclateArgument.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Expression\DyadicCalculate.cs" />
     <Compile Include="Expression\DyadicExpression.cs" />
     <Compile Include="FullPath.cs" />
+    <Compile Include="Pragma\CastPragma.cs" />
     <Compile Include="Pragma\PrimitivePragma.cs" />
     <Compile Include="ReturnDirective.cs" />
     <Compile Include="EchoDirective.cs" />
@@ -66,7 +68,7 @@
     <Compile Include="NameSpace.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
     <Compile Include="NumberLiteral.cs" />
-    <Compile Include="OverLoadManager.cs" />
+    <Compile Include="ScopeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
@@ -76,6 +78,9 @@
     <Compile Include="Token.cs" />
     <Compile Include="TupleList.cs" />
     <Compile Include="VoidScope.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Symbol\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

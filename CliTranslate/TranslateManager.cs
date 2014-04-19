@@ -308,7 +308,6 @@ namespace CliTranslate
                 case CalculatePragmaType.Mul: trans.GenerateControl(CodeType.Mul); break;
                 case CalculatePragmaType.Div: trans.GenerateControl(CodeType.Div); break;
                 case CalculatePragmaType.Mod: trans.GenerateControl(CodeType.Mod); break;
-                case CalculatePragmaType.Cast: break;
                 default: throw new Exception();
             }
         }

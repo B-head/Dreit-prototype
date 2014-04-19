@@ -119,6 +119,18 @@ namespace AbstractSyntax
             return Name;
         }
 
+        internal virtual TypeMatchResult TypeMatch(List<Scope> type)
+        {
+            if(type.Count == 0)
+            {
+                return TypeMatchResult.PerfectMatch;
+            }
+            else
+            {
+                return TypeMatchResult.NotCallable;
+            }
+        }
+
         internal void SpreadScope(Scope scope)
         {
             Name = CreateName();

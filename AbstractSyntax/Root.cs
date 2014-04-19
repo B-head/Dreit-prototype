@@ -69,7 +69,7 @@ namespace AbstractSyntax
             AppendPragma("mul", new CalculatePragma(CalculatePragmaType.Mul));
             AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
             AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
-            AppendPragma("cast", new CalculatePragma(CalculatePragmaType.Cast));
+            AppendPragma("cast", new CastPragma());
             AppendPragma("Root", new PrimitivePragma(PrimitivePragmaType.Root));
             AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
             AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));

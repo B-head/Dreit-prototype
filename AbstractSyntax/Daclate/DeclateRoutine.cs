@@ -56,6 +56,25 @@ namespace AbstractSyntax.Daclate
             return Ident == null ? Name : Ident.Value;
         }
 
+        internal override TypeMatchResult TypeMatch(List<Scope> type)
+        {
+            if (ArgumentType.Count != type.Count)
+            {
+                return TypeMatchResult.MissMatchCount;
+            }
+            else
+            {
+                for (int i = 0; i < ArgumentType.Count; i++)
+                {
+                    if (ArgumentType[i] != type[i])
+                    {
+                        return TypeMatchResult.MissMatchType;
+                    }
+                }
+            }
+            return TypeMatchResult.PerfectMatch;
+        }
+
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);

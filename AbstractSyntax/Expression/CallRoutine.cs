@@ -13,18 +13,17 @@ namespace AbstractSyntax.Expression
         public Element Access { get; set; }
         public TupleList Argument { get; set; }
         public List<Scope> ArgumentType { get; set; }
-        private bool _IsVoidValue = false;
 
         public override bool IsVoidValue
         {
-            get { return _IsVoidValue; }
+            get { return Access.Reference.DataType is VoidScope; }
         }
 
         public override Scope DataType
         {
             get 
             {
-                if (Access.Reference is CalculatePragma)
+                if (Access.Reference is CalculatePragma || Access.Reference is CastPragma)
                 {
                     return ArgumentType[0];
                 }
@@ -65,60 +64,13 @@ namespace AbstractSyntax.Expression
                 argType.Add(temp);
             }
             ArgumentType = argType;
-            CheckCall((dynamic)Access.Reference);
-        }
-
-        private void CheckCall(Scope scope)
-        {
-            CompileError("関数ではありません。");
-        }
-
-        private void CheckCall(DeclateRoutine rout)
-        {
-            if(ArgumentType.Count != rout.ArgumentType.Count)
+            var ret = Access.Reference.TypeMatch(ArgumentType);
+            switch(ret)
             {
-                CompileError("引数の数が合っていません。");
-            }
-            else
-            {
-                for (int i = 0; i < ArgumentType.Count; i++)
-                {
-                    if(ArgumentType[i] != rout.ArgumentType[i])
-                    {
-                        CompileError("引数の型が合っていません。");
-                    }
-                }
-                if(rout.ReturnType == null)
-                {
-                    _IsVoidValue = true;
-                }
-            }
-        }
-
-        private void CheckCall(CalculatePragma pragma)
-        {
-            if (ArgumentType.Count != 2)
-            {
-                CompileError("引数の数が合っていません。");
-            }
-            else if (pragma.Type == CalculatePragmaType.Cast)
-            {
-
-            }
-            else
-            {
-                if (ArgumentType[0] != ArgumentType[1])
-                {
-                    CompileError("引数の型が合っていません。");
-                }
-            }
-        }
-
-        private void CheckCall(DeclateClass cls)
-        {
-            if (ArgumentType.Count != 0)
-            {
-                CompileError("引数の数が合っていません。");
+                case TypeMatchResult.Unknown: CompileError("原因不明の呼び出しエラーです。"); break;
+                case TypeMatchResult.NotCallable: CompileError("関数ではありません。"); break;
+                case TypeMatchResult.MissMatchCount: CompileError("引数の数が合っていません。"); break;
+                case TypeMatchResult.MissMatchType: CompileError("引数の型が合っていません。"); break;
             }
         }
     }
