@@ -7,7 +7,7 @@ using AbstractSyntax;
 
 namespace AbstractSyntax
 {
-    public class CalculatePragma : DeclateOperator
+    public class CalculatePragma : DeclateRoutine
     {
         public CalculatePragmaType Type { get; private set; }
 
@@ -22,11 +22,6 @@ namespace AbstractSyntax
         {
             get { return true; }
         }
-
-        internal override void SpreadReference(Scope scope)
-        {
-            base.SpreadReference(scope);
-        }
     }
 
     public enum CalculatePragmaType
@@ -36,5 +31,6 @@ namespace AbstractSyntax
         Mul,
         Div,
         Mod,
+        Cast,
     }
 }

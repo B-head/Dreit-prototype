@@ -100,9 +100,16 @@ namespace AbstractSyntax
             {
                 CompileError("引数の数が合っていません。");
             }
-            else if (ArgumentType[0] != ArgumentType[1])
+            else if (pragma.Type == CalculatePragmaType.Cast)
             {
-                CompileError("引数の型が合っていません。");
+
+            }
+            else
+            {
+                if (ArgumentType[0] != ArgumentType[1])
+                {
+                    CompileError("引数の型が合っていません。");
+                }
             }
         }
 

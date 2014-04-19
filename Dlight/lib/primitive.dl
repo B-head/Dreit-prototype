@@ -1,4 +1,10 @@
-﻿alias Integer8 Int8
+﻿alias Boolean Bool
+class Boolean : @@Boolean
+{
+
+}
+
+alias Integer8 Int8
 class Integer8 : @@Integer8
 {
 	operator +(other:Integer8) :: @@add(this, other)
@@ -54,6 +60,70 @@ class Integer64 : @@Integer64
 	routine from(other:Integer32) :: @@cast(this, other)
 }
 
+alias Natural8 Byte
+class Natural8 : @@Natural8
+{
+	operator +(other:Natural8) :: @@add(this, other)
+	operator -(other:Natural8) :: @@sub(this, other)
+	operator *(other:Natural8) :: @@mul(this, other)
+	operator /(other:Natural8) :: @@div(this, other)
+	operator %(other:Natural8) :: @@mod(this, other)
+
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
+}
+
+class Natural16 : @@Natural16
+{
+	operator +(other:Natural16) :: @@add(this, other)
+	operator -(other:Natural16) :: @@sub(this, other)
+	operator *(other:Natural16) :: @@mul(this, other)
+	operator /(other:Natural16) :: @@div(this, other)
+	operator %(other:Natural16) :: @@mod(this, other)
+
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
+}
+
+class Natural32 : @@Natural32
+{
+	operator +(other:Natural32) :: @@add(this, other)
+	operator -(other:Natural32) :: @@sub(this, other)
+	operator *(other:Natural32) :: @@mul(this, other)
+	operator /(other:Natural32) :: @@div(this, other)
+	operator %(other:Natural32) :: @@mod(this, other)
+
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
+}
+
+class Natural64 : @@Natural64
+{
+	operator +(other:Natural64) :: @@add(this, other)
+	operator -(other:Natural64) :: @@sub(this, other)
+	operator *(other:Natural64) :: @@mul(this, other)
+	operator /(other:Natural64) :: @@div(this, other)
+	operator %(other:Natural64) :: @@mod(this, other)
+
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+}
+
+class Binary32 : @@Binary32
+{
+	operator +(other:Binary32) :: @@add(this, other)
+	operator -(other:Binary32) :: @@sub(this, other)
+	operator *(other:Binary32) :: @@mul(this, other)
+	operator /(other:Binary32) :: @@div(this, other)
+	operator %(other:Binary32) :: @@mod(this, other)
+	
+	routine from(other:Binary64) :: @@cast(this, other)
+}
+
 class Binary64 : @@Binary64
 {
 	operator +(other:Binary64) :: @@add(this, other)
@@ -61,4 +131,6 @@ class Binary64 : @@Binary64
 	operator *(other:Binary64) :: @@mul(this, other)
 	operator /(other:Binary64) :: @@div(this, other)
 	operator %(other:Binary64) :: @@mod(this, other)
+	
+	routine from(other:Binary32) :: @@cast(this, other)
 }
