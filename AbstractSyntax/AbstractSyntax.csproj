@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AliasDirective.cs" />
     <Compile Include="DataType.cs" />
+    <Compile Include="OverLoadScope.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
     <Compile Include="Expression\CallRoutine.cs" />
     <Compile Include="Daclate\DeclateArgument.cs" />
@@ -68,7 +69,6 @@
     <Compile Include="NameSpace.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
     <Compile Include="NumberLiteral.cs" />
-    <Compile Include="ScopeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />

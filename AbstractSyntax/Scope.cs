@@ -12,37 +12,60 @@ namespace AbstractSyntax
         private static int NextId = 1;
         public int Id { get; private set; }
         public string Name { get; set; }
-        private ScopeManager ReferenceScope;
         public FullPath FullPath { get; private set; }
+        private Dictionary<string, OverLoadScope> ScopeSymbol;
         private List<Scope> _ScopeChild;
         public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }
 
         public Scope()
         {
             Id = NextId++;
-            ReferenceScope = new ScopeManager();
+            ScopeSymbol = new Dictionary<string, OverLoadScope>();
             _ScopeChild = new List<Scope>();
         }
 
-        public void AppendChild(Scope child)
+        public void AppendChild(Scope scope)
         {
-            ReferenceScope.Append(child);
-            _ScopeChild.Add(child);
-            if(child.IsNameSpace)
+            OverLoadScope ol;
+            if (ScopeSymbol.ContainsKey(scope.Name))
             {
-                ReferenceScope.Merge(child.ReferenceScope);
+                ol = ScopeSymbol[scope.Name];
+            }
+            else
+            {
+                ol = new OverLoadScope();
+                ScopeSymbol[scope.Name] = ol;
+            }
+            ol.Append(scope);//仮
+            _ScopeChild.Add(scope);
+            if (scope.IsNameSpace)
+            {
+                Merge(scope);
+            }
+        }
+
+        private void Merge(Scope other)
+        {
+            foreach (var v in other.ScopeSymbol)
+            {
+                OverLoadScope ol;
+                if (ScopeSymbol.ContainsKey(v.Key))
+                {
+                    ol = ScopeSymbol[v.Key];
+                }
+                else
+                {
+                    ol = new OverLoadScope();
+                    ScopeSymbol[v.Key] = ol;
+                }
+                ol.Merge(v.Value);
             }
         }
 
         internal Scope NameResolution(string name)
         {
-            return NameResolution(name, new List<Scope>());
-        }
-
-        internal Scope NameResolution(string name, List<Scope> type)
-        {
-            Scope temp = ReferenceScope.MatchScope(name, type);
-            if(temp != null)
+            OverLoadScope temp;
+            if(ScopeSymbol.TryGetValue(name, out temp))
             {
                 return temp;
             }
@@ -54,7 +77,7 @@ namespace AbstractSyntax
             {
                 return null;
             }
-            return ScopeParent.NameResolution(name, type);
+            return ScopeParent.NameResolution(name);
         }
 
         public override Scope DataType
