@@ -26,6 +26,10 @@ namespace AbstractSyntax.Pragma
             {
                 return TypeMatchResult.MissMatchCount;
             }
+            else if (type[0] == type[1])
+            {
+                return TypeMatchResult.MissMatchType;
+            }
             return TypeMatchResult.PerfectMatch;
         }
     }
