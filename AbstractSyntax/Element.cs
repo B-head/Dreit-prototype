@@ -20,7 +20,7 @@ namespace AbstractSyntax
             get { throw new NotSupportedException(); }
         }
 
-        public virtual Scope Reference
+        public virtual OverLoadScope Reference
         {
             get { throw new NotSupportedException(); }
         }

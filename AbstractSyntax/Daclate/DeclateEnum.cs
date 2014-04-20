@@ -8,7 +8,7 @@ using AbstractSyntax.Expression;
 
 namespace AbstractSyntax.Daclate
 {
-    public class DeclateEnum : Scope
+    public class DeclateEnum : DataType
     {
         public IdentifierAccess Ident { get; set; }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
-    public class OverLoadScope : Scope
+    public class OverLoadScope
     {
         private List<Scope> OverLoad;
 
@@ -27,7 +27,17 @@ namespace AbstractSyntax
 
         public DataType GetDataType()
         {
-            return (DataType)OverLoad.Find(s => s is DataType);
+            var find = (DataType)OverLoad.Find(s => s is DataType);
+            if(find != null)
+            {
+                return find;
+            }
+            var refer = TypeSelect();
+            if (refer == null)
+            {
+                throw new InvalidOperationException();
+            }
+            return refer.DataType;
         }
 
         public Scope TypeSelect()

@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
             get { return Right.DataType; }
         }
 
-        public override Scope Reference
+        public override OverLoadScope Reference
         {
             get { return Right.Reference; }
         }

@@ -8,7 +8,7 @@ using AbstractSyntax.Expression;
 
 namespace AbstractSyntax.Daclate
 {
-    public class DeclateGeneric : Scope
+    public class DeclateGeneric : DataType
     {
         public IdentifierAccess Ident { get; set; }
 

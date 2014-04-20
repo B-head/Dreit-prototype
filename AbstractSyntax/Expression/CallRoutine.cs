@@ -12,18 +12,19 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; set; }
         public TupleList Argument { get; set; }
+        public Scope CallScope { get; set; }
         public List<DataType> ArgumentType { get; set; }
 
         public override bool IsVoidValue
         {
-            get { return Access.Reference.DataType is VoidScope; }
+            get { return Access.Reference.GetDataType() is VoidScope; }
         }
 
         public override DataType DataType
         {
             get 
             {
-                if (Access.Reference is CalculatePragma || Access.Reference is CastPragma)
+                if (CallScope is CalculatePragma || CallScope is CastPragma)
                 {
                     return ArgumentType[0];
                 }
@@ -64,14 +65,19 @@ namespace AbstractSyntax.Expression
                 argType.Add(temp);
             }
             ArgumentType = argType;
-            var ret = Access.Reference.TypeMatch(ArgumentType);
+            CallScope = Access.Reference.TypeSelect(ArgumentType);
+            if(CallScope == null)
+            {
+                CompileError("引数型に合うオーバーロードが定義されていません。");
+            }
+            /*var ret = CallScope.TypeMatch(ArgumentType);
             switch(ret)
             {
                 case TypeMatchResult.Unknown: CompileError("原因不明の呼び出しエラーです。"); break;
                 case TypeMatchResult.NotCallable: CompileError("関数ではありません。"); break;
                 case TypeMatchResult.MissMatchCount: CompileError("引数の数が合っていません。"); break;
                 case TypeMatchResult.MissMatchType: CompileError("引数の型が合っていません。"); break;
-            }
+            }*/
         }
     }
 }

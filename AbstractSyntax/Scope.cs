@@ -71,7 +71,6 @@ namespace AbstractSyntax
             }
             if (name == Name)
             {
-                throw new Exception();
                 //return this;
             }
             if (ScopeParent == null)
@@ -79,16 +78,6 @@ namespace AbstractSyntax
                 return null;
             }
             return ScopeParent.NameResolution(name);
-        }
-
-        public override DataType DataType
-        {
-            get { throw new NotSupportedException(); }
-        }
-
-        public override Scope Reference
-        {
-            get { return this; }
         }
 
         internal virtual bool IsNameSpace

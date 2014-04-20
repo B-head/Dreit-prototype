@@ -11,15 +11,14 @@ namespace AbstractSyntax
     {
         public int ErrorCount { get; private set; }
         public int WarningCount { get; private set; }
+        private Dictionary<string, OverLoadScope> PragmaDictionary;
         private List<Scope> PragmaList;
-        private Dictionary<string, Scope> _PragmaDictionary;
-        public IReadOnlyDictionary<string, Scope> PragmaDictionary { get; set; }
 
         public Root()
         {
             Name = "global";
             PragmaList = new List<Scope>();
-            _PragmaDictionary = new Dictionary<string, Scope>();
+            PragmaDictionary = new Dictionary<string, OverLoadScope>();
             CreatePragma();
         }
 
@@ -48,10 +47,10 @@ namespace AbstractSyntax
             CheckDataType();
         }
 
-        internal Scope GetPragma(string name)
+        internal OverLoadScope GetPragma(string name)
         {
-            Scope temp;
-            _PragmaDictionary.TryGetValue(name, out temp);
+            OverLoadScope temp;
+            PragmaDictionary.TryGetValue(name, out temp);
             return temp;
         }
 
@@ -59,7 +58,9 @@ namespace AbstractSyntax
         {
             pragma.Name = "@@" + name;
             PragmaList.Add(pragma);
-            _PragmaDictionary.Add(name, pragma);
+            var ol = new OverLoadScope();
+            ol.Append(pragma);
+            PragmaDictionary.Add(name, ol);
         }
 
         private void CreatePragma()

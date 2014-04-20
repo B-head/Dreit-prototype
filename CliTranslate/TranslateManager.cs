@@ -215,24 +215,24 @@ namespace CliTranslate
 
         private void Translate(IdentifierAccess element, Translator trans)
         {
-            if(element.Refer is ThisScope)
+            if (element.Reference.TypeSelect() is ThisScope)
             {
                 trans.GenerateControl(CodeType.This);
             }
             else if (element.IsTacitThis)
             {
                 trans.GenerateControl(CodeType.This);
-                trans.GenerateLoad(element.Refer.FullPath);
+                trans.GenerateLoad(element.Reference.TypeSelect().FullPath);
             }
             else
             {
-                trans.GenerateLoad(element.Refer.FullPath);
+                trans.GenerateLoad(element.Reference.TypeSelect().FullPath);
             }
         }
 
         private void TranslateAssign(IdentifierAccess element, Translator trans)
         {
-            trans.GenerateStore(element.Refer.FullPath);
+            trans.GenerateStore(element.Reference.TypeSelect().FullPath);
         }
 
         private Element TranslateAccess(IdentifierAccess element, Translator trans)
@@ -263,7 +263,7 @@ namespace CliTranslate
         private void Translate(DyadicCalculate element, Translator trans)
         {
             ChildTranslate(element, trans);
-            trans.GenerateCall(element.ReferOp.FullPath);
+            trans.GenerateCall(element.ReferOp.TypeSelect().FullPath);
         }
 
         private void Translate(LeftAssign element, Translator trans)
@@ -284,7 +284,7 @@ namespace CliTranslate
 
         private void Translate(CallRoutine element, Translator trans)
         {
-            var pragma = element.Access.Reference as CalculatePragma;
+            var pragma = element.Access.Reference.TypeSelect() as CalculatePragma;
             if(pragma != null)
             {
                 PragmaTranslate(pragma, element.Argument, trans);
@@ -292,7 +292,7 @@ namespace CliTranslate
             }
             TranslateAccess((dynamic)element.Access, trans);
             Translate((dynamic)element.Argument, trans);
-            trans.GenerateCall(element.Access.Reference.FullPath);
+            trans.GenerateCall(element.Access.Reference.TypeSelect().FullPath);
         }
 
         private void PragmaTranslate(CalculatePragma element, TupleList argument, Translator trans)

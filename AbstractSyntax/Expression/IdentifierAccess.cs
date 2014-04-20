@@ -11,22 +11,22 @@ namespace AbstractSyntax.Expression
     {
         public string Value { get; set; }
         public bool IsPragmaAccess { get; set; }
-        public bool IsTacitThis { get; private set; } 
-        public Scope Refer { get; private set; }
+        public bool IsTacitThis { get; private set; }
+        private OverLoadScope _Reference;
 
         public IdentifierAccess()
         {
-            Refer = new VoidScope();
+            _Reference = new OverLoadScope();
         }
 
         public override DataType DataType
         {
-            get { return Refer.DataType; }
+            get { return _Reference.GetDataType(); }
         }
 
-        public override Scope Reference
+        public override OverLoadScope Reference
         {
-            get { return Refer; }
+            get { return _Reference; }
         }
 
         public override bool IsAssignable
@@ -57,7 +57,7 @@ namespace AbstractSyntax.Expression
                 }
                 else
                 {
-                    Refer = temp;
+                    _Reference = temp;
                 }
             }
             else
@@ -69,13 +69,13 @@ namespace AbstractSyntax.Expression
                 }
                 else
                 {
-                    Refer = temp;
+                    _Reference = temp;
                 }
             }
-            if (ScopeParent is DeclateRoutine && Refer.ScopeParent == GetParentClass())
+            /*if (ScopeParent is DeclateRoutine && _Reference.ScopeParent == GetParentClass())
             {
                 IsTacitThis = true;
-            }
+            }*/
         }
 
         private Scope GetParentClass()

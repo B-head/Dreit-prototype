@@ -9,7 +9,7 @@ namespace AbstractSyntax.Expression
 {
     public class DyadicCalculate : DyadicExpression
     {
-        public Scope ReferOp { get; private set; }
+        public OverLoadScope ReferOp { get; private set; }
 
         public override DataType DataType
         {
