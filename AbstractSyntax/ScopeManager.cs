@@ -16,25 +16,37 @@ namespace AbstractSyntax
             ScopeSymbol = new Dictionary<string, List<Scope>>();
         }
 
-        public bool Append(Scope scope)
+        public void Append(Scope scope)
         {
+            List<Scope> list;
             if(ScopeSymbol.ContainsKey(scope.Name))
             {
-                return false;
+                list = ScopeSymbol[scope.Name];
             }
-            var list = ScopeSymbol[scope.Name];
-            if(list == null)
+            else
             {
                 list = new List<Scope>();
                 ScopeSymbol[scope.Name] = list;
             }
             list.Add(scope);//仮
-            return true;
         }
 
-        public Scope MatchScope(string name)
+        public void Merge(ScopeManager other)
         {
-            return MatchScope(name, new List<Scope>());
+            foreach (var v in other.ScopeSymbol)
+            {
+                List<Scope> list;
+                if (ScopeSymbol.ContainsKey(v.Key))
+                {
+                    list = ScopeSymbol[v.Key];
+                }
+                else
+                {
+                    list = new List<Scope>();
+                    ScopeSymbol[v.Key] = list;
+                }
+                list.AddRange(v.Value);
+            }
         }
 
         public Scope MatchScope(string name, List<Scope> type)

@@ -12,39 +12,36 @@ namespace AbstractSyntax
         private static int NextId = 1;
         public int Id { get; private set; }
         public string Name { get; set; }
+        private ScopeManager ReferenceScope;
         public FullPath FullPath { get; private set; }
-        private Dictionary<string, Scope> _ScopeChild;
-        public IReadOnlyDictionary<string, Scope> ScopeChild { get { return _ScopeChild; } }
+        private List<Scope> _ScopeChild;
+        public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }
 
         public Scope()
         {
             Id = NextId++;
-            _ScopeChild = new Dictionary<string, Scope>();
+            ReferenceScope = new ScopeManager();
+            _ScopeChild = new List<Scope>();
         }
 
         public void AppendChild(Scope child)
         {
-            Scope temp;
-            if (!_ScopeChild.TryGetValue(child.Name, out temp))
+            ReferenceScope.Append(child);
+            _ScopeChild.Add(child);
+            if(child.IsNameSpace)
             {
-                _ScopeChild.Add(child.Name, child);
+                ReferenceScope.Merge(child.ReferenceScope);
             }
-        }
-
-        private FullPath GetFullPath()
-        {
-            if (ScopeParent == null)
-            {
-                return new FullPath();
-            }
-            var temp = ScopeParent.GetFullPath();
-            temp.Append(this);
-            return temp;
         }
 
         internal Scope NameResolution(string name)
         {
-            Scope temp = ChildNameResolution(name);
+            return NameResolution(name, new List<Scope>());
+        }
+
+        internal Scope NameResolution(string name, List<Scope> type)
+        {
+            Scope temp = ReferenceScope.MatchScope(name, type);
             if(temp != null)
             {
                 return temp;
@@ -57,41 +54,7 @@ namespace AbstractSyntax
             {
                 return null;
             }
-            return ScopeParent.NameResolution(name);
-        }
-
-        private Scope ChildNameResolution(string name)
-        {
-            Scope temp;
-            if (_ScopeChild.TryGetValue(name, out temp))
-            {
-                return temp;
-            }
-            var deccls = this as DeclateClass;
-            if(deccls != null)
-            {
-                foreach(var v in deccls.InheritRefer)
-                {
-                    temp = v.ChildNameResolution(name);
-                    if (temp != null)
-                    {
-                        return temp;
-                    }
-                }
-            }
-            foreach(var peir in _ScopeChild)
-            {
-                var v = peir.Value;
-                if (v.IsNameSpace)
-                {
-                    temp = v.ChildNameResolution(name);
-                    if(temp != null)
-                    {
-                        return temp;
-                    }
-                }
-            }
-            return null;
+            return ScopeParent.NameResolution(name, type);
         }
 
         public override Scope DataType
@@ -138,7 +101,6 @@ namespace AbstractSyntax
             {
                 scope.AppendChild(this);
             }
-            FullPath = GetFullPath();
         }
 
         internal override void CheckSyntax()

@@ -143,7 +143,7 @@ namespace AbstractSyntax
         {
             Parent = parent;
             ScopeParent = scope;
-            if (parent == null)
+            if (this is Root)
             {
                 Root = (Root)this;
             }
@@ -154,14 +154,23 @@ namespace AbstractSyntax
             if(this is Scope)
             {
                 var temp = (Scope)this;
-                temp.SpreadScope(scope);
-                scope = temp;
-            }
-            foreach (Element v in this)
-            {
-                if (v != null)
+                foreach (Element v in this)
                 {
-                    v.SpreadElement(this, scope);
+                    if (v != null)
+                    {
+                        v.SpreadElement(this, temp);
+                    }
+                }
+                temp.SpreadScope(scope);
+            }
+            else
+            {
+                foreach (Element v in this)
+                {
+                    if (v != null)
+                    {
+                        v.SpreadElement(this, scope);
+                    }
                 }
             }
         }

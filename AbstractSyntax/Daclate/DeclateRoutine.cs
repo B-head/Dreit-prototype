@@ -58,6 +58,10 @@ namespace AbstractSyntax.Daclate
 
         internal override TypeMatchResult TypeMatch(List<Scope> type)
         {
+            if (ArgumentType == null)
+            {
+                return TypeMatchResult.Unknown;
+            }
             if (ArgumentType.Count != type.Count)
             {
                 return TypeMatchResult.MissMatchCount;

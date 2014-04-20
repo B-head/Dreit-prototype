@@ -76,7 +76,7 @@ namespace CliTranslate
 
         private void ChildSpreadTranslate(Scope scope, Translator trans)
         {
-            foreach (var v in scope.ScopeChild.Values)
+            foreach (var v in scope.ScopeChild)
             {
                 if (v == null || v.IsImport || v.IsPragma)
                 {
