@@ -11,9 +11,9 @@ namespace AbstractSyntax
     {
         public string Integral { get; set; }
         public string Fraction { get; set; }
-        private Scope _DataType;
+        private DataType _DataType;
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get
             {
@@ -41,11 +41,11 @@ namespace AbstractSyntax
         {
             if(Fraction == null)
             {
-                _DataType = scope.NameResolution("Integer32");
+                _DataType = scope.NameResolution("Integer32").GetDataType();
             }
             else
             {
-                _DataType = scope.NameResolution("Binary64");
+                _DataType = scope.NameResolution("Binary64").GetDataType();
             }
         }
 

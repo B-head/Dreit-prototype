@@ -25,12 +25,17 @@ namespace AbstractSyntax
             OverLoad.AddRange(other.OverLoad);
         }
 
-        public Scope TypeSelect()
+        public DataType GetDataType()
         {
-            return TypeSelect(new List<Scope>());
+            return (DataType)OverLoad.Find(s => s is DataType);
         }
 
-        public Scope TypeSelect(List<Scope> type)
+        public Scope TypeSelect()
+        {
+            return TypeSelect(new List<DataType>());
+        }
+
+        public Scope TypeSelect(List<DataType> type)
         {
             return OverLoad.Find(s => s.TypeMatch(type) == TypeMatchResult.PerfectMatch);
         }

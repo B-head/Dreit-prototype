@@ -15,8 +15,8 @@ namespace AbstractSyntax.Daclate
         public TupleList Argument { get; set; }
         public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
-        public List<Scope> ArgumentType { get; set; }
-        public Scope ReturnType { get; set; }
+        public List<DataType> ArgumentType { get; set; }
+        public DataType ReturnType { get; set; }
 
         public DeclateRoutine()
         {
@@ -28,7 +28,7 @@ namespace AbstractSyntax.Daclate
             get { return true; }
         }
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get { return ReturnType; }
         }
@@ -56,7 +56,7 @@ namespace AbstractSyntax.Daclate
             return Ident == null ? Name : Ident.Value;
         }
 
-        internal override TypeMatchResult TypeMatch(List<Scope> type)
+        internal override TypeMatchResult TypeMatch(List<DataType> type)
         {
             if (ArgumentType == null)
             {
@@ -82,7 +82,7 @@ namespace AbstractSyntax.Daclate
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
-            var refer = new List<Scope>();
+            var refer = new List<DataType>();
             foreach (var v in Argument)
             {
                 var temp = v.DataType;

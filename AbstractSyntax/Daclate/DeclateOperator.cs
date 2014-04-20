@@ -14,7 +14,7 @@ namespace AbstractSyntax.Daclate
         internal override void SpreadReference(Scope scope)
         {
             base.SpreadReference(scope);
-            var refer = new List<Scope>();
+            var refer = new List<DataType>();
             foreach (var v in Argument)
             {
                 var temp = v.DataType;

@@ -19,12 +19,9 @@ namespace AbstractSyntax.Expression
             Refer = new VoidScope();
         }
 
-        public override Scope DataType
+        public override DataType DataType
         {
-            get 
-            { 
-                return Refer.DataType; 
-            }
+            get { return Refer.DataType; }
         }
 
         public override Scope Reference

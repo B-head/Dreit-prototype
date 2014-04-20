@@ -14,30 +14,14 @@ namespace AbstractSyntax.Expression
             Operator = TokenType.Access;
         }
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get { return Right.DataType; }
         }
 
         public override Scope Reference
         {
-            get
-            {
-                var ident = Right as IdentifierAccess;
-                var member = Right as MemberAccess;
-                if (ident != null)
-                {
-                    return ident.Reference;
-                }
-                else if (member != null)
-                {
-                    return member.Reference;
-                }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-            }
+            get { return Right.Reference; }
         }
 
         internal override void SpreadReference(Scope scope)

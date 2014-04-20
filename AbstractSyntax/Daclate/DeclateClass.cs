@@ -8,7 +8,7 @@ using AbstractSyntax.Expression;
 
 namespace AbstractSyntax.Daclate
 {
-    public class DeclateClass : Scope
+    public class DeclateClass : DataType
     {
         public IdentifierAccess Ident { get; set; }
         public TupleList Generic { get; set; }
@@ -26,6 +26,11 @@ namespace AbstractSyntax.Daclate
         public override bool IsVoidValue
         {
             get { return true; }
+        }
+
+        public override DataType DataType
+        {
+            get { return this; }
         }
 
         public override int Count
@@ -51,7 +56,7 @@ namespace AbstractSyntax.Daclate
             return Ident == null ? Name : Ident.Value;
         }
 
-        internal override TypeMatchResult TypeMatch(List<Scope> type)
+        internal override TypeMatchResult TypeMatch(List<DataType> type)
         {
             if (type.Count == 0)
             {

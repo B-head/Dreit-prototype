@@ -15,7 +15,7 @@ namespace AbstractSyntax
         public Root Root { get; private set; }
         public bool IsImport { get; set; }
 
-        public virtual Scope DataType
+        public virtual DataType DataType
         {
             get { throw new NotSupportedException(); }
         }

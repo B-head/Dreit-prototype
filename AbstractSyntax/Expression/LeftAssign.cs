@@ -9,7 +9,7 @@ namespace AbstractSyntax.Expression
 {
     public class LeftAssign : DyadicExpression
     {
-        public override Scope DataType
+        public override DataType DataType
         {
             get { return Right.DataType; }
         }

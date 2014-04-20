@@ -62,7 +62,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal Scope NameResolution(string name)
+        internal OverLoadScope NameResolution(string name)
         {
             OverLoadScope temp;
             if(ScopeSymbol.TryGetValue(name, out temp))
@@ -71,7 +71,8 @@ namespace AbstractSyntax
             }
             if (name == Name)
             {
-                return this;
+                throw new Exception();
+                //return this;
             }
             if (ScopeParent == null)
             {
@@ -80,9 +81,9 @@ namespace AbstractSyntax
             return ScopeParent.NameResolution(name);
         }
 
-        public override Scope DataType
+        public override DataType DataType
         {
-            get { return this; }
+            get { throw new NotSupportedException(); }
         }
 
         public override Scope Reference
@@ -105,7 +106,7 @@ namespace AbstractSyntax
             return Name;
         }
 
-        internal virtual TypeMatchResult TypeMatch(List<Scope> type)
+        internal virtual TypeMatchResult TypeMatch(List<DataType> type)
         {
             if(type.Count == 0)
             {

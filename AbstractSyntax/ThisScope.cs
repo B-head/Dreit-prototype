@@ -17,7 +17,7 @@ namespace AbstractSyntax
             _DataType = dataType;
         }
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get { return _DataType; }
         }

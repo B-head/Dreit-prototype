@@ -20,7 +20,7 @@ namespace AbstractSyntax.Pragma
             get { return true; }
         }
 
-        internal override TypeMatchResult TypeMatch(List<Scope> type)
+        internal override TypeMatchResult TypeMatch(List<DataType> type)
         {
             if (type.Count != 2)
             {

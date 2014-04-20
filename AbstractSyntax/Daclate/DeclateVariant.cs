@@ -12,9 +12,9 @@ namespace AbstractSyntax.Daclate
     {
         public IdentifierAccess Ident { get; set; }
         public Element ExplicitType { get; set; }
-        public Scope _DataType { get; set; }
+        public DataType _DataType { get; set; }
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get
             {
@@ -46,7 +46,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public void SetDataType(Scope type)
+        public void SetDataType(DataType type)
         {
             _DataType = type;
         }
@@ -56,7 +56,7 @@ namespace AbstractSyntax.Daclate
             return Ident == null ? Name : Ident.Value;
         }
 
-        internal override TypeMatchResult TypeMatch(List<Scope> type)
+        internal override TypeMatchResult TypeMatch(List<DataType> type)
         {
             if (type.Count == 0)
             {

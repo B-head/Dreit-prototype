@@ -11,7 +11,7 @@ namespace AbstractSyntax.Expression
     {
         public Scope ReferOp { get; private set; }
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get { return Left.DataType; }
         }
@@ -19,8 +19,8 @@ namespace AbstractSyntax.Expression
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            Scope l = Left.DataType;
-            Scope r = Right.DataType;
+            DataType l = Left.DataType;
+            DataType r = Right.DataType;
             if (l != r)
             {
                 CompileError(l + " 型と " + r + " 型を演算することは出来ません。");

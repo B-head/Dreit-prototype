@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
-    interface DataType
+    public class DataType : Scope
     {
         //いつか使うつもり。
     }

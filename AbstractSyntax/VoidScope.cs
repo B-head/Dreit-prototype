@@ -7,7 +7,7 @@ using AbstractSyntax;
 
 namespace AbstractSyntax
 {
-    public class VoidScope : Scope
+    public class VoidScope : DataType
     {
         public VoidScope()
         {

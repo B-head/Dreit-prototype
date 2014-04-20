@@ -12,14 +12,14 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; set; }
         public TupleList Argument { get; set; }
-        public List<Scope> ArgumentType { get; set; }
+        public List<DataType> ArgumentType { get; set; }
 
         public override bool IsVoidValue
         {
             get { return Access.Reference.DataType is VoidScope; }
         }
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get 
             {
@@ -57,7 +57,7 @@ namespace AbstractSyntax.Expression
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            var argType = new List<Scope>();
+            var argType = new List<DataType>();
             foreach (var v in Argument)
             {
                 var temp = v.DataType;
