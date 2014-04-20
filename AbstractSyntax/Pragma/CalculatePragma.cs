@@ -25,11 +25,11 @@ namespace AbstractSyntax.Pragma
 
         internal override TypeMatchResult TypeMatch(List<Scope> type)
         {
-            if (ArgumentType.Count != 2)
+            if (type.Count != 2)
             {
                 return TypeMatchResult.MissMatchCount;
             }
-            else if (ArgumentType[0] != ArgumentType[1])
+            else if (type[0] != type[1])
             {
                 return TypeMatchResult.MissMatchType;
             }

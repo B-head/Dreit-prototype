@@ -19,5 +19,14 @@ namespace AbstractSyntax.Pragma
         {
             get { return true; }
         }
+
+        internal override TypeMatchResult TypeMatch(List<Scope> type)
+        {
+            if (type.Count != 2)
+            {
+                return TypeMatchResult.MissMatchCount;
+            }
+            return TypeMatchResult.PerfectMatch;
+        }
     }
 }
