@@ -8,18 +8,12 @@ namespace AbstractSyntax.Visualizer
     {
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
-            if (windowService == null)
-                throw new ArgumentNullException("windowService");
-            if (objectProvider == null)
-                throw new ArgumentNullException("objectProvider");
+            if (windowService == null) throw new ArgumentNullException("windowService");
+            if (objectProvider == null) throw new ArgumentNullException("objectProvider");
 
             Element data = (Element)objectProvider.GetObject();
-
-            // TODO: オブジェクトのビューを表示します。
-            //       displayForm をユーザー独自のカスタム フォームまたはコントロールで置き換えます。
-            using (Form displayForm = new Form())
+            using (var displayForm = new SyntaxVisualizerForm(data))
             {
-                displayForm.Text = data.ToString();
                 windowService.ShowDialog(displayForm);
             }
         }

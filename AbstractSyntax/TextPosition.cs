@@ -24,7 +24,7 @@ namespace AbstractSyntax
         {
             if (File == null || File == string.Empty)
             {
-                return "<empty>" + "(" + Line + "," + Row + ")";
+                return "<empty>()";
             }
             else
             {

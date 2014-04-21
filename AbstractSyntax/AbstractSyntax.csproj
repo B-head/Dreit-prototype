@@ -80,10 +80,21 @@
     <Compile Include="ThisScope.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TupleList.cs" />
+    <Compile Include="Visualizer\SyntaxVisualizerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Visualizer\SyntaxVisualizerForm.Designer.cs">
+      <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="VoidScope.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Symbol\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Visualizer\SyntaxVisualizerForm.resx">
+      <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

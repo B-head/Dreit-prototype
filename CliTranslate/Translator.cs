@@ -72,30 +72,9 @@ namespace CliTranslate
             }
         }
 
-        private string Indent(int indent)
-        {
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < indent; i++)
-            {
-                result.Append(" ");
-            }
-            return result.ToString();
-        }
-
         public override string ToString()
         {
-            return ToString(0);
-        }
-
-        public string ToString(int indent)
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine(Indent(indent) + this.GetType().Name + ": " + Scope.ToString() + "(" + Scope.Id + ")");
-            foreach (var v in _Child)
-            {
-                builder.Append(v.ToString(indent + 1));
-            }
-            return builder.ToString(); 
+            return this.GetType().Name + ": " + Scope.GetFullName() + "(" + Scope.Id + ")";
         }
 
         internal virtual TypeBuilder CreateLexical(string name)

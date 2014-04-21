@@ -5,9 +5,8 @@ using System.Diagnostics;
 
 namespace AbstractSyntax
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
-    public class DataType : Scope
+    public abstract class DataType : Scope
     {
         public virtual PrimitivePragmaType GetPrimitiveType()
         {

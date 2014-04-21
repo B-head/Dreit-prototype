@@ -6,15 +6,21 @@ using System.Text;
 
 namespace AbstractSyntax
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public abstract class Element : IReadOnlyList<Element>
     {
+        private static int NextId = 1;
+        public int Id { get; private set; }
         public TextPosition Position { get; set; }
         public Element Parent { get; private set; }
         public Scope ScopeParent { get; private set; }
         public Root Root { get; private set; }
         public bool IsImport { get; set; }
+
+        public Element()
+        {
+            Id = NextId++;
+        }
 
         public virtual DataType DataType
         {
@@ -117,13 +123,13 @@ namespace AbstractSyntax
 
         public override string ToString()
         {
-            return ToString(false);
+            return ElementInfo();
         }
 
         public virtual string ToString(bool hideImport, int indent = 0)
         {
             StringBuilder result = new StringBuilder();
-            result.AppendLine(Indent(indent) + ElementInfo());
+            result.AppendLine(Indent(indent) + ToString());
             foreach (Element v in this)
             {
                 if (v == null)

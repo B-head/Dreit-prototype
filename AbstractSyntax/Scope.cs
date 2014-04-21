@@ -6,12 +6,9 @@ using System.Text;
 
 namespace AbstractSyntax
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public abstract class Scope : Element
     {
-        private static int NextId = 1;
-        public int Id { get; private set; }
         public string Name { get; set; }
         private Dictionary<string, OverLoadScope> ScopeSymbol;
         private List<Scope> _ScopeChild;
@@ -19,7 +16,6 @@ namespace AbstractSyntax
 
         public Scope()
         {
-            Id = NextId++;
             ScopeSymbol = new Dictionary<string, OverLoadScope>();
             _ScopeChild = new List<Scope>();
         }
