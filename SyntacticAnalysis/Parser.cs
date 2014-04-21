@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
-using Common;
+using AbstractSyntax.Daclate;
+using AbstractSyntax.Expression;
 
 namespace SyntacticAnalysis
 {
@@ -14,15 +15,26 @@ namespace SyntacticAnalysis
         private delegate E ParserFunction<E>(ref int c) where E : Element;
         private List<Token> InputToken;
         private List<Token> ErrorToken;
+        private Lexer Lexer;
 
-        public Element Parse(List<Token> input, string name)
+        public Element Parse(Lexer lexer, string name)
         {
-            InputToken = input;
-            ErrorToken = new List<Token>();
-            int c = 0;
-            SkipSpaser(c);
+            InputToken = lexer.Token.ToList();
+            ErrorToken = lexer.ErrorToken.ToList();
+            Lexer = lexer;
+            int c = -1;
+            MoveNextToken(ref c);
+            var p = GetTextPosition(c);
             DirectiveList exp = DirectiveList(ref c, true);
-            return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = exp.Position };
+            if (exp.Count > 0)
+            {
+                exp.Position = SetTextLength(p, exp[exp.Count - 1].Position);
+            }
+            else
+            {
+                exp.Position = p;
+            }
+            return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = new TextPosition { File = lexer.FileName, Length = lexer.Text.Length } };
         }
 
         private bool IsReadable(int c)
@@ -32,26 +44,44 @@ namespace SyntacticAnalysis
 
         private Token Read(int c)
         {
-            return IsReadable(c) ? InputToken[c] : null;
+            return InputToken[c];
         }
 
-        private void SkipSpaser(int c)
+        private void MoveNextToken(ref int c)
         {
-            int temp = c;
-            Spacer(ref temp);
-            InputToken.RemoveRange(c, temp - c);
-        }
-
-        private void SkipError(int c)
-        {
-            SkipSpaser(c);
-            AddError(c);
-            InputToken.RemoveAt(c);
+            c++;
+            while (IsReadable(c))
+            {
+                if (CheckToken(c, TokenType.LineTerminator))
+                {
+                    c++;
+                    continue;
+                }
+                break;
+            }
         }
 
         private void AddError(int c)
         {
             ErrorToken.Add(Read(c));
+        }
+
+        private TextPosition GetTextPosition(int c)
+        {
+            if (IsReadable(c))
+            {
+                return Read(c).Position;
+            }
+            else
+            {
+                return Lexer.LastPosition;
+            }
+        }
+
+        private TextPosition SetTextLength(TextPosition first, TextPosition last)
+        {
+            first.Length = last.Length + last.Total - first.Total;
+            return first;
         }
 
         private bool CheckToken(int c, params TokenType[] type)
@@ -63,11 +93,11 @@ namespace SyntacticAnalysis
         private bool CheckToken(int c, out TokenType match, params TokenType[] type)
         {
             match = TokenType.Unknoun;
-            Token t = Read(c);
-            if(t == null)
+            if(!IsReadable(c))
             {
                 return false;
             }
+            Token t = Read(c);
             foreach(TokenType v in type)
             {
                 if(t.Type == v)
@@ -118,9 +148,9 @@ namespace SyntacticAnalysis
             TokenType match;
             while (CheckToken(c, out match, type))
             {
-                SkipSpaser(++c);
+                MoveNextToken(ref c);
                 Element right = next(ref c);
-                left = new R { Left = left, Right = right, Operator = match, Position = left.Position };
+                left = new R { Left = left, Right = right, Operator = match, Position = SetTextLength(left.Position, right.Position) };
             }
             return left;
         }
@@ -133,9 +163,9 @@ namespace SyntacticAnalysis
             {
                 return left;
             }
-            SkipSpaser(++c);
+            MoveNextToken(ref c);
             Element right = RightAssociative<R>(ref c, next, type);
-            return new R { Left = left, Right = right, Operator = match, Position = left.Position };
+            return new R { Left = left, Right = right, Operator = match, Position = SetTextLength(left.Position, right.Position) };
         }
 
         private TupleList ParseTuple(ref int c, ParserFunction next)
@@ -148,16 +178,20 @@ namespace SyntacticAnalysis
                 {
                     break;
                 }
-                if(tuple.Count <= 0)
-                {
-                    tuple.Position = temp.Position;
-                }
                 tuple.Append(temp);
                 if (!CheckToken(c, TokenType.List))
                 {
                     break;
                 }
-                SkipSpaser(++c);
+                MoveNextToken(ref c);
+            }
+            if(tuple.Count > 0)
+            {
+                tuple.Position = SetTextLength(tuple[0].Position, tuple[tuple.Count - 1].Position);
+            }
+            else
+            {
+                tuple.Position = GetTextPosition(c);
             }
             return tuple;
         }

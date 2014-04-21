@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AbstractSyntax.Pragma;
 
 namespace AbstractSyntax
 {
@@ -10,15 +11,14 @@ namespace AbstractSyntax
     {
         public int ErrorCount { get; private set; }
         public int WarningCount { get; private set; }
+        private Dictionary<string, OverLoadScope> PragmaDictionary;
         private List<Scope> PragmaList;
-        private Dictionary<string, Scope> _PragmaDictionary;
-        public IReadOnlyDictionary<string, Scope> PragmaDictionary { get; set; }
 
         public Root()
         {
             Name = "global";
             PragmaList = new List<Scope>();
-            _PragmaDictionary = new Dictionary<string, Scope>();
+            PragmaDictionary = new Dictionary<string, OverLoadScope>();
             CreatePragma();
         }
 
@@ -47,10 +47,10 @@ namespace AbstractSyntax
             CheckDataType();
         }
 
-        internal Scope GetPragma(string name)
+        internal OverLoadScope GetPragma(string name)
         {
-            Scope temp;
-            _PragmaDictionary.TryGetValue(name, out temp);
+            OverLoadScope temp;
+            PragmaDictionary.TryGetValue(name, out temp);
             return temp;
         }
 
@@ -58,7 +58,9 @@ namespace AbstractSyntax
         {
             pragma.Name = "@@" + name;
             PragmaList.Add(pragma);
-            _PragmaDictionary.Add(name, pragma);
+            var ol = new OverLoadScope();
+            ol.Append(pragma);
+            PragmaDictionary.Add(name, ol);
         }
 
         private void CreatePragma()
@@ -68,8 +70,19 @@ namespace AbstractSyntax
             AppendPragma("mul", new CalculatePragma(CalculatePragmaType.Mul));
             AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
             AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
+            AppendPragma("cast", new CastPragma());
             AppendPragma("Root", new PrimitivePragma(PrimitivePragmaType.Root));
+            AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
+            AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));
+            AppendPragma("Integer16", new PrimitivePragma(PrimitivePragmaType.Integer16));
             AppendPragma("Integer32", new PrimitivePragma(PrimitivePragmaType.Integer32));
+            AppendPragma("Integer64", new PrimitivePragma(PrimitivePragmaType.Integer64));
+            AppendPragma("Natural8", new PrimitivePragma(PrimitivePragmaType.Natural8));
+            AppendPragma("Natural16", new PrimitivePragma(PrimitivePragmaType.Natural16));
+            AppendPragma("Natural32", new PrimitivePragma(PrimitivePragmaType.Natural32));
+            AppendPragma("Natural64", new PrimitivePragma(PrimitivePragmaType.Natural64));
+            AppendPragma("Binary32", new PrimitivePragma(PrimitivePragmaType.Binary32));
+            AppendPragma("Binary64", new PrimitivePragma(PrimitivePragmaType.Binary64));
         }
 
         internal void OutputError(string message)

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
-using Common;
 
 namespace SyntacticAnalysis
 {
@@ -17,7 +16,7 @@ namespace SyntacticAnalysis
             {
                 if (CheckToken(c, TokenType.EndExpression))
                 {
-                    SkipSpaser(++c);
+                    MoveNextToken(ref c);
                     continue;
                 }
                 Element temp = Directive(ref c);
@@ -27,7 +26,8 @@ namespace SyntacticAnalysis
                     {
                         break;
                     }
-                    SkipError(c);
+                    AddError(c);
+                    MoveNextToken(ref c);
                     continue;
                 }
                 result.Append(temp);
@@ -38,30 +38,44 @@ namespace SyntacticAnalysis
         private DirectiveList Block(ref int c)
         {
             DirectiveList result = null;
+            var first = GetTextPosition(c);
             if (CheckToken(c, TokenType.Separator))
             {
-                SkipSpaser(++c);
+                MoveNextToken(ref c);
                 result = new DirectiveList { IsInline = true };
-                result.Append(Directive(ref c));
+                var d = Directive(ref c);
+                result.Append(d);
+                result.Position = SetTextLength(first, d.Position);
             }
             else if (CheckToken(c, TokenType.LeftBrace))
             {
-                SkipSpaser(++c);
+                TextPosition last;
+                MoveNextToken(ref c);
                 result = DirectiveList(ref c);
                 if (CheckToken(c, TokenType.RightBrace))
                 {
-                    SkipSpaser(++c);
+                    last = GetTextPosition(c);
+                    MoveNextToken(ref c);
                 }
+                else
+                {
+                    last = result[result.Count - 1].Position;
+                }
+                result.Position = SetTextLength(first, last);
+            }
+            else
+            {
+                result = new DirectiveList { Position = GetTextPosition(c) };
             }
             return result;
         }
 
         private Element Directive(ref int c)
         {
-            Element temp = CoalesceParser(ref c, Echo, Alias, Return, Expression);;
+            Element temp = CoalesceParser(ref c, Echo, Alias, Return, Expression);
             if (CheckToken(c, TokenType.EndExpression))
             {
-                SkipSpaser(++c);
+                MoveNextToken(ref c);
             }
             return temp;
         }
@@ -72,9 +86,10 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            var p = GetTextPosition(c);
+            MoveNextToken(ref c);
             Element exp = Expression(ref c);
-            return new EchoDirective { Exp = exp, Position = exp.Position };
+            return new EchoDirective { Exp = exp, Position = SetTextLength(p, exp.Position) };
         }
 
         private AliasDirective Alias(ref int c)
@@ -83,10 +98,11 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            var p = GetTextPosition(c);
+            MoveNextToken(ref c);
             var from = IdentifierAccess(ref c);
             var to = IdentifierAccess(ref c);
-            return new AliasDirective { From = from, To = to, Position = from.Position };
+            return new AliasDirective { From = from, To = to, Position = SetTextLength(p, to.Position) };
         }
 
         private ReturnDirective Return(ref int c)
@@ -95,9 +111,10 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            SkipSpaser(++c);
+            var p = GetTextPosition(c);
+            MoveNextToken(ref c);
             Element exp = Expression(ref c);
-            return new ReturnDirective { Exp = exp, Position = exp.Position };
+            return new ReturnDirective { Exp = exp, Position = SetTextLength(p, exp.Position) };
         }
     }
 }

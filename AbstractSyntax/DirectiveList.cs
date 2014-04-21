@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Common;
+using AbstractSyntax;
 
 namespace AbstractSyntax
 {
@@ -38,6 +38,19 @@ namespace AbstractSyntax
         public override Element GetChild(int index)
         {
             return Child[index];
+        }
+
+        public List<E> FindElements<E>() where E : Element
+        {
+            var result = new List<E>();
+            foreach(var v in Child)
+            {
+                if(v is E)
+                {
+                    result.Add((E)v);
+                }
+            }
+            return result;
         }
     }
 }

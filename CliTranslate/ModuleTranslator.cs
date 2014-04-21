@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
-using Common;
+using AbstractSyntax.Pragma;
 
 namespace CliTranslate
 {
@@ -16,7 +16,7 @@ namespace CliTranslate
         private TypeBuilder GlobalField;
         private MethodBuilder EntryContext;
 
-        public ModuleTranslator(FullPath path, Translator parent, ModuleBuilder module)
+        public ModuleTranslator(Scope path, Translator parent, ModuleBuilder module)
             : base(path, parent)
         {
             Module = module;
@@ -37,7 +37,7 @@ namespace CliTranslate
             return Module.DefineType(name + "@@lexical", TypeAttributes.SpecialName);
         }
 
-        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType, FullPath[] argumentType)
+        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(argumentType);
@@ -45,19 +45,19 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(FullPath path)
+        public override ClassTranslator CreateClass(Scope path)
         {
-            var builder = Module.DefineType(path.ToString());
+            var builder = Module.DefineType(path.GetFullName());
             return new ClassTranslator(path, this, builder);
         }
 
-        public override PrimitiveTranslator CreatePrimitive(FullPath path, PrimitivePragmaType type)
+        public override PrimitiveTranslator CreatePrimitive(Scope path, PrimitivePragmaType type)
         {
-            var builder = Module.DefineType(path.ToString());
+            var builder = Module.DefineType(path.GetFullName());
             return new PrimitiveTranslator(path, this, builder, type);
         }
 
-        public override void CreateVariant(FullPath path, FullPath type)
+        public override void CreateVariant(Scope path, Scope type)
         {
             var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Static);
             Root.RegisterBuilder(path, builder);

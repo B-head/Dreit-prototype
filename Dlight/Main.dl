@@ -1,7 +1,9 @@
-﻿1 + 2 * 3 =: var a =: var b
+﻿/* テストコード /* ネストコメント */ */
+
+1 + 2 * 3 =: var a =: var b
 echo test(a + 11, b + 22)
 
-rout test(c:Integer32, d:Integer32):Integer32 :: a * b + c - d 
+rout test(c:Integer32, d:Integer32) :: a * b + c - d 
 
 Rand() =: var rand:Rand
 echo rand.value
@@ -9,8 +11,8 @@ echo rand.gen()
 echo rand.gen()
 echo rand.gen()
 
-class Rand
+class Rand //テストクラス
 {
 	var value := 98765
-	routine gen():Integer32 :: value := value * 1103515245 + 12345
+	routine gen :: value := value * 1103515245 + 12345
 }

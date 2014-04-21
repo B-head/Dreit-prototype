@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
-using Common;
+using AbstractSyntax.Expression;
 
 namespace SyntacticAnalysis
 {
@@ -22,16 +22,17 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            TextPosition position = Read(temp).Position;
-            SkipSpaser(++temp);
+            var p = GetTextPosition(temp);
+            MoveNextToken(ref temp);
             Element exp = DirectiveList(ref temp);
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
             }
-            SkipSpaser(++temp);
+            p = SetTextLength(p, GetTextPosition(c));
+            MoveNextToken(ref temp);
             c = temp;
-            return new ExpressionGrouping { _Child = exp, Operator = TokenType.Special, Position = position };
+            return new ExpressionGrouping { Child = exp, Operator = TokenType.Special, Position = p };
         }
 
         private NumberLiteral Number(ref int c)
@@ -43,17 +44,17 @@ namespace SyntacticAnalysis
                 return null;
             }
             Token i = Read(temp);
-            SkipSpaser(++temp);
+            MoveNextToken(ref temp);
             c = temp;
             if (CheckToken(temp, TokenType.Access))
             {
-                SkipSpaser(++temp);
+                MoveNextToken(ref temp);
                 if (CheckToken(temp, TokenType.DigitStartString))
                 {
                     Token f = Read(temp);
-                    SkipSpaser(++temp);
+                    MoveNextToken(ref temp);
                     c = temp;
-                    return new NumberLiteral { Integral = i.Text, Fraction = f.Text, Position = i.Position };
+                    return new NumberLiteral { Integral = i.Text, Fraction = f.Text, Position = SetTextLength(i.Position, f.Position) };
                 }
             }
             return new NumberLiteral { Integral = i.Text, Position = i.Position };
@@ -62,18 +63,19 @@ namespace SyntacticAnalysis
         private IdentifierAccess IdentifierAccess(ref int c)
         {
             bool pragma = false;
+            var p = GetTextPosition(c);
             if (CheckToken(c, TokenType.Pragma))
             {
                 pragma = true;
-                SkipSpaser(++c);
+                MoveNextToken(ref c);
             }
             if (!CheckToken(c, TokenType.LetterStartString))
             {
                 return null;
             }
             Token t = Read(c);
-            SkipSpaser(++c);
-            return new IdentifierAccess { Value = t.Text, IsPragma = pragma, Position = t.Position };
+            MoveNextToken(ref c);
+            return new IdentifierAccess { Value = t.Text, IsPragmaAccess = pragma, Position = SetTextLength(p, t.Position) };
         }
     }
 }

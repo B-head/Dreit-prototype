@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Common;
+using AbstractSyntax;
 
 namespace AbstractSyntax
 {
-    public class VoidScope : Scope
+    public class VoidScope : DataType
     {
         public VoidScope()
         {

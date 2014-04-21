@@ -3,55 +3,74 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Common;
+using AbstractSyntax.Daclate;
 
 namespace AbstractSyntax
 {
-    public abstract class Scope : Element, PathNode
+    public abstract class Scope : Element
     {
         private static int NextId = 1;
         public int Id { get; private set; }
         public string Name { get; set; }
-        public FullPath FullPath { get; private set; }
-        private Dictionary<string, Scope> _ScopeChild;
-        public IReadOnlyDictionary<string, Scope> ScopeChild { get { return _ScopeChild; } }
+        private Dictionary<string, OverLoadScope> ScopeSymbol;
+        private List<Scope> _ScopeChild;
+        public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }
 
         public Scope()
         {
             Id = NextId++;
-            _ScopeChild = new Dictionary<string, Scope>();
+            ScopeSymbol = new Dictionary<string, OverLoadScope>();
+            _ScopeChild = new List<Scope>();
         }
 
-        public void AppendChild(Scope child)
+        public void AppendChild(Scope scope)
         {
-            Scope temp;
-            if (!_ScopeChild.TryGetValue(child.Name, out temp))
+            OverLoadScope ol;
+            if (ScopeSymbol.ContainsKey(scope.Name))
             {
-                _ScopeChild.Add(child.Name, child);
+                ol = ScopeSymbol[scope.Name];
+            }
+            else
+            {
+                ol = new OverLoadScope();
+                ScopeSymbol[scope.Name] = ol;
+            }
+            ol.Append(scope);//todo 重複判定を実装する。
+            _ScopeChild.Add(scope);
+            if (scope.IsNameSpace)
+            {
+                Merge(scope);
             }
         }
 
-        private FullPath GetFullPath()
+        private void Merge(Scope other)
         {
-            if (ScopeParent == null)
+            foreach (var v in other.ScopeSymbol)
             {
-                return new FullPath();
+                OverLoadScope ol;
+                if (ScopeSymbol.ContainsKey(v.Key))
+                {
+                    ol = ScopeSymbol[v.Key];
+                }
+                else
+                {
+                    ol = new OverLoadScope();
+                    ScopeSymbol[v.Key] = ol;
+                }
+                ol.Merge(v.Value);
             }
-            var temp = ScopeParent.GetFullPath();
-            temp.Append(this);
-            return temp;
         }
 
-        internal Scope NameResolution(string name)
+        internal OverLoadScope NameResolution(string name)
         {
-            Scope temp = ChildNameResolution(name);
-            if(temp != null)
+            OverLoadScope temp;
+            if(ScopeSymbol.TryGetValue(name, out temp))
             {
                 return temp;
             }
             if (name == Name)
             {
-                return this;
+                //return this;
             }
             if (ScopeParent == null)
             {
@@ -60,43 +79,21 @@ namespace AbstractSyntax
             return ScopeParent.NameResolution(name);
         }
 
-        private Scope ChildNameResolution(string name)
+        public string GetFullName()
         {
-            Scope temp;
-            if (_ScopeChild.TryGetValue(name, out temp))
-            {
-                return temp;
-            }
-            var deccls = this as DeclateClass;
-            if(deccls != null)
-            {
-                foreach(var v in deccls.InheritRefer)
-                {
-                    temp = v.ChildNameResolution(name);
-                    if (temp != null)
-                    {
-                        return temp;
-                    }
-                }
-            }
-            foreach(var peir in _ScopeChild)
-            {
-                var v = peir.Value;
-                if (v.IsNameSpace)
-                {
-                    temp = v.ChildNameResolution(name);
-                    if(temp != null)
-                    {
-                        return temp;
-                    }
-                }
-            }
-            return null;
+            StringBuilder builder = new StringBuilder();
+            BuildFullName(builder);
+            return builder.ToString();
         }
 
-        public override Scope DataType
+        private void BuildFullName(StringBuilder builder)
         {
-            get { return this; }
+            if(ScopeParent != null && !(ScopeParent is Root))
+            {
+                ScopeParent.BuildFullName(builder);
+                builder.Append(".");
+            }
+            builder.Append(Name);
         }
 
         internal virtual bool IsNameSpace
@@ -114,6 +111,18 @@ namespace AbstractSyntax
             return Name;
         }
 
+        internal virtual TypeMatchResult TypeMatch(List<DataType> type)
+        {
+            if(type.Count == 0)
+            {
+                return TypeMatchResult.PerfectMatch;
+            }
+            else
+            {
+                return TypeMatchResult.NotCallable;
+            }
+        }
+
         internal void SpreadScope(Scope scope)
         {
             Name = CreateName();
@@ -121,7 +130,6 @@ namespace AbstractSyntax
             {
                 scope.AppendChild(this);
             }
-            FullPath = GetFullPath();
         }
 
         internal override void CheckSyntax()

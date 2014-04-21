@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
-using Common;
+using AbstractSyntax.Expression;
 
 namespace SyntacticAnalysis
 {
@@ -59,21 +59,23 @@ namespace SyntacticAnalysis
 
         private Element CallRoutine(ref int c)
         {
+            var p = GetTextPosition(c);
             var access = MemberAccess(ref c);
             int temp = c;
             if (!CheckToken(temp, TokenType.LeftParenthesis))
             {
                 return access;
             }
-            SkipSpaser(++temp);
-            var argument = ParseTuple(ref temp, Addtive); // 仮
+            MoveNextToken(ref temp);
+            var argument = ParseTuple(ref temp, Addtive); //todo デフォルト引数などに対応した専用の構文が必要。
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return access;
             }
-            SkipSpaser(++temp);
+            p = SetTextLength(p, GetTextPosition(temp));
+            MoveNextToken(ref temp);
             c = temp;
-            return new CallRoutine { Access = access, Argument = argument, Position = access.Position };
+            return new CallRoutine { Access = access, Argument = argument, Position = p };
         }
 
         private Element MemberAccess(ref int c)

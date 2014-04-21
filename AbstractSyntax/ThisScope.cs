@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AbstractSyntax.Daclate;
 
 namespace AbstractSyntax
 {
@@ -16,7 +17,7 @@ namespace AbstractSyntax
             _DataType = dataType;
         }
 
-        public override Scope DataType
+        public override DataType DataType
         {
             get { return _DataType; }
         }

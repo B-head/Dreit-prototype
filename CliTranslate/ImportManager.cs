@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using AbstractSyntax;
+using AbstractSyntax.Daclate;
+using AbstractSyntax.Expression;
 
 namespace CliTranslate
 {
@@ -34,7 +36,7 @@ namespace CliTranslate
         {
             foreach(var v in Peir)
             {
-                root.RegisterBuilder(v.Scope.FullPath, v.Info);
+                root.RegisterBuilder(v.Scope, v.Info);
             }
         }
 
