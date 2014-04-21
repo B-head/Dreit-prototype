@@ -6,7 +6,6 @@ using System.Diagnostics;
 
 namespace AbstractSyntax.Pragma
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public class CalculatePragma : DeclateRoutine
     {

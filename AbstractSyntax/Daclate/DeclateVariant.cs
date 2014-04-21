@@ -6,7 +6,6 @@ using System.Diagnostics;
 
 namespace AbstractSyntax.Daclate
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public class DeclateVariant : Scope
     {

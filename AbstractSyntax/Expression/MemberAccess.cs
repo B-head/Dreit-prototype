@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace AbstractSyntax.Expression
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public class MemberAccess : DyadicExpression
     {

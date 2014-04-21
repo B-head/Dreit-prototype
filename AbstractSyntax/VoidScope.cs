@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace AbstractSyntax
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public class VoidScope : DataType
     {

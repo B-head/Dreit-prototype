@@ -6,6 +6,7 @@ using System.Text;
 
 namespace AbstractSyntax
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public abstract class Element : IReadOnlyList<Element>
     {

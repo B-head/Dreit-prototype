@@ -3,8 +3,7 @@ using System;
 using System.Diagnostics;
 
 namespace AbstractSyntax.Expression
-{
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+
     [Serializable]
     public abstract class DyadicExpression : Element
     {

@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace AbstractSyntax.Expression
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
     public class DyadicCalculate : DyadicExpression
     {
