@@ -20,6 +20,7 @@ namespace Dlight
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(root.CompileResult());
+            //SyntaxVisualizer.TestShowVisualizer(root);
             if (root.ErrorCount == 0)
             {
                 TranslateManager trans = new TranslateManager(fileName.Replace(".dl", ""));

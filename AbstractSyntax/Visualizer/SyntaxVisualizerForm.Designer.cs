@@ -29,8 +29,10 @@
         private void InitializeComponent()
         {
             this.syntaxTree = new System.Windows.Forms.TreeView();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.valueList = new System.Windows.Forms.ListView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.value = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -40,20 +42,32 @@
             // syntaxTree
             // 
             this.syntaxTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.syntaxTree.FullRowSelect = true;
+            this.syntaxTree.HideSelection = false;
             this.syntaxTree.Location = new System.Drawing.Point(0, 0);
             this.syntaxTree.Name = "syntaxTree";
-            this.syntaxTree.Size = new System.Drawing.Size(530, 678);
+            this.syntaxTree.Size = new System.Drawing.Size(602, 661);
             this.syntaxTree.TabIndex = 0;
+            this.syntaxTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AddSelectHandler);
             // 
-            // listView1
+            // valueList
             // 
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(530, 678);
-            this.listView1.TabIndex = 1;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.List;
+            this.valueList.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.valueList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.name,
+            this.value});
+            this.valueList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.valueList.FullRowSelect = true;
+            this.valueList.GridLines = true;
+            this.valueList.LabelWrap = false;
+            this.valueList.Location = new System.Drawing.Point(0, 0);
+            this.valueList.MultiSelect = false;
+            this.valueList.Name = "valueList";
+            this.valueList.Size = new System.Drawing.Size(603, 661);
+            this.valueList.TabIndex = 1;
+            this.valueList.UseCompatibleStateImageBehavior = false;
+            this.valueList.View = System.Windows.Forms.View.Details;
+            this.valueList.ItemActivate += new System.EventHandler(this.ItemActivateHandler);
             // 
             // splitContainer1
             // 
@@ -68,16 +82,28 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.listView1);
-            this.splitContainer1.Size = new System.Drawing.Size(1072, 682);
-            this.splitContainer1.SplitterDistance = 534;
+            this.splitContainer1.Panel2.Controls.Add(this.valueList);
+            this.splitContainer1.Size = new System.Drawing.Size(1217, 665);
+            this.splitContainer1.SplitterDistance = 606;
             this.splitContainer1.TabIndex = 2;
+            // 
+            // name
+            // 
+            this.name.Tag = "";
+            this.name.Text = "名前";
+            this.name.Width = 169;
+            // 
+            // value
+            // 
+            this.value.Tag = "";
+            this.value.Text = "値";
+            this.value.Width = 423;
             // 
             // SyntaxVisualizerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1072, 682);
+            this.ClientSize = new System.Drawing.Size(1217, 665);
             this.Controls.Add(this.splitContainer1);
             this.Name = "SyntaxVisualizerForm";
             this.Text = "SyntaxVisualizerForm";
@@ -93,7 +119,9 @@
         #endregion
 
         private System.Windows.Forms.TreeView syntaxTree;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView valueList;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ColumnHeader name;
+        private System.Windows.Forms.ColumnHeader value;
     }
 }

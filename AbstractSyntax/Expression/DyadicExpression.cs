@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 
 namespace AbstractSyntax.Expression
-
+{
     [Serializable]
     public abstract class DyadicExpression : Element
     {

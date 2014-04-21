@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,6 +15,7 @@ namespace AbstractSyntax.Visualizer
     {
         private Root root;
         private Element target;
+        private const BindingFlags showMenber = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         public SyntaxVisualizerForm(Element target)
         {
@@ -24,12 +26,26 @@ namespace AbstractSyntax.Visualizer
 
         private void LoadHandler(object sender, EventArgs e)
         {
-            Text = target.ToString();
             AddTree(syntaxTree.Nodes, root);
-            var node = GetTreeNode(target);
-            node.EnsureVisible();
-            node.Expand();
-            syntaxTree.SelectedNode = node;
+            SelectElement(target);
+        }
+
+        private void AddSelectHandler(object sender, TreeViewEventArgs e)
+        {
+            var node = syntaxTree.SelectedNode;
+            Text = node.Text;
+            ShowValue((Element)node.Tag);
+        }
+
+        private void ItemActivateHandler(object sender, EventArgs e)
+        {
+            var item = valueList.SelectedItems[0];
+            var element = item.Tag as Element;
+            if(element == null)
+            {
+                return;
+            }
+            SelectElement(element);
         }
 
         private void AddTree(TreeNodeCollection nodes, Element element)
@@ -51,16 +67,69 @@ namespace AbstractSyntax.Visualizer
             }
         }
 
+        private void ShowValue(Element element)
+        {
+            valueList.BeginUpdate();
+            valueList.Items.Clear();
+            var type = element.GetType();
+            foreach(var v in type.GetFields(showMenber))
+            {
+                object obj = v.GetValue(element) ?? "<null>";
+                var texts = new string[]{ v.Name, obj.ToString() };
+                var item = new ListViewItem(texts);
+                item.Tag = obj;
+                valueList.Items.Add(item);
+            }
+            foreach (var v in type.GetProperties(showMenber))
+            {
+                object obj;
+                try
+                {
+                    obj = v.GetValue(element) ?? "<null>";
+                }
+                catch (Exception e)
+                {
+                    obj = e.ToString();
+                }
+                var texts = new string[] { v.Name, obj.ToString() };
+                var item = new ListViewItem(texts);
+                item.Tag = obj;
+                valueList.Items.Add(item);
+            }
+            valueList.EndUpdate();
+        }
+
+        public void SelectElement(Element element)
+        {
+            var node = GetTreeNode(element);
+            if(node == null)
+            {
+                MessageBox.Show(this, "指定されたElementはツリー内にありませんでした。", "探索結果");
+                return;
+            }
+            node.EnsureVisible();
+            node.Expand();
+            syntaxTree.SelectedNode = node;
+        }
+
         private TreeNode GetTreeNode(Element element)
         {
             TreeNodeCollection nodes;
-            if (element is Root)
+            if (element == null)
+            {
+                return null;
+            }
+            else if (element is Root)
             {
                 nodes = syntaxTree.Nodes;
             }
             else
             {
                 var node = GetTreeNode(element.Parent);
+                if(node == null)
+                {
+                    return null;
+                }
                 nodes = node.Nodes;
             }
             foreach(TreeNode v in nodes)
@@ -70,7 +139,7 @@ namespace AbstractSyntax.Visualizer
                     return v;
                 }
             }
-            throw new ArgumentException();
+            return null;
         }
     }
 }
