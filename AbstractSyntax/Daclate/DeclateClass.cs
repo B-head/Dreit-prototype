@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AbstractSyntax;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Pragma;
 
 namespace AbstractSyntax.Daclate
 {
@@ -65,6 +66,23 @@ namespace AbstractSyntax.Daclate
             else
             {
                 return TypeMatchResult.MissMatchCount;
+            }
+        }
+
+        public override PrimitivePragmaType GetPrimitiveType()
+        {
+            PrimitivePragma prim = null;
+            if (InheritRefer.Count == 1)
+            {
+                prim = InheritRefer[0] as PrimitivePragma;
+            }
+            if(prim == null)
+            {
+                return PrimitivePragmaType.NotPrimitive;
+            }
+            else
+            {
+                return prim.Type;
             }
         }
 

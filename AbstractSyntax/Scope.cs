@@ -35,7 +35,7 @@ namespace AbstractSyntax
                 ol = new OverLoadScope();
                 ScopeSymbol[scope.Name] = ol;
             }
-            ol.Append(scope);//仮
+            ol.Append(scope);//todo 重複判定を実装する。
             _ScopeChild.Add(scope);
             if (scope.IsNameSpace)
             {
@@ -77,6 +77,23 @@ namespace AbstractSyntax
                 return null;
             }
             return ScopeParent.NameResolution(name);
+        }
+
+        public string GetFullName()
+        {
+            StringBuilder builder = new StringBuilder();
+            BuildFullName(builder);
+            return builder.ToString();
+        }
+
+        private void BuildFullName(StringBuilder builder)
+        {
+            if(ScopeParent != null && !(ScopeParent is Root))
+            {
+                ScopeParent.BuildFullName(builder);
+                builder.Append(".");
+            }
+            builder.Append(Name);
         }
 
         internal virtual bool IsNameSpace

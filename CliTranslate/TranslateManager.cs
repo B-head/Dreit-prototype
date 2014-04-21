@@ -100,14 +100,10 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateClass scope, Translator trans)
         {
-            PrimitivePragma prim = null;
-            if (scope.InheritRefer.Count == 1)
+            PrimitivePragmaType prim = scope.GetPrimitiveType();
+            if (prim != PrimitivePragmaType.NotPrimitive)
             {
-                prim = scope.InheritRefer[0] as PrimitivePragma;
-            }
-            if (prim != null)
-            {
-                var temp = trans.CreatePrimitive(scope, prim.Type);
+                var temp = trans.CreatePrimitive(scope, prim);
                 TransDictionary.Add(scope, temp);
                 ChildSpreadTranslate(scope, temp);
             }
@@ -263,7 +259,7 @@ namespace CliTranslate
         private void Translate(DyadicCalculate element, Translator trans)
         {
             ChildTranslate(element, trans);
-            trans.GenerateCall(element.ReferOp.TypeSelect());
+            trans.GenerateCall(element.CallScope);
         }
 
         private void Translate(LeftAssign element, Translator trans)
@@ -284,24 +280,23 @@ namespace CliTranslate
 
         private void Translate(CallRoutine element, Translator trans)
         {
-            var pragma = element.Access.Reference.TypeSelect() as CalculatePragma;
-            if(pragma != null)
-            {
-                PragmaTranslate(pragma, element.Argument, trans);
-                return;
-            }
-            TranslateAccess((dynamic)element.Access, trans);
-            Translate((dynamic)element.Argument, trans);
-            trans.GenerateCall(element.Access.Reference.TypeSelect());
+            CallTranslate((dynamic)element.CallScope, element, trans);
         }
 
-        private void PragmaTranslate(CalculatePragma element, TupleList argument, Translator trans)
+        private void CallTranslate(Scope call, CallRoutine element, Translator trans)
         {
-            foreach (var v in argument)
+            TranslateAccess((dynamic)element.Access, trans);
+            Translate((dynamic)element.Argument, trans);
+            trans.GenerateCall(call);
+        }
+
+        private void CallTranslate(CalculatePragma call, CallRoutine element, Translator trans)
+        {
+            foreach (var v in element.Argument)
             {
                 Translate((dynamic)v, trans);
             }
-            switch (element.Type)
+            switch (call.Type)
             {
                 case CalculatePragmaType.Add: trans.GenerateControl(CodeType.Add); break;
                 case CalculatePragmaType.Sub: trans.GenerateControl(CodeType.Sub); break;
@@ -310,6 +305,28 @@ namespace CliTranslate
                 case CalculatePragmaType.Mod: trans.GenerateControl(CodeType.Mod); break;
                 default: throw new Exception();
             }
+        }
+
+        private void CallTranslate(CastPragma call, CallRoutine element, Translator trans)
+        {
+            Translate((dynamic)element.Argument[1], trans);
+            PrimitivePragmaType prim = element.ArgumentType[0].GetPrimitiveType();
+            switch(prim)
+            {
+                case PrimitivePragmaType.Integer8: trans.GenerateControl(CodeType.ConvI1); break;
+                case PrimitivePragmaType.Integer16: trans.GenerateControl(CodeType.ConvI2); break;
+                case PrimitivePragmaType.Integer32: trans.GenerateControl(CodeType.ConvI4); break;
+                case PrimitivePragmaType.Integer64: trans.GenerateControl(CodeType.ConvI8); break;
+                case PrimitivePragmaType.Natural8: trans.GenerateControl(CodeType.ConvU1); break;
+                case PrimitivePragmaType.Natural16: trans.GenerateControl(CodeType.ConvU2); break;
+                case PrimitivePragmaType.Natural32: trans.GenerateControl(CodeType.ConvU4); break;
+                case PrimitivePragmaType.Natural64: trans.GenerateControl(CodeType.ConvU8); break;
+                case PrimitivePragmaType.Binary32: trans.GenerateControl(CodeType.ConvR4); break;
+                case PrimitivePragmaType.Binary64: trans.GenerateControl(CodeType.ConvR8); break;
+                default: throw new ArgumentException();
+            }
+            //todo this参照への代入に対応する。
+            //TranslateAssign((dynamic)element.Argument[0], trans);
         }
 
         private void Translate(NumberLiteral element, Translator trans)

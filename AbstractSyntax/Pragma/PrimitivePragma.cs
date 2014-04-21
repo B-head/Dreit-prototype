@@ -24,6 +24,7 @@ namespace AbstractSyntax.Pragma
 
     public enum PrimitivePragmaType
     {
+        NotPrimitive,
         Root,
         Boolean,
         Integer8,

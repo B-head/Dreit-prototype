@@ -17,7 +17,7 @@ namespace AbstractSyntax.Expression
 
         public override bool IsVoidValue
         {
-            get { return Access.Reference.GetDataType() is VoidScope; }
+            get { return DataType is VoidScope; }
         }
 
         public override DataType DataType

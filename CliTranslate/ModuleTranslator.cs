@@ -47,13 +47,13 @@ namespace CliTranslate
 
         public override ClassTranslator CreateClass(Scope path)
         {
-            var builder = Module.DefineType(path.ToString());
+            var builder = Module.DefineType(path.GetFullName());
             return new ClassTranslator(path, this, builder);
         }
 
         public override PrimitiveTranslator CreatePrimitive(Scope path, PrimitivePragmaType type)
         {
-            var builder = Module.DefineType(path.ToString());
+            var builder = Module.DefineType(path.GetFullName());
             return new PrimitiveTranslator(path, this, builder, type);
         }
 

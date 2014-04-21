@@ -67,7 +67,7 @@ namespace SyntacticAnalysis
                 return access;
             }
             MoveNextToken(ref temp);
-            var argument = ParseTuple(ref temp, Addtive); // 仮
+            var argument = ParseTuple(ref temp, Addtive); //todo デフォルト引数などに対応した専用の構文が必要。
             if (!CheckToken(temp, TokenType.RightParenthesis))
             {
                 return access;

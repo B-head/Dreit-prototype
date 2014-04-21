@@ -72,10 +72,11 @@ namespace AbstractSyntax.Expression
                     _Reference = temp;
                 }
             }
-            /*if (ScopeParent is DeclateRoutine && _Reference.ScopeParent == GetParentClass())
+            var voidSelect = _Reference.TypeSelect();
+            if (ScopeParent is DeclateRoutine && voidSelect != null && voidSelect.ScopeParent == GetParentClass())
             {
                 IsTacitThis = true;
-            }*/
+            }
         }
 
         private Scope GetParentClass()

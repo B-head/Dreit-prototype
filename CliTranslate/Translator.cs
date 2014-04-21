@@ -20,6 +20,16 @@ namespace CliTranslate
         Mul,
         Div,
         Mod,
+        ConvI1,
+        ConvI2,
+        ConvI4,
+        ConvI8,
+        ConvU1,
+        ConvU2,
+        ConvU4,
+        ConvU8,
+        ConvR4,
+        ConvR8,
         This,
         Echo,
     }
@@ -151,6 +161,16 @@ namespace CliTranslate
                 case CodeType.Mul: Generator.Emit(OpCodes.Mul); break;
                 case CodeType.Div: Generator.Emit(OpCodes.Div); break;
                 case CodeType.Mod: Generator.Emit(OpCodes.Rem); break;
+                case CodeType.ConvI1: Generator.Emit(OpCodes.Conv_I1); break;
+                case CodeType.ConvI2: Generator.Emit(OpCodes.Conv_I2); break;
+                case CodeType.ConvI4: Generator.Emit(OpCodes.Conv_I4); break;
+                case CodeType.ConvI8: Generator.Emit(OpCodes.Conv_I8); break;
+                case CodeType.ConvU1: Generator.Emit(OpCodes.Conv_U1); break;
+                case CodeType.ConvU2: Generator.Emit(OpCodes.Conv_U2); break;
+                case CodeType.ConvU4: Generator.Emit(OpCodes.Conv_U4); break;
+                case CodeType.ConvU8: Generator.Emit(OpCodes.Conv_U8); break;
+                case CodeType.ConvR4: Generator.Emit(OpCodes.Conv_R4); break;
+                case CodeType.ConvR8: Generator.Emit(OpCodes.Conv_R8); break;
                 case CodeType.This: Generator.Emit(OpCodes.Ldarg_0); break;
                 case CodeType.Echo: Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(Int32) })); break;
                 default: throw new ArgumentException();

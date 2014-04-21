@@ -9,7 +9,7 @@ namespace AbstractSyntax.Expression
 {
     public class DyadicCalculate : DyadicExpression
     {
-        public OverLoadScope ReferOp { get; private set; }
+        public Scope CallScope { get; private set; }
 
         public override DataType DataType
         {
@@ -35,7 +35,8 @@ namespace AbstractSyntax.Expression
                 case TokenType.Modulo: callName = "%"; break;
                 default: throw new Exception();
             }
-            ReferOp = DataType.NameResolution(callName);
+            var ol = l.NameResolution(callName);
+            CallScope = ol.TypeSelect(new DataType[] { r }.ToList());
         }
     }
 }
