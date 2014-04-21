@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AbstractSyntax.Visualizer;
+using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
 
 namespace AbstractSyntax.Expression
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class DyadicCalculate : DyadicExpression
     {
         public Scope CallScope { get; private set; }

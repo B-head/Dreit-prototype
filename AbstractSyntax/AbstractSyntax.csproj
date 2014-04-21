@@ -30,9 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.DebuggerVisualizers, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -72,6 +75,7 @@
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="ThisScope.cs" />
     <Compile Include="Token.cs" />

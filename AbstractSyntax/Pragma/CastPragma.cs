@@ -1,12 +1,13 @@
-﻿using System;
+﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Visualizer;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax.Daclate;
+using System.Diagnostics;
 
 namespace AbstractSyntax.Pragma
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class CastPragma : DeclateRoutine
     {
         public CastPragma()

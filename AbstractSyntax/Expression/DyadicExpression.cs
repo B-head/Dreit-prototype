@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
+﻿using AbstractSyntax.Visualizer;
+using System;
+using System.Diagnostics;
 
 namespace AbstractSyntax.Expression
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public abstract class DyadicExpression : Element
     {
         public Element Left { get; set; }

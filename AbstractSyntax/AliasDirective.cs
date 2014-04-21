@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax.Expression;
+﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Visualizer;
+using System;
+using System.Diagnostics;
 
 namespace AbstractSyntax
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class AliasDirective : Element
     {
         public IdentifierAccess From { get; set; }

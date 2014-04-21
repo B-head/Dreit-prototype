@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax.Daclate;
+﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Visualizer;
+using System;
+using System.Diagnostics;
 
 namespace AbstractSyntax.Pragma
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class PrimitivePragma : DeclateClass
     {
         public PrimitivePragmaType Type { get; private set; }

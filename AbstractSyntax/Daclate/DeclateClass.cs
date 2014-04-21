@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
-using AbstractSyntax.Expression;
+﻿using AbstractSyntax.Expression;
 using AbstractSyntax.Pragma;
+using AbstractSyntax.Visualizer;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace AbstractSyntax.Daclate
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class DeclateClass : DataType
     {
         public IdentifierAccess Ident { get; set; }

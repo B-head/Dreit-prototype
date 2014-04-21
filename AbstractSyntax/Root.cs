@@ -1,12 +1,13 @@
-﻿using System;
+﻿using AbstractSyntax.Pragma;
+using AbstractSyntax.Visualizer;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax.Pragma;
+using System.Diagnostics;
 
 namespace AbstractSyntax
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class Root : NameSpace
     {
         public int ErrorCount { get; private set; }

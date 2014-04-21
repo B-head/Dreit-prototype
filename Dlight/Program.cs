@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Reflection;
-using SyntacticAnalysis;
+﻿using AbstractSyntax;
+using AbstractSyntax.Visualizer;
 using CliTranslate;
-using AbstractSyntax;
+using SyntacticAnalysis;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace Dlight
 {

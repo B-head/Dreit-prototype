@@ -1,12 +1,12 @@
-﻿using System;
+﻿using AbstractSyntax.Visualizer;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
+using System.Diagnostics;
 
 namespace AbstractSyntax.Daclate
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class DeclateModule : Scope
     {
         public DirectiveList ExpList { get; set; }

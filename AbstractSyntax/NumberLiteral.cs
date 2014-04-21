@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AbstractSyntax.Visualizer;
+using System;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace AbstractSyntax
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class NumberLiteral : Element
     {
         public string Integral { get; set; }

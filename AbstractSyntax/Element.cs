@@ -1,12 +1,13 @@
-﻿using System;
+﻿using AbstractSyntax.Visualizer;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
 
 namespace AbstractSyntax
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public abstract class Element : IReadOnlyList<Element>
     {
         public TextPosition Position { get; set; }

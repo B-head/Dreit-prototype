@@ -1,13 +1,13 @@
-﻿using System;
+﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Visualizer;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
-using AbstractSyntax.Expression;
+using System.Diagnostics;
 
 namespace AbstractSyntax.Daclate
 {
+    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [Serializable]
     public class DeclateVariant : Scope
     {
         public IdentifierAccess Ident { get; set; }
