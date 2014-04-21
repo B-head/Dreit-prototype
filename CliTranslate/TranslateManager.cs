@@ -93,7 +93,7 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateModule scope, Translator trans)
         {
-            var temp = trans.CreateModule(scope.FullPath);
+            var temp = trans.CreateModule(scope);
             TransDictionary.Add(scope, temp);
             ChildSpreadTranslate(scope, temp);
         }
@@ -107,13 +107,13 @@ namespace CliTranslate
             }
             if (prim != null)
             {
-                var temp = trans.CreatePrimitive(scope.FullPath, prim.Type);
+                var temp = trans.CreatePrimitive(scope, prim.Type);
                 TransDictionary.Add(scope, temp);
                 ChildSpreadTranslate(scope, temp);
             }
             else
             {
-                var temp = trans.CreateClass(scope.FullPath);
+                var temp = trans.CreateClass(scope);
                 TransDictionary.Add(scope, temp);
                 ChildSpreadTranslate(scope, temp);
             }
@@ -121,17 +121,17 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateRoutine scope, Translator trans)
         {
-            List<FullPath> argumentType = new List<FullPath>();
+            List<Scope> argumentType = new List<Scope>();
             foreach(var v in scope.ArgumentType)
             {
-                argumentType.Add(v.FullPath);
+                argumentType.Add(v);
             }
-            var temp = trans.CreateRoutine(scope.FullPath, scope.ReturnType.FullPath, argumentType.ToArray());
+            var temp = trans.CreateRoutine(scope, scope.ReturnType, argumentType.ToArray());
             TransDictionary.Add(scope, temp);
-            var argument = new List<FullPath>();
+            var argument = new List<Scope>();
             foreach (var v in scope.Argument)
             {
-                argument.Add(((Scope)v).FullPath);
+                argument.Add((Scope)v);
             }
             temp.CreateArguments(argument.ToArray());
             ChildSpreadTranslate(scope, temp);
@@ -139,7 +139,7 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateVariant scope, Translator trans)
         {
-            trans.CreateVariant(scope.FullPath, scope.DataType.FullPath);
+            trans.CreateVariant(scope, scope.DataType);
         }
 
         private void SpreadTranslate(DeclateArgument scope, Translator trans)
@@ -222,17 +222,17 @@ namespace CliTranslate
             else if (element.IsTacitThis)
             {
                 trans.GenerateControl(CodeType.This);
-                trans.GenerateLoad(element.Reference.TypeSelect().FullPath);
+                trans.GenerateLoad(element.Reference.TypeSelect());
             }
             else
             {
-                trans.GenerateLoad(element.Reference.TypeSelect().FullPath);
+                trans.GenerateLoad(element.Reference.TypeSelect());
             }
         }
 
         private void TranslateAssign(IdentifierAccess element, Translator trans)
         {
-            trans.GenerateStore(element.Reference.TypeSelect().FullPath);
+            trans.GenerateStore(element.Reference.TypeSelect());
         }
 
         private Element TranslateAccess(IdentifierAccess element, Translator trans)
@@ -263,7 +263,7 @@ namespace CliTranslate
         private void Translate(DyadicCalculate element, Translator trans)
         {
             ChildTranslate(element, trans);
-            trans.GenerateCall(element.ReferOp.TypeSelect().FullPath);
+            trans.GenerateCall(element.ReferOp.TypeSelect());
         }
 
         private void Translate(LeftAssign element, Translator trans)
@@ -292,7 +292,7 @@ namespace CliTranslate
             }
             TranslateAccess((dynamic)element.Access, trans);
             Translate((dynamic)element.Argument, trans);
-            trans.GenerateCall(element.Access.Reference.TypeSelect().FullPath);
+            trans.GenerateCall(element.Access.Reference.TypeSelect());
         }
 
         private void PragmaTranslate(CalculatePragma element, TupleList argument, Translator trans)

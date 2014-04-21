@@ -36,7 +36,7 @@ namespace CliTranslate
         {
             foreach(var v in Peir)
             {
-                root.RegisterBuilder(v.Scope.FullPath, v.Info);
+                root.RegisterBuilder(v.Scope, v.Info);
             }
         }
 

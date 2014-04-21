@@ -55,7 +55,6 @@
     <Compile Include="Daclate\DeclateVariant.cs" />
     <Compile Include="Expression\DyadicCalculate.cs" />
     <Compile Include="Expression\DyadicExpression.cs" />
-    <Compile Include="FullPath.cs" />
     <Compile Include="Pragma\CastPragma.cs" />
     <Compile Include="Pragma\PrimitivePragma.cs" />
     <Compile Include="ReturnDirective.cs" />

@@ -7,12 +7,11 @@ using AbstractSyntax.Daclate;
 
 namespace AbstractSyntax
 {
-    public abstract class Scope : Element, PathNode
+    public abstract class Scope : Element
     {
         private static int NextId = 1;
         public int Id { get; private set; }
         public string Name { get; set; }
-        public FullPath FullPath { get; private set; }
         private Dictionary<string, OverLoadScope> ScopeSymbol;
         private List<Scope> _ScopeChild;
         public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }

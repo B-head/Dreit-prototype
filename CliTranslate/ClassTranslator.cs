@@ -13,16 +13,16 @@ namespace CliTranslate
     {
         private TypeBuilder Class;
         private MethodBuilder ClassContext;
-        private Dictionary<FullPath, dynamic> InitDictonary;
+        private Dictionary<Scope, dynamic> InitDictonary;
         private ILGenerator CtorGenerator;
 
-        public ClassTranslator(FullPath path, Translator parent, TypeBuilder builder)
+        public ClassTranslator(Scope path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
             Class = builder;
             ClassContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName | MethodAttributes.Static);
             parent.BuildInitCall(ClassContext);
-            InitDictonary = new Dictionary<FullPath, dynamic>();
+            InitDictonary = new Dictionary<Scope, dynamic>();
             Generator = ClassContext.GetILGenerator();
             Root.RegisterBuilder(path, Class);
             CreateConstructor(path);
@@ -35,7 +35,7 @@ namespace CliTranslate
             Class.CreateType();
         }
 
-        private ConstructorBuilder CreateConstructor(FullPath path)
+        private ConstructorBuilder CreateConstructor(Scope path)
         {
             var ctor = Class.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, Type.EmptyTypes);
             Root.RegisterBuilder(path, ctor);
@@ -50,7 +50,7 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName);
         }
 
-        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType, FullPath[] argumentType)
+        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(argumentType);
@@ -58,13 +58,13 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(FullPath path)
+        public override ClassTranslator CreateClass(Scope path)
         {
             var builder = Class.DefineNestedType(path.Name);
             return new ClassTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(FullPath path, FullPath typeName)
+        public override void CreateVariant(Scope path, Scope typeName)
         {
             var type = Root.GetBuilder(typeName);
             var builder = Class.DefineField(path.Name, type, FieldAttributes.Public);
@@ -76,7 +76,7 @@ namespace CliTranslate
             CtorGenerator.Emit(OpCodes.Stfld, builder);
         }
 
-        public override void GenerateLoad(FullPath name)
+        public override void GenerateLoad(Scope name)
         {
             dynamic temp;
             if (!InitDictonary.TryGetValue(name, out temp))
@@ -86,7 +86,7 @@ namespace CliTranslate
             BuildLoad(temp);
         }
 
-        public override void GenerateStore(FullPath name)
+        public override void GenerateStore(Scope name)
         {
             dynamic temp;
             if (!InitDictonary.TryGetValue(name, out temp))

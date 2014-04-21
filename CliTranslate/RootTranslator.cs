@@ -11,8 +11,8 @@ namespace CliTranslate
 {
     public class RootTranslator : Translator
     {
-        private Dictionary<FullPath, dynamic> BuilderDictonary;
-        private Dictionary<FullPath, ConstructorInfo> CtorDictonary;
+        private Dictionary<Scope, dynamic> BuilderDictonary;
+        private Dictionary<Scope, ConstructorInfo> CtorDictonary;
         private AssemblyBuilder Assembly;
         private ModuleBuilder Module;
         public string Name { get; private set; }
@@ -21,15 +21,15 @@ namespace CliTranslate
         public RootTranslator(string name)
             : base(null, null)
         {
-            BuilderDictonary = new Dictionary<FullPath, dynamic>();
-            CtorDictonary = new Dictionary<FullPath, ConstructorInfo>();
+            BuilderDictonary = new Dictionary<Scope, dynamic>();
+            CtorDictonary = new Dictionary<Scope, ConstructorInfo>();
             Name = name;
             FileName = name + ".exe";
             Assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave);
             Module = Assembly.DefineDynamicModule(Name, FileName);
         }
 
-        internal dynamic GetBuilder(FullPath path)
+        internal dynamic GetBuilder(Scope path)
         {
             if(path == null)
             {
@@ -38,7 +38,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type GetReturnBuilder(FullPath path)
+        internal Type GetReturnBuilder(Scope path)
         {
             if (path == null)
             {
@@ -47,7 +47,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type[] GetArgumentBuilders(params FullPath[] path)
+        internal Type[] GetArgumentBuilders(params Scope[] path)
         {
             List<Type> result = new List<Type>();
             foreach(var v in path)
@@ -57,7 +57,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        internal Type[] GetArgumentBuilders(Type prim, params FullPath[] path)
+        internal Type[] GetArgumentBuilders(Type prim, params Scope[] path)
         {
             List<Type> result = new List<Type>();
             result.Add(prim);
@@ -68,7 +68,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        internal ConstructorInfo GetConstructor(FullPath path)
+        internal ConstructorInfo GetConstructor(Scope path)
         {
             if (path == null)
             {
@@ -77,7 +77,7 @@ namespace CliTranslate
             return CtorDictonary[path];
         }
 
-        public void RegisterBuilder(FullPath path, dynamic builder)
+        public void RegisterBuilder(Scope path, dynamic builder)
         {
             if(path == null || builder == null)
             {
@@ -99,7 +99,7 @@ namespace CliTranslate
             }
         }
 
-        public override ModuleTranslator CreateModule(FullPath path)
+        public override ModuleTranslator CreateModule(Scope path)
         {
             return new ModuleTranslator(path, this, Module);
         }

@@ -30,12 +30,12 @@ namespace CliTranslate
         public Translator Parent { get; private set; }
         private List<Translator> _Child;
         public IReadOnlyList<Translator> Child { get { return _Child; } }
-        public FullPath Path { get; private set; }
+        public Scope Scope { get; private set; }
         protected ILGenerator Generator;
 
-        protected Translator(FullPath path, Translator parent)
+        protected Translator(Scope scope, Translator parent)
         {
-            Path = path;
+            Scope = scope;
             _Child = new List<Translator>();
             if(parent == null)
             {
@@ -80,7 +80,7 @@ namespace CliTranslate
         public string ToString(int indent)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine(Indent(indent) + this.GetType().Name + ": " + Path.ToString() + "(" + Path.Id + ")");
+            builder.AppendLine(Indent(indent) + this.GetType().Name + ": " + Scope.ToString() + "(" + Scope.Id + ")");
             foreach (var v in _Child)
             {
                 builder.Append(v.ToString(indent + 1));
@@ -93,12 +93,12 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual ModuleTranslator CreateModule(FullPath path)
+        public virtual ModuleTranslator CreateModule(Scope path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual RoutineTranslator CreateRoutine(FullPath path, FullPath returnType, FullPath[] argumentType)
+        public virtual RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
         {
             throw new NotSupportedException();
         }
@@ -108,27 +108,27 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual ClassTranslator CreateClass(FullPath path)
+        public virtual ClassTranslator CreateClass(Scope path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual PrimitiveTranslator CreatePrimitive(FullPath path, PrimitivePragmaType type)
+        public virtual PrimitiveTranslator CreatePrimitive(Scope path, PrimitivePragmaType type)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void CreateEnum(FullPath path)
+        public virtual void CreateEnum(Scope path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void CreateVariant(FullPath path, FullPath type)
+        public virtual void CreateVariant(Scope path, Scope type)
         {
             throw new NotSupportedException();
         }
 
-        public void CreateLabel(FullPath path)
+        public void CreateLabel(Scope path)
         {
             var builder = Generator.DefineLabel();
             Root.RegisterBuilder(path, builder);
@@ -202,7 +202,7 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Ldstr, value);
         }
 
-        public virtual void GenerateLoad(FullPath name)
+        public virtual void GenerateLoad(Scope name)
         {
             dynamic temp = Root.GetBuilder(name);
             BuildLoad(temp);
@@ -259,7 +259,7 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateStore(FullPath name)
+        public virtual void GenerateStore(Scope name)
         {
             dynamic temp = Root.GetBuilder(name);
             BuildStore(temp);
@@ -309,7 +309,7 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateCall(FullPath name)
+        public virtual void GenerateCall(Scope name)
         {
             var temp = Root.GetBuilder(name);
             if (temp is Type)

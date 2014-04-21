@@ -16,7 +16,7 @@ namespace CliTranslate
         private Type Prim;
         private MethodBuilder ClassContext;
 
-        public PrimitiveTranslator(FullPath path, Translator parent, TypeBuilder builder, PrimitivePragmaType type)
+        public PrimitiveTranslator(Scope path, Translator parent, TypeBuilder builder, PrimitivePragmaType type)
             : base(path, parent)
         {
             Class = builder;
@@ -53,7 +53,7 @@ namespace CliTranslate
             Class.CreateType();
         }
 
-        public override RoutineTranslator CreateRoutine(FullPath path, FullPath returnType, FullPath[] argumentType)
+        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(Prim, argumentType);
