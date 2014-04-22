@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AbstractSyntax.Visualizer
@@ -131,7 +125,7 @@ namespace AbstractSyntax.Visualizer
             return item;
         }
 
-        public void SelectElement(Element element)
+        private void SelectElement(Element element)
         {
             var node = GetTreeNode(element);
             if(node == null)
