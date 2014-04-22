@@ -112,39 +112,9 @@ namespace AbstractSyntax
             Root.OutputWarning("Warning: " + ErrorInfo() + message);
         }
 
-        private string Indent(int indent)
-        {
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < indent; i++)
-            {
-                result.Append(" ");
-            }
-            return result.ToString();
-        }
-
         public override string ToString()
         {
             return ElementInfo();
-        }
-
-        public virtual string ToString(bool hideImport, int indent = 0)
-        {
-            StringBuilder result = new StringBuilder();
-            result.AppendLine(Indent(indent) + ToString());
-            foreach (Element v in this)
-            {
-                if (v == null)
-                {
-                    result.AppendLine(Indent(indent + 1) + "<null>");
-                    continue;
-                }
-                if(hideImport && v.IsImport)
-                {
-                    continue;
-                }
-                result.Append(v.ToString(hideImport, indent + 1));
-            }
-            return result.ToString();
         }
 
         protected void SpreadElement(Element parent, Scope scope)

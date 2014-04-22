@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -34,7 +35,7 @@ namespace AbstractSyntax.Visualizer
         {
             var node = syntaxTree.SelectedNode;
             Text = node.Text;
-            ShowValue((Element)node.Tag);
+            ShowValueList((Element)node.Tag);
         }
 
         private void ItemActivateHandler(object sender, EventArgs e)
@@ -67,18 +68,30 @@ namespace AbstractSyntax.Visualizer
             }
         }
 
-        private void ShowValue(Element element)
+        private void ShowValueList(Element element)
         {
             valueList.BeginUpdate();
+            valueList.Groups.Clear();
             valueList.Items.Clear();
             var type = element.GetType();
-            foreach(var v in type.GetFields(showMenber))
+            AddGroup(element, type);
+            /*while(type != typeof(object))
+            {
+                AddGroup(element, type);
+                type = type.BaseType;
+            }*/
+            valueList.EndUpdate();
+        }
+
+        private ListViewGroup AddGroup(Element element, Type type)
+        {
+            var group = new ListViewGroup(type.Name);
+            group.Tag = type;
+            valueList.Groups.Add(group);
+            foreach (var v in type.GetFields(showMenber))
             {
                 object obj = v.GetValue(element) ?? "<null>";
-                var texts = new string[]{ v.Name, obj.ToString() };
-                var item = new ListViewItem(texts);
-                item.Tag = obj;
-                valueList.Items.Add(item);
+                AddValue(group, v.Name, obj);
             }
             foreach (var v in type.GetProperties(showMenber))
             {
@@ -91,12 +104,31 @@ namespace AbstractSyntax.Visualizer
                 {
                     obj = e.ToString();
                 }
-                var texts = new string[] { v.Name, obj.ToString() };
-                var item = new ListViewItem(texts);
-                item.Tag = obj;
-                valueList.Items.Add(item);
+                AddValue(group, v.Name, obj);
             }
-            valueList.EndUpdate();
+            return group;
+        }
+
+        private ListViewItem AddValue(ListViewGroup group, string name, object value)
+        {
+            var texts = new string[] { name, value.ToString() };
+            var item = new ListViewItem(texts);
+            item.Tag = value;
+            valueList.Items.Add(item);
+            group.Items.Add(item);
+            if(value is Element)
+            {
+                item.BackColor = Color.LightBlue;
+            }
+            else if(value is IList)
+            {
+                var list = (IList)value;
+                for(var i = 0; i < list.Count; ++i)
+                {
+                    AddValue(group, name + "[" + i + "]", list[i]);
+                }
+            }
+            return item;
         }
 
         public void SelectElement(Element element)
