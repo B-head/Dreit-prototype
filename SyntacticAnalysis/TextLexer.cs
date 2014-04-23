@@ -9,26 +9,26 @@ namespace SyntacticAnalysis
 {
     public partial class Lexer
     {
-        private bool EndOfLine(ref TextPosition p)
+        private Token EndOfLine(Tokenizer t)
         {
             int i = 0;
-            if (IsEnable(p, i) && Peek(p, i).Match("\x0A"))
+            if (t.IsReadable(i) && t.MatchAny(i, "\x0A"))
             {
                 i++;
-                if (IsEnable(p, i) && Peek(p, i).Match("\x0D"))
+                if (t.IsReadable(i) && t.MatchAny(i, "\x0D"))
                 {
                     i++;
                 }
             }
-            else if (IsEnable(p, i) && Peek(p, i).Match("\x0D"))
+            else if (t.IsReadable(i) && t.MatchAny(i, "\x0D"))
             {
                 i++;
-                if (IsEnable(p, i) && Peek(p, i).Match("\x0A"))
+                if (t.IsReadable(i) && t.MatchAny(i, "\x0A"))
                 {
                     i++;
                 }
             }
-            return TakeAddToken(ref p, i, TokenType.LineTerminator);
+            return t.TakeToken(i, TokenType.LineTerminator);
         }
 
         private bool WhiteSpace(ref TextPosition p)

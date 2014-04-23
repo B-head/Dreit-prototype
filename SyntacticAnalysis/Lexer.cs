@@ -9,7 +9,8 @@ namespace SyntacticAnalysis
 {
     public partial class Lexer
     {
-        private delegate bool LexerFunction(ref TextPosition p);
+        private delegate Token LexerFunction(Tokenizer t);
+        private delegate bool LexerFunctionOld(ref TextPosition p);
         public string Text { get; private set; }
         public string FileName { get; private set; }
         public TextPosition LastPosition { get; private set; }
@@ -31,8 +32,15 @@ namespace SyntacticAnalysis
             _Token = new List<Token>();
             _ErrorToken = new List<Token>();
             TextPosition p = new TextPosition { File = fileName, Total = 0, Line = 1, Row = 0 };
-            while (IsEnable(p, 0))
+            var t = new Tokenizer(text, fileName);
+            while (t.IsReadable())
             {
+                Token temp;
+                temp = DisjunctionLexer
+                    (
+                    t,
+                    EndOfLine
+                    );
                 DisjunctionLexer
                     (
                     ref p,
@@ -62,9 +70,22 @@ namespace SyntacticAnalysis
             return Text[p.Total + i];
         }
 
-        private void DisjunctionLexer(ref TextPosition p, params LexerFunction[] func)
+        private Token DisjunctionLexer(Tokenizer t, params LexerFunction[] func)
         {
-            foreach (LexerFunction f in func)
+            foreach (var f in func)
+            {
+                var token = f(t);
+                if (token != null)
+                {
+                    return token;
+                }
+            }
+            return null;
+        }
+
+        private void DisjunctionLexer(ref TextPosition p, params LexerFunctionOld[] func)
+        {
+            foreach (LexerFunctionOld f in func)
             {
                 if (f(ref p))
                 {

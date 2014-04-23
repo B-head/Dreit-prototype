@@ -18,12 +18,12 @@ namespace SyntacticAnalysis
             Position = new TextPosition { File = fileName, Line = 1 };
         }
 
-        public bool IsReadable(int index)
+        public bool IsReadable(int index = 0)
         {
             return Position.Total + index < Text.Length;
         }
 
-        public char Read(int index)
+        public char Read(int index = 0)
         {
             return Text[Position.Total + index];
         }
@@ -60,16 +60,17 @@ namespace SyntacticAnalysis
             return start <= c && c <= end;
         }
 
-        public Token TakeToken(ref TextPosition p, int length, TokenType type)
+        public Token TakeToken(int length, TokenType type)
         {
             if (length == 0)
             {
                 return null;
             }
             string text = Read(0, length);
-            TextPosition temp = p;
+            var temp = Position;
             temp.Length = length;
             Token token = new Token { Text = text, Type = type, Position = temp };
+            var p = Position;
             p.Total += length;
             p.Row += length;
             if (type == TokenType.LineTerminator)
@@ -77,6 +78,7 @@ namespace SyntacticAnalysis
                 p.Line++;
                 p.Row = 0;
             }
+            Position = p;
             return token;
         }
     }
