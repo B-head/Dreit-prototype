@@ -9,10 +9,10 @@ namespace SyntacticAnalysis
 {
     public partial class Lexer
     {
-        private bool SinglePunctuator(ref TextPosition p)
+        private Token SinglePunctuator(Tokenizer t)
         {
             TokenType type = TokenType.Unknoun;
-            string sub = TrySubString(p.Total, 1);
+            string sub = t.Read(0, 1);
             switch(sub)
             {
                 case ";": type = TokenType.EndExpression; break;
@@ -42,15 +42,15 @@ namespace SyntacticAnalysis
                 case "]": type = TokenType.RightBracket; break;
                 case "{": type = TokenType.LeftBrace; break;
                 case "}": type = TokenType.RightBrace; break;
-                default: return false;
+                default: return null;
             }
-            return TakeAddToken(ref p, 1, type);
+            return t.TakeToken(1, type);
         }
 
-        private bool DoublePunctuator(ref TextPosition p)
+        private Token DoublePunctuator(Tokenizer t)
         {
             TokenType type = TokenType.Unknoun;
-            string sub = TrySubString(p.Total, 2);
+            string sub = t.Read(0, 2);
             switch (sub)
             {
                 case "::": type = TokenType.Separator; break;
@@ -89,15 +89,15 @@ namespace SyntacticAnalysis
                 case "%=": type = TokenType.ModuloLeftAssign; break;
                 case "=%": type = TokenType.ModuloRightAssign; break;
                 case "**": type = TokenType.Exponent; break;
-                default: return false;
+                default: return null;
             }
-            return TakeAddToken(ref p, 2, type);
+            return t.TakeToken(2, type);
         }
 
-        private bool TriplePunctuator(ref TextPosition p)
+        private Token TriplePunctuator(Tokenizer t)
         {
             TokenType type = TokenType.Unknoun;
-            string sub = TrySubString(p.Total, 3);
+            string sub = t.Read(0, 3);
             switch (sub)
             {
                 case "=<>": type = TokenType.Incompare; break;
@@ -112,9 +112,9 @@ namespace SyntacticAnalysis
                 case "=>>": type = TokenType.RightShiftRightAssign; break;
                 case "**=": type = TokenType.ExponentLeftAssign; break;
                 case "=**": type = TokenType.ExponentRightAssign; break;
-                default: return false;
+                default: return null;
             }
-            return TakeAddToken(ref p, 3, type);
+            return t.TakeToken(3, type);
         }
     }
 }

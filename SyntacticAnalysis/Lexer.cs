@@ -73,6 +73,7 @@ namespace SyntacticAnalysis
                 return temp.Type;
             }
             errorToken.Add(OtherString(t));
+            return TokenType.OtherString;
         }
 
         private bool IsEnable(TextPosition p, int i)
