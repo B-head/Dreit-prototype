@@ -46,8 +46,6 @@
     <Compile Include="Parser.cs" />
     <Compile Include="PrimaryParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PunctuatorLexer.cs" />
-    <Compile Include="TextLexer.cs" />
     <Compile Include="Tokenizer.cs" />
   </ItemGroup>
   <ItemGroup>
