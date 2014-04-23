@@ -60,6 +60,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractSyntax\AbstractSyntax.csproj">
+      <Project>{c1681d7b-c0fa-4c9c-8d4a-2a432b2ce764}</Project>
+      <Name>AbstractSyntax</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SyntacticAnalysis\SyntacticAnalysis.csproj">
       <Project>{4e625555-55ad-4c76-b124-0e056d055f40}</Project>
       <Name>SyntacticAnalysis</Name>
