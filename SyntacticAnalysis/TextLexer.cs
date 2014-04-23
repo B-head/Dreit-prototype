@@ -71,25 +71,25 @@ namespace SyntacticAnalysis
             return t.TakeToken(++i, TokenType.BlockComment);
         }
 
-        private bool LineCommnet(ref TextPosition p)
+        private Token LineCommnet(Tokenizer t)
         {
             int i = 0;
-            if (!(IsEnable(p, i + 1) && Peek(p, i).Match("/") && Peek(p, i + 1).Match("/")))
+            if(!t.IsReadable(i + 1))
             {
-                if (!(IsEnable(p, i + 1) && Peek(p, i).Match("#") && Peek(p, i + 1).Match("!")))
-                {
-                    return false;
-                }
+                return null;
             }
-            for (i = 2; IsEnable(p, i); i++)
+            if (t.Read(i, 2) != "//" && t.Read(i, 2) != "#!")
             {
-                if (IsEnable(p, i) && Peek(p, i).Match("\x0A\x0D"))
+                return null;
+            }
+            for (i = 2; !t.IsReadable(i); i++)
+            {
+                if (t.MatchAny(i, "\x0A\x0D"))
                 {
                     break;
                 }
             }
-            SkipToken(ref p, i);
-            return true;
+            return t.TakeToken(++i, TokenType.LineCommnet);
         }
 
         private bool StringLiteral(ref TextPosition p)
