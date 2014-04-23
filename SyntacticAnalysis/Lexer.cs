@@ -44,7 +44,7 @@ namespace SyntacticAnalysis
             temp = DisjunctionLexer
                 (
                 t,
-                EndOfLine,
+                LineTerminator,
                 WhiteSpace,
                 BlockComment,
                 LineCommnet

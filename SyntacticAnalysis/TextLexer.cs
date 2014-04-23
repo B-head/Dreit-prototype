@@ -9,7 +9,7 @@ namespace SyntacticAnalysis
 {
     public partial class Lexer
     {
-        private Token EndOfLine(Tokenizer t)
+        private Token LineTerminator(Tokenizer t)
         {
             int i = 0;
             if (t.IsReadable(i) && t.MatchAny(i, "\x0A"))
