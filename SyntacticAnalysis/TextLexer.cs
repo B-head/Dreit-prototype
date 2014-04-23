@@ -203,19 +203,18 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.DigitStartString);
         }
 
-        private bool OtherString(ref TextPosition p)
+        private Token OtherString(Tokenizer t)
         {
             int i;
-            for (i = 0; IsEnable(p, i); i++)
+            for (i = 0; t.IsReadable(i); i++)
             {
-                char c = Peek(p, i);
-                if (!c.Match('\x00', '\x7F'))
+                if (!t.MatchRange(i, '\x00', '\x7F'))
                 {
                     continue;
                 }
                 break;
             }
-            return TakeAddErrorToken(ref p, i, TokenType.OtherString);
+            return t.TakeToken(i, TokenType.OtherString);
         }
     }
 }
