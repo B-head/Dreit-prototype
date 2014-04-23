@@ -45,32 +45,30 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.WhiteSpace);
         }
 
-        private bool BlockComment(ref TextPosition p)
+        private Token BlockComment(Tokenizer t)
         {
             int i = 0, nest = 1;
-            if(!(IsEnable(p, i + 1) && Peek(p, i).Match("/") && Peek(p, i + 1).Match("*")))
+            if(!t.IsReadable(i + 1) || t.Read(i, 2) != "/*")
             {
-                return false;
+                return null;
             }
-            for (i = 2; IsEnable(p, i); i++)
+            for (i = 2; !t.IsReadable(i + 1); i++)
             {
-                if(IsEnable(p, i + 1) && Peek(p, i).Match("*") && Peek(p, i + 1).Match("/"))
+                if (t.Read(i, 2) == "*/")
                 {
                     ++i;
                     if (--nest == 0)
                     {
-                        ++i;
                         break;
                     }
                 }
-                if(IsEnable(p, i + 1) && Peek(p, i).Match("/") && Peek(p, i + 1).Match("*"))
+                if (t.Read(i, 2) == "/*")
                 {
                     ++i;
                     ++nest;
                 }
             }
-            SkipToken(ref p, i);
-            return true;
+            return t.TakeToken(++i, TokenType.BlockComment);
         }
 
         private bool LineCommnet(ref TextPosition p)

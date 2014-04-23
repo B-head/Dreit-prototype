@@ -40,7 +40,8 @@ namespace SyntacticAnalysis
                     (
                     t,
                     EndOfLine,
-                    WhiteSpace
+                    WhiteSpace,
+                    BlockComment
                     );
                 if (temp != null)
                 {
@@ -49,7 +50,6 @@ namespace SyntacticAnalysis
                 DisjunctionLexer
                     (
                     ref p,
-                    BlockComment,
                     LineCommnet,
                     StringLiteral,
                     LetterStartString,

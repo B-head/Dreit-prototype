@@ -21,6 +21,7 @@ namespace AbstractSyntax
         Special,
         LineTerminator,
         WhiteSpace,
+        BlockComment,
         QuoteSeparator,
         PlainText,
         LetterStartString,
