@@ -29,38 +29,50 @@ namespace SyntacticAnalysis
         {
             Text = text;
             FileName = fileName;
-            _Token = new List<Token>();
-            _ErrorToken = new List<Token>();
-            TextPosition p = new TextPosition { File = fileName, Total = 0, Line = 1, Row = 0 };
+            var tokenList = new List<Token>();
+            var errorToken = new List<Token>();
             var t = new Tokenizer(text, fileName);
             while (t.IsReadable())
             {
-                Token temp;
-                temp = DisjunctionLexer
-                    (
-                    t,
-                    EndOfLine,
-                    WhiteSpace,
-                    BlockComment,
-                    LineCommnet
-                    );
-                if (temp != null)
-                {
-                    continue;
-                }
-                DisjunctionLexer
-                    (
-                    ref p,
-                    StringLiteral,
-                    LetterStartString,
-                    DigitStartString,
-                    TriplePunctuator,
-                    DoublePunctuator,
-                    SinglePunctuator,
-                    OtherString
-                    );
+                LexPartion(t, tokenList, errorToken);
             }
-            LastPosition = p;
+            LastPosition = t.Position;
+        }
+
+        private TokenType LexPartion(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
+        {
+            Token temp;
+            temp = DisjunctionLexer
+                (
+                t,
+                EndOfLine,
+                WhiteSpace,
+                BlockComment,
+                LineCommnet
+                );
+            if (temp != null)
+            {
+                return temp.Type;
+            }
+            if (StringLiteral(t, tokenList, errorToken))
+            {
+                return TokenType.PlainText;
+            }
+            temp = DisjunctionLexer
+                (
+                t,
+                TriplePunctuator,
+                DoublePunctuator,
+                SinglePunctuator,
+                LetterStartString,
+                DigitStartString
+                );
+            if (temp != null)
+            {
+                tokenList.Add(temp);
+                return temp.Type;
+            }
+            errorToken.Add(OtherString(t));
         }
 
         private bool IsEnable(TextPosition p, int i)

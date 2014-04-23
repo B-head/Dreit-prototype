@@ -92,62 +92,50 @@ namespace SyntacticAnalysis
             return t.TakeToken(++i, TokenType.LineCommnet);
         }
 
-        private bool StringLiteral(ref TextPosition p)
+        private bool StringLiteral(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
         {
-            if (!(IsEnable(p, 0) && Peek(p, 0).Match("\'\"`")))
+            if (!t.IsReadable(0) || !t.MatchAny(0, "\'\"`"))
             {
                 return false;
             }
-            string quote = Peek(p, 0).ToString();
-            TakeAddToken(ref p, 1, TokenType.QuoteSeparator);
+            string quote = t.Read(0, 1);
+            tokenList.Add(t.TakeToken(1, TokenType.QuoteSeparator));
             int i;
-            for (i = 0; IsEnable(p, i); i++)
+            for (i = 0; t.IsReadable(i); i++)
             {
-                char c = Peek(p, i);
-                if (c.Match(quote))
+                if (t.MatchAny(i, quote))
                 {
-                    TakeAddToken(ref p, i, TokenType.PlainText);
-                    return TakeAddToken(ref p, 1, TokenType.QuoteSeparator);
+                    tokenList.Add(t.TakeToken(i, TokenType.PlainText));
+                    tokenList.Add(t.TakeToken(1, TokenType.QuoteSeparator));
+                    return true;
                 }
-                if (c.Match("{"))
+                if (t.MatchAny(i, "{"))
                 {
-                    TakeAddToken(ref p, i, TokenType.PlainText);
-                    BuiltInExpression(ref p);
+                    tokenList.Add(t.TakeToken(i, TokenType.PlainText));
+                    BuiltInExpression(t, tokenList, errorToken);
                     i = -1;
                 }
             }
-            return TakeAddToken(ref p, i, TokenType.PlainText);
+            tokenList.Add(t.TakeToken(i, TokenType.PlainText));
+            return true;
         }
 
-        private bool BuiltInExpression(ref TextPosition p)
+        private void BuiltInExpression(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
         {
-            if (!(IsEnable(p, 0) && Peek(p, 0).Match("{")))
+            if (!t.IsReadable(0) || !t.MatchAny(0, "{"))
             {
-                return false;
+                return;
             }
+            var result = new List<Token>();
             int nest = 0;
-            while (IsEnable(p, 0))
+            while (t.IsReadable())
             {
-                DisjunctionLexer
-                    (
-                    ref p,
-                    EndOfLine,
-                    WhiteSpace,
-                    BlockComment,
-                    LineCommnet,
-                    StringLiteral,
-                    LetterStartString,
-                    DigitStartString,
-                    TriplePunctuator,
-                    DoublePunctuator,
-                    SinglePunctuator,
-                    OtherString
-                    );
-                if (_Token[_Token.Count - 1].Type == TokenType.LeftBrace)
+                var tt = LexPartion(t, tokenList, errorToken);
+                if (tt == TokenType.LeftBrace)
                 {
                     ++nest;
                 }
-                if(_Token[_Token.Count - 1].Type == TokenType.RightBrace)
+                if (tt == TokenType.RightBrace)
                 {
                     if(--nest == 0)
                     {
@@ -155,7 +143,6 @@ namespace SyntacticAnalysis
                     }
                 }
             }
-            return true;
         }
 
         private bool LetterStartString(ref TextPosition p)
