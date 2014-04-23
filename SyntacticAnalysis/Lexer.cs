@@ -39,13 +39,16 @@ namespace SyntacticAnalysis
                 temp = DisjunctionLexer
                     (
                     t,
-                    EndOfLine
+                    EndOfLine,
+                    WhiteSpace
                     );
+                if (temp != null)
+                {
+                    continue;
+                }
                 DisjunctionLexer
                     (
                     ref p,
-                    EndOfLine,
-                    WhiteSpace,
                     BlockComment,
                     LineCommnet,
                     StringLiteral,

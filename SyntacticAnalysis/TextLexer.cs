@@ -31,19 +31,18 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.LineTerminator);
         }
 
-        private bool WhiteSpace(ref TextPosition p)
+        private Token WhiteSpace(Tokenizer t)
         {
             int i;
-            for (i = 0; IsEnable(p, i); i++)
+            for (i = 0; t.IsReadable(i); i++)
             {
-                char c = Peek(p, i);
-                if (c.Match('\x00', '\x20') || c.Match("\x7F"))
+                if (t.MatchRange(i, '\x00', '\x20') || t.MatchAny(i, "\x7F"))
                 {
                     continue;
                 }
                 break;
             }
-            return SkipToken(ref p, i);
+            return t.TakeToken(i, TokenType.WhiteSpace);
         }
 
         private bool BlockComment(ref TextPosition p)

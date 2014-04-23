@@ -20,6 +20,7 @@ namespace AbstractSyntax
         Unknoun,
         Special,
         LineTerminator,
+        WhiteSpace,
         QuoteSeparator,
         PlainText,
         LetterStartString,
