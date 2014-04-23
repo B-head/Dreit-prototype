@@ -145,34 +145,33 @@ namespace SyntacticAnalysis
             }
         }
 
-        private bool LetterStartString(ref TextPosition p)
+        private Token LetterStartString(Tokenizer t)
         {
             int i;
             bool escape = false;
-            for (i = 0; IsEnable(p, i); i++)
+            for (i = 0; t.IsReadable(i); i++)
             {
-                char c = Peek(p, i);
-                if (escape && c.Match('!', '~'))
+                if (escape && t.MatchRange(i, '!', '~'))
                 {
                     escape = false;
                     continue;
                 }
-                if (c.Match('a', 'z') || c.Match('A', 'Z') || c.Match("_"))
+                if (t.MatchRange(i, 'a', 'z') || t.MatchRange(i, 'A', 'Z') || t.MatchAny(i, "_"))
                 {
                     continue;
                 }
-                if (i > 0 && c.Match('0', '9'))
+                if (i > 0 && t.MatchRange(i, '0', '9'))
                 {
                     continue;
                 }
-                if (c.Match("\\"))
+                if (t.MatchAny(i, "\\"))
                 {
                     escape = true;
                     continue;
                 }
                 break;
             }
-            return TakeAddToken(ref p, i, TokenType.LetterStartString);
+            return t.TakeToken(i, TokenType.LetterStartString);
         }
 
         private bool DigitStartString(ref TextPosition p)
