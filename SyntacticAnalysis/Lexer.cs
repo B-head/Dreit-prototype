@@ -3,38 +3,23 @@ using System.Collections.Generic;
 
 namespace SyntacticAnalysis
 {
-    public partial class Lexer
+    public static class Lexer
     {
         private delegate Token LexerFunction(Tokenizer t);
-        public string Text { get; private set; }
-        public string FileName { get; private set; }
-        public TextPosition LastPosition { get; private set; }
-        private List<Token> _Token;
-        public IReadOnlyList<Token> Token
-        {
-            get { return _Token; }
-        }
-        private List<Token> _ErrorToken;
-        public IReadOnlyList<Token> ErrorToken
-        {
-            get { return _ErrorToken; }
-        }
 
-        public void Lex(string text, string fileName)
+        public static void Lex(string text, string fileName, out List<Token> tokenList, out List<Token> errorToken, out TextPosition lastPosition)
         {
-            Text = text;
-            FileName = fileName;
-            var tokenList = new List<Token>();
-            var errorToken = new List<Token>();
+            tokenList = new List<Token>();
+            errorToken = new List<Token>();
             var t = new Tokenizer(text, fileName);
             while (t.IsReadable())
             {
                 LexPartion(t, tokenList, errorToken);
             }
-            LastPosition = t.Position;
+            lastPosition = t.Position;
         }
 
-        private TokenType LexPartion(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
+        private static TokenType LexPartion(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
         {
             Token temp;
             temp = DisjunctionLexer
@@ -71,7 +56,7 @@ namespace SyntacticAnalysis
             return TokenType.OtherString;
         }
 
-        private Token DisjunctionLexer(Tokenizer t, params LexerFunction[] func)
+        private static Token DisjunctionLexer(Tokenizer t, params LexerFunction[] func)
         {
             foreach (var f in func)
             {
@@ -84,7 +69,7 @@ namespace SyntacticAnalysis
             return null;
         }
 
-        private Token LineTerminator(Tokenizer t)
+        private static Token LineTerminator(Tokenizer t)
         {
             int i = 0;
             if (t.IsReadable(i) && t.MatchAny(i, "\x0A"))
@@ -106,7 +91,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.LineTerminator);
         }
 
-        private Token WhiteSpace(Tokenizer t)
+        private static Token WhiteSpace(Tokenizer t)
         {
             int i;
             for (i = 0; t.IsReadable(i); i++)
@@ -120,7 +105,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.WhiteSpace);
         }
 
-        private Token BlockComment(Tokenizer t)
+        private static Token BlockComment(Tokenizer t)
         {
             int i = 0, nest = 1;
             if (!t.IsReadable(i + 1) || t.Read(i, 2) != "/*")
@@ -146,7 +131,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(++i, TokenType.BlockComment);
         }
 
-        private Token LineCommnet(Tokenizer t)
+        private static Token LineCommnet(Tokenizer t)
         {
             int i = 0;
             if (!t.IsReadable(i + 1))
@@ -167,7 +152,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(++i, TokenType.LineCommnet);
         }
 
-        private bool StringLiteral(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
+        private static bool StringLiteral(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
         {
             if (!t.IsReadable(0) || !t.MatchAny(0, "\'\"`"))
             {
@@ -195,7 +180,7 @@ namespace SyntacticAnalysis
             return true;
         }
 
-        private void BuiltInExpression(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
+        private static void BuiltInExpression(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
         {
             if (!t.IsReadable(0) || !t.MatchAny(0, "{"))
             {
@@ -220,7 +205,7 @@ namespace SyntacticAnalysis
             }
         }
 
-        private Token LetterStartString(Tokenizer t)
+        private static Token LetterStartString(Tokenizer t)
         {
             int i;
             bool escape = false;
@@ -249,7 +234,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.LetterStartString);
         }
 
-        private Token DigitStartString(Tokenizer t)
+        private static Token DigitStartString(Tokenizer t)
         {
             int i;
             bool escape = false;
@@ -278,7 +263,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.DigitStartString);
         }
 
-        private Token OtherString(Tokenizer t)
+        private static Token OtherString(Tokenizer t)
         {
             int i;
             for (i = 0; t.IsReadable(i); i++)
@@ -292,7 +277,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(i, TokenType.OtherString);
         }
 
-        private Token SinglePunctuator(Tokenizer t)
+        private static Token SinglePunctuator(Tokenizer t)
         {
             TokenType type = TokenType.Unknoun;
             string sub = t.Read(0, 1);
@@ -330,7 +315,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(1, type);
         }
 
-        private Token DoublePunctuator(Tokenizer t)
+        private static Token DoublePunctuator(Tokenizer t)
         {
             TokenType type = TokenType.Unknoun;
             string sub = t.Read(0, 2);
@@ -377,7 +362,7 @@ namespace SyntacticAnalysis
             return t.TakeToken(2, type);
         }
 
-        private Token TriplePunctuator(Tokenizer t)
+        private static Token TriplePunctuator(Tokenizer t)
         {
             TokenType type = TokenType.Unknoun;
             string sub = t.Read(0, 3);

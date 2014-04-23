@@ -13,15 +13,15 @@ namespace SyntacticAnalysis
     {
         private delegate Element ParserFunction(ref int c);
         private delegate E ParserFunction<E>(ref int c) where E : Element;
-        private List<Token> InputToken;
+        private List<Token> TokenList;
         private List<Token> ErrorToken;
-        private Lexer Lexer;
+        private TextPosition LastPosition;
 
-        public Element Parse(Lexer lexer, string name)
+        public Element Parse(string text, string name, List<Token> tokenList, List<Token> errorToken, TextPosition lastPosition)
         {
-            InputToken = lexer.Token.ToList();
-            ErrorToken = lexer.ErrorToken.ToList();
-            Lexer = lexer;
+            TokenList = tokenList.ToList();
+            ErrorToken = errorToken.ToList();
+            LastPosition = lastPosition;
             int c = -1;
             MoveNextToken(ref c);
             var p = GetTextPosition(c);
@@ -34,17 +34,17 @@ namespace SyntacticAnalysis
             {
                 exp.Position = p;
             }
-            return new DeclateModule { Name = name, ExpList = exp, ErrorToken = ErrorToken, Position = new TextPosition { File = lexer.FileName, Length = lexer.Text.Length } };
+            return new DeclateModule { Name = name, SourceText = text, ExpList = exp, ErrorToken = ErrorToken, Position = LastPosition };
         }
 
         private bool IsReadable(int c)
         {
-            return c < InputToken.Count;
+            return c < TokenList.Count;
         }
 
         private Token Read(int c)
         {
-            return InputToken[c];
+            return TokenList[c];
         }
 
         private void MoveNextToken(ref int c)
@@ -74,7 +74,7 @@ namespace SyntacticAnalysis
             }
             else
             {
-                return Lexer.LastPosition;
+                return LastPosition;
             }
         }
 

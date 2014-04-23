@@ -8,6 +8,7 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateModule : Scope
     {
+        public string SourceText { get; set; }
         public DirectiveList ExpList { get; set; }
         public List<Token> ErrorToken { get; set; }
 

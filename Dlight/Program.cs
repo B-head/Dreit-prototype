@@ -2,6 +2,7 @@
 using CliTranslate;
 using SyntacticAnalysis;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -29,10 +30,12 @@ namespace Dlight
         static Element CompileFile(string fileName)
         {
             string text = File.ReadAllText(fileName);
-            Lexer lexer = new Lexer();
-            lexer.Lex(text, fileName);
+            List<Token> tokenList, errorToken;
+            TextPosition position;
+            Lexer.Lex(text, fileName, out tokenList, out errorToken, out position);
+            string name = fileName.Replace(".dl", "").Split('/').Last();
             Parser parser = new Parser();
-            return parser.Parse(lexer, fileName.Replace(".dl", "").Split('/').Last());
+            return parser.Parse(text, name, tokenList, errorToken, position);
         }
     }
 }
