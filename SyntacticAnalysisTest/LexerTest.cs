@@ -3,6 +3,7 @@ using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using SyntacticAnalysis;
 using System;
+using System.Collections.Generic;
 using TestUtility;
 
 namespace SyntacticAnalysisTest
@@ -117,6 +118,47 @@ namespace SyntacticAnalysisTest
             }
         }
 
+        [TestCase("'abc'def", new string[] { "'", "abc", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase("\"abc\"def", new string[] { "\"", "abc", "\"" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase("`abc`def", new string[] { "`", "abc", "`" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase("'abcdef", new string[] { "'", "abcdef" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText })]
+        [TestCase(@"'ab\'cd\'ef'", new string[] { "'", @"ab\'cd\'ef", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase(@"'ab\\cd\\ef'", new string[] { "'", @"ab\\cd\\ef", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase("'abc{ def }ghi'", new string[] { "'", "abc", "{", "def", "}", "ghi", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase(@"'abc\{ def }ghi'", new string[] { "'", @"abc\{ def }ghi", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase("'{ abc }'", new string[] { "'", "{", "abc", "}", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.QuoteSeparator })]
+        [TestCase("'{ '{ abc }' }' }'", new string[] { "'", "{", "'", "{", "abc", "}", "'", "}", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.LeftBrace, TokenType.QuoteSeparator, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.QuoteSeparator, TokenType.RightBrace, TokenType.QuoteSeparator })]
+        [TestCase("abc'def'", new string[] { }, new TokenType[] { } )]
+        public void StringLiteral(string text, string[] eTexts, TokenType[] eTypes)
+        {
+            var t = new Tokenizer(text, string.Empty);
+            var tokenList = new List<Token>();
+            var errorToken = new List<Token>();
+            var result = (bool)typeof(Lexer).Invoke("StringLiteral", t, tokenList, errorToken);
+            Assert.That(result, Is.EqualTo(eTexts.Length > 0));
+            Assert.That(tokenList, Is.All.Not.Null);
+            Assert.That(List.Map(tokenList).Property("Text"), Is.EqualTo(eTexts));
+            Assert.That(List.Map(tokenList).Property("Type"), Is.EqualTo(eTypes));
+            Assert.That(errorToken.Count, Is.EqualTo(0));
+        }
+
+        [TestCase("{ }", new string[] { "{", "}" }, new TokenType[] { TokenType.LeftBrace, TokenType.RightBrace })]
+        [TestCase("{ } abc", new string[] { "{", "}" }, new TokenType[] { TokenType.LeftBrace, TokenType.RightBrace })]
+        [TestCase("{ 1 + 1 } abc", new string[] { "{", "1", "+", "1", "}" }, new TokenType[] { TokenType.LeftBrace, TokenType.DigitStartString, TokenType.Add, TokenType.DigitStartString, TokenType.RightBrace })]
+        [TestCase("{ loop{ } } }", new string[] { "{", "loop", "{", "}", "}" }, new TokenType[] { TokenType.LeftBrace, TokenType.LetterStartString, TokenType.LeftBrace, TokenType.RightBrace, TokenType.RightBrace })]
+        [TestCase("abc { }", new string[] { }, new TokenType[] { })]
+        public void BuiltInExpression(string text, string[] eTexts, TokenType[] eTypes)
+        {
+            var t = new Tokenizer(text, string.Empty);
+            var tokenList = new List<Token>();
+            var errorToken = new List<Token>();
+            typeof(Lexer).Invoke("BuiltInExpression", t, tokenList, errorToken);
+            Assert.That(tokenList, Is.All.Not.Null);
+            Assert.That(List.Map(tokenList).Property("Text"), Is.EqualTo(eTexts));
+            Assert.That(List.Map(tokenList).Property("Type"), Is.EqualTo(eTypes));
+            Assert.That(errorToken.Count, Is.EqualTo(0));
+        }
+
         [TestCase("abc", "abc", TokenType.LetterStartString)]
         [TestCase("abc def", "abc", TokenType.LetterStartString)]
         [TestCase("ABC", "ABC", TokenType.LetterStartString)]
@@ -126,6 +168,7 @@ namespace SyntacticAnalysisTest
         [TestCase("_", "_", TokenType.LetterStartString)]
         [TestCase(@"abc\\def", @"abc\\def", TokenType.LetterStartString)]
         [TestCase(@"abc\+def", @"abc\+def", TokenType.LetterStartString)]
+        [TestCase(@"abc\ndef", @"abc\ndef", TokenType.LetterStartString)]
         [TestCase(@"abc+def", @"abc", TokenType.LetterStartString)]
         [TestCase(@"abc\ def", @"abc\", TokenType.LetterStartString)]
         [TestCase(@"\+abcdef\-", @"\+abcdef\-", TokenType.LetterStartString)]

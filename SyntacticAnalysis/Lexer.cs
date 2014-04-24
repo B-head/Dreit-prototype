@@ -159,22 +159,35 @@ namespace SyntacticAnalysis
                 return false;
             }
             string quote = t.Read(0, 1);
+            bool escape = false;
             tokenList.Add(t.TakeToken(1, TokenType.QuoteSeparator));
             int i;
             for (i = 0; t.IsReadable(i); i++)
             {
-                if (t.MatchAny(i, quote))
+                if (!escape && t.MatchAny(i, quote))
                 {
-                    tokenList.Add(t.TakeToken(i, TokenType.PlainText));
+                    if (i > 0)
+                    {
+                        tokenList.Add(t.TakeToken(i, TokenType.PlainText));
+                    }
                     tokenList.Add(t.TakeToken(1, TokenType.QuoteSeparator));
                     return true;
                 }
-                if (t.MatchAny(i, "{"))
+                if (!escape && t.MatchAny(i, "{"))
                 {
-                    tokenList.Add(t.TakeToken(i, TokenType.PlainText));
+                    if (i > 0)
+                    {
+                        tokenList.Add(t.TakeToken(i, TokenType.PlainText));
+                    }
                     BuiltInExpression(t, tokenList, errorToken);
                     i = -1;
                 }
+                else if (t.MatchAny(i, "\\"))
+                {
+                    escape = !escape;
+                    continue;
+                }
+                escape = false;
             }
             tokenList.Add(t.TakeToken(i, TokenType.PlainText));
             return true;
@@ -218,15 +231,17 @@ namespace SyntacticAnalysis
                 }
                 if (t.MatchRange(i, 'a', 'z') || t.MatchRange(i, 'A', 'Z') || t.MatchAny(i, "_"))
                 {
+                    escape = false;
                     continue;
                 }
                 if (i > 0 && t.MatchRange(i, '0', '9'))
                 {
+                    escape = false;
                     continue;
                 }
                 if (t.MatchAny(i, "\\"))
                 {
-                    escape = true;
+                    escape = !escape;
                     continue;
                 }
                 break;
