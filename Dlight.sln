@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E12D2A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntacticAnalysisTest", "SyntacticAnalysisTest\SyntacticAnalysisTest.csproj", "{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtility", "TestUtility\TestUtility.csproj", "{76B0AC11-B904-4892-992C-A6B05E154188}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B0AC11-B904-4892-992C-A6B05E154188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B0AC11-B904-4892-992C-A6B05E154188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B0AC11-B904-4892-992C-A6B05E154188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B0AC11-B904-4892-992C-A6B05E154188}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

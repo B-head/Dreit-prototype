@@ -5,7 +5,7 @@ namespace SyntacticAnalysis
 {
     public static class Lexer
     {
-        private delegate Token LexerFunction(Tokenizer t);
+        internal delegate Token LexerFunction(Tokenizer t);
 
         public static void Lex(string text, string fileName, out List<Token> tokenList, out List<Token> errorToken, out TextPosition lastPosition)
         {
@@ -112,7 +112,7 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            for (i = 2; !t.IsReadable(i + 1); i++)
+            for (i = 2; t.IsReadable(i + 1); i++)
             {
                 if (t.Read(i, 2) == "*/")
                 {
@@ -142,14 +142,14 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
-            for (i = 2; !t.IsReadable(i); i++)
+            for (i = 2; t.IsReadable(i); i++)
             {
                 if (t.MatchAny(i, "\x0A\x0D"))
                 {
                     break;
                 }
             }
-            return t.TakeToken(++i, TokenType.LineCommnet);
+            return t.TakeToken(i, TokenType.LineCommnet);
         }
 
         private static bool StringLiteral(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
@@ -237,25 +237,14 @@ namespace SyntacticAnalysis
         private static Token DigitStartString(Tokenizer t)
         {
             int i;
-            bool escape = false;
             for (i = 0; t.IsReadable(i); i++)
             {
-                if (escape && t.MatchRange(i, '!', '~'))
-                {
-                    escape = false;
-                    continue;
-                }
-                if (t.MatchRange(i, '0', '9') || t.MatchAny(i, "_"))
+                if (t.MatchRange(i, '0', '9'))
                 {
                     continue;
                 }
-                if (i > 0 && (t.MatchRange(i, 'a', 'z') || t.MatchRange(i, 'A', 'Z')))
+                if (i > 0 && (t.MatchRange(i, 'a', 'z') || t.MatchRange(i, 'A', 'Z') || t.MatchAny(i, "_")))
                 {
-                    continue;
-                }
-                if (i > 0 && t.MatchAny(i, "\\"))
-                {
-                    escape = true;
                     continue;
                 }
                 break;

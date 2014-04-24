@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}</ProjectGuid>
+    <ProjectGuid>{76B0AC11-B904-4892-992C-A6B05E154188}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SyntacticAnalysisTest</RootNamespace>
-    <AssemblyName>SyntacticAnalysisTest</AssemblyName>
+    <RootNamespace>TestUtility</RootNamespace>
+    <AssemblyName>TestUtility</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,9 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -53,26 +50,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="TokenizerTest.cs" />
+    <Compile Include="NonPublicAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LexerTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AbstractSyntax\AbstractSyntax.csproj">
-      <Project>{c1681d7b-c0fa-4c9c-8d4a-2a432b2ce764}</Project>
-      <Name>AbstractSyntax</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SyntacticAnalysis\SyntacticAnalysis.csproj">
-      <Project>{4e625555-55ad-4c76-b124-0e056d055f40}</Project>
-      <Name>SyntacticAnalysis</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TestUtility\TestUtility.csproj">
-      <Project>{76b0ac11-b904-4892-992c-a6b05e154188}</Project>
-      <Name>TestUtility</Name>
-    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

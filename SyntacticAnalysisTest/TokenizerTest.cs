@@ -67,7 +67,7 @@ namespace SyntacticAnalysisTest
             var token = t.TakeToken(length, type);
             if (token == null)
             {
-                Assert.That(eText == null, "nullが返されました。");
+                Assert.That(null, Is.EqualTo(eText));
             }
             else
             {
