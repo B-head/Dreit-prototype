@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="TokenizerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="LexerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\SyntacticAnalysis\SyntacticAnalysis.csproj">
       <Project>{4e625555-55ad-4c76-b124-0e056d055f40}</Project>
       <Name>SyntacticAnalysis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestUtility\TestUtility.csproj">
+      <Project>{76b0ac11-b904-4892-992c-a6b05e154188}</Project>
+      <Name>TestUtility</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
