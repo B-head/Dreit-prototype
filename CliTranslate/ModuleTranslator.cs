@@ -21,7 +21,7 @@ namespace CliTranslate
         {
             Module = module;
             GlobalField = Module.DefineType(path.Name + ".@@global", TypeAttributes.SpecialName);
-            EntryContext = Module.DefineGlobalMethod(path.Name + ".@@entry", MethodAttributes.SpecialName | MethodAttributes.Static, null, null);
+            EntryContext = GlobalField.DefineMethod("@@entry", MethodAttributes.SpecialName | MethodAttributes.Static, null, null);
             Generator = EntryContext.GetILGenerator();
             Root.SetEntryPoint(EntryContext);
         }
@@ -41,7 +41,7 @@ namespace CliTranslate
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(argumentType);
-            var builder = Module.DefineGlobalMethod(path.ToString(), MethodAttributes.Static, retbld, argbld);
+            var builder = GlobalField.DefineMethod(path.Name, MethodAttributes.Static, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 

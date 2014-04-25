@@ -8,9 +8,9 @@ using System.Linq;
 
 namespace Dlight
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             string fileName = args[0];
             Root root = new Root();
@@ -24,10 +24,11 @@ namespace Dlight
             {
                 TranslateManager trans = new TranslateManager(fileName.Replace(".dl", ""));
                 trans.TranslateTo(root, import);
+                trans.Save();
             }
         }
 
-        static Element CompileFile(string fileName)
+        public static Element CompileFile(string fileName)
         {
             string text = File.ReadAllText(fileName);
             List<Token> tokenList, errorToken;

@@ -111,6 +111,14 @@ namespace CliTranslate
             Assembly.Save(FileName);
         }
 
+        public void Run()
+        {
+            var entry = Assembly.EntryPoint;
+            var type = Assembly.GetType(entry.DeclaringType.FullName);
+            entry = type.GetMethod(entry.Name, BindingFlags.NonPublic | BindingFlags.Static);
+            entry.Invoke(null, null);
+        }
+
         internal void SetEntryPoint(MethodBuilder entry)
         {
             Assembly.SetEntryPoint(entry);

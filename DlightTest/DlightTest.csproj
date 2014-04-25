@@ -61,6 +61,8 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -71,6 +73,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="CompileTest.cs" />
+    <Compile Include="TestCaseReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -82,13 +86,24 @@
       <Project>{fe6f3528-b4de-4cc9-9554-fbe2b1213041}</Project>
       <Name>CliTranslate</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Dlight\Dlight.csproj">
+      <Project>{76c1b982-7fdc-4223-9e70-59798dd42c73}</Project>
+      <Name>Dlight</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SyntacticAnalysis\SyntacticAnalysis.csproj">
       <Project>{4e625555-55ad-4c76-b124-0e056d055f40}</Project>
       <Name>SyntacticAnalysis</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CompileTestSchema.xsd" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BasicTest.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
