@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      echo 10
+    </code>
+    <output>
+      10
+    </output>
+  </case>
+  
+  <case>
+    <code>
+      echo 10 + 10
+    </code>
+    <output>
+      20
+    </output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      echo abc
+    </code>
+  </case>
+  
+  <case ignore="true">
+    <code>
+      echo { abc }
+    </code>
+  </case>
+</compile-test>

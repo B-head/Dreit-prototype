@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="CompileTestSchema.xsd" elementFormDefault="qualified" xmlns:i="CompileTestSchema.xsd" xmlns="http://www.w3.org/2001/XMLSchema">
+  <element name="compile-test">
+    <complexType>
+      <sequence minOccurs="0" maxOccurs="unbounded">
+        <element ref="i:case"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="case">
+    <complexType>
+      <sequence>
+        <element name="code" type="string"/>
+        <element name="input" type="string" minOccurs="0"/>
+        <element name="output" type="string" minOccurs="0"/>
+      </sequence>
+      <attribute name="ignore" type="boolean"/>
+    </complexType>
+  </element>
+</schema>
