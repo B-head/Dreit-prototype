@@ -94,7 +94,7 @@ namespace AbstractSyntax
                     int temp = ToNum(v);
                     if (temp >= b)
                     {
-                        CompileError("数値リテラルに使用できない文字が含まれています。");
+                        CompileError("number-parse-error");
                         return 0;
                     }
                     number += temp;

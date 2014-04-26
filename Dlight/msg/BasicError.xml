@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-message xmlns="CompileMessage.xsd">
+  <msg key="null-scope-name">スコープID:{Id} の識別子は空です。</msg>
+  <msg key="invalid-token">文字列 {Text} は有効なトークンではありません。</msg>
+  <msg key="error-token">トークン {Text} をこの位置に書くことは出来ません。</msg>
+  <msg key="not-datatype-inherit">継承元はクラスである必要があります。</msg>
+  <msg key="disagree-return-type">返り値の型が合っていません。</msg>
+  <msg key="unmatch-overroad">引数型に合うオーバーロードが定義されていません。</msg>
+  <msg key="impossible-calculate">{Left.DataType.Name} 型と {Right.DataType.Name} 型を演算することは出来ません。</msg>
+  <msg key="require-expression">式が必要です。</msg>
+  <msg key="undefined-pragma">プラグマ @@{Value} は定義されていません。</msg>
+  <msg key="undefined-identifier">識別子 {Value} は宣言されていません。</msg>
+  <msg key="not-collide-assign">式中では割り当て演算子の向きが揃っている必要があります。</msg>
+  <msg key="not-assignable">割り当て可能な式である必要があります。</msg>
+  <msg key="number-parse-error">数値リテラルに使用できない文字が含まれています。</msg>
+</compile-message>

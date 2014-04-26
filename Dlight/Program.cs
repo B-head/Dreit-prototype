@@ -20,12 +20,13 @@ namespace Dlight
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(root.CompileResult());
-            if (root.ErrorCount == 0)
+            if (root.ErrorCount > 0)
             {
-                TranslateManager trans = new TranslateManager(fileName.Replace(".dl", ""));
-                trans.TranslateTo(root, import);
-                trans.Save();
+                return;
             }
+            TranslateManager trans = new TranslateManager(fileName.Replace(".dl", ""));
+            trans.TranslateTo(root, import);
+            trans.Save();
         }
 
         public static Element CompileFile(string fileName)

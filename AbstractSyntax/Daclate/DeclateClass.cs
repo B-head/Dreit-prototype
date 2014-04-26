@@ -100,7 +100,7 @@ namespace AbstractSyntax.Daclate
                 }
                 else
                 {
-                    CompileError("継承元はクラスである必要があります。");
+                    CompileError("not-datatype-inherit");
                 }
             }
         }

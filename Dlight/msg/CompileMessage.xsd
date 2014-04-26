@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="CompileMessage.xsd" elementFormDefault="qualified" xmlns:i="CompileMessage.xsd" xmlns="http://www.w3.org/2001/XMLSchema">
+  <element name="compile-message">
+    <complexType>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element ref="i:msg"/>
+      </choice>
+    </complexType>
+  </element>
+
+  <element name="msg">
+    <complexType>
+      <simpleContent>
+        <extension base="string">
+          <attribute name="key" type="ID" use="required"/>
+        </extension>
+      </simpleContent>
+    </complexType>
+  </element>
+</schema>

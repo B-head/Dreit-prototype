@@ -37,7 +37,7 @@ namespace AbstractSyntax.Expression
             {
                 if (v == null)
                 {
-                    CompileError("式が必要です。");
+                    CompileError("require-expression");
                     continue;
                 }
             }

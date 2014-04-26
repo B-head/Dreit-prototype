@@ -67,7 +67,7 @@ namespace AbstractSyntax.Expression
             CallScope = Access.Reference.TypeSelect(ArgumentType);
             if(CallScope == null)
             {
-                CompileError("引数型に合うオーバーロードが定義されていません。");
+                CompileError("unmatch-overroad");
             }
             /*var ret = CallScope.TypeMatch(ArgumentType);
             switch(ret)

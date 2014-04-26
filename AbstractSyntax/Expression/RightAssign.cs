@@ -17,7 +17,7 @@ namespace AbstractSyntax.Expression
         {
             if (Right != null && !Right.IsAssignable)
             {
-                CompileError("割り当て可能な式である必要があります。");
+                CompileError("not-assignable");
             }
             base.CheckSyntax();
         }

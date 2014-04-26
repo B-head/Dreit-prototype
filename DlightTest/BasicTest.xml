@@ -18,13 +18,13 @@
     </output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       echo abc
     </code>
   </case>
   
-  <case ignore="true">
+  <case>
     <code>
       echo { abc }
     </code>

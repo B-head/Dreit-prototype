@@ -133,15 +133,12 @@ namespace AbstractSyntax
         {
             if (Name == null || Name == string.Empty)
             {
-                if (!(this is Root))
-                {
-                    CompileError(this.GetType().Name + "(ID" + Id + ") の識別子は空です。");
-                }
+                CompileError("null-scope-name");
             }
-            else if (!(this is Root) && false)
+            /*else if (false)
             {
                 CompileError("識別子 " + Name + " は既に宣言されています。");
-            }
+            }*/
             base.CheckSyntax();
         }
     }

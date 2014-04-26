@@ -2,9 +2,9 @@
 <schema targetNamespace="CompileTestSchema.xsd" elementFormDefault="qualified" xmlns:i="CompileTestSchema.xsd" xmlns="http://www.w3.org/2001/XMLSchema">
   <element name="compile-test">
     <complexType>
-      <sequence minOccurs="0" maxOccurs="unbounded">
+      <choice minOccurs="0" maxOccurs="unbounded">
         <element ref="i:case"/>
-      </sequence>
+      </choice>
     </complexType>
   </element>
 

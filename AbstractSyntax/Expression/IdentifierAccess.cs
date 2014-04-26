@@ -52,7 +52,7 @@ namespace AbstractSyntax.Expression
                 var temp = Root.GetPragma(Value);
                 if (temp == null)
                 {
-                    CompileError("プラグマ @@" + Value + " は定義されていません。");
+                    CompileError("undefined-pragma");
                 }
                 else
                 {
@@ -64,7 +64,7 @@ namespace AbstractSyntax.Expression
                 var temp = scope.NameResolution(Value);
                 if (temp == null)
                 {
-                    CompileError("識別子 " + Value + " は宣言されていません。");
+                    CompileError("undefined-identifier");
                 }
                 else
                 {

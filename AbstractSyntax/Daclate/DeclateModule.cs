@@ -46,13 +46,14 @@ namespace AbstractSyntax.Daclate
         {
             foreach (Token v in ErrorToken)
             {
+                //todo エラーオブジェクトにTokenを渡す必要がある。
                 if (v.Type == TokenType.OtherString)
                 {
-                    CompileError(": 文字列 " + v.Text + " は有効なトークンではありません。", v.Position);
+                    CompileError("invalid-token", v.Position);
                 }
                 else
                 {
-                    CompileError(": トークン " + v.Text + " をこの位置に書くことは出来ません。", v.Position);
+                    CompileError("error-token", v.Position);
                 }
             }
             base.CheckSyntax();

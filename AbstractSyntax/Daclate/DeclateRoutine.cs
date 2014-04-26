@@ -106,7 +106,7 @@ namespace AbstractSyntax.Daclate
                 }
                 else if(ReturnType != ret.DataType)
                 {
-                    CompileError("返り値の型が合っていません。");
+                    CompileError("disagree-return-type");
                 }
             }
             else
@@ -120,7 +120,7 @@ namespace AbstractSyntax.Daclate
                 {
                     if (ReturnType != v.DataType)
                     {
-                        CompileError("返り値の型が合っていません。");
+                        CompileError("disagree-return-type");
                     }
                 }
             }

@@ -92,14 +92,9 @@ namespace AbstractSyntax
             return builder.ToString();
         }
 
-        private string ErrorInfo()
-        {
-            return Position + ": ";
-        }
-
         protected void CompileError(string message)
         {
-            Root.OutputError("Error: " + ErrorInfo() + message);
+            CompileError(message, Position);
         }
 
         protected void CompileError(string message, TextPosition position)
@@ -109,7 +104,7 @@ namespace AbstractSyntax
 
         protected void CompileWarning(string message)
         {
-            Root.OutputWarning("Warning: " + ErrorInfo() + message);
+            Root.OutputWarning("Warning: " + Position + ": " + message);
         }
 
         public override string ToString()

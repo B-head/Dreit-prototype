@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="msg\CompileMessage.xsd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\primitive.dl">
@@ -71,6 +72,9 @@
       <Project>{4e625555-55ad-4c76-b124-0e056d055f40}</Project>
       <Name>SyntacticAnalysis</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="msg\BasicError.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

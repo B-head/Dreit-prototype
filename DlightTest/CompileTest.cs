@@ -14,8 +14,8 @@ namespace DlightTest
     {
         private string primitive;
 
-        [SetUp]
-        public void SetUp()
+        [TestFixtureSetUp]
+        public void TestFixtureSetUp()
         {
             primitive = File.ReadAllText("lib/primitive.dl");
         }
@@ -28,30 +28,29 @@ namespace DlightTest
             root.Append(CompileText("primitive", primitive));
             root.Append(CompileText("test", data.Code));
             root.SemanticAnalysis();
-            if (root.ErrorCount == 0)
+            if (root.ErrorCount > 0)
             {
-                TranslateManager trans = new TranslateManager("test");
-                trans.TranslateTo(root, import);
-                trans.Save();
-                var process = MakeProcess("test.exe");
+                Console.WriteLine(root.CompileResult());
+                Assert.Fail("Compile error");
+            }
+            TranslateManager trans = new TranslateManager("test");
+            trans.TranslateTo(root, import);
+            trans.Save();
+            using (var process = MakeProcess("test.exe"))
+            {
                 process.Start();
                 process.StandardInput.WriteLine(data.Input);
-                if (!process.WaitForExit(1000))
+                if (process.WaitForExit(1000))
+                {
+                    var output = process.StandardOutput.ReadToEnd().Trim();
+                    Assert.That(output, Is.EqualTo(data.Output));
+                }
+                else
                 {
                     process.Kill();
                     process.WaitForExit();
                     Assert.Fail("Timeout execution");
                 }
-                else
-                {
-                    var output = process.StandardOutput.ReadToEnd().Trim();
-                    Assert.That(output, Is.EqualTo(data.Output));
-                }
-            }
-            else
-            {
-                Console.WriteLine(root.CompileResult());
-                Assert.Fail("Compile error");
             }
         }
 

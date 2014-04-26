@@ -22,7 +22,7 @@ namespace AbstractSyntax.Expression
             DataType r = Right.DataType;
             if (l != r)
             {
-                CompileError(l + " 型と " + r + " 型を演算することは出来ません。");
+                CompileError("impossible-calculate");
             }
             string callName = string.Empty;
             switch(Operator)

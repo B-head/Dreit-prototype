@@ -11,7 +11,7 @@ namespace DlightTest
 
         public TestCaseReader()
         {
-            root = XElement.Load("BasicTest.xml");
+            root = XElement.Load("BasicTest.xml", LoadOptions.None);
         }
 
         public IEnumerator<TestCaseData> GetEnumerator()
