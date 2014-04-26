@@ -9,16 +9,16 @@ namespace AbstractSyntax
     [Serializable]
     public class Root : NameSpace
     {
-        public int ErrorCount { get; private set; }
-        public int WarningCount { get; private set; }
         private Dictionary<string, OverLoadScope> PragmaDictionary;
         private List<Scope> PragmaList;
+        public CompileInfoManager CompileInfo { get; private set; }
 
         public Root()
         {
             Name = "global";
             PragmaList = new List<Scope>();
             PragmaDictionary = new Dictionary<string, OverLoadScope>();
+            CompileInfo = new CompileInfoManager();
             CreatePragma();
         }
 
@@ -83,23 +83,6 @@ namespace AbstractSyntax
             AppendPragma("Natural64", new PrimitivePragma(PrimitivePragmaType.Natural64));
             AppendPragma("Binary32", new PrimitivePragma(PrimitivePragmaType.Binary32));
             AppendPragma("Binary64", new PrimitivePragma(PrimitivePragmaType.Binary64));
-        }
-
-        internal void OutputError(string message)
-        {
-            Console.WriteLine(message);
-            ErrorCount++;
-        }
-
-        internal void OutputWarning(string message)
-        {
-            Console.WriteLine(message);
-            WarningCount++;
-        }
-
-        public string CompileResult()
-        {
-            return "Error = " + ErrorCount + ", Warning = " + WarningCount;
         }
     }
 }

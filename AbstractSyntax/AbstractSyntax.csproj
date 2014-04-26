@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AliasDirective.cs" />
+    <Compile Include="CompileInfoManager.cs" />
     <Compile Include="DataType.cs" />
     <Compile Include="OverLoadScope.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
@@ -78,7 +79,6 @@
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
-    <Compile Include="TextPosition.cs" />
     <Compile Include="ThisScope.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TupleList.cs" />

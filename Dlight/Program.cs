@@ -19,8 +19,8 @@ namespace Dlight
             root.Append(CompileFile("lib/primitive.dl"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
-            Console.WriteLine(root.CompileResult());
-            if (root.ErrorCount > 0)
+            Console.WriteLine(root.CompileInfo);
+            if (root.CompileInfo.ErrorCount > 0)
             {
                 return;
             }

@@ -49,14 +49,26 @@ namespace AbstractSyntax.Daclate
                 //todo エラーオブジェクトにTokenを渡す必要がある。
                 if (v.Type == TokenType.OtherString)
                 {
-                    CompileError("invalid-token", v.Position);
+                    CompileError("invalid-token", v);
                 }
                 else
                 {
-                    CompileError("error-token", v.Position);
+                    CompileError("error-token", v);
                 }
             }
             base.CheckSyntax();
+        }
+
+        private void CompileError(string key, Token token)
+        {
+            CompileInfo info = new CompileInfo
+            {
+                Type = CompileInfoType.Error,
+                Key = key,
+                Position = token.Position,
+                Target = token,
+            };
+            Root.CompileInfo.Append(info);
         }
     }
 }

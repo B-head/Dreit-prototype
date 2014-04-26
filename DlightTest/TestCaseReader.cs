@@ -16,7 +16,7 @@ namespace DlightTest
 
         public IEnumerator<TestCaseData> GetEnumerator()
         {
-            int count = 0;
+            //int count = 0;
             XNamespace ns = "CompileTestSchema.xsd";
             foreach (var e in root.Elements(ns + "case"))
             {

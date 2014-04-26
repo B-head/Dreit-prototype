@@ -92,19 +92,31 @@ namespace AbstractSyntax
             return builder.ToString();
         }
 
-        protected void CompileError(string message)
+        private void PostCompileInfo(string key, CompileInfoType type)
         {
-            CompileError(message, Position);
+            CompileInfo info = new CompileInfo
+            {
+                Type = type,
+                Key = key,
+                Position = Position,
+                Target = this,
+            };
+            Root.CompileInfo.Append(info);
         }
 
-        protected void CompileError(string message, TextPosition position)
+        protected void CompileMessage(string key)
         {
-            Root.OutputError("Error: " + position + ": " + message);
+            PostCompileInfo(key, CompileInfoType.Message);
         }
 
-        protected void CompileWarning(string message)
+        protected void CompileError(string key)
         {
-            Root.OutputWarning("Warning: " + Position + ": " + message);
+            PostCompileInfo(key, CompileInfoType.Error);
+        }
+
+        protected void CompileWarning(string key)
+        {
+            PostCompileInfo(key, CompileInfoType.Warning);
         }
 
         public override string ToString()
