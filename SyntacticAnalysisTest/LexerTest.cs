@@ -1,8 +1,6 @@
 ﻿using AbstractSyntax;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using SyntacticAnalysis;
-using System;
 using System.Collections.Generic;
 using TestUtility;
 

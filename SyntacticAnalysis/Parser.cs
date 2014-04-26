@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
+﻿using AbstractSyntax;
 using AbstractSyntax.Daclate;
 using AbstractSyntax.Expression;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SyntacticAnalysis
 {

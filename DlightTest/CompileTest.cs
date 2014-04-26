@@ -2,10 +2,10 @@
 using CliTranslate;
 using NUnit.Framework;
 using SyntacticAnalysis;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System;
 
 namespace DlightTest
 {
