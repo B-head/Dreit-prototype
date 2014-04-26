@@ -28,9 +28,9 @@ namespace DlightTest
             root.Append(CompileText("primitive", primitive));
             root.Append(CompileText("test", data.Code));
             root.SemanticAnalysis();
-            if (root.CompileInfo.ErrorCount > 0)
+            if (root.MessageManager.ErrorCount > 0)
             {
-                Console.WriteLine(root.CompileInfo);
+                Console.WriteLine(root.MessageManager);
                 Assert.Fail("Compile error");
             }
             TranslateManager trans = new TranslateManager("test");

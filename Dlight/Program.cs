@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Dlight
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -19,8 +19,8 @@ namespace Dlight
             root.Append(CompileFile("lib/primitive.dl"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
-            Console.WriteLine(root.CompileInfo);
-            if (root.CompileInfo.ErrorCount > 0)
+            Console.WriteLine(CompileMessageBuilder.Build(root.MessageManager));
+            if (root.MessageManager.ErrorCount > 0)
             {
                 return;
             }

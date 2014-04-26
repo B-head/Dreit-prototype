@@ -61,14 +61,14 @@ namespace AbstractSyntax.Daclate
 
         private void CompileError(string key, Token token)
         {
-            CompileInfo info = new CompileInfo
+            CompileMessage info = new CompileMessage
             {
-                Type = CompileInfoType.Error,
+                Type = CompileMessageType.Error,
                 Key = key,
                 Position = token.Position,
                 Target = token,
             };
-            Root.CompileInfo.Append(info);
+            Root.MessageManager.Append(info);
         }
     }
 }

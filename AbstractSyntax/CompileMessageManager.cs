@@ -6,35 +6,35 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
-    public class CompileInfoManager : IReadOnlyList<CompileInfo>
+    public class CompileMessageManager : IReadOnlyList<CompileMessage>
     {
-        private List<CompileInfo> List;
-        public int MessageCount { get; private set; }
+        private List<CompileMessage> List;
+        public int InfoCount { get; private set; }
         public int ErrorCount { get; private set; }
         public int WarningCount { get; private set; }
 
-        public CompileInfoManager()
+        public CompileMessageManager()
         {
-            List = new List<CompileInfo>();
+            List = new List<CompileMessage>();
         }
 
-        public void Append(CompileInfo info)
+        public void Append(CompileMessage info)
         {
             switch(info.Type)
             {
-                case CompileInfoType.Message: ++MessageCount; break;
-                case CompileInfoType.Error: ++ErrorCount; break;
-                case CompileInfoType.Warning: ++WarningCount; break;
+                case CompileMessageType.Info: ++InfoCount; break;
+                case CompileMessageType.Error: ++ErrorCount; break;
+                case CompileMessageType.Warning: ++WarningCount; break;
             }
             List.Add(info);
         }
 
         public override string ToString()
         {
-            return "Error = " + ErrorCount + ", Warning = " + WarningCount + ", Message = " + MessageCount;
+            return "Error = " + ErrorCount + ", Warning = " + WarningCount + ", Information = " + InfoCount;
         }
 
-        public CompileInfo this[int index]
+        public CompileMessage this[int index]
         {
             get { return List[index]; }
         }
@@ -44,7 +44,7 @@ namespace AbstractSyntax
             get { return List.Count; }
         }
 
-        public IEnumerator<CompileInfo> GetEnumerator()
+        public IEnumerator<CompileMessage> GetEnumerator()
         {
             return List.GetEnumerator();
         }
@@ -55,17 +55,17 @@ namespace AbstractSyntax
         }
     }
 
-    public struct CompileInfo
+    public struct CompileMessage
     {
-        public CompileInfoType Type { get; set; } 
+        public CompileMessageType Type { get; set; } 
         public string Key { get; set; }
         public TextPosition Position { get; set; }
         public object Target { get; set; }
     }
 
-    public enum CompileInfoType
+    public enum CompileMessageType
     {
-        Message,
+        Info,
         Error,
         Warning,
     }

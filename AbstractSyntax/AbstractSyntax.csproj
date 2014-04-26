@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AliasDirective.cs" />
-    <Compile Include="CompileInfoManager.cs" />
+    <Compile Include="CompileMessageManager.cs" />
     <Compile Include="DataType.cs" />
     <Compile Include="OverLoadScope.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />

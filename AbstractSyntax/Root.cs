@@ -11,14 +11,14 @@ namespace AbstractSyntax
     {
         private Dictionary<string, OverLoadScope> PragmaDictionary;
         private List<Scope> PragmaList;
-        public CompileInfoManager CompileInfo { get; private set; }
+        public CompileMessageManager MessageManager { get; private set; }
 
         public Root()
         {
             Name = "global";
             PragmaList = new List<Scope>();
             PragmaDictionary = new Dictionary<string, OverLoadScope>();
-            CompileInfo = new CompileInfoManager();
+            MessageManager = new CompileMessageManager();
             CreatePragma();
         }
 
