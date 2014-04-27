@@ -3,7 +3,6 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace DlightTest
@@ -39,17 +38,18 @@ namespace DlightTest
                 var wc =AppendMessage(message, e, "warning", CompileMessageType.Warning);
                 var data = new TestData
                 {
-                    Name = category + "-" + ((string)e.Attribute("name") ?? count.ToString()),
                     Category = category,
+                    Name = category + "-" + ((string)e.Attribute("name") ?? count.ToString()),
                     Ignore = (bool?)e.Attribute("ignore") ?? false,
                     Explicit = (bool?)e.Attribute("explicit") ?? false,
-                    Code = CodeNormalize(e.Element(ns + "code")),
+                    NoExecute = (bool?)e.Attribute("no-execute") ?? false,
+                    Code = TestData.CodeNormalize((string)e.Element(ns + "code")),
                     Message = message,
                     InfoCount = ic,
                     ErrorCount = ec,
                     WarningCount = wc,
-                    Input = CodeNormalize(e.Element(ns + "input")),
-                    Output = CodeNormalize(e.Element(ns + "output")),
+                    Input = TestData.CodeNormalize((string)e.Element(ns + "input")),
+                    Output = TestData.CodeNormalize((string)e.Element(ns + "output")),
                 };
                 testData.Add(data);
             }
@@ -69,16 +69,6 @@ namespace DlightTest
                 list.Add(m);
             }
             return count;
-        }
-
-        private static string CodeNormalize(XElement element)
-        {
-            if (element == null)
-            {
-                return null;
-            }
-            var temp = element.Value.Trim();
-            return Regex.Replace(temp, @"\s+", " ");
         }
 
         public IEnumerator<TestCaseData> GetEnumerator()

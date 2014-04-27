@@ -60,6 +60,7 @@ namespace CliTranslate
             ChildSpreadTranslate(root, Root);
             EnumSpreadTranslate();
             Translate(root, Root);
+            Root.BuildCode();
         }
 
         public void Save()

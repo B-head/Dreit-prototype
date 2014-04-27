@@ -23,9 +23,9 @@ namespace CliTranslate
             Root.RegisterBuilder(path, Method);
         }
 
-        public override void Save()
+        public override void BuildCode()
         {
-            base.Save();
+            base.BuildCode();
             if (Lexical != null)
             {
                 Lexical.CreateType();

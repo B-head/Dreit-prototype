@@ -26,9 +26,9 @@ namespace CliTranslate
             Root.SetEntryPoint(EntryContext);
         }
 
-        public override void Save()
+        public override void BuildCode()
         {
-            base.Save();
+            base.BuildCode();
             GlobalField.CreateType();
         }
 

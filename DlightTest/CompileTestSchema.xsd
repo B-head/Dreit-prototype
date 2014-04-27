@@ -23,6 +23,7 @@
       <attribute name="name" type="NCName"/>
       <attribute name="ignore" type="boolean"/>
       <attribute name="explicit" type="boolean"/>
+      <attribute name="no-execute" type="boolean"/>
     </complexType>
   </element>
 </schema>

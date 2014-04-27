@@ -1,6 +1,5 @@
 ﻿using AbstractSyntax;
 using CliTranslate;
-using Dlight;
 using NUnit.Framework;
 using SyntacticAnalysis;
 using System;
@@ -36,6 +35,10 @@ namespace DlightTest
                 Assert.That(data.ErrorCount, Is.Not.EqualTo(0), "Compile error");
                 return;
             }
+            if(data.NoExecute)
+            {
+                return;
+            }
             TranslateManager trans = new TranslateManager(data.Name);
             trans.TranslateTo(root, import);
             trans.Save();
@@ -45,7 +48,7 @@ namespace DlightTest
                 process.StandardInput.WriteLine(data.Input);
                 if (process.WaitForExit(1000))
                 {
-                    var output = process.StandardOutput.ReadToEnd().Trim();
+                    var output = TestData.CodeNormalize(process.StandardOutput.ReadToEnd());
                     Assert.That(output, Is.EqualTo(data.Output));
                 }
                 else
@@ -77,19 +80,6 @@ namespace DlightTest
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
             return process;
-        }
-
-        class CompileMessageEqualityComparer : EqualityComparer<CompileMessage>
-        {
-            public override bool Equals(CompileMessage x, CompileMessage y)
-            {
-                return x.Key == y.Key && x.Type == y.Type;
-            }
-
-            public override int GetHashCode(CompileMessage obj)
-            {
-                return obj.GetHashCode();
-            }
         }
     }
 }

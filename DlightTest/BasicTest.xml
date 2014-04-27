@@ -25,7 +25,7 @@
     <error>undefined-identifier</error>
   </case>
   
-  <case>
+  <case no-execute="true">
     <code>
       echo { abc }
     </code>

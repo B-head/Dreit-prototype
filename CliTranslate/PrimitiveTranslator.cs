@@ -47,9 +47,9 @@ namespace CliTranslate
             }
         }
 
-        public override void Save()
+        public override void BuildCode()
         {
-            base.Save();
+            base.BuildCode();
             Class.CreateType();
         }
 

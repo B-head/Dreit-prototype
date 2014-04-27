@@ -28,9 +28,9 @@ namespace CliTranslate
             CreateConstructor(path);
         }
 
-        public override void Save()
+        public override void BuildCode()
         {
-            base.Save();
+            base.BuildCode();
             CtorGenerator.Emit(OpCodes.Ret);
             Class.CreateType();
         }

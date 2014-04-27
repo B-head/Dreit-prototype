@@ -64,11 +64,11 @@ namespace CliTranslate
             child.Parent = this;
         }
 
-        public virtual void Save()
+        public virtual void BuildCode()
         {
             foreach (var v in _Child)
             {
-                v.Save();
+                v.BuildCode();
             }
         }
 

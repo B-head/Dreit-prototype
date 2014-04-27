@@ -104,10 +104,14 @@ namespace CliTranslate
             return new ModuleTranslator(path, this, Module);
         }
 
-        public override void Save()
+        public override void BuildCode()
         {
-            base.Save();
+            base.BuildCode();
             Module.CreateGlobalFunctions();
+        }
+
+        public void Save()
+        {
             Assembly.Save(FileName);
         }
 

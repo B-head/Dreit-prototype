@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
+    [Serializable]
     public class CompileMessageManager : IReadOnlyList<CompileMessage>
     {
         private List<CompileMessage> List;
@@ -55,6 +56,7 @@ namespace AbstractSyntax
         }
     }
 
+    [Serializable]
     public struct CompileMessage
     {
         public CompileMessageType Type { get; set; } 
