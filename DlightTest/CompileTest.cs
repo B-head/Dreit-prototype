@@ -49,9 +49,14 @@ namespace DlightTest
                         Console.WriteLine(error);
                     }
                     object obj = formatter.Deserialize(istream);
-                    if (obj is Exception)
+                    if (obj is AssertionException)
                     {
-                        throw new AggregateException("test failed", (Exception)obj);
+                        var e = (AssertionException)obj;
+                        throw new AssertionException(e.Message, e);
+                    }
+                    else if (obj is Exception)
+                    {
+                        throw new AggregateException("test error", (Exception)obj);
                     }
                     Console.WriteLine(obj);
                     if (data.Output != null)

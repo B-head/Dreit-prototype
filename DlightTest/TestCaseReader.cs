@@ -63,7 +63,7 @@ namespace DlightTest
                 ++count;
                 var m = new CompileMessage
                 {
-                    Key = (string)e,
+                    Key = (string)e.Attribute("key"),
                     Type = type,
                 };
                 list.Add(m);

@@ -22,7 +22,14 @@
     <code>
       echo abc
     </code>
-    <error>undefined-identifier</error>
+    <error key="undefined-identifier"/>
+  </case>
+
+  <case>
+    <code>
+      echo 1 + 2.0
+    </code>
+    <error key="impossible-calculate"/>
   </case>
   
   <case no-execute="true">

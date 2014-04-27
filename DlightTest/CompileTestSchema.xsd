@@ -13,9 +13,9 @@
       <sequence>
         <element name="code" type="string"/>
         <choice minOccurs="0" maxOccurs="unbounded">
-          <element name="info" type="NCName"/>
-          <element name="error" type="NCName"/>
-          <element name="warning" type="NCName"/>
+          <element name="info" type="i:message"/>
+          <element name="error" type="i:message"/>
+          <element name="warning" type="i:message"/>
         </choice>
         <element name="input" type="string" minOccurs="0"/>
         <element name="output" type="string" minOccurs="0"/>
@@ -26,4 +26,8 @@
       <attribute name="no-execute" type="boolean"/>
     </complexType>
   </element>
+
+  <complexType name="message">
+    <attribute name="key" type="NCName"/>
+  </complexType>
 </schema>
