@@ -51,7 +51,7 @@ namespace AbstractSyntax
         public static string Build(CompileMessage message, bool errorThrow = false)
         {
             var builder = new StringBuilder();
-            builder.Append(GetPrefix(message.Type)).Append(": ");
+            builder.Append(message.GetPrefix()).Append(": ");
             builder.Append(message.Position).Append(": ");
             var msg = messageBase[message.Key];
             var current = 0;
@@ -76,17 +76,6 @@ namespace AbstractSyntax
             }
             builder.Append(msg.Substring(current, msg.Length - current));
             return builder.ToString();
-        }
-
-        private static string GetPrefix(CompileMessageType type)
-        {
-            switch (type)
-            {
-                case CompileMessageType.Info: return "Info";
-                case CompileMessageType.Error: return "Error";
-                case CompileMessageType.Warning: return "Warning";
-            }
-            throw new ArgumentException();
         }
 
         private static string GetValue(string exp, object target)

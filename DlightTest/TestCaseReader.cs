@@ -34,17 +34,20 @@ namespace DlightTest
             {
                 ++count;
                 var message = new List<CompileMessage>();
-                AppendMessage(message, e, "info", CompileMessageType.Info);
-                AppendMessage(message, e, "error", CompileMessageType.Error);
-                AppendMessage(message, e, "warning", CompileMessageType.Warning);
+                var ic = AppendMessage(message, e, "info", CompileMessageType.Info);
+                var ec = AppendMessage(message, e, "error", CompileMessageType.Error);
+                var wc =AppendMessage(message, e, "warning", CompileMessageType.Warning);
                 var data = new TestData
                 {
-                    Name = (string)e.Attribute("name") ?? count.ToString(),
+                    Name = category + "-" + ((string)e.Attribute("name") ?? count.ToString()),
                     Category = category,
                     Ignore = (bool?)e.Attribute("ignore") ?? false,
                     Explicit = (bool?)e.Attribute("explicit") ?? false,
                     Code = CodeNormalize(e.Element(ns + "code")),
                     Message = message,
+                    InfoCount = ic,
+                    ErrorCount = ec,
+                    WarningCount = wc,
                     Input = CodeNormalize(e.Element(ns + "input")),
                     Output = CodeNormalize(e.Element(ns + "output")),
                 };
@@ -52,10 +55,12 @@ namespace DlightTest
             }
         }
 
-        private static void AppendMessage(List<CompileMessage> list, XElement element, string name, CompileMessageType type)
+        private static int AppendMessage(List<CompileMessage> list, XElement element, string name, CompileMessageType type)
         {
+            int count = 0;
             foreach(var e in element.Elements(ns + name))
             {
+                ++count;
                 var m = new CompileMessage
                 {
                     Key = (string)e,
@@ -63,6 +68,7 @@ namespace DlightTest
                 };
                 list.Add(m);
             }
+            return count;
         }
 
         private static string CodeNormalize(XElement element)
@@ -80,7 +86,7 @@ namespace DlightTest
             foreach (var data in testData)
             {
                 var test = new TestCaseData(data);
-                test.SetName(data.Category + "-" + data.Name + "(" + data.Code + ")");
+                test.SetName(data.Name + "(" + data.Code + ")");
                 test.SetCategory(data.Category);
                 if (data.Ignore)
                 {

@@ -61,6 +61,22 @@ namespace AbstractSyntax
         public string Key { get; set; }
         public TextPosition Position { get; set; }
         public object Target { get; set; }
+
+        public string GetPrefix()
+        {
+            switch (Type)
+            {
+                case CompileMessageType.Info: return "Info";
+                case CompileMessageType.Error: return "Error";
+                case CompileMessageType.Warning: return "Warning";
+            }
+            throw new ArgumentException();
+        }
+
+        public override string ToString()
+        {
+            return GetPrefix() + ": " + Key;
+        }
     }
 
     public enum CompileMessageType

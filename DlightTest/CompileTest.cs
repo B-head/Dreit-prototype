@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax;
 using CliTranslate;
+using Dlight;
 using NUnit.Framework;
 using SyntacticAnalysis;
 using System;
@@ -12,10 +13,9 @@ namespace DlightTest
     [TestFixture]
     class CompileTest
     {
-        private string primitive;
+        private static string primitive;
 
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
+        static CompileTest()
         {
             primitive = File.ReadAllText("lib/primitive.dl");
         }
@@ -26,17 +26,20 @@ namespace DlightTest
             Root root = new Root();
             ImportManager import = new ImportManager(root);
             root.Append(CompileText("primitive", primitive));
-            root.Append(CompileText("test", data.Code));
+            root.Append(CompileText(data.Name, data.Code));
             root.SemanticAnalysis();
+            Assert.That(root.MessageManager, Is.EquivalentTo(data.Message).Using<CompileMessage>(new CompileMessageEqualityComparer()));
+            var message = CompileMessageBuilder.Build(root.MessageManager);
             if (root.MessageManager.ErrorCount > 0)
             {
-                Console.WriteLine(root.MessageManager);
-                Assert.Fail("Compile error");
+                Console.WriteLine(message);
+                Assert.That(data.ErrorCount, Is.Not.EqualTo(0), "Compile error");
+                return;
             }
-            TranslateManager trans = new TranslateManager("test");
+            TranslateManager trans = new TranslateManager(data.Name);
             trans.TranslateTo(root, import);
             trans.Save();
-            using (var process = MakeProcess("test.exe"))
+            using (var process = MakeProcess(data.Name + ".exe"))
             {
                 process.Start();
                 process.StandardInput.WriteLine(data.Input);
@@ -74,6 +77,19 @@ namespace DlightTest
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
             return process;
+        }
+
+        class CompileMessageEqualityComparer : EqualityComparer<CompileMessage>
+        {
+            public override bool Equals(CompileMessage x, CompileMessage y)
+            {
+                return x.Key == y.Key && x.Type == y.Type;
+            }
+
+            public override int GetHashCode(CompileMessage obj)
+            {
+                return obj.GetHashCode();
+            }
         }
     }
 }

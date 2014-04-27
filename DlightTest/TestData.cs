@@ -11,6 +11,9 @@ namespace DlightTest
         public bool Explicit { get; set; }
         public string Code { get; set; }
         public List<CompileMessage> Message { get; set; }
+        public int InfoCount { get; set; }
+        public int ErrorCount { get; set; }
+        public int WarningCount { get; set; }
         public string Input { get; set; }
         public string Output { get; set; }
 

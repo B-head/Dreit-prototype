@@ -22,6 +22,7 @@
     <code>
       echo abc
     </code>
+    <error>undefined-identifier</error>
   </case>
   
   <case>
