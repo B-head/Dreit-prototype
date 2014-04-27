@@ -103,6 +103,7 @@ namespace AbstractSyntax
         }
     }
 
+    [SerializableAttribute]
     public class CompileMessageBuildExcepsion : Exception
     {
         public string Exp { get; set; }

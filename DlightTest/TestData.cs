@@ -1,9 +1,11 @@
 ﻿using AbstractSyntax;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace DlightTest
 {
+    [Serializable]
     class TestData
     {
         public string Category { get; set; }
