@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<compile-message xmlns="CompileMessage.xsd">
+<compile-message xmlns="CompileMessageSchema.xsd">
   <msg key="null-scope-name">スコープID:{Id} の識別子は空です。</msg>
   <msg key="invalid-token">文字列 {Text} は有効なトークンではありません。</msg>
   <msg key="error-token">トークン {Text} をこの位置に書くことは出来ません。</msg>

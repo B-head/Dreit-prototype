@@ -11,12 +11,11 @@ namespace AbstractSyntax
     public static class CompileMessageBuilder
     {
         private static Dictionary<string, string> messageBase;
-        private static XNamespace ns;
+        private static readonly XNamespace ns = "CompileMessageSchema.xsd";
 
         static CompileMessageBuilder()
         {
             messageBase = new Dictionary<string, string>();
-            ns = "CompileMessage.xsd";
             foreach(var file in Directory.EnumerateFiles(@"./msg/", "*.xml"))
             {
                 var element = XElement.Load(file);
@@ -38,18 +37,18 @@ namespace AbstractSyntax
             }
         }
 
-        public static string Build(CompileMessageManager manager)
+        public static string Build(CompileMessageManager manager, bool errorThrow = false)
         {
             var builder = new StringBuilder();
             foreach(var v in manager)
             {
-                builder.AppendLine(Build(v));
+                builder.AppendLine(Build(v, errorThrow));
             }
             builder.Append(manager);
             return builder.ToString();
         }
 
-        public static string Build(CompileMessage message)
+        public static string Build(CompileMessage message, bool errorThrow = false)
         {
             var builder = new StringBuilder();
             builder.Append(GetPrefix(message.Type)).Append(": ");
@@ -61,7 +60,18 @@ namespace AbstractSyntax
             {
                 builder.Append(msg.Substring(current, match.Index - current));
                 current = match.Index + match.Length;
-                builder.Append(GetValue(match.Value.Trim('{', '}'), message.Target));
+                try
+                {
+                    builder.Append(GetValue(match.Value.Trim('{', '}').Trim(), message.Target));
+                }
+                catch(CompileMessageBuildExcepsion e)
+                {
+                    if(errorThrow)
+                    {
+                        throw;
+                    }
+                    builder.Append("<").Append(e).Append(">");
+                }
                 match = match.NextMatch();
             }
             builder.Append(msg.Substring(current, msg.Length - current));
@@ -76,7 +86,7 @@ namespace AbstractSyntax
                 case CompileMessageType.Error: return "Error";
                 case CompileMessageType.Warning: return "Warning";
             }
-            throw new Exception();
+            throw new ArgumentException();
         }
 
         private static string GetValue(string exp, object target)
@@ -104,7 +114,7 @@ namespace AbstractSyntax
         }
     }
 
-    public class CompileMessageBuildExcepsion : ApplicationException
+    public class CompileMessageBuildExcepsion : Exception
     {
         public string Exp { get; set; }
         public object Target { get; set; }
@@ -130,7 +140,7 @@ namespace AbstractSyntax
                 }
                 else
                 {
-                    builder.Append("<").Append(type.Name).Append(">");
+                    builder.Append("[").Append(type.Name).Append("]");
                 }
                 builder.Append(".").Append(s);
                 var prop = type.GetProperty(s, bf);
@@ -148,7 +158,7 @@ namespace AbstractSyntax
                 builder.Append(" is not found");
                 return builder.ToString();
             }
-            throw new Exception();
+            throw new ArgumentException();
         }
     }
 }

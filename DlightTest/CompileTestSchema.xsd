@@ -12,10 +12,17 @@
     <complexType>
       <sequence>
         <element name="code" type="string"/>
+        <choice minOccurs="0" maxOccurs="unbounded">
+          <element name="info" type="NCName"/>
+          <element name="error" type="NCName"/>
+          <element name="warning" type="NCName"/>
+        </choice>
         <element name="input" type="string" minOccurs="0"/>
         <element name="output" type="string" minOccurs="0"/>
       </sequence>
+      <attribute name="name" type="NCName"/>
       <attribute name="ignore" type="boolean"/>
+      <attribute name="explicit" type="boolean"/>
     </complexType>
   </element>
 </schema>

@@ -32,7 +32,7 @@ namespace AbstractSyntax.Expression
                 case TokenType.Multiply: callName = "*"; break;
                 case TokenType.Divide: callName = "/"; break;
                 case TokenType.Modulo: callName = "%"; break;
-                default: throw new Exception();
+                default: throw new InvalidOperationException();
             }
             var ol = l.NameResolution(callName);
             CallScope = ol.TypeSelect(new DataType[] { r }.ToList());
