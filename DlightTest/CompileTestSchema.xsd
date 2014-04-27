@@ -28,6 +28,6 @@
   </element>
 
   <complexType name="message">
-    <attribute name="key" type="NCName"/>
+    <attribute name="key" type="NCName" use="required"/>
   </complexType>
 </schema>

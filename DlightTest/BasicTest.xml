@@ -4,18 +4,37 @@
     <code>
       echo 10
     </code>
-    <output>
-      10
-    </output>
+    <output>10</output>
   </case>
   
   <case>
     <code>
       echo 10 + 10
     </code>
-    <output>
-      20
-    </output>
+    <output>20</output>
+  </case>
+
+  <case>
+    <code>
+      echo 1 + 2 * 3
+    </code>
+    <output>7</output>
+  </case>
+
+  <case>
+    <code>
+      var e := 10
+      var f := 20.5
+      echo e + f
+    </code>
+    <output>30.5</output>
+  </case>
+
+  <case>
+    <code>
+      echo 1 + 2.0
+    </code>
+    <output>3</output>
   </case>
 
   <case>
@@ -24,17 +43,100 @@
     </code>
     <error key="undefined-identifier"/>
   </case>
+  
+  <case>
+    <code>
+      echo { 30 }
+    </code>
+    <error key="_"/>
+    <error key="error-token"/>
+    <error key="error-token"/>
+  </case>
 
   <case>
     <code>
-      echo 1 + 2.0
+      var a := 40
+      echo a
     </code>
-    <error key="impossible-calculate"/>
+    <output>40</output>
   </case>
-  
-  <case no-execute="true">
+
+  <case>
     <code>
-      echo { abc }
+      var a:Integer32 := 40
+      echo a
     </code>
+    <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      var a:Integ45 := 40
+      echo a
+    </code>
+    <error key="undefined-identifier"/>
+  </case>
+
+  <case>
+    <code>
+      50 =: var a =: var b
+      echo a * b
+    </code>
+    <output>2500</output>
+  </case>
+
+  <case>
+    <code>
+      routine foo() :: 100
+      echo foo()
+    </code>
+    <output>100</output>
+  </case>
+
+  <case>
+    <code>
+      routine foo(a:Integer32, b:Integer32) :: a % b
+      echo foo(23, 5)
+    </code>
+    <output>3</output>
+  </case>
+
+  <case>
+    <code>
+      echo foo(23, 5)
+      routine foo(a:Integer32, b:Integer32) {
+      return a % b
+      }
+    </code>
+    <output>3</output>
+  </case>
+
+  <case>
+    <code>
+      class A
+      {
+      var value := 500
+      }
+
+      A() =: var a
+      echo a.value
+    </code>
+    <output>500</output>
+  </case>
+
+  <case>
+    <code>
+      class Counter
+      {
+      var value := 0
+      routine next() :: value := value + 1
+      }
+
+      Counter() =: var counter
+      echo counter.next()
+      echo counter.next()
+      echo counter.next()
+    </code>
+    <output>1 2 3</output>
   </case>
 </compile-test>
