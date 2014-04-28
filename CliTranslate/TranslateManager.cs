@@ -7,6 +7,7 @@ using AbstractSyntax;
 using AbstractSyntax.Daclate;
 using AbstractSyntax.Pragma;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Symbol;
 
 namespace CliTranslate
 {

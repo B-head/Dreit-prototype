@@ -81,13 +81,14 @@ namespace AbstractSyntax
             return null;
         }
 
-        private string ElementInfo()
+        public override string ToString()
         {
-            StringBuilder builder = new StringBuilder(Position + " " + this.GetType().Name);
+            StringBuilder builder = new StringBuilder();
+            builder.Append(Position).Append(" ").Append(this.GetType().Name);
             var add = AdditionalInfo();
             if(add != null)
             {
-                builder.Append(": " + add);
+                builder.Append(": ").Append(add);
             }
             return builder.ToString();
         }
@@ -117,11 +118,6 @@ namespace AbstractSyntax
         protected void CompileWarning(string key)
         {
             PostCompileInfo(key, CompileMessageType.Warning);
-        }
-
-        public override string ToString()
-        {
-            return ElementInfo();
         }
 
         protected void SpreadElement(Element parent, Scope scope)

@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax.Expression;
 using AbstractSyntax.Pragma;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;

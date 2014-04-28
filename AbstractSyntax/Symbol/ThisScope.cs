@@ -3,7 +3,7 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Symbol
 {
     [Serializable]
     public class ThisScope : Scope

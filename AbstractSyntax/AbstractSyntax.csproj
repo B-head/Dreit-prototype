@@ -80,7 +80,7 @@
     <Compile Include="Scope.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
-    <Compile Include="ThisScope.cs" />
+    <Compile Include="Symbol\ThisScope.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="TupleList.cs" />
     <Compile Include="Visualizer\SyntaxVisualizerForm.cs">
@@ -89,11 +89,9 @@
     <Compile Include="Visualizer\SyntaxVisualizerForm.Designer.cs">
       <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="VoidScope.cs" />
+    <Compile Include="Symbol\VoidScope.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Symbol\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Visualizer\SyntaxVisualizerForm.resx">
       <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
