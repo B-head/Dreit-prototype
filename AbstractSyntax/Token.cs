@@ -3,15 +3,22 @@
 namespace AbstractSyntax
 {
     [Serializable]
-    public class Token
+    public struct Token
     {
         public TokenType Type { get; set; }
         public TextPosition Position { get; set; }
         public string Text { get; set; }
 
+        public static readonly Token Empty = new Token { Text = string.Empty };
+
         public override string ToString()
         {
             return Position + ": " + Enum.GetName(typeof(TokenType), Type) + " => " + Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20');
+        }
+
+        public static implicit operator bool(Token token)
+        {
+            return !string.IsNullOrEmpty(token.Text);
         }
     }
 

@@ -60,7 +60,7 @@ namespace SyntacticAnalysis
         {
             if (length == 0)
             {
-                return null;
+                return Token.Empty;
             }
             string text = Read(0, length);
             Token token = new Token { Text = text, Type = type, Position = _Position.AlterLength(length) };

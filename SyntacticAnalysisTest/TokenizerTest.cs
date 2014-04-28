@@ -57,15 +57,15 @@ namespace SyntacticAnalysisTest
 
         [TestCase("abcdefg", 3, TokenType.PlainText, "abc", false)]
         [TestCase("abcdefg", 7, TokenType.PlainText, "abcdefg", false)]
-        [TestCase("abcdefg", 0, TokenType.PlainText, null, false)]
+        [TestCase("abcdefg", 0, TokenType.PlainText, "", false)]
         [TestCase("\n\r", 2, TokenType.LineTerminator, "\n\r", true)]
         public void TakeToken(string text, int length, TokenType type, string eText, bool eLine)
         {
             Tokenizer t = new Tokenizer(text, "file");
             var token = t.TakeToken(length, type);
-            if (token == null)
+            if (!token)
             {
-                Assert.That(null, Is.EqualTo(eText));
+                Assert.That(token, Is.EqualTo(Token.Empty));
             }
             else
             {

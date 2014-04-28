@@ -30,7 +30,7 @@ namespace SyntacticAnalysis
                 BlockComment,
                 LineCommnet
                 );
-            if (temp != null)
+            if (temp)
             {
                 return temp.Type;
             }
@@ -47,7 +47,7 @@ namespace SyntacticAnalysis
                 LetterStartString,
                 DigitStartString
                 );
-            if (temp != null)
+            if (temp)
             {
                 tokenList.Add(temp);
                 return temp.Type;
@@ -61,12 +61,12 @@ namespace SyntacticAnalysis
             foreach (var f in func)
             {
                 var token = f(t);
-                if (token != null)
+                if (token)
                 {
                     return token;
                 }
             }
-            return null;
+            return Token.Empty;
         }
 
         private static Token LineTerminator(Tokenizer t)
@@ -110,7 +110,7 @@ namespace SyntacticAnalysis
             int i = 0, nest = 1;
             if (!t.IsReadable(i + 1) || t.Read(i, 2) != "/*")
             {
-                return null;
+                return Token.Empty;
             }
             for (i = 2; t.IsReadable(i + 1); i++)
             {
@@ -136,11 +136,11 @@ namespace SyntacticAnalysis
             int i = 0;
             if (!t.IsReadable(i + 1))
             {
-                return null;
+                return Token.Empty;
             }
             if (t.Read(i, 2) != "//" && t.Read(i, 2) != "#!")
             {
-                return null;
+                return Token.Empty;
             }
             for (i = 2; t.IsReadable(i); i++)
             {
@@ -314,7 +314,7 @@ namespace SyntacticAnalysis
                 case "]": type = TokenType.RightBracket; break;
                 case "{": type = TokenType.LeftBrace; break;
                 case "}": type = TokenType.RightBrace; break;
-                default: return null;
+                default: return Token.Empty;
             }
             return t.TakeToken(1, type);
         }
@@ -361,7 +361,7 @@ namespace SyntacticAnalysis
                 case "%=": type = TokenType.ModuloLeftAssign; break;
                 case "=%": type = TokenType.ModuloRightAssign; break;
                 case "**": type = TokenType.Exponent; break;
-                default: return null;
+                default: return Token.Empty;
             }
             return t.TakeToken(2, type);
         }
@@ -384,7 +384,7 @@ namespace SyntacticAnalysis
                 case "=>>": type = TokenType.RightShiftRightAssign; break;
                 case "**=": type = TokenType.ExponentLeftAssign; break;
                 case "=**": type = TokenType.ExponentRightAssign; break;
-                default: return null;
+                default: return Token.Empty;
             }
             return t.TakeToken(3, type);
         }
