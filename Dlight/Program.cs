@@ -32,12 +32,10 @@ namespace Dlight
         public static Element CompileFile(string fileName)
         {
             string text = File.ReadAllText(fileName);
-            List<Token> tokenList, errorToken;
-            TextPosition position;
-            Lexer.Lex(text, fileName, out tokenList, out errorToken, out position);
+            var collection = Lexer.Lex(text, fileName);
             string name = fileName.Replace(".dl", "").Split('/').Last();
             Parser parser = new Parser();
-            return parser.Parse(text, name, tokenList, errorToken, position);
+            return parser.Parse(collection);
         }
     }
 }

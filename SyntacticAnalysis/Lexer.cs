@@ -7,16 +7,16 @@ namespace SyntacticAnalysis
     {
         internal delegate Token LexerFunction(Tokenizer t);
 
-        public static void Lex(string text, string fileName, out List<Token> tokenList, out List<Token> errorToken, out TextPosition lastPosition)
+        public static TokenCollection Lex(string text, string fileName)
         {
-            tokenList = new List<Token>();
-            errorToken = new List<Token>();
+            var tokenList = new List<Token>();
+            var errorToken = new List<Token>();
             var t = new Tokenizer(text, fileName);
             while (t.IsReadable())
             {
                 LexPartion(t, tokenList, errorToken);
             }
-            lastPosition = t.Position;
+            return new TokenCollection(text, fileName, tokenList, errorToken, t.Position);
         }
 
         private static TokenType LexPartion(Tokenizer t, List<Token> tokenList, List<Token> errorToken)

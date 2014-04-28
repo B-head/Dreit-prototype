@@ -9,16 +9,16 @@ namespace SyntacticAnalysis
     public partial class Parser
     {
         private delegate Element ParserFunction(ref int c);
-        private delegate E ParserFunction<E>(ref int c) where E : Element;
+        private delegate E ParserFunction<out E>(ref int c) where E : Element;
         private List<Token> TokenList;
         private List<Token> ErrorToken;
         private TextPosition LastPosition;
 
-        public Element Parse(string text, string name, List<Token> tokenList, List<Token> errorToken, TextPosition lastPosition)
+        public Element Parse(TokenCollection collection)
         {
-            TokenList = tokenList.ToList();
-            ErrorToken = errorToken.ToList();
-            LastPosition = lastPosition;
+            TokenList = collection.TokenList.ToList();
+            ErrorToken = collection.ErrorToken.ToList();
+            LastPosition = collection.LastPosition;
             int c = -1;
             MoveNextToken(ref c);
             var p = GetTextPosition(c);
@@ -31,7 +31,7 @@ namespace SyntacticAnalysis
             {
                 exp.Position = p;
             }
-            return new DeclateModule { Name = name, SourceText = text, ExpList = exp, ErrorToken = ErrorToken, Position = LastPosition };
+            return new DeclateModule { Name = collection.GetName(), SourceText = collection.Text, ExpList = exp, ErrorToken = ErrorToken, Position = LastPosition };
         }
 
         private bool IsReadable(int c)
