@@ -72,7 +72,7 @@ namespace DlightTest
                     }
                     if (data.Output != null)
                     {
-                        var output = TestData.CodeNormalize(process.StandardOutput.ReadToEnd());
+                        var output = TestData.CodeNormalize(process.StandardOutput.ReadToEnd(), true);
                         Assert.That(output, Is.EqualTo(data.Output));
                     }
                 }
@@ -123,7 +123,7 @@ namespace DlightTest
         {
             Root root = new Root();
             ImportManager import = new ImportManager(root);
-            root.Append(CompileText("primitive", primitive));
+            root.Append(CompileText("lib/primitive.dl", primitive));
             root.Append(CompileText(data.Name, data.Code));
             root.SemanticAnalysis();
             if (root.MessageManager.MessageCount > 0)
@@ -145,13 +145,11 @@ namespace DlightTest
             trans.Run();
         }
 
-        private static Element CompileText(string name, string text)
+        private static Element CompileText(string fileName, string text)
         {
-            List<Token> tokenList, errorToken;
-            TextPosition position;
-            Lexer.Lex(text, name, out tokenList, out errorToken, out position);
+            var collection = Lexer.Lex(text, fileName);
             Parser parser = new Parser();
-            return parser.Parse(text, name, tokenList, errorToken, position);
+            return parser.Parse(collection);
         }
     }
 }

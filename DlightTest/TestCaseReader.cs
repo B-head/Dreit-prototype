@@ -49,7 +49,7 @@ namespace DlightTest
                     ErrorCount = ec,
                     WarningCount = wc,
                     Input = TestData.CodeNormalize((string)e.Element(ns + "input")),
-                    Output = TestData.CodeNormalize((string)e.Element(ns + "output")),
+                    Output = TestData.CodeNormalize((string)e.Element(ns + "output"), true),
                 };
                 testData.Add(data);
             }

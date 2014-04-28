@@ -9,6 +9,15 @@
   
   <case>
     <code>
+      echo 10
+      echo 20
+      echo 30
+    </code>
+    <output>10 20 30</output>
+  </case>
+  
+  <case>
+    <code>
       echo 10 + 10
     </code>
     <output>20</output>

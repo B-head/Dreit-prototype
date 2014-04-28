@@ -26,14 +26,27 @@ namespace DlightTest
             return Code;
         }
 
-        public static string CodeNormalize(string code)
+        public static string CodeNormalize(string code, bool eraseLT = false)
         {
             if (code == null)
             {
                 return null;
             }
             var temp = code.Trim().Normalize();
-            return Regex.Replace(temp, @"\s+", " ");
+            if (eraseLT)
+            {
+                return Regex.Replace(temp, @"\s+", " ");
+            }
+            else
+            {
+                return Regex.Replace(temp, @"\s+", CodeEvaluator);
+            }
+        }
+
+        private static string CodeEvaluator(Match match)
+        {
+            char[] any = { '\n', '\r' };
+            return match.Value.IndexOfAny(any) >= 0 ? "\n" : " ";
         }
     }
 
