@@ -48,8 +48,8 @@ namespace CliTranslate
                 if (scope is DeclateOperator) return 11;
                 if (scope is DeclateArgument) return 20;
                 if (scope is DeclateVariant) return 21;
-                if (scope is VoidScope) return 30;
-                if (scope is ThisScope) return 31;
+                if (scope is VoidSymbol) return 30;
+                if (scope is ThisSymbol) return 31;
                 throw new ArgumentException();
             }
         }
@@ -222,7 +222,7 @@ namespace CliTranslate
 
         private void Translate(IdentifierAccess element, Translator trans)
         {
-            if (element.Reference.TypeSelect() is ThisScope)
+            if (element.Reference.TypeSelect() is ThisSymbol)
             {
                 trans.GenerateControl(CodeType.This);
             }

@@ -15,13 +15,13 @@ namespace AbstractSyntax.Daclate
         public TupleList Generic { get; set; }
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
-        public ThisScope This { get; set; }
+        public ThisSymbol This { get; set; }
         public List<DeclateClass> InheritRefer { get; private set; }
 
         public DeclateClass()
         {
             InheritRefer = new List<DeclateClass>();
-            This = new ThisScope(this);
+            This = new ThisSymbol(this);
         }
 
         public override bool IsVoidValue

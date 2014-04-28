@@ -17,7 +17,7 @@ namespace AbstractSyntax.Expression
 
         public override bool IsVoidValue
         {
-            get { return DataType is VoidScope; }
+            get { return DataType is VoidSymbol; }
         }
 
         public override DataType DataType

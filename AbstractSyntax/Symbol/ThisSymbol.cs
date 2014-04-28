@@ -6,11 +6,11 @@ using System.Diagnostics;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class ThisScope : Scope
+    public class ThisSymbol : Scope
     {
         private DeclateClass _DataType;
 
-        public ThisScope(DeclateClass dataType)
+        public ThisSymbol(DeclateClass dataType)
         {
             Name = "this";
             _DataType = dataType;

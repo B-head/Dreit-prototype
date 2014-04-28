@@ -20,7 +20,7 @@ namespace AbstractSyntax.Daclate
 
         public DeclateRoutine()
         {
-            ReturnType = new VoidScope();
+            ReturnType = new VoidSymbol();
         }
 
         public override bool IsVoidValue
@@ -101,7 +101,7 @@ namespace AbstractSyntax.Daclate
             if(Block.IsInline)
             {
                 var ret = Block[0];
-                if(ReturnType is VoidScope)
+                if (ReturnType is VoidSymbol)
                 {
                     ReturnType = ret.DataType;
                 }
@@ -113,7 +113,7 @@ namespace AbstractSyntax.Daclate
             else
             {
                 var ret = Block.FindElements<ReturnDirective>();
-                if(ReturnType is VoidScope && ret.Count > 0)
+                if (ReturnType is VoidSymbol && ret.Count > 0)
                 {
                     ReturnType = ret[0].DataType;
                 }
