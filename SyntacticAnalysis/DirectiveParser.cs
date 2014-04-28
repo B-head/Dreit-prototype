@@ -4,25 +4,25 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private DirectiveList DirectiveList(ref int c, bool root = false)
+        private static DirectiveList DirectiveList(TokenCollection c, ref int i, bool root = false)
         {
             DirectiveList result = new DirectiveList();
-            while (IsReadable(c))
+            while (c.IsReadable(i))
             {
-                if (CheckToken(c, TokenType.EndExpression))
+                if (c.CheckToken(i, TokenType.EndExpression))
                 {
-                    MoveNextToken(ref c);
+                    c.MoveNextToken(ref i);
                     continue;
                 }
-                Element temp = Directive(ref c);
+                Element temp = Directive(c, ref i);
                 if (temp == null)
                 {
-                    if (!root && CheckToken(c, TokenType.RightBrace))
+                    if (!root && c.CheckToken(i, TokenType.RightBrace))
                     {
                         break;
                     }
-                    AddError(c);
-                    MoveNextToken(ref c);
+                    c.AddError(i);
+                    c.MoveNextToken(ref i);
                     continue;
                 }
                 result.Append(temp);
@@ -30,86 +30,86 @@ namespace SyntacticAnalysis
             return result;
         }
 
-        private DirectiveList Block(ref int c)
+        private static DirectiveList Block(TokenCollection c, ref int i)
         {
             DirectiveList result = null;
-            var first = GetTextPosition(c);
-            if (CheckToken(c, TokenType.Separator))
+            var first = c.GetTextPosition(i);
+            if (c.CheckToken(i, TokenType.Separator))
             {
-                MoveNextToken(ref c);
+                c.MoveNextToken(ref i);
                 result = new DirectiveList { IsInline = true };
-                var d = Directive(ref c);
+                var d = Directive(c, ref i);
                 result.Append(d);
-                result.Position = SetTextLength(first, d.Position);
+                result.Position = first.AlterLength((TextPosition?)d);
             }
-            else if (CheckToken(c, TokenType.LeftBrace))
+            else if (c.CheckToken(i, TokenType.LeftBrace))
             {
                 TextPosition last;
-                MoveNextToken(ref c);
-                result = DirectiveList(ref c);
-                if (CheckToken(c, TokenType.RightBrace))
+                c.MoveNextToken(ref i);
+                result = DirectiveList(c, ref i);
+                if (c.CheckToken(i, TokenType.RightBrace))
                 {
-                    last = GetTextPosition(c);
-                    MoveNextToken(ref c);
+                    last = c.GetTextPosition(i);
+                    c.MoveNextToken(ref i);
                 }
                 else
                 {
                     last = result[result.Count - 1].Position;
                 }
-                result.Position = SetTextLength(first, last);
+                result.Position = first.AlterLength(last);
             }
             else
             {
-                result = new DirectiveList { Position = GetTextPosition(c) };
+                result = new DirectiveList { Position = c.GetTextPosition(i) };
             }
             return result;
         }
 
-        private Element Directive(ref int c)
+        private static Element Directive(TokenCollection c, ref int i)
         {
-            Element temp = CoalesceParser(ref c, Echo, Alias, Return, Expression);
-            if (CheckToken(c, TokenType.EndExpression))
+            Element temp = CoalesceParser(c, ref i, Echo, Alias, Return, Expression);
+            if (c.CheckToken(i, TokenType.EndExpression))
             {
-                MoveNextToken(ref c);
+                c.MoveNextToken(ref i);
             }
             return temp;
         }
 
-        private EchoDirective Echo(ref int c)
+        private static EchoDirective Echo(TokenCollection c, ref int i)
         {
-            if (!CheckText(c, "echo"))
+            if (!c.CheckText(i, "echo"))
             {
                 return null;
             }
-            var p = GetTextPosition(c);
-            MoveNextToken(ref c);
-            Element exp = Expression(ref c);
-            return new EchoDirective { Exp = exp, Position = SetTextLength(p, exp.Position) };
+            var p = c.GetTextPosition(i);
+            c.MoveNextToken(ref i);
+            Element exp = Expression(c, ref i);
+            return new EchoDirective { Exp = exp, Position = p.AlterLength((TextPosition?)exp) };
         }
 
-        private AliasDirective Alias(ref int c)
+        private static AliasDirective Alias(TokenCollection c, ref int i)
         {
-            if (!CheckText(c, "alias"))
+            if (!c.CheckText(i, "alias"))
             {
                 return null;
             }
-            var p = GetTextPosition(c);
-            MoveNextToken(ref c);
-            var from = IdentifierAccess(ref c);
-            var to = IdentifierAccess(ref c);
-            return new AliasDirective { From = from, To = to, Position = SetTextLength(p, to.Position) };
+            var p = c.GetTextPosition(i);
+            c.MoveNextToken(ref i);
+            var from = IdentifierAccess(c, ref i);
+            var to = IdentifierAccess(c, ref i);
+            return new AliasDirective { From = from, To = to, Position = p.AlterLength((TextPosition?)to) };
         }
 
-        private ReturnDirective Return(ref int c)
+        private static ReturnDirective Return(TokenCollection c, ref int i)
         {
-            if (!CheckText(c, "return"))
+            if (!c.CheckText(i, "return"))
             {
                 return null;
             }
-            var p = GetTextPosition(c);
-            MoveNextToken(ref c);
-            Element exp = Expression(ref c);
-            return new ReturnDirective { Exp = exp, Position = SetTextLength(p, exp.Position) };
+            var p = c.GetTextPosition(i);
+            c.MoveNextToken(ref i);
+            Element exp = Expression(c, ref i);
+            return new ReturnDirective { Exp = exp, Position = p.AlterLength((TextPosition?)exp) };
         }
     }
 }

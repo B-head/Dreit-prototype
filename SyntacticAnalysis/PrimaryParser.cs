@@ -5,72 +5,72 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private Element Primary(ref int c)
+        private static Element Primary(TokenCollection c, ref int i)
         {
-            return CoalesceParser(ref c, Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, IdentifierAccess);
+            return CoalesceParser(c, ref i, Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, IdentifierAccess);
         }
 
-        private ExpressionGrouping Group(ref int c)
+        private static ExpressionGrouping Group(TokenCollection c, ref int i)
         {
-            int temp = c;
-            if (!CheckToken(temp, TokenType.LeftParenthesis))
+            int temp = i;
+            if (!c.CheckToken(temp, TokenType.LeftParenthesis))
             {
                 return null;
             }
-            var p = GetTextPosition(temp);
-            MoveNextToken(ref temp);
-            Element exp = DirectiveList(ref temp);
-            if (!CheckToken(temp, TokenType.RightParenthesis))
+            var p = c.GetTextPosition(temp);
+            c.MoveNextToken(ref temp);
+            Element exp = DirectiveList(c, ref temp);
+            if (!c.CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;
             }
-            p = SetTextLength(p, GetTextPosition(c));
-            MoveNextToken(ref temp);
-            c = temp;
+            p = p.AlterLength(c.GetTextPosition(i));
+            c.MoveNextToken(ref temp);
+            i = temp;
             return new ExpressionGrouping { Child = exp, Operator = TokenType.Special, Position = p };
         }
 
-        private NumberLiteral Number(ref int c)
+        private static NumberLiteral Number(TokenCollection c, ref int i)
         {
-            int temp = c;
+            int temp = i;
             string value = string.Empty;
-            if (!CheckToken(temp, TokenType.DigitStartString))
+            if (!c.CheckToken(temp, TokenType.DigitStartString))
             {
                 return null;
             }
-            Token i = Read(temp);
-            MoveNextToken(ref temp);
-            c = temp;
-            if (CheckToken(temp, TokenType.Access))
+            Token a = c.Read(temp);
+            c.MoveNextToken(ref temp);
+            i = temp;
+            if (c.CheckToken(temp, TokenType.Access))
             {
-                MoveNextToken(ref temp);
-                if (CheckToken(temp, TokenType.DigitStartString))
+                c.MoveNextToken(ref temp);
+                if (c.CheckToken(temp, TokenType.DigitStartString))
                 {
-                    Token f = Read(temp);
-                    MoveNextToken(ref temp);
-                    c = temp;
-                    return new NumberLiteral { Integral = i.Text, Fraction = f.Text, Position = SetTextLength(i.Position, f.Position) };
+                    Token b = c.Read(temp);
+                    c.MoveNextToken(ref temp);
+                    i = temp;
+                    return new NumberLiteral { Integral = a.Text, Fraction = b.Text, Position = a.Position.AlterLength(b.Position) };
                 }
             }
-            return new NumberLiteral { Integral = i.Text, Position = i.Position };
+            return new NumberLiteral { Integral = a.Text, Position = a.Position };
         }
 
-        private IdentifierAccess IdentifierAccess(ref int c)
+        private static IdentifierAccess IdentifierAccess(TokenCollection c, ref int i)
         {
             bool pragma = false;
-            var p = GetTextPosition(c);
-            if (CheckToken(c, TokenType.Pragma))
+            var p = c.GetTextPosition(i);
+            if (c.CheckToken(i, TokenType.Pragma))
             {
                 pragma = true;
-                MoveNextToken(ref c);
+                c.MoveNextToken(ref i);
             }
-            if (!CheckToken(c, TokenType.LetterStartString))
+            if (!c.CheckToken(i, TokenType.LetterStartString))
             {
                 return null;
             }
-            Token t = Read(c);
-            MoveNextToken(ref c);
-            return new IdentifierAccess { Value = t.Text, IsPragmaAccess = pragma, Position = SetTextLength(p, t.Position) };
+            Token t = c.Read(i);
+            c.MoveNextToken(ref i);
+            return new IdentifierAccess { Value = t.Text, IsPragmaAccess = pragma, Position = p.AlterLength(t.Position) };
         }
     }
 }

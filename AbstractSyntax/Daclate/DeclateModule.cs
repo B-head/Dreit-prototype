@@ -10,7 +10,7 @@ namespace AbstractSyntax.Daclate
     {
         public string SourceText { get; set; }
         public DirectiveList ExpList { get; set; }
-        public List<Token> ErrorToken { get; set; }
+        public IReadOnlyList<Token> ErrorToken { get; set; }
 
         public DeclateModule()
         {

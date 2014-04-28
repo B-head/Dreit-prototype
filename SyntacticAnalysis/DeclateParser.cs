@@ -6,131 +6,131 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private DeclateVariant DeclareVariant(ref int c)
+        private static DeclateVariant DeclareVariant(TokenCollection c, ref int i)
         {
-            if (!CheckText(c, "var"))
+            if (!c.CheckText(i, "var"))
             {
                 return null;
             }
-            var first = GetTextPosition(c);
-            MoveNextToken(ref c);
-            IdentifierAccess ident = IdentifierAccess(ref c);
+            var first = c.GetTextPosition(i);
+            c.MoveNextToken(ref i);
+            IdentifierAccess ident = IdentifierAccess(c, ref i);
             var last = ident.Position;
             Element explType = null;
-            if (CheckToken(c, TokenType.Peir))
+            if (c.CheckToken(i, TokenType.Peir))
             {
-                MoveNextToken(ref c);
-                explType = MemberAccess(ref c);
+                c.MoveNextToken(ref i);
+                explType = MemberAccess(c, ref i);
                 last = explType.Position;
             }
-            return new DeclateVariant { Ident = ident, ExplicitType = explType, Position = SetTextLength(first, last) };
+            return new DeclateVariant { Ident = ident, ExplicitType = explType, Position = first.AlterLength(last) };
         }
 
-        private DeclateRoutine DeclateRoutine(ref int c)
+        private static DeclateRoutine DeclateRoutine(TokenCollection c, ref int i)
         {
-            if (!CheckText(c, "rout", "routine"))
+            if (!c.CheckText(i, "rout", "routine"))
             {
                 return null;
             }
-            var p = GetTextPosition(c);
-            MoveNextToken(ref c);
-            IdentifierAccess ident = IdentifierAccess(ref c);
+            var p = c.GetTextPosition(i);
+            c.MoveNextToken(ref i);
+            IdentifierAccess ident = IdentifierAccess(c, ref i);
             TupleList attr = null;
             Element retType = null;
-            if (CheckToken(c, TokenType.LeftParenthesis))
+            if (c.CheckToken(i, TokenType.LeftParenthesis))
             {
-                MoveNextToken(ref c);
-                attr = ParseTuple(ref c, DeclateArgument);
-                if (CheckToken(c, TokenType.RightParenthesis))
+                c.MoveNextToken(ref i);
+                attr = ParseTuple(c, ref i, DeclateArgument);
+                if (c.CheckToken(i, TokenType.RightParenthesis))
                 {
-                    MoveNextToken(ref c);
+                    c.MoveNextToken(ref i);
                 }
             }
             else
             {
                 attr = new TupleList();
             }
-            if (CheckToken(c, TokenType.Peir))
+            if (c.CheckToken(i, TokenType.Peir))
             {
-                MoveNextToken(ref c);
-                retType = MemberAccess(ref c);
+                c.MoveNextToken(ref i);
+                retType = MemberAccess(c, ref i);
             }
-            var block = Block(ref c);
-            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitType = retType, Block = block, Position = SetTextLength(p, block.Position) };
+            var block = Block(c, ref i);
+            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitType = retType, Block = block, Position = p.AlterLength((TextPosition?)block) };
         }
 
-        private DeclateOperator DeclateOperator(ref int c)
+        private static DeclateOperator DeclateOperator(TokenCollection c, ref int i)
         {
-            if (!CheckText(c, "operator"))
+            if (!c.CheckText(i, "operator"))
             {
                 return null;
             }
-            var p = GetTextPosition(c);
-            MoveNextToken(ref c);
-            Token op = Read(c++);
+            var p = c.GetTextPosition(i);
+            c.MoveNextToken(ref i);
+            Token op = c.Read(i++);
             TupleList attr = null;
             Element retType = null;
-            if (CheckToken(c, TokenType.LeftParenthesis))
+            if (c.CheckToken(i, TokenType.LeftParenthesis))
             {
-                MoveNextToken(ref c);
-                attr = ParseTuple(ref c, DeclateArgument);
-                if (CheckToken(c, TokenType.RightParenthesis))
+                c.MoveNextToken(ref i);
+                attr = ParseTuple(c, ref i, DeclateArgument);
+                if (c.CheckToken(i, TokenType.RightParenthesis))
                 {
-                    MoveNextToken(ref c);
+                    c.MoveNextToken(ref i);
                 }
             }
             else
             {
                 attr = new TupleList();
             }
-            if (CheckToken(c, TokenType.Peir))
+            if (c.CheckToken(i, TokenType.Peir))
             {
-                MoveNextToken(ref c);
-                retType = MemberAccess(ref c);
+                c.MoveNextToken(ref i);
+                retType = MemberAccess(c, ref i);
             }
-            var block = Block(ref c);
-            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitType = retType, Block = block, Position = SetTextLength(p, block.Position) };
+            var block = Block(c, ref i);
+            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitType = retType, Block = block, Position = p.AlterLength((TextPosition?)block) };
         }
 
-        private DeclateArgument DeclateArgument(ref int c)
+        private static DeclateArgument DeclateArgument(TokenCollection c, ref int i)
         {
-            IdentifierAccess ident = IdentifierAccess(ref c);
+            IdentifierAccess ident = IdentifierAccess(c, ref i);
             if(ident == null)
             {
                 return null;
             }
             var p = ident.Position;
             Element explType = null;
-            if (CheckToken(c, TokenType.Peir))
+            if (c.CheckToken(i, TokenType.Peir))
             {
-                MoveNextToken(ref c);
-                explType = MemberAccess(ref c);
-                p = SetTextLength(p, explType.Position);
+                c.MoveNextToken(ref i);
+                explType = MemberAccess(c, ref i);
+                p = p.AlterLength((TextPosition?)explType);
             }
             return new DeclateArgument { Ident = ident, ExplicitType = explType, Position = p };
         }
 
-        private DeclateClass DeclateClass(ref int c)
+        private static DeclateClass DeclateClass(TokenCollection c, ref int i)
         {
-            if (!CheckText(c, "class"))
+            if (!c.CheckText(i, "class"))
             {
                 return null;
             }
-            var p = GetTextPosition(c);
-            MoveNextToken(ref c);
-            IdentifierAccess ident = IdentifierAccess(ref c);
+            var p = c.GetTextPosition(i);
+            c.MoveNextToken(ref i);
+            IdentifierAccess ident = IdentifierAccess(c, ref i);
             TupleList inherit = null;
-            if (CheckToken(c, TokenType.Peir))
+            if (c.CheckToken(i, TokenType.Peir))
             {
-                MoveNextToken(ref c);
-                inherit = ParseTuple(ref c, MemberAccess);
+                c.MoveNextToken(ref i);
+                inherit = ParseTuple(c, ref i, MemberAccess);
             }
             else
             {
                 inherit = new TupleList();
             }
-            var block = Block(ref c);
-            return new DeclateClass { Ident = ident, Inherit = inherit, Block = block, Position = SetTextLength(p, block.Position) };
+            var block = Block(c, ref i);
+            return new DeclateClass { Ident = ident, Inherit = inherit, Block = block, Position = p.AlterLength((TextPosition?)block) };
         }
     }
 }

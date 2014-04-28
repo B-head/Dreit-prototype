@@ -33,41 +33,40 @@ namespace SyntacticAnalysis
             return Regex.Replace(temp, @"^.*/", "");
         }
 
-        public bool IsReadable(int c)
+        public bool IsReadable(int i)
         {
-            return c < _TokenList.Count;
+            return i < _TokenList.Count;
         }
 
-        public Token Read(int c)
+        public Token Read(int i)
         {
-            return _TokenList[c];
+            return _TokenList[i];
         }
 
-        public int MoveNextToken(int c)
+        public void MoveNextToken(ref int i)
         {
-            c++;
-            while (IsReadable(c))
+            i++;
+            while (IsReadable(i))
             {
-                if (CheckToken(c, TokenType.LineTerminator))
+                if (CheckToken(i, TokenType.LineTerminator))
                 {
-                    c++;
+                    i++;
                     continue;
                 }
                 break;
             }
-            return c;
         }
 
-        public void AddError(int c)
+        public void AddError(int i)
         {
-            _ErrorToken.Add(Read(c));
+            _ErrorToken.Add(Read(i));
         }
 
-        public TextPosition GetTextPosition(int c)
+        public TextPosition GetTextPosition(int i)
         {
-            if (IsReadable(c))
+            if (IsReadable(i))
             {
-                return Read(c).Position;
+                return Read(i).Position;
             }
             else
             {
@@ -75,20 +74,20 @@ namespace SyntacticAnalysis
             }
         }
 
-        public bool CheckToken(int c, params TokenType[] type)
+        public bool CheckToken(int i, params TokenType[] type)
         {
             TokenType temp;
-            return CheckToken(c, out temp, type);
+            return CheckToken(i, out temp, type);
         }
 
-        public bool CheckToken(int c, out TokenType match, params TokenType[] type)
+        public bool CheckToken(int i, out TokenType match, params TokenType[] type)
         {
             match = TokenType.Unknoun;
-            if (!IsReadable(c))
+            if (!IsReadable(i))
             {
                 return false;
             }
-            Token t = Read(c);
+            Token t = Read(i);
             foreach (TokenType v in type)
             {
                 if (t.Type == v)
@@ -100,13 +99,13 @@ namespace SyntacticAnalysis
             return false;
         }
 
-        public bool CheckText(int c, params string[] text)
+        public bool CheckText(int i, params string[] text)
         {
-            if (!IsReadable(c))
+            if (!IsReadable(i))
             {
                 return false;
             }
-            Token t = Read(c);
+            Token t = Read(i);
             foreach (string v in text)
             {
                 if (v == t.Text)

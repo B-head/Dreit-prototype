@@ -53,7 +53,7 @@
     <error key="undefined-identifier"/>
   </case>
   
-  <case ignore="true">
+  <case>
     <code>
       echo { 30 }
     </code>

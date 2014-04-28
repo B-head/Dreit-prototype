@@ -34,8 +34,7 @@ namespace Dlight
             string text = File.ReadAllText(fileName);
             var collection = Lexer.Lex(text, fileName);
             string name = fileName.Replace(".dl", "").Split('/').Last();
-            Parser parser = new Parser();
-            return parser.Parse(collection);
+            return Parser.Parse(collection);
         }
     }
 }

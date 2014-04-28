@@ -148,8 +148,7 @@ namespace DlightTest
         private static Element CompileText(string fileName, string text)
         {
             var collection = Lexer.Lex(text, fileName);
-            Parser parser = new Parser();
-            return parser.Parse(collection);
+            return Parser.Parse(collection);
         }
     }
 }
