@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateVariant : Scope
+    public class DeclateVariant : Scope, IAccess
     {
         public IdentifierAccess Ident { get; set; }
         public Element ExplicitType { get; set; }
@@ -25,9 +25,9 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override bool IsAssignable
+        public OverLoadScope Reference
         {
-            get { return true; }
+            get { return Ident.Reference; }
         }
 
         public override int Count
@@ -35,13 +35,16 @@ namespace AbstractSyntax.Daclate
             get { return 2; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            switch (index)
+            get
             {
-                case 0: return Ident;
-                case 1: return ExplicitType;
-                default: throw new ArgumentOutOfRangeException();
+                switch (index)
+                {
+                    case 0: return Ident;
+                    case 1: return ExplicitType;
+                    default: throw new ArgumentOutOfRangeException();
+                }
             }
         }
 

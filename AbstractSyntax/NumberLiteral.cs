@@ -24,7 +24,7 @@ namespace AbstractSyntax
             }
         }
 
-        protected override string AdditionalInfo()
+        protected override string ElementInfo()
         {
             if (Fraction == null)
             {

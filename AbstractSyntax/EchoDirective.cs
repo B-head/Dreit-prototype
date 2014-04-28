@@ -9,22 +9,20 @@ namespace AbstractSyntax
     {
         public Element Exp { get; set; }
 
-        public override bool IsVoidValue
-        {
-            get { return true; }
-        }
-
         public override int Count
         {
             get { return 1; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            switch (index)
+            get
             {
-                case 0: return Exp;
-                default: throw new ArgumentOutOfRangeException();
+                switch (index)
+                {
+                    case 0: return Exp;
+                    default: throw new ArgumentOutOfRangeException();
+                }
             }
         }
     }

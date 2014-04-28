@@ -34,9 +34,9 @@ namespace AbstractSyntax
             get { return Child.Count; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            return Child[index];
+            get { return Child[index]; }
         }
 
         public List<E> FindElements<E>() where E : Element

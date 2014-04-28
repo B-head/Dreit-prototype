@@ -23,7 +23,7 @@ namespace AbstractSyntax.Expression
             {
                 CompileError("not-collide-assign");
             }
-            else if(Left != null && !Left.IsAssignable)
+            else if(!(Left is IAccess))
             {
                 CompileError("not-assignable");
             }

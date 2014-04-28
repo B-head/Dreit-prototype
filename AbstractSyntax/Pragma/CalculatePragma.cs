@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CalculatePragma : DeclateRoutine
+    public class CalculatePragma : DeclateRoutine, IPragma
     {
         public CalculatePragmaType Type { get; private set; }
 
@@ -16,11 +16,6 @@ namespace AbstractSyntax.Pragma
             Type = type;
             Argument = new TupleList();
             Block = new DirectiveList();
-        }
-
-        public override bool IsPragma
-        {
-            get { return true; }
         }
 
         internal override TypeMatchResult TypeMatch(List<DataType> type)

@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,27 +26,17 @@ namespace AbstractSyntax
 
         public virtual DataType DataType
         {
-            get { throw new NotSupportedException(); }
-        }
-
-        public virtual OverLoadScope Reference
-        {
-            get { throw new NotSupportedException(); }
-        }
-
-        public virtual bool IsPragma
-        {
-            get { return false; }
-        }
-
-        public virtual bool IsAssignable
-        {
-            get { return false; }
+            get { return new VoidSymbol(); }
         }
 
         public virtual bool IsVoidValue
         {
-            get { return false; }
+            get { return DataType is VoidSymbol; }
+        }
+
+        protected virtual string ElementInfo()
+        {
+            return null;
         }
 
         public virtual int Count
@@ -53,71 +44,9 @@ namespace AbstractSyntax
             get { return 0; }
         }
 
-        public virtual Element GetChild(int index)
+        public virtual Element this[int index]
         {
-            throw new ArgumentOutOfRangeException();
-        }
-
-        public Element this[int index]
-        {
-            get { return GetChild(index); }
-        }
-
-        public IEnumerator<Element> GetEnumerator()
-        {
-            for (int i = 0; i < Count; i++)
-            {
-                yield return GetChild(i);
-            }
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        protected virtual string AdditionalInfo()
-        {
-            return null;
-        }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(Position).Append(" ").Append(this.GetType().Name);
-            var add = AdditionalInfo();
-            if(add != null)
-            {
-                builder.Append(": ").Append(add);
-            }
-            return builder.ToString();
-        }
-
-        private void PostCompileInfo(string key, CompileMessageType type)
-        {
-            CompileMessage info = new CompileMessage
-            {
-                Type = type,
-                Key = key,
-                Position = Position,
-                Target = this,
-            };
-            Root.MessageManager.Append(info);
-        }
-
-        protected void CompileInfo(string key)
-        {
-            PostCompileInfo(key, CompileMessageType.Info);
-        }
-
-        protected void CompileError(string key)
-        {
-            PostCompileInfo(key, CompileMessageType.Error);
-        }
-
-        protected void CompileWarning(string key)
-        {
-            PostCompileInfo(key, CompileMessageType.Warning);
+            get { throw new ArgumentOutOfRangeException(); }
         }
 
         protected void SpreadElement(Element parent, Scope scope)
@@ -191,6 +120,58 @@ namespace AbstractSyntax
                     v.CheckDataType();
                 }
             }
+        }
+
+        protected void CompileInfo(string key)
+        {
+            PostCompileInfo(key, CompileMessageType.Info);
+        }
+
+        protected void CompileError(string key)
+        {
+            PostCompileInfo(key, CompileMessageType.Error);
+        }
+
+        protected void CompileWarning(string key)
+        {
+            PostCompileInfo(key, CompileMessageType.Warning);
+        }
+
+        private void PostCompileInfo(string key, CompileMessageType type)
+        {
+            CompileMessage info = new CompileMessage
+            {
+                Type = type,
+                Key = key,
+                Position = Position,
+                Target = this,
+            };
+            Root.MessageManager.Append(info);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(Position).Append(" ").Append(this.GetType().Name);
+            var add = ElementInfo();
+            if (add != null)
+            {
+                builder.Append(": ").Append(add);
+            }
+            return builder.ToString();
+        }
+
+        public IEnumerator<Element> GetEnumerator()
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                yield return this[i];
+            }
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

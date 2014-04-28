@@ -5,21 +5,20 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class MemberAccess : DyadicExpression
+    public class MemberAccess : DyadicExpression, IAccess
     {
-        public MemberAccess()
-        {
-            Operator = TokenType.Access;
-        }
-
         public override DataType DataType
         {
             get { return Right.DataType; }
         }
 
-        public override OverLoadScope Reference
+        public OverLoadScope Reference
         {
-            get { return Right.Reference; }
+            get
+            {
+                var right = Right as IAccess;
+                return right.Reference; 
+            }
         }
 
         internal override void SpreadReference(Scope scope)

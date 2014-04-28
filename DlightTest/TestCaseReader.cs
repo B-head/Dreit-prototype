@@ -76,7 +76,7 @@ namespace DlightTest
             foreach (var data in testData)
             {
                 var test = new TestCaseData(data);
-                test.SetName(data.Name + "(" + data.Code + ")");
+                test.SetName(data.Name);
                 test.SetCategory(data.Category);
                 if (data.Ignore)
                 {

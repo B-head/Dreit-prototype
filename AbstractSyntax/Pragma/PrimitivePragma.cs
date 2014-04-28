@@ -6,18 +6,13 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class PrimitivePragma : DeclateClass
+    public class PrimitivePragma : DeclateClass, IPragma
     {
         public PrimitivePragmaType Type { get; private set; }
 
         public PrimitivePragma(PrimitivePragmaType type)
         {
             Type = type;
-        }
-
-        public override bool IsPragma
-        {
-            get { return true; }
         }
     }
 

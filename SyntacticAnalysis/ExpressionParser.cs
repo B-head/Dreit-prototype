@@ -29,7 +29,7 @@ namespace SyntacticAnalysis
             }
             if (tuple.Count > 0)
             {
-                return tuple.GetChild(0);
+                return tuple[0];
             }
             else
             {

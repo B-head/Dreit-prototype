@@ -23,7 +23,7 @@ namespace DlightTest
 
         public override string ToString()
         {
-            return Code;
+            return Name + "{" + Code + "}";
         }
 
         public static string CodeNormalize(string code, bool eraseLT = false)

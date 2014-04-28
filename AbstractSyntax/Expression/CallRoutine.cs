@@ -15,11 +15,6 @@ namespace AbstractSyntax.Expression
         public Scope CallScope { get; set; }
         public List<DataType> ArgumentType { get; set; }
 
-        public override bool IsVoidValue
-        {
-            get { return DataType is VoidSymbol; }
-        }
-
         public override DataType DataType
         {
             get 
@@ -40,13 +35,16 @@ namespace AbstractSyntax.Expression
             get { return 2; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            switch (index)
+            get
             {
-                case 0: return Access;
-                case 1: return Argument;
-                default: throw new ArgumentOutOfRangeException();
+                switch (index)
+                {
+                    case 0: return Access;
+                    case 1: return Argument;
+                    default: throw new ArgumentOutOfRangeException();
+                }
             }
         }
 
@@ -65,7 +63,8 @@ namespace AbstractSyntax.Expression
                 argType.Add(temp);
             }
             ArgumentType = argType;
-            CallScope = Access.Reference.TypeSelect(ArgumentType);
+            var access = Access as IAccess;
+            CallScope = access.Reference.TypeSelect(ArgumentType);
             if(CallScope == null)
             {
                 CompileError("unmatch-overroad");

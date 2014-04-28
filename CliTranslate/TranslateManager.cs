@@ -89,7 +89,7 @@ namespace CliTranslate
         {
             foreach (var v in scope.ScopeChild)
             {
-                if (v == null || v.IsImport || v.IsPragma)
+                if (v == null || v.IsImport || v is IPragma)
                 {
                     continue;
                 }
@@ -163,7 +163,7 @@ namespace CliTranslate
         {
             foreach(var v in element)
             {
-                if (v == null || v.IsImport || v.IsPragma)
+                if (v == null || v.IsImport || v is IPragma)
                 {
                     continue;
                 }
@@ -186,7 +186,7 @@ namespace CliTranslate
                     trans.GenerateControl(CodeType.Pop);
                 }
             }
-            if (element.Count <= 0 || !(element.GetChild(element.Count - 1) is ReturnDirective))
+            if (element.Count <= 0 || !(element[element.Count - 1] is ReturnDirective))
             {
                 trans.GenerateControl(CodeType.Ret);
             }

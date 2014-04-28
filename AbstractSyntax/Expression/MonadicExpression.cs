@@ -15,16 +15,19 @@ namespace AbstractSyntax.Expression
             get { return 1; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            switch (index)
+            get
             {
-                case 0: return Child;
-                default: throw new ArgumentOutOfRangeException();
+                switch (index)
+                {
+                    case 0: return Child;
+                    default: throw new ArgumentOutOfRangeException();
+                }
             }
         }
 
-        protected override string AdditionalInfo()
+        protected override string ElementInfo()
         {
             return Enum.GetName(typeof(TokenType), Operator);
         }

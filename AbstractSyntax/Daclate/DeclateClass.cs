@@ -26,7 +26,7 @@ namespace AbstractSyntax.Daclate
 
         public override bool IsVoidValue
         {
-            get { return true; }
+            get { return true; } //todo この代わりのプロパティが必要。
         }
 
         public override DataType DataType
@@ -39,16 +39,19 @@ namespace AbstractSyntax.Daclate
             get { return 5; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            switch (index)
+            get
             {
-                case 0: return Ident;
-                case 1: return Generic;
-                case 2: return Inherit;
-                case 3: return Block;
-                case 4: return This;
-                default: throw new ArgumentOutOfRangeException();
+                switch (index)
+                {
+                    case 0: return Ident;
+                    case 1: return Generic;
+                    case 2: return Inherit;
+                    case 3: return Block;
+                    case 4: return This;
+                    default: throw new ArgumentOutOfRangeException();
+                }
             }
         }
 

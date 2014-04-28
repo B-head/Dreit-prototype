@@ -98,7 +98,7 @@ namespace AbstractSyntax
             get { return false; }
         }
 
-        protected override string AdditionalInfo()
+        protected override string ElementInfo()
         {
             return Name;
         }

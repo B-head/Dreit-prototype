@@ -7,17 +7,12 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CastPragma : DeclateRoutine
+    public class CastPragma : DeclateRoutine, IPragma
     {
         public CastPragma()
         {
             Argument = new TupleList();
             Block = new DirectiveList();
-        }
-
-        public override bool IsPragma
-        {
-            get { return true; }
         }
 
         internal override TypeMatchResult TypeMatch(List<DataType> type)

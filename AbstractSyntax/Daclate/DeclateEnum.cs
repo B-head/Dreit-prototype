@@ -15,12 +15,15 @@ namespace AbstractSyntax.Daclate
             get { return 1; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            switch (index)
+            get
             {
-                case 0: return Ident;
-                default: throw new ArgumentOutOfRangeException();
+                switch (index)
+                {
+                    case 0: return Ident;
+                    default: throw new ArgumentOutOfRangeException();
+                }
             }
         }
 

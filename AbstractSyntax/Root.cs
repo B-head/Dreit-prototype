@@ -27,15 +27,18 @@ namespace AbstractSyntax
             get { return Child.Count + PragmaList.Count; }
         }
 
-        public override Element GetChild(int index)
+        public override Element this[int index]
         {
-            if (index < Child.Count)
+            get
             {
-                return Child[index];
-            }
-            else
-            {
-                return PragmaList[index - Child.Count];
+                if (index < Child.Count)
+                {
+                    return Child[index];
+                }
+                else
+                {
+                    return PragmaList[index - Child.Count];
+                }
             }
         }
 

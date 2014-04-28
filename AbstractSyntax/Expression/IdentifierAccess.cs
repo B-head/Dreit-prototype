@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class IdentifierAccess : Element
+    public class IdentifierAccess : Element, IAccess
     {
         public string Value { get; set; }
         public bool IsPragmaAccess { get; set; }
@@ -23,17 +23,12 @@ namespace AbstractSyntax.Expression
             get { return _Reference.GetDataType(); }
         }
 
-        public override OverLoadScope Reference
+        public OverLoadScope Reference
         {
             get { return _Reference; }
         }
 
-        public override bool IsAssignable
-        {
-            get { return true; }
-        }
-
-        protected override string AdditionalInfo()
+        protected override string ElementInfo()
         {
             if (IsPragmaAccess)
             {

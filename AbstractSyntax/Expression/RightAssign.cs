@@ -15,7 +15,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSyntax()
         {
-            if (Right != null && !Right.IsAssignable)
+            if (!(Right is IAccess))
             {
                 CompileError("not-assignable");
             }
