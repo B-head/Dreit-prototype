@@ -10,6 +10,7 @@ namespace AbstractSyntax
     public class CompileMessageManager : IReadOnlyList<CompileMessage>
     {
         private List<CompileMessage> List;
+        public int MessageCount { get; private set; }
         public int InfoCount { get; private set; }
         public int ErrorCount { get; private set; }
         public int WarningCount { get; private set; }
@@ -27,6 +28,7 @@ namespace AbstractSyntax
                 case CompileMessageType.Error: ++ErrorCount; break;
                 case CompileMessageType.Warning: ++WarningCount; break;
             }
+            ++MessageCount;
             List.Add(info);
         }
 

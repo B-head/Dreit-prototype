@@ -21,20 +21,20 @@
     <output>7</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
-      var e := 10
-      var f := 20.5
-      echo e + f
+      var e:Binary64 := 25.5
+      var f:Integer32 := e
+      echo f
     </code>
-    <output>30.5</output>
+    <output>25</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
-      echo 1 + 2.0
+      echo 1 + 2.5
     </code>
-    <output>3</output>
+    <output>3.5</output>
   </case>
 
   <case>
@@ -44,7 +44,7 @@
     <error key="undefined-identifier"/>
   </case>
   
-  <case>
+  <case ignore="true">
     <code>
       echo { 30 }
     </code>
@@ -103,12 +103,35 @@
 
   <case>
     <code>
+      routine foo(a:Integer32) :: a + 20
+      routine foo(b:Binary64) :: b + 55.5
+      echo foo(0)
+      echo foo(0.0)
+    </code>
+    <output>20 55.5</output>
+  </case>
+
+  <case>
+    <code>
       echo foo(23, 5)
       routine foo(a:Integer32, b:Integer32) {
       return a % b
       }
     </code>
     <output>3</output>
+  </case>
+
+  <case>
+    <code>
+      class A
+      {
+      var value := 500
+      }
+
+      A() =: var a:A
+      echo a.value
+    </code>
+    <output>500</output>
   </case>
 
   <case>

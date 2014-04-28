@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DlightTest
@@ -37,10 +38,9 @@ namespace DlightTest
                     istream.DisposeLocalCopyOfClientHandle();
                     formatter.Serialize(ostream, data);
                     process.StandardInput.WriteLine(data.Input);
-                    if (!process.WaitForExit(5000))
+                    if (!process.WaitForExit(1000))
                     {
                         process.Kill();
-                        process.WaitForExit();
                         Assert.Fail("Timeout execution");
                     }
                     var error = process.StandardError.ReadToEnd();
@@ -48,17 +48,28 @@ namespace DlightTest
                     {
                         Console.WriteLine(error);
                     }
-                    object obj = formatter.Deserialize(istream);
-                    if (obj is AssertionException)
+                    while (true)
                     {
-                        var e = (AssertionException)obj;
-                        throw new AssertionException(e.Message, e);
+                        object obj = null;
+                        try
+                        {
+                            obj = formatter.Deserialize(istream);
+                        }
+                        catch (SerializationException)
+                        {
+                            break;
+                        }
+                        if (obj is AssertionException)
+                        {
+                            var e = (AssertionException)obj;
+                            throw new AssertionException(e.Message, e);
+                        }
+                        else if (obj is Exception)
+                        {
+                            throw new AggregateException("test error", (Exception)obj);
+                        }
+                        Console.WriteLine(obj);
                     }
-                    else if (obj is Exception)
-                    {
-                        throw new AggregateException("test error", (Exception)obj);
-                    }
-                    Console.WriteLine(obj);
                     if (data.Output != null)
                     {
                         var output = TestData.CodeNormalize(process.StandardOutput.ReadToEnd());
@@ -94,8 +105,7 @@ namespace DlightTest
                     TestData data = formatter.Deserialize(istream) as TestData;
                     try
                     {
-                        var message = Execute(data);
-                        formatter.Serialize(ostream, message);
+                        Execute(data, o => formatter.Serialize(ostream, o));
                     }
                     catch (Exception e)
                     {
@@ -105,32 +115,34 @@ namespace DlightTest
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.Error.WriteLine(e);
             }
         }
 
-        private static string Execute(TestData data)
+        private static void Execute(TestData data, Action<object> send)
         {
             Root root = new Root();
             ImportManager import = new ImportManager(root);
             root.Append(CompileText("primitive", primitive));
             root.Append(CompileText(data.Name, data.Code));
             root.SemanticAnalysis();
+            if (root.MessageManager.MessageCount > 0)
+            {
+                send(CompileMessageBuilder.Build(root.MessageManager));
+            }
             Assert.That(root.MessageManager, Is.EquivalentTo(data.Message).Using<CompileMessage>(new CompileMessageEqualityComparer()));
-            var message = CompileMessageBuilder.Build(root.MessageManager);
             if (root.MessageManager.ErrorCount > 0)
             {
                 Assert.That(data.ErrorCount, Is.Not.EqualTo(0), "Compile error");
-                return message;
+                return;
             }
             if(data.NoExecute)
             {
-                return message;
+                return;
             }
             TranslateManager trans = new TranslateManager(data.Name);
             trans.TranslateTo(root, import);
             trans.Run();
-            return message;
         }
 
         private static Element CompileText(string name, string text)
