@@ -78,6 +78,7 @@
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="TextPosition.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="ThisScope.cs" />
     <Compile Include="Token.cs" />

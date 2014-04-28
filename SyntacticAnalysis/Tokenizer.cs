@@ -5,27 +5,28 @@ namespace SyntacticAnalysis
     class Tokenizer
     {
         public string Text { get; private set; }
-        public TextPosition Position { get; private set; }
+        private TextPosition _Position;
+        public TextPosition Position { get { return _Position; } }
 
         public Tokenizer(string text, string fileName)
         {
             Text = text;
-            Position = new TextPosition { File = fileName, Line = 1 };
+            _Position = new TextPosition { File = fileName, Line = 1 };
         }
 
         public bool IsReadable(int index = 0)
         {
-            return Position.Total + index < Text.Length;
+            return _Position.Total + index < Text.Length;
         }
 
         public char Read(int index = 0)
         {
-            return Text[Position.Total + index];
+            return Text[_Position.Total + index];
         }
 
         public string Read(int index, int length)
         {
-            int start = Position.Total + index;
+            int start = _Position.Total + index;
             if (start + length <= Text.Length)
             {
                 return Text.Substring(start, length);
@@ -62,18 +63,12 @@ namespace SyntacticAnalysis
                 return null;
             }
             string text = Read(0, length);
-            var temp = Position;
-            temp.Length = length;
-            Token token = new Token { Text = text, Type = type, Position = temp };
-            var p = Position;
-            p.Total += length;
-            p.Row += length;
+            Token token = new Token { Text = text, Type = type, Position = _Position.AlterLength(length) };
+            _Position.AddCount(length);
             if (type == TokenType.LineTerminator)
             {
-                p.Line++;
-                p.Row = 0;
+                _Position.LineTerminate();
             }
-            Position = p;
             return token;
         }
     }
