@@ -105,7 +105,14 @@ namespace AbstractSyntax.Daclate
                 var ret = Block[0];
                 if (ReturnType is VoidSymbol)
                 {
-                    ReturnType = ret.DataType;
+                    if (ret is ReturnDirective)
+                    {
+                        ReturnType = ((ReturnDirective)ret).Exp.DataType;
+                    }
+                    else
+                    {
+                        ReturnType = ret.DataType;
+                    }
                 }
                 else if(ReturnType != ret.DataType)
                 {
@@ -117,11 +124,11 @@ namespace AbstractSyntax.Daclate
                 var ret = Block.FindElements<ReturnDirective>();
                 if (ReturnType is VoidSymbol && ret.Count > 0)
                 {
-                    ReturnType = ret[0].DataType;
+                    ReturnType = ret[0].Exp.DataType;
                 }
                 foreach(var v in ret)
                 {
-                    if (ReturnType != v.DataType)
+                    if (ReturnType != v.Exp.DataType)
                     {
                         CompileError("disagree-return-type");
                     }

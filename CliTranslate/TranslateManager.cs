@@ -186,7 +186,7 @@ namespace CliTranslate
                     trans.GenerateControl(CodeType.Pop);
                 }
             }
-            if (element.Count <= 0 || !(element[element.Count - 1] is ReturnDirective))
+            if (element.Count <= 0 || !(element[element.Count - 1] is ReturnDirective)) //todo VoidSymbolで調べた方がいい？
             {
                 trans.GenerateControl(CodeType.Ret);
             }

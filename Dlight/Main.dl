@@ -1,5 +1,5 @@
 ﻿
-      routine foo(a:Integer32) :: a + 20
-      routine foo(b:Binary64) :: b + 55.5
-      echo foo(0)
-      echo foo(0.0)
+      echo foo(23, 5)
+      routine foo(a:Integer32, b:Integer32) {
+      return a % b
+      }

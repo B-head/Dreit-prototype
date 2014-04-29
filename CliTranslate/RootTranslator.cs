@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
+using AbstractSyntax.Symbol;
 
 namespace CliTranslate
 {
@@ -31,16 +32,16 @@ namespace CliTranslate
 
         internal dynamic GetBuilder(Scope path)
         {
-            if(path == null)
+            if (path is VoidSymbol)
             {
-                throw new ArgumentNullException();
+                return typeof(void);
             }
             return BuilderDictonary[path];
         }
 
         internal Type GetReturnBuilder(Scope path)
         {
-            if (path == null)
+            if (path is VoidSymbol)
             {
                 return typeof(void);
             }

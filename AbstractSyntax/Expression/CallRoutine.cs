@@ -27,7 +27,7 @@ namespace AbstractSyntax.Expression
                 else if(CallScope is DeclateRoutine)
                 {
                     var rout = (DeclateRoutine)CallScope;
-                    return rout.ReturnType;
+                    return rout.DataType;
                 }
                 else
                 {
