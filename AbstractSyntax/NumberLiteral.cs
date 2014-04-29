@@ -24,15 +24,18 @@ namespace AbstractSyntax
             }
         }
 
-        protected override string ElementInfo()
+        protected override string ElementInfo
         {
-            if (Fraction == null)
+            get
             {
-                return Integral;
-            }
-            else
-            {
-                return Integral + "." + Fraction;
+                if (Fraction == null)
+                {
+                    return Integral;
+                }
+                else
+                {
+                    return Integral + "." + Fraction;
+                }
             }
         }
 

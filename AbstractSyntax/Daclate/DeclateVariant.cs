@@ -21,7 +21,7 @@ namespace AbstractSyntax.Daclate
                 {
                     throw new InvalidOperationException();
                 }
-                return _DataType; 
+                return _DataType;
             }
         }
 
@@ -58,11 +58,6 @@ namespace AbstractSyntax.Daclate
             _DataType = type;
         }
 
-        protected override string CreateName()
-        {
-            return Ident == null ? Name : Ident.Value;
-        }
-
         internal override TypeMatchResult TypeMatch(List<DataType> type)
         {
             if (type.Count == 0)
@@ -84,6 +79,12 @@ namespace AbstractSyntax.Daclate
             {
                 return TypeMatchResult.MissMatchCount;
             }
+        }
+
+        protected override void SpreadElement(Element parent, Scope scope)
+        {
+            Name = Ident == null ? string.Empty : Ident.Value;
+            base.SpreadElement(parent, scope);
         }
 
         internal override void SpreadReference(Scope scope)

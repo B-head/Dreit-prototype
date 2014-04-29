@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
@@ -7,15 +8,13 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CalculatePragma : DeclateRoutine, IPragma
+    public class CalculatePragma : RoutineSymbol, IPragma
     {
         public CalculatePragmaType Type { get; private set; }
 
         public CalculatePragma(CalculatePragmaType type)
         {
             Type = type;
-            Argument = new TupleList();
-            Block = new DirectiveList();
         }
 
         internal override TypeMatchResult TypeMatch(List<DataType> type)

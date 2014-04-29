@@ -15,7 +15,7 @@ namespace AbstractSyntax
         public int Id { get; private set; }
         public TextPosition Position { get; set; }
         public Element Parent { get; private set; }
-        public Scope ScopeParent { get; private set; }
+        public Scope CurrentScope { get; private set; }
         public Root Root { get; private set; }
         public bool IsImport { get; set; }
 
@@ -34,9 +34,9 @@ namespace AbstractSyntax
             get { return DataType is VoidSymbol; }
         }
 
-        protected virtual string ElementInfo()
+        protected virtual string ElementInfo
         {
-            return null;
+            get { return null; }
         }
 
         public virtual int Count
@@ -49,10 +49,10 @@ namespace AbstractSyntax
             get { throw new ArgumentOutOfRangeException(); }
         }
 
-        protected void SpreadElement(Element parent, Scope scope)
+        protected virtual void SpreadElement(Element parent, Scope scope)
         {
             Parent = parent;
-            ScopeParent = scope;
+            CurrentScope = scope;
             if (this is Root)
             {
                 Root = (Root)this;
@@ -61,26 +61,15 @@ namespace AbstractSyntax
             {
                 Root = parent.Root;
             }
-            if(this is Scope)
+            if (this is Scope)
             {
-                var temp = (Scope)this;
-                foreach (Element v in this)
-                {
-                    if (v != null)
-                    {
-                        v.SpreadElement(this, temp);
-                    }
-                }
-                temp.SpreadScope(scope);
+                scope = (Scope)this;
             }
-            else
+            foreach (Element v in this)
             {
-                foreach (Element v in this)
+                if (v != null)
                 {
-                    if (v != null)
-                    {
-                        v.SpreadElement(this, scope);
-                    }
+                    v.SpreadElement(this, scope);
                 }
             }
         }
@@ -124,20 +113,20 @@ namespace AbstractSyntax
 
         protected void CompileInfo(string key)
         {
-            PostCompileInfo(key, CompileMessageType.Info);
+            SendCompileInfo(key, CompileMessageType.Info);
         }
 
         protected void CompileError(string key)
         {
-            PostCompileInfo(key, CompileMessageType.Error);
+            SendCompileInfo(key, CompileMessageType.Error);
         }
 
         protected void CompileWarning(string key)
         {
-            PostCompileInfo(key, CompileMessageType.Warning);
+            SendCompileInfo(key, CompileMessageType.Warning);
         }
 
-        private void PostCompileInfo(string key, CompileMessageType type)
+        private void SendCompileInfo(string key, CompileMessageType type)
         {
             CompileMessage info = new CompileMessage
             {
@@ -153,7 +142,7 @@ namespace AbstractSyntax
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(Position).Append(" ").Append(this.GetType().Name);
-            var add = ElementInfo();
+            var add = ElementInfo;
             if (add != null)
             {
                 builder.Append(": ").Append(add);

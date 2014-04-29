@@ -8,15 +8,12 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateRoutine : Scope
+    public class DeclateRoutine : RoutineSymbol
     {
-        public IdentifierAccess Ident { get; set; }
         public TupleList Generic { get; set; }
         public TupleList Argument { get; set; }
         public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
-        public List<DataType> ArgumentType { get; set; }
-        public DataType ReturnType { get; set; }
 
         public override bool IsVoidValue
         {
@@ -30,7 +27,7 @@ namespace AbstractSyntax.Daclate
 
         public override int Count
         {
-            get { return 5; }
+            get { return 4; }
         }
 
         public override Element this[int index]
@@ -39,19 +36,13 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Ident;
-                    case 1: return Generic;
-                    case 2: return Argument;
-                    case 3: return ExplicitType;
-                    case 4: return Block;
+                    case 0: return Generic;
+                    case 1: return Argument;
+                    case 2: return ExplicitType;
+                    case 3: return Block;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        protected override string CreateName()
-        {
-            return Ident == null ? Name : Ident.Value;
         }
 
         internal override TypeMatchResult TypeMatch(List<DataType> type)

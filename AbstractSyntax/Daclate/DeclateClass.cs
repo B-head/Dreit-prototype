@@ -11,7 +11,6 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateClass : DataType
     {
-        public IdentifierAccess Ident { get; set; }
         public TupleList Generic { get; set; }
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
@@ -36,7 +35,7 @@ namespace AbstractSyntax.Daclate
 
         public override int Count
         {
-            get { return 5; }
+            get { return 4; }
         }
 
         public override Element this[int index]
@@ -45,19 +44,13 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Ident;
-                    case 1: return Generic;
-                    case 2: return Inherit;
-                    case 3: return Block;
-                    case 4: return This;
+                    case 0: return Generic;
+                    case 1: return Inherit;
+                    case 2: return Block;
+                    case 3: return This;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        protected override string CreateName()
-        {
-            return Ident == null ? Name : Ident.Value;
         }
 
         internal override TypeMatchResult TypeMatch(List<DataType> type)

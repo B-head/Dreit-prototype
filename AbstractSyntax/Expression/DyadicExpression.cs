@@ -29,9 +29,12 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        protected override string ElementInfo()
+        protected override string ElementInfo
         {
-            return Enum.GetName(typeof(TokenType), Operator);
+            get
+            {
+                return Enum.GetName(typeof(TokenType), Operator);
+            }
         }
 
         internal override void CheckSyntax()

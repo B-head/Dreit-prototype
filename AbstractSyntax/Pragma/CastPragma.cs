@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
@@ -7,14 +8,8 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CastPragma : DeclateRoutine, IPragma
+    public class CastPragma : RoutineSymbol, IPragma
     {
-        public CastPragma()
-        {
-            Argument = new TupleList();
-            Block = new DirectiveList();
-        }
-
         internal override TypeMatchResult TypeMatch(List<DataType> type)
         {
             if (type.Count != 2)

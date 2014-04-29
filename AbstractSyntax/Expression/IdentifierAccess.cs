@@ -20,7 +20,7 @@ namespace AbstractSyntax.Expression
                 if (_IsTacitThis == null)
                 {
                     var voidSelect = ScopeReference;
-                    if (voidSelect != null && voidSelect.ScopeParent == GetParentClass() && ScopeParent is DeclateRoutine)
+                    if (voidSelect != null && voidSelect.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine)
                     {
                         _IsTacitThis = true;
                     }
@@ -39,7 +39,7 @@ namespace AbstractSyntax.Expression
             {
                 if (_Reference.IsVoid == true)
                 {
-                    GetReference(ScopeParent);
+                    GetReference(CurrentScope);
                 }
                 return _Reference.GetDataType(); 
             }
@@ -51,7 +51,7 @@ namespace AbstractSyntax.Expression
             {
                 if(_Reference.IsVoid == true)
                 {
-                    GetReference(ScopeParent);
+                    GetReference(CurrentScope);
                 }
                 return _Reference;
             }
@@ -63,7 +63,7 @@ namespace AbstractSyntax.Expression
             {
                 if (_Reference.IsVoid == true)
                 {
-                    GetReference(ScopeParent);
+                    GetReference(CurrentScope);
                 }
                 return _Reference.TypeSelect();
             }
@@ -92,14 +92,14 @@ namespace AbstractSyntax.Expression
 
         private Scope GetParentClass()
         {
-            var current = ScopeParent;
+            var current = CurrentScope;
             while(current != null)
             {
                 if(current is DeclateClass)
                 {
                     break;
                 }
-                current = current.ScopeParent;
+                current = current.CurrentScope;
             }
             return current;
         }
@@ -110,15 +110,18 @@ namespace AbstractSyntax.Expression
             base.SpreadReference(scope);
         }
 
-        protected override string ElementInfo()
+        protected override string ElementInfo
         {
-            if (IsPragmaAccess)
+            get
             {
-                return "@@" + Value;
-            }
-            else
-            {
-                return Value;
+                if (IsPragmaAccess)
+                {
+                    return "@@" + Value;
+                }
+                else
+                {
+                    return Value;
+                }
             }
         }
     }

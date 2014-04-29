@@ -9,12 +9,12 @@ namespace AbstractSyntax.Expression
     {
         public override DataType DataType
         {
-            get { return GetReference(ScopeParent).GetDataType(); }
+            get { return GetReference(CurrentScope).GetDataType(); }
         }
 
         public OverLoadScope Reference
         {
-            get { return GetReference(ScopeParent); }
+            get { return GetReference(CurrentScope); }
         }
 
         public OverLoadScope GetReference(Scope scope)

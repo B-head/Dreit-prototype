@@ -80,7 +80,7 @@ namespace CliTranslate
             {
                 var v = SpreadQueue.Min;
                 SpreadQueue.Remove(v);
-                var trans = TransDictionary[v.ScopeParent];
+                var trans = TransDictionary[v.CurrentScope];
                 SpreadTranslate((dynamic)v, trans);
             }
         }

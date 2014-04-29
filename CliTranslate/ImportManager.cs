@@ -96,7 +96,6 @@ namespace CliTranslate
 
         private DeclateClass ImportType(Type type)
         {
-            var ident = new IdentifierAccess { Value = type.GetPureName(), IsImport = true };
             var generic = CreateGenericList(type.GetGenericList());
             var inherit = CreateInheritList(type.GetInheritList());
             var exp = new DirectiveList { IsImport = true };
@@ -137,7 +136,7 @@ namespace CliTranslate
             {
                 exp.Append(ImportType(n));
             }
-            DeclateClass result = new DeclateClass { Ident = ident, Generic = generic, Inherit = inherit, Block = exp, IsImport = true };
+            DeclateClass result = new DeclateClass { Name = type.GetPureName(), Generic = generic, Inherit = inherit, Block = exp, IsImport = true };
             AppendPeir(result, type);
             foreach (var c in ctor)
             {
@@ -200,10 +199,9 @@ namespace CliTranslate
 
         private Element ConvertConstructor(ConstructorInfo ctor)
         {
-            var ident = new IdentifierAccess { Value = ctor.Name, IsImport = true };
             var argument = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
-            DeclateRoutine result = new DeclateRoutine { Ident = ident, Argument = argument, ExplicitType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Name = ctor.Name, Argument = argument, ExplicitType = expl, IsImport = true };
             AppendPeir(result, ctor);
             return result;
         }
@@ -227,11 +225,10 @@ namespace CliTranslate
 
         private DeclateRoutine ImportMethod(MethodInfo method)
         {
-            var ident = new IdentifierAccess { Value = method.GetPureName(), IsImport = true };
             var generic = CreateGenericList(method.GetGenericList());
             var argument = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
-            DeclateRoutine result = new DeclateRoutine { Ident = ident, Generic = generic, Argument = argument, ExplicitType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Name = method.GetPureName(), Generic = generic, Argument = argument, ExplicitType = expl, IsImport = true };
             AppendPeir(result, method);
             return result;
         }

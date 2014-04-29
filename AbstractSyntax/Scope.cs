@@ -20,24 +20,14 @@ namespace AbstractSyntax
             _ScopeChild = new List<Scope>();
         }
 
-        public void AppendChild(Scope scope)
+        internal virtual bool IsNameSpace
         {
-            OverLoadScope ol;
-            if (ScopeSymbol.ContainsKey(scope.Name))
-            {
-                ol = ScopeSymbol[scope.Name];
-            }
-            else
-            {
-                ol = new OverLoadScope();
-                ScopeSymbol[scope.Name] = ol;
-            }
-            ol.Append(scope);//todo 重複判定を実装する。
-            _ScopeChild.Add(scope);
-            if (scope.IsNameSpace)
-            {
-                Merge(scope);
-            }
+            get { return false; }
+        }
+
+        protected override string ElementInfo
+        {
+            get { return Name; }
         }
 
         private void Merge(Scope other)
@@ -69,7 +59,7 @@ namespace AbstractSyntax
             {
                 return Root.VoidOverLoad;
             }
-            return ScopeParent.NameResolution(name);
+            return CurrentScope.NameResolution(name);
         }
 
         public string GetFullName()
@@ -81,27 +71,41 @@ namespace AbstractSyntax
 
         private void BuildFullName(StringBuilder builder)
         {
-            if(ScopeParent != null && !(ScopeParent is Root))
+            if(CurrentScope != null && !(CurrentScope is Root))
             {
-                ScopeParent.BuildFullName(builder);
+                CurrentScope.BuildFullName(builder);
                 builder.Append(".");
             }
             builder.Append(Name);
         }
 
-        internal virtual bool IsNameSpace
+        public void AppendChild(Scope scope)
         {
-            get { return false; }
+            OverLoadScope ol;
+            if (ScopeSymbol.ContainsKey(scope.Name))
+            {
+                ol = ScopeSymbol[scope.Name];
+            }
+            else
+            {
+                ol = new OverLoadScope();
+                ScopeSymbol[scope.Name] = ol;
+            }
+            ol.Append(scope);//todo 重複判定を実装する。
+            _ScopeChild.Add(scope);
+            if (scope.IsNameSpace)
+            {
+                Merge(scope);
+            }
         }
 
-        protected override string ElementInfo()
+        protected override void SpreadElement(Element parent, Scope scope)
         {
-            return Name;
-        }
-
-        protected virtual string CreateName()
-        {
-            return Name;
+            base.SpreadElement(parent, scope);
+            if (!(this is Root))
+            {
+                scope.AppendChild(this);
+            }
         }
 
         internal virtual TypeMatchResult TypeMatch(List<DataType> type)
@@ -116,18 +120,9 @@ namespace AbstractSyntax
             }
         }
 
-        internal void SpreadScope(Scope scope)
-        {
-            Name = CreateName();
-            if (scope != null)
-            {
-                scope.AppendChild(this);
-            }
-        }
-
         internal override void CheckSyntax()
         {
-            if (Name == null || Name == string.Empty)
+            if (string.IsNullOrEmpty(Name))
             {
                 CompileError("null-scope-name");
             }

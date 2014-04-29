@@ -27,9 +27,10 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        protected override string CreateName()
+        protected override void SpreadElement(Element parent, Scope scope)
         {
-            return Ident == null ? Name : Ident.Value;
+            Name = Ident == null ? string.Empty : Ident.Value;
+            base.SpreadElement(parent, scope);
         }
     }
 }

@@ -34,9 +34,14 @@ namespace SyntacticAnalysis
             }
             var p = c.GetTextPosition(i);
             c.MoveNextToken(ref i);
-            IdentifierAccess ident = IdentifierAccess(c, ref i);
+            string name = string.Empty;
             TupleList attr = null;
             Element retType = null;
+            if (c.CheckToken(i, TokenType.LetterStartString))
+            {
+                name = c.Read(i).Text;
+                c.MoveNextToken(ref i);
+            }
             if (c.CheckToken(i, TokenType.LeftParenthesis))
             {
                 c.MoveNextToken(ref i);
@@ -56,7 +61,7 @@ namespace SyntacticAnalysis
                 retType = MemberAccess(c, ref i);
             }
             var block = Block(c, ref i);
-            return new DeclateRoutine { Ident = ident, Argument = attr, ExplicitType = retType, Block = block, Position = p.AlterLength((TextPosition?)block) };
+            return new DeclateRoutine { Name = name, Argument = attr, ExplicitType = retType, Block = block, Position = p.AlterLength((TextPosition?)block) };
         }
 
         private static DeclateOperator DeclateOperator(TokenCollection c, ref int i)
@@ -118,8 +123,13 @@ namespace SyntacticAnalysis
             }
             var p = c.GetTextPosition(i);
             c.MoveNextToken(ref i);
-            IdentifierAccess ident = IdentifierAccess(c, ref i);
+            string name = string.Empty;
             TupleList inherit = null;
+            if (c.CheckToken(i, TokenType.LetterStartString))
+            {
+                name = c.Read(i).Text;
+                c.MoveNextToken(ref i);
+            }
             if (c.CheckToken(i, TokenType.Peir))
             {
                 c.MoveNextToken(ref i);
@@ -130,7 +140,7 @@ namespace SyntacticAnalysis
                 inherit = new TupleList();
             }
             var block = Block(c, ref i);
-            return new DeclateClass { Ident = ident, Inherit = inherit, Block = block, Position = p.AlterLength((TextPosition?)block) };
+            return new DeclateClass { Name = name, Inherit = inherit, Block = block, Position = p.AlterLength((TextPosition?)block) };
         }
     }
 }
