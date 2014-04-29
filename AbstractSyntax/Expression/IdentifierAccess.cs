@@ -17,39 +17,53 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (_IsTacitThis == null)
+                if (_IsTacitThis != null)
                 {
-                    var voidSelect = ScopeReference;
-                    if (voidSelect != null && voidSelect.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine)
-                    {
-                        _IsTacitThis = true;
-                    }
-                    else
-                    {
-                        _IsTacitThis = false;
-                    }
+                    return _IsTacitThis.Value;
+                }
+                var voidSelect = ScopeReference;
+                if (voidSelect != null && voidSelect.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine)
+                {
+                    _IsTacitThis = true;
+                }
+                else
+                {
+                    _IsTacitThis = false;
                 }
                 return _IsTacitThis.Value;
             }
         }
 
-        public override DataType DataType
+        protected override string ElementInfo
         {
             get
             {
-                if (_Reference.IsVoid == true)
+                if (IsPragmaAccess)
                 {
-                    GetReference(CurrentScope);
+                    return "@@" + Value;
                 }
-                return _Reference.GetDataType(); 
+                else
+                {
+                    return Value;
+                }
             }
+        }
+
+        public override DataType DataType
+        {
+            get { return Reference.GetDataType(); }
+        }
+
+        public Scope ScopeReference
+        {
+            get { return Reference.TypeSelect(); }
         }
 
         public OverLoadScope Reference
         {
             get
             {
-                if(_Reference.IsVoid == true)
+                if(_Reference == null)
                 {
                     GetReference(CurrentScope);
                 }
@@ -57,37 +71,16 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public Scope ScopeReference
-        {
-            get
-            {
-                if (_Reference.IsVoid == true)
-                {
-                    GetReference(CurrentScope);
-                }
-                return _Reference.TypeSelect();
-            }
-        }
-
-        public OverLoadScope GetReference(Scope scope)
+        public void GetReference(Scope scope)
         {
             if (IsPragmaAccess)
             {
                 _Reference = Root.GetPragma(Value);
-                if (_Reference.IsVoid)
-                {
-                    CompileError("undefined-pragma");
-                }
             }
             else
             {
                 _Reference = scope.NameResolution(Value);
-                if (_Reference.IsVoid)
-                {
-                    CompileError("undefined-identifier");
-                }
             }
-            return _Reference;
         }
 
         private Scope GetParentClass()
@@ -104,25 +97,20 @@ namespace AbstractSyntax.Expression
             return current;
         }
 
-        internal override void SpreadReference(Scope scope)
+        internal override void CheckDataType()
         {
-            _Reference = Root.VoidOverLoad;
-            base.SpreadReference(scope);
-        }
-
-        protected override string ElementInfo
-        {
-            get
+            if (Reference.IsVoid)
             {
                 if (IsPragmaAccess)
                 {
-                    return "@@" + Value;
+                    CompileError("undefined-pragma");
                 }
                 else
                 {
-                    return Value;
+                    CompileError("undefined-identifier");
                 }
             }
+            base.CheckDataType();
         }
     }
 }

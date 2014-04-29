@@ -74,21 +74,6 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual void SpreadReference(Scope scope)
-        {
-            if (this is Scope)
-            {
-                scope = (Scope)this;
-            }
-            foreach (Element v in this)
-            {
-                if (v != null)
-                {
-                    v.SpreadReference(scope);
-                }
-            }
-        }
-
         internal virtual void CheckSyntax()
         {
             foreach (Element v in this)

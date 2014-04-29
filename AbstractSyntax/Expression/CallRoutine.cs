@@ -54,11 +54,6 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        internal override void SpreadReference(Scope scope)
-        {
-            base.SpreadReference(scope);
-        }
-
         internal override void CheckDataType()
         {
             base.CheckDataType();

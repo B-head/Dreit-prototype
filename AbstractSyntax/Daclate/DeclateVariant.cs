@@ -17,9 +17,17 @@ namespace AbstractSyntax.Daclate
         {
             get
             {
-                if(_DataType == null)
+                if(_DataType != null)
                 {
-                    throw new InvalidOperationException();
+                    return _DataType;
+                }
+                if (ExplicitType != null)
+                {
+                    _DataType = ExplicitType.DataType;
+                }
+                else
+                {
+                    _DataType = Root.Void;
                 }
                 return _DataType;
             }
@@ -30,9 +38,9 @@ namespace AbstractSyntax.Daclate
             get { return Ident.Reference; }
         }
 
-        public OverLoadScope GetReference(Scope scope)
+        public void GetReference(Scope scope)
         {
-            return Ident.GetReference(scope);
+            Ident.GetReference(scope);
         }
 
         public override int Count
@@ -85,19 +93,6 @@ namespace AbstractSyntax.Daclate
         {
             Name = Ident == null ? string.Empty : Ident.Value;
             base.SpreadElement(parent, scope);
-        }
-
-        internal override void SpreadReference(Scope scope)
-        {
-            base.SpreadReference(scope);
-            if (ExplicitType != null)
-            {
-                _DataType = ExplicitType.DataType;
-            }
-            else
-            {
-                _DataType = Root.Void;
-            }
         }
     }
 }

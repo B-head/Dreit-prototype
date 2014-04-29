@@ -11,7 +11,7 @@ namespace AbstractSyntax
     public class Root : NameSpace
     {
         private Dictionary<string, OverLoadScope> PragmaDictionary;
-        private List<Scope> PragmaList;
+        private DirectiveList PragmaList;
         public CompileMessageManager MessageManager { get; private set; }
         public VoidSymbol Void { get; private set; }
         public OverLoadScope VoidOverLoad { get; private set; }
@@ -19,7 +19,7 @@ namespace AbstractSyntax
         public Root()
         {
             Name = "global";
-            PragmaList = new List<Scope>();
+            PragmaList = new DirectiveList();
             PragmaDictionary = new Dictionary<string, OverLoadScope>();
             MessageManager = new CompileMessageManager();
             Void = new VoidSymbol();
@@ -29,24 +29,19 @@ namespace AbstractSyntax
 
         public override int Count
         {
-            get { return Child.Count + PragmaList.Count + 1; }
+            get { return 3; }
         }
 
         public override Element this[int index]
         {
             get
             {
-                if (index < Child.Count)
+                switch (index)
                 {
-                    return Child[index];
-                }
-                else if (index < Child.Count + PragmaList.Count)
-                {
-                    return PragmaList[index - Child.Count];
-                }
-                else
-                {
-                    return Void;
+                    case 0: return ExpList;
+                    case 1: return PragmaList;
+                    case 2: return Void;
+                    default: throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -54,7 +49,6 @@ namespace AbstractSyntax
         public void SemanticAnalysis()
         {
             SpreadElement(null, null);
-            SpreadReference(null);
             CheckSyntax();
             CheckDataType();
         }
@@ -69,7 +63,7 @@ namespace AbstractSyntax
         private void AppendPragma(string name, Scope pragma)
         {
             pragma.Name = "@@" + name;
-            PragmaList.Add(pragma);
+            PragmaList.Append(pragma);
             var ol = new OverLoadScope();
             ol.Append(pragma);
             PragmaDictionary.Add(name, ol);
@@ -83,7 +77,7 @@ namespace AbstractSyntax
             AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
             AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
             AppendPragma("cast", new CastPragma());
-            AppendPragma("Root", new PrimitivePragma(PrimitivePragmaType.Root));
+            AppendPragma("Object", new PrimitivePragma(PrimitivePragmaType.Object));
             AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
             AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));
             AppendPragma("Integer16", new PrimitivePragma(PrimitivePragmaType.Integer16));

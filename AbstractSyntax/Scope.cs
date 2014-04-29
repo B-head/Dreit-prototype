@@ -20,11 +20,6 @@ namespace AbstractSyntax
             _ScopeChild = new List<Scope>();
         }
 
-        internal virtual bool IsNameSpace
-        {
-            get { return false; }
-        }
-
         protected override string ElementInfo
         {
             get { return Name; }
@@ -93,7 +88,7 @@ namespace AbstractSyntax
             }
             ol.Append(scope);//todo 重複判定を実装する。
             _ScopeChild.Add(scope);
-            if (scope.IsNameSpace)
+            if (scope is NameSpace)
             {
                 Merge(scope);
             }

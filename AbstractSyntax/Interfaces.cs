@@ -14,6 +14,6 @@ namespace AbstractSyntax
     public interface IAccess
     {
         OverLoadScope Reference { get; }
-        OverLoadScope GetReference(Scope scope);
+        void GetReference(Scope scope);
     }
 }

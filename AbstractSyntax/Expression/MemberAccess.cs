@@ -7,22 +7,48 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class MemberAccess : DyadicExpression, IAccess
     {
+        private OverLoadScope _Reference;
+
         public override DataType DataType
         {
-            get { return GetReference(CurrentScope).GetDataType(); }
+            get 
+            {
+                if(_Reference == null)
+                {
+                    GetReference(CurrentScope);
+                }
+                return Right.DataType; 
+            }
         }
 
         public OverLoadScope Reference
         {
-            get { return GetReference(CurrentScope); }
+            get
+            {
+                if(_Reference == null)
+                {
+                    GetReference(CurrentScope);
+                }
+                return _Reference;
+            }
         }
 
-        public OverLoadScope GetReference(Scope scope)
+        public void GetReference(Scope scope)
         {
             var left = Left as IAccess;
             var right = Right as IAccess;
-            var refer = left.GetReference(scope);
-            return right.GetReference(refer.GetDataType());
+            left.GetReference(scope);
+            right.GetReference(Left.DataType);
+            _Reference = right.Reference;
+        }
+
+        internal override void CheckDataType()
+        {
+            if (_Reference == null)
+            {
+                GetReference(CurrentScope);
+            }
+            base.CheckDataType();
         }
     }
 }

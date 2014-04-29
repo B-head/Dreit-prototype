@@ -178,6 +178,11 @@ namespace CliTranslate
 
         private void Translate(DirectiveList element, Translator trans)
         {
+            if(element.Parent is NameSpace && !(element.Parent is DeclateModule))
+            {
+                ChildTranslate(element, trans);
+                return;
+            }
             foreach (Element v in element)
             {
                 Translate((dynamic)v, trans);

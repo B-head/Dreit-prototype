@@ -6,43 +6,14 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateModule : Scope
+    public class DeclateModule : NameSpace
     {
         public string SourceText { get; set; }
-        public DirectiveList ExpList { get; set; }
         public IReadOnlyList<Token> ErrorToken { get; set; }
 
         public DeclateModule()
         {
-            ExpList = new DirectiveList();
             ErrorToken = new List<Token>();
-        }
-
-        public void Append(Element append)
-        {
-            ExpList.Append(append);
-        }
-
-        public override int Count
-        {
-            get { return 1; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return ExpList;
-                    default: throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
-        internal override bool IsNameSpace
-        {
-            get { return true; }
         }
 
         internal override void CheckSyntax()

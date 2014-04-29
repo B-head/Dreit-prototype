@@ -15,11 +15,34 @@ namespace AbstractSyntax.Daclate
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
         public ThisSymbol This { get; set; }
-        public List<DeclateClass> InheritRefer { get; private set; }
+        private List<DeclateClass> _InheritRefer; 
+
+        public List<DeclateClass> InheritRefer 
+        {
+            get
+            {
+                if (_InheritRefer != null)
+                {
+                    return _InheritRefer;
+                }
+                _InheritRefer = new List<DeclateClass>();
+                foreach (var v in Inherit)
+                {
+                    if (v.DataType is DeclateClass)
+                    {
+                        InheritRefer.Add((DeclateClass)v.DataType);
+                    }
+                    else
+                    {
+                        CompileError("not-datatype-inherit");
+                    }
+                }
+                return _InheritRefer;
+            }
+        }
 
         public DeclateClass()
         {
-            InheritRefer = new List<DeclateClass>();
             This = new ThisSymbol(this);
         }
 
@@ -79,26 +102,6 @@ namespace AbstractSyntax.Daclate
             else
             {
                 return prim.Type;
-            }
-        }
-
-        internal override void SpreadReference(Scope scope)
-        {
-            base.SpreadReference(scope);
-            if(Inherit == null)
-            {
-                return;
-            }
-            foreach (var v in Inherit)
-            {
-                if(v.DataType is DeclateClass)
-                {
-                    InheritRefer.Add((DeclateClass)v.DataType);
-                }
-                else
-                {
-                    CompileError("not-datatype-inherit");
-                }
             }
         }
 

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    [Serializable]
     public class RoutineSymbol : Scope
     {
-        public List<DataType> ArgumentType { get; set; }
-        public DataType ReturnType { get; set; }
+        public virtual List<DataType> ArgumentType { get; set; }
+        public virtual DataType ReturnType { get; set; }
     }
 }

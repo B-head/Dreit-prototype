@@ -31,7 +31,7 @@ namespace CliTranslate
         {
             switch(type)
             {
-                case PrimitivePragmaType.Root: return typeof(Object);
+                case PrimitivePragmaType.Object: return typeof(Object);
                 case PrimitivePragmaType.Boolean: return typeof(Boolean);
                 case PrimitivePragmaType.Integer8: return typeof(SByte);
                 case PrimitivePragmaType.Integer16: return typeof(Int16);

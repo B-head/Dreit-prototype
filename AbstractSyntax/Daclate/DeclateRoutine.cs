@@ -15,6 +15,86 @@ namespace AbstractSyntax.Daclate
         public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
 
+        public override List<DataType> ArgumentType
+        {
+            get
+            {
+                if(base.ArgumentType != null)
+                {
+                    return base.ArgumentType;
+                }
+                base.ArgumentType = new List<DataType>();
+                foreach (var v in Argument)
+                {
+                    var temp = v.DataType;
+                    base.ArgumentType.Add(temp);
+                }
+                return base.ArgumentType;
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public override DataType ReturnType
+        {
+            get
+            {
+                if(base.ReturnType != null)
+                {
+                    return base.ReturnType;
+                }
+                if (ExplicitType != null)
+                {
+                    base.ReturnType = ExplicitType.DataType;
+                }
+                else
+                {
+                    base.ReturnType = Root.Void;
+                }
+                if (Block.IsInline)
+                {
+                    var ret = Block[0];
+                    if (base.ReturnType is VoidSymbol)
+                    {
+                        if (ret is ReturnDirective)
+                        {
+                            base.ReturnType = ((ReturnDirective)ret).Exp.DataType;
+                        }
+                        else
+                        {
+                            base.ReturnType = ret.DataType;
+                        }
+                    }
+                    else if (base.ReturnType != ret.DataType)
+                    {
+                        CompileError("disagree-return-type");
+                    }
+                }
+                else
+                {
+                    var ret = Block.FindElements<ReturnDirective>();
+                    if (base.ReturnType is VoidSymbol && ret.Count > 0)
+                    {
+                        base.ReturnType = ret[0].Exp.DataType;
+                    }
+                    foreach (var v in ret)
+                    {
+                        if (base.ReturnType != v.Exp.DataType)
+                        {
+                            CompileError("disagree-return-type");
+                        }
+                    }
+                }
+                return base.ReturnType;
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
         public override bool IsVoidValue
         {
             get { return true; } //todo この代わりのプロパティが必要。
@@ -47,10 +127,6 @@ namespace AbstractSyntax.Daclate
 
         internal override TypeMatchResult TypeMatch(List<DataType> type)
         {
-            if (ArgumentType == null)
-            {
-                return TypeMatchResult.Unknown;
-            }
             if (ArgumentType.Count != type.Count)
             {
                 return TypeMatchResult.MissMatchCount;
@@ -66,65 +142,6 @@ namespace AbstractSyntax.Daclate
                 }
             }
             return TypeMatchResult.PerfectMatch;
-        }
-
-        internal override void SpreadReference(Scope scope)
-        {
-            base.SpreadReference(scope);
-            var refer = new List<DataType>();
-            foreach (var v in Argument)
-            {
-                var temp = v.DataType;
-                refer.Add(temp);
-            }
-            ArgumentType = refer;
-            if (ExplicitType != null)
-            {
-                ReturnType = ExplicitType.DataType;
-            }
-            else
-            {
-                ReturnType = Root.Void;
-            }
-        }
-
-        internal override void CheckDataType()
-        {
-            base.CheckDataType();
-            if(Block.IsInline)
-            {
-                var ret = Block[0];
-                if (ReturnType is VoidSymbol)
-                {
-                    if (ret is ReturnDirective)
-                    {
-                        ReturnType = ((ReturnDirective)ret).Exp.DataType;
-                    }
-                    else
-                    {
-                        ReturnType = ret.DataType;
-                    }
-                }
-                else if(ReturnType != ret.DataType)
-                {
-                    CompileError("disagree-return-type");
-                }
-            }
-            else
-            {
-                var ret = Block.FindElements<ReturnDirective>();
-                if (ReturnType is VoidSymbol && ret.Count > 0)
-                {
-                    ReturnType = ret[0].Exp.DataType;
-                }
-                foreach(var v in ret)
-                {
-                    if (ReturnType != v.Exp.DataType)
-                    {
-                        CompileError("disagree-return-type");
-                    }
-                }
-            }
         }
     }
 }

@@ -16,9 +16,17 @@ namespace AbstractSyntax
         {
             get
             {
-                if (_DataType == null)
+                if (_DataType != null)
                 {
-                    throw new InvalidOperationException();
+                    return _DataType;
+                }
+                if(Fraction == null)
+                {
+                    _DataType = CurrentScope.NameResolution("Integer32").GetDataType();
+                }
+                else
+                {
+                    _DataType = CurrentScope.NameResolution("Binary64").GetDataType();
                 }
                 return _DataType;
             }
@@ -36,18 +44,6 @@ namespace AbstractSyntax
                 {
                     return Integral + "." + Fraction;
                 }
-            }
-        }
-
-        internal override void SpreadReference(Scope scope)
-        {
-            if(Fraction == null)
-            {
-                _DataType = scope.NameResolution("Integer32").GetDataType();
-            }
-            else
-            {
-                _DataType = scope.NameResolution("Binary64").GetDataType();
             }
         }
 
