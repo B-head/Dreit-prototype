@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Pragma;
+﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -23,9 +24,14 @@ namespace AbstractSyntax.Expression
                 {
                     return ArgumentType[0];
                 }
+                else if(CallScope is DeclateRoutine)
+                {
+                    var rout = (DeclateRoutine)CallScope;
+                    return rout.ReturnType;
+                }
                 else
                 {
-                    return Access.DataType;
+                    return Access.DataType; //todo もっと適切な方法で型を取得する必要がある。
                 }
             }
         }

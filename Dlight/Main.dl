@@ -1,2 +1,5 @@
-﻿var a:Integ45 := 40
-echo a
+﻿
+      routine foo(a:Integer32) :: a + 20
+      routine foo(b:Binary64) :: b + 55.5
+      echo foo(0)
+      echo foo(0.0)

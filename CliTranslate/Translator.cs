@@ -31,7 +31,6 @@ namespace CliTranslate
         ConvR4,
         ConvR8,
         This,
-        Echo,
     }
 
     public abstract class Translator
@@ -151,7 +150,6 @@ namespace CliTranslate
                 case CodeType.ConvR4: Generator.Emit(OpCodes.Conv_R4); break;
                 case CodeType.ConvR8: Generator.Emit(OpCodes.Conv_R8); break;
                 case CodeType.This: Generator.Emit(OpCodes.Ldarg_0); break;
-                case CodeType.Echo: Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(Int32) })); break;
                 default: throw new ArgumentException();
             }
         }
@@ -320,6 +318,13 @@ namespace CliTranslate
             {
                 Generator.Emit(OpCodes.Call, temp);
             }
+        }
+
+        public void GenerateEcho(Scope type)
+        {
+            var temp = Root.GetBuilder(type) as Type;
+            var types = new Type[] { temp };
+            Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", types));
         }
     }
 }

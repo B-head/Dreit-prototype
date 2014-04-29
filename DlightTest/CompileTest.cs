@@ -38,7 +38,7 @@ namespace DlightTest
                     istream.DisposeLocalCopyOfClientHandle();
                     formatter.Serialize(ostream, data);
                     process.StandardInput.WriteLine(data.Input);
-                    if (!process.WaitForExit(1000))
+                    if (!process.WaitForExit(2000))
                     {
                         process.Kill();
                         Assert.Fail("Timeout execution");

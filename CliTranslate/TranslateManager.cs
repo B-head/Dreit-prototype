@@ -355,7 +355,7 @@ namespace CliTranslate
         private void Translate(EchoDirective element, Translator trans)
         {
             ChildTranslate(element, trans);
-            trans.GenerateControl(CodeType.Echo);
+            trans.GenerateEcho(element.Exp.DataType);
         }
     }
 }
