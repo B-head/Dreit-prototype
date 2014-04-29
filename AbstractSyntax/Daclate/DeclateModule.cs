@@ -49,7 +49,6 @@ namespace AbstractSyntax.Daclate
         {
             foreach (Token v in ErrorToken)
             {
-                //todo エラーオブジェクトにTokenを渡す必要がある。
                 if (v.Type == TokenType.OtherString)
                 {
                     CompileError("invalid-token", v);

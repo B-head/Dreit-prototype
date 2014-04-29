@@ -18,11 +18,6 @@ namespace AbstractSyntax.Daclate
         public List<DataType> ArgumentType { get; set; }
         public DataType ReturnType { get; set; }
 
-        public DeclateRoutine()
-        {
-            ReturnType = new VoidSymbol();
-        }
-
         public override bool IsVoidValue
         {
             get { return true; } //todo この代わりのプロパティが必要。
@@ -95,6 +90,10 @@ namespace AbstractSyntax.Daclate
             if (ExplicitType != null)
             {
                 ReturnType = ExplicitType.DataType;
+            }
+            else
+            {
+                ReturnType = Root.Void;
             }
         }
 

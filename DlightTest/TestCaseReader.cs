@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace DlightTest
@@ -17,7 +18,7 @@ namespace DlightTest
             testData = new List<TestData>();
             foreach (var file in Directory.EnumerateFiles(@"./", "*.xml"))
             {
-                var element = XElement.Load(file);
+                var element = XElement.Load(file, LoadOptions.SetLineInfo);
                 if (element.Name != ns + "compile-test")
                 {
                     continue;
@@ -40,6 +41,7 @@ namespace DlightTest
                 {
                     Category = category,
                     Name = category + "-" + ((string)e.Attribute("name") ?? count.ToString()),
+                    Line = ((IXmlLineInfo)e).LineNumber,
                     Ignore = (bool?)e.Attribute("ignore") ?? false,
                     Explicit = (bool?)e.Attribute("explicit") ?? false,
                     NoExecute = (bool?)e.Attribute("no-execute") ?? false,
@@ -76,7 +78,7 @@ namespace DlightTest
             foreach (var data in testData)
             {
                 var test = new TestCaseData(data);
-                test.SetName(data.Name);
+                test.SetName(data.Name + "(" + data.Line + ")");
                 test.SetCategory(data.Category);
                 if (data.Ignore)
                 {

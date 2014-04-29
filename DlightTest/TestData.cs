@@ -10,6 +10,7 @@ namespace DlightTest
     {
         public string Category { get; set; }
         public string Name { get; set; }
+        public int Line { get; set; }
         public bool Ignore { get; set; }
         public bool Explicit { get; set; }
         public bool NoExecute { get; set; }

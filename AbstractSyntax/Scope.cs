@@ -65,13 +65,9 @@ namespace AbstractSyntax
             {
                 return temp;
             }
-            if (name == Name)
+            if (this is Root)
             {
-                //return this;
-            }
-            if (ScopeParent == null)
-            {
-                return null;
+                return Root.VoidOverLoad;
             }
             return ScopeParent.NameResolution(name);
         }

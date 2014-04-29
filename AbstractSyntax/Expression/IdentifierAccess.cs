@@ -13,11 +13,6 @@ namespace AbstractSyntax.Expression
         public bool IsTacitThis { get; private set; }
         private OverLoadScope _Reference;
 
-        public IdentifierAccess()
-        {
-            _Reference = new OverLoadScope();
-        }
-
         public override DataType DataType
         {
             get { return _Reference.GetDataType(); }
@@ -44,26 +39,20 @@ namespace AbstractSyntax.Expression
         {
             if (IsPragmaAccess)
             {
-                var temp = Root.GetPragma(Value);
-                if (temp == null)
+                _Reference = Root.GetPragma(Value);
+                if (_Reference.IsVoid)
                 {
                     CompileError("undefined-pragma");
-                }
-                else
-                {
-                    _Reference = temp;
+                    return;
                 }
             }
             else
             {
-                var temp = scope.NameResolution(Value);
-                if (temp == null)
+                _Reference = scope.NameResolution(Value);
+                if (_Reference.IsVoid)
                 {
                     CompileError("undefined-identifier");
-                }
-                else
-                {
-                    _Reference = temp;
+                    return;
                 }
             }
             var voidSelect = _Reference.TypeSelect();
@@ -76,7 +65,7 @@ namespace AbstractSyntax.Expression
         private Scope GetParentClass()
         {
             var current = ScopeParent;
-            while(current != null)
+            while(current != null) //todo バグ潰してる？
             {
                 if(current is DeclateClass)
                 {

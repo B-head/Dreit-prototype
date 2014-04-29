@@ -26,7 +26,7 @@ namespace AbstractSyntax
 
         public virtual DataType DataType
         {
-            get { return new VoidSymbol(); }
+            get { return Root.Void; }
         }
 
         public virtual bool IsVoidValue

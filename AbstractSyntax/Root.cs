@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Pragma;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace AbstractSyntax
         private Dictionary<string, OverLoadScope> PragmaDictionary;
         private List<Scope> PragmaList;
         public CompileMessageManager MessageManager { get; private set; }
+        public VoidSymbol Void { get; private set; }
+        public OverLoadScope VoidOverLoad { get; private set; }
 
         public Root()
         {
@@ -19,12 +22,14 @@ namespace AbstractSyntax
             PragmaList = new List<Scope>();
             PragmaDictionary = new Dictionary<string, OverLoadScope>();
             MessageManager = new CompileMessageManager();
+            Void = new VoidSymbol();
+            VoidOverLoad = new OverLoadScope(Void);
             CreatePragma();
         }
 
         public override int Count
         {
-            get { return Child.Count + PragmaList.Count; }
+            get { return Child.Count + PragmaList.Count + 1; }
         }
 
         public override Element this[int index]
@@ -35,9 +40,13 @@ namespace AbstractSyntax
                 {
                     return Child[index];
                 }
-                else
+                else if (index < Child.Count + PragmaList.Count)
                 {
                     return PragmaList[index - Child.Count];
+                }
+                else
+                {
+                    return Void;
                 }
             }
         }
