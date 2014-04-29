@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,10 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateVariant : Scope, IAccess
+    public class DeclateVariant : VariantSymbol, IAccess
     {
         public IdentifierAccess Ident { get; set; }
         public Element ExplicitType { get; set; }
-        public DataType _DataType { get; set; }
 
         public override DataType DataType
         {

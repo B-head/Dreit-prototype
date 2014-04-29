@@ -9,7 +9,17 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class RoutineSymbol : Scope
     {
-        public virtual List<DataType> ArgumentType { get; set; }
-        public virtual DataType ReturnType { get; set; }
+        protected List<DataType> _ArgumentType;
+        protected DataType _ReturnType;
+
+        public virtual List<DataType> ArgumentType
+        {
+            get { return _ArgumentType; }
+        }
+
+        public virtual DataType ReturnType
+        {
+            get { return _ReturnType; }
+        }
     }
 }

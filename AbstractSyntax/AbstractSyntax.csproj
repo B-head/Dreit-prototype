@@ -79,7 +79,10 @@
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Symbol\ClassSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
+    <Compile Include="Symbol\UndefinedSymbol.cs" />
+    <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="Symbol\ThisSymbol.cs" />

@@ -19,21 +19,17 @@ namespace AbstractSyntax.Daclate
         {
             get
             {
-                if(base.ArgumentType != null)
+                if (_ArgumentType != null)
                 {
-                    return base.ArgumentType;
+                    return _ArgumentType;
                 }
-                base.ArgumentType = new List<DataType>();
+                _ArgumentType = new List<DataType>();
                 foreach (var v in Argument)
                 {
                     var temp = v.DataType;
-                    base.ArgumentType.Add(temp);
+                    _ArgumentType.Add(temp);
                 }
-                return base.ArgumentType;
-            }
-            set
-            {
-                throw new NotSupportedException();
+                return _ArgumentType;
             }
         }
 
@@ -41,33 +37,33 @@ namespace AbstractSyntax.Daclate
         {
             get
             {
-                if(base.ReturnType != null)
+                if (_ReturnType != null)
                 {
-                    return base.ReturnType;
+                    return _ReturnType;
                 }
                 if (ExplicitType != null)
                 {
-                    base.ReturnType = ExplicitType.DataType;
+                    _ReturnType = ExplicitType.DataType;
                 }
                 else
                 {
-                    base.ReturnType = Root.Void;
+                    _ReturnType = Root.Void;
                 }
                 if (Block.IsInline)
                 {
                     var ret = Block[0];
-                    if (base.ReturnType is VoidSymbol)
+                    if (_ReturnType is VoidSymbol)
                     {
                         if (ret is ReturnDirective)
                         {
-                            base.ReturnType = ((ReturnDirective)ret).Exp.DataType;
+                            _ReturnType = ((ReturnDirective)ret).Exp.DataType;
                         }
                         else
                         {
-                            base.ReturnType = ret.DataType;
+                            _ReturnType = ret.DataType;
                         }
                     }
-                    else if (base.ReturnType != ret.DataType)
+                    else if (_ReturnType != ret.DataType)
                     {
                         CompileError("disagree-return-type");
                     }
@@ -75,23 +71,19 @@ namespace AbstractSyntax.Daclate
                 else
                 {
                     var ret = Block.FindElements<ReturnDirective>();
-                    if (base.ReturnType is VoidSymbol && ret.Count > 0)
+                    if (_ReturnType is VoidSymbol && ret.Count > 0)
                     {
-                        base.ReturnType = ret[0].Exp.DataType;
+                        _ReturnType = ret[0].Exp.DataType;
                     }
                     foreach (var v in ret)
                     {
-                        if (base.ReturnType != v.Exp.DataType)
+                        if (_ReturnType != v.Exp.DataType)
                         {
                             CompileError("disagree-return-type");
                         }
                     }
                 }
-                return base.ReturnType;
-            }
-            set
-            {
-                throw new NotSupportedException();
+                return _ReturnType;
             }
         }
 

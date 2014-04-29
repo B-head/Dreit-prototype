@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class PrimitivePragma : DeclateClass, IPragma
+    public class PrimitivePragma : ClassSymbol, IPragma
     {
         public PrimitivePragmaType Type { get; private set; }
 

@@ -9,15 +9,14 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateClass : DataType
+    public class DeclateClass : ClassSymbol
     {
         public TupleList Generic { get; set; }
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
         public ThisSymbol This { get; set; }
-        private List<DeclateClass> _InheritRefer; 
 
-        public List<DeclateClass> InheritRefer 
+        public override List<ClassSymbol> InheritRefer 
         {
             get
             {
@@ -25,12 +24,12 @@ namespace AbstractSyntax.Daclate
                 {
                     return _InheritRefer;
                 }
-                _InheritRefer = new List<DeclateClass>();
+                _InheritRefer = new List<ClassSymbol>();
                 foreach (var v in Inherit)
                 {
-                    if (v.DataType is DeclateClass)
+                    if (v.DataType is ClassSymbol)
                     {
-                        InheritRefer.Add((DeclateClass)v.DataType);
+                        InheritRefer.Add((ClassSymbol)v.DataType);
                     }
                     else
                     {
@@ -103,27 +102,6 @@ namespace AbstractSyntax.Daclate
             {
                 return prim.Type;
             }
-        }
-
-        public bool IsContain(DeclateClass other)
-        {
-            return Object.ReferenceEquals(this, other);
-        }
-
-        public bool IsConvert(DeclateClass other)
-        {
-            if(IsContain(other))
-            {
-                return true;
-            }
-            foreach(var v in InheritRefer)
-            {
-                if(v.IsConvert(other))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }
