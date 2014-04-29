@@ -31,7 +31,7 @@ namespace AbstractSyntax.Expression
                 }
                 else
                 {
-                    return Access.DataType; //todo もっと適切な方法で型を取得する必要がある。
+                    return CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
                 }
             }
         }

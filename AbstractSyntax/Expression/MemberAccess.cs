@@ -9,22 +9,20 @@ namespace AbstractSyntax.Expression
     {
         public override DataType DataType
         {
-            get { return Right.DataType; }
+            get { return GetReference(ScopeParent).GetDataType(); }
         }
 
         public OverLoadScope Reference
         {
-            get
-            {
-                var right = Right as IAccess;
-                return right.Reference; 
-            }
+            get { return GetReference(ScopeParent); }
         }
 
-        internal override void SpreadReference(Scope scope)
+        public OverLoadScope GetReference(Scope scope)
         {
-            Left.SpreadReference(scope);
-            Right.SpreadReference(Left.DataType);
+            var left = Left as IAccess;
+            var right = Right as IAccess;
+            var refer = left.GetReference(scope);
+            return right.GetReference(refer.GetDataType());
         }
     }
 }

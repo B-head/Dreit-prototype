@@ -1,5 +1,11 @@
 ﻿
-      echo foo(23, 5)
-      routine foo(a:Integer32, b:Integer32) {
-      return a % b
+      class Counter
+      {
+      var value := 0
+      routine next() :: value := value + 1
       }
+
+      Counter() =: var counter
+      echo counter.next()
+      echo counter.next()
+      echo counter.next()

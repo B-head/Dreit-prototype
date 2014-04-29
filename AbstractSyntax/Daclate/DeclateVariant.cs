@@ -30,6 +30,11 @@ namespace AbstractSyntax.Daclate
             get { return Ident.Reference; }
         }
 
+        public OverLoadScope GetReference(Scope scope)
+        {
+            return Ident.GetReference(scope);
+        }
+
         public override int Count
         {
             get { return 2; }
@@ -87,6 +92,10 @@ namespace AbstractSyntax.Daclate
             if (ExplicitType != null)
             {
                 _DataType = ExplicitType.DataType;
+            }
+            else
+            {
+                _DataType = Root.Void;
             }
         }
     }

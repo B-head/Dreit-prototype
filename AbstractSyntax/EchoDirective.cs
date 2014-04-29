@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
@@ -23,6 +24,15 @@ namespace AbstractSyntax
                     case 0: return Exp;
                     default: throw new ArgumentOutOfRangeException();
                 }
+            }
+        }
+
+        internal override void CheckDataType()
+        {
+            base.CheckDataType();
+            if(Exp != null && Exp.DataType is VoidSymbol) //todo UndefinedSymbolでの識別が必要。
+            {
+                //CompileError("invalid-void");
             }
         }
     }

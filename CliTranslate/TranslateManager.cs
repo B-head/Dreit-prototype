@@ -222,24 +222,24 @@ namespace CliTranslate
 
         private void Translate(IdentifierAccess element, Translator trans)
         {
-            if (element.Reference.TypeSelect() is ThisSymbol)
+            if (element.ScopeReference is ThisSymbol)
             {
                 trans.GenerateControl(CodeType.This);
             }
             else if (element.IsTacitThis)
             {
                 trans.GenerateControl(CodeType.This);
-                trans.GenerateLoad(element.Reference.TypeSelect());
+                trans.GenerateLoad(element.ScopeReference);
             }
             else
             {
-                trans.GenerateLoad(element.Reference.TypeSelect());
+                trans.GenerateLoad(element.ScopeReference);
             }
         }
 
         private void TranslateAssign(IdentifierAccess element, Translator trans)
         {
-            trans.GenerateStore(element.Reference.TypeSelect());
+            trans.GenerateStore(element.ScopeReference);
         }
 
         private Element TranslateAccess(IdentifierAccess element, Translator trans)
