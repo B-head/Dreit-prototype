@@ -7,7 +7,7 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class MemberAccess : DyadicExpression, IAccess
     {
-        private OverLoadScope _Reference;
+        private OverLoad _Reference;
 
         public override DataType DataType
         {
@@ -15,30 +15,30 @@ namespace AbstractSyntax.Expression
             {
                 if(_Reference == null)
                 {
-                    GetReference(CurrentScope);
+                    RefarenceResolution(CurrentScope);
                 }
                 return Right.DataType; 
             }
         }
 
-        public OverLoadScope Reference
+        public OverLoad Reference
         {
             get
             {
                 if(_Reference == null)
                 {
-                    GetReference(CurrentScope);
+                    RefarenceResolution(CurrentScope);
                 }
                 return _Reference;
             }
         }
 
-        public void GetReference(Scope scope)
+        public void RefarenceResolution(Scope scope)
         {
             var left = Left as IAccess;
             var right = Right as IAccess;
-            left.GetReference(scope);
-            right.GetReference(Left.DataType);
+            left.RefarenceResolution(scope);
+            right.RefarenceResolution(Left.DataType);
             _Reference = right.Reference;
         }
 
@@ -46,7 +46,7 @@ namespace AbstractSyntax.Expression
         {
             if (_Reference == null)
             {
-                GetReference(CurrentScope);
+                RefarenceResolution(CurrentScope);
             }
             base.CheckDataType();
         }

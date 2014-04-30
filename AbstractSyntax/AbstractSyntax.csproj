@@ -49,7 +49,7 @@
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="DataType.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="OverLoadScope.cs" />
+    <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
     <Compile Include="Expression\CallRoutine.cs" />
     <Compile Include="Daclate\DeclateArgument.cs" />
@@ -84,6 +84,7 @@
     <Compile Include="Symbol\UndefinedSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="TextPosition.cs" />
+    <Compile Include="UndefinedOverLoad.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="Symbol\ThisSymbol.cs" />
     <Compile Include="Token.cs" />

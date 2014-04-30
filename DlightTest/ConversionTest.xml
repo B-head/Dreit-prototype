@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      var e:Binary64 := 25.5
+      var f:Integer32 := e
+      echo f
+    </code>
+    <output>25</output>
+  </case>
+
+  <case>
+    <code>
+      echo 1 + 2.5
+    </code>
+    <output>3.5</output>
+  </case>
+</compile-test>

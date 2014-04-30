@@ -10,20 +10,22 @@ namespace AbstractSyntax
     [Serializable]
     public class Root : NameSpace
     {
-        private Dictionary<string, OverLoadScope> PragmaDictionary;
+        private Dictionary<string, OverLoad> PragmaDictionary;
         private DirectiveList PragmaList;
         public CompileMessageManager MessageManager { get; private set; }
         public VoidSymbol Void { get; private set; }
-        public OverLoadScope VoidOverLoad { get; private set; }
+        public UndefinedSymbol Undefined { get; private set; }
+        public UndefinedOverLoad UndefinedOverLoad { get; private set; }
 
         public Root()
         {
             Name = "global";
             PragmaList = new DirectiveList();
-            PragmaDictionary = new Dictionary<string, OverLoadScope>();
+            PragmaDictionary = new Dictionary<string, OverLoad>();
             MessageManager = new CompileMessageManager();
             Void = new VoidSymbol();
-            VoidOverLoad = new OverLoadScope(Void);
+            Undefined = new UndefinedSymbol();
+            UndefinedOverLoad = new UndefinedOverLoad(Undefined);
             CreatePragma();
         }
 
@@ -53,9 +55,9 @@ namespace AbstractSyntax
             CheckDataType();
         }
 
-        internal OverLoadScope GetPragma(string name)
+        internal OverLoad GetPragma(string name)
         {
-            OverLoadScope temp;
+            OverLoad temp;
             PragmaDictionary.TryGetValue(name, out temp);
             return temp;
         }
@@ -64,7 +66,7 @@ namespace AbstractSyntax
         {
             pragma.Name = "@@" + name;
             PragmaList.Append(pragma);
-            var ol = new OverLoadScope();
+            var ol = new OverLoad();
             ol.Append(pragma);
             PragmaDictionary.Add(name, ol);
         }

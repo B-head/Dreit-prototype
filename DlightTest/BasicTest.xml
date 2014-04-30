@@ -30,22 +30,6 @@
     <output>7</output>
   </case>
 
-  <case ignore="true">
-    <code>
-      var e:Binary64 := 25.5
-      var f:Integer32 := e
-      echo f
-    </code>
-    <output>25</output>
-  </case>
-
-  <case ignore="true">
-    <code>
-      echo 1 + 2.5
-    </code>
-    <output>3.5</output>
-  </case>
-
   <case>
     <code>
       echo abc
@@ -75,6 +59,14 @@
       echo a
     </code>
     <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      var a:Int32 := 70
+      echo a
+    </code>
+    <output>70</output>
   </case>
 
   <case>

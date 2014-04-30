@@ -11,7 +11,7 @@ namespace AbstractSyntax.Expression
         public string Value { get; set; }
         public bool IsPragmaAccess { get; set; }
         private bool? _IsTacitThis;
-        private OverLoadScope _Reference;
+        private OverLoad _Reference;
 
         public bool IsTacitThis
         {
@@ -59,19 +59,19 @@ namespace AbstractSyntax.Expression
             get { return Reference.TypeSelect(); }
         }
 
-        public OverLoadScope Reference
+        public OverLoad Reference
         {
             get
             {
                 if(_Reference == null)
                 {
-                    GetReference(CurrentScope);
+                    RefarenceResolution(CurrentScope);
                 }
                 return _Reference;
             }
         }
 
-        public void GetReference(Scope scope)
+        public void RefarenceResolution(Scope scope)
         {
             if (IsPragmaAccess)
             {
@@ -99,7 +99,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckDataType()
         {
-            if (Reference.IsVoid)
+            if (Reference is UndefinedOverLoad)
             {
                 if (IsPragmaAccess)
                 {

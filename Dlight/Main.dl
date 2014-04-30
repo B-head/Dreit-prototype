@@ -1,11 +1,3 @@
 ﻿
-      class Counter
-      {
-      var value := 0
-      routine next() :: value := value + 1
-      }
-
-      Counter() =: var counter
-      echo counter.next()
-      echo counter.next()
-      echo counter.next()
+      var a:Int32 := 70
+      echo a

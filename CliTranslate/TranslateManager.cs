@@ -39,7 +39,7 @@ namespace CliTranslate
             private int ScopePriority(Scope scope)
             {
                 if (scope is Root) return 0;
-                if (scope is NameSpace) return 2;
+                if (scope is NameSpace) return 1;
                 if (scope is DeclateModule) return 2;
                 if (scope is DeclateClass) return 3;
                 if (scope is DeclateEnum) return 4;
@@ -50,6 +50,7 @@ namespace CliTranslate
                 if (scope is DeclateVariant) return 21;
                 if (scope is VoidSymbol) return 30;
                 if (scope is ThisSymbol) return 31;
+                if (scope is AliasDirective) return 32;
                 throw new ArgumentException();
             }
         }

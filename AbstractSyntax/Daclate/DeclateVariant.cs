@@ -27,20 +27,20 @@ namespace AbstractSyntax.Daclate
                 }
                 else
                 {
-                    _DataType = Root.Void;
+                    _DataType = Root.Undefined;
                 }
                 return _DataType;
             }
         }
 
-        public OverLoadScope Reference
+        public OverLoad Reference
         {
             get { return Ident.Reference; }
         }
 
-        public void GetReference(Scope scope)
+        public void RefarenceResolution(Scope scope)
         {
-            Ident.GetReference(scope);
+            Ident.RefarenceResolution(scope);
         }
 
         public override int Count
@@ -63,7 +63,10 @@ namespace AbstractSyntax.Daclate
 
         public void SetDataType(DataType type)
         {
-            _DataType = type;
+            if(DataType is UndefinedSymbol)
+            {
+                _DataType = type;
+            }
         }
 
         internal override TypeMatchResult TypeMatch(List<DataType> type)

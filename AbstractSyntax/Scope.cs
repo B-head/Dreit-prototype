@@ -10,13 +10,13 @@ namespace AbstractSyntax
     public abstract class Scope : Element
     {
         public string Name { get; set; }
-        private Dictionary<string, OverLoadScope> ScopeSymbol;
+        private Dictionary<string, OverLoad> ScopeSymbol;
         private List<Scope> _ScopeChild;
         public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }
 
         public Scope()
         {
-            ScopeSymbol = new Dictionary<string, OverLoadScope>();
+            ScopeSymbol = new Dictionary<string, OverLoad>();
             _ScopeChild = new List<Scope>();
         }
 
@@ -29,30 +29,30 @@ namespace AbstractSyntax
         {
             foreach (var v in other.ScopeSymbol)
             {
-                OverLoadScope ol;
+                OverLoad ol;
                 if (ScopeSymbol.ContainsKey(v.Key))
                 {
                     ol = ScopeSymbol[v.Key];
                 }
                 else
                 {
-                    ol = new OverLoadScope();
+                    ol = new OverLoad();
                     ScopeSymbol[v.Key] = ol;
                 }
                 ol.Merge(v.Value);
             }
         }
 
-        internal OverLoadScope NameResolution(string name)
+        internal OverLoad NameResolution(string name)
         {
-            OverLoadScope temp;
+            OverLoad temp;
             if(ScopeSymbol.TryGetValue(name, out temp))
             {
                 return temp;
             }
             if (this is Root)
             {
-                return Root.VoidOverLoad;
+                return Root.UndefinedOverLoad;
             }
             return CurrentScope.NameResolution(name);
         }
@@ -76,14 +76,14 @@ namespace AbstractSyntax
 
         public void AppendChild(Scope scope)
         {
-            OverLoadScope ol;
+            OverLoad ol;
             if (ScopeSymbol.ContainsKey(scope.Name))
             {
                 ol = ScopeSymbol[scope.Name];
             }
             else
             {
-                ol = new OverLoadScope();
+                ol = new OverLoad();
                 ScopeSymbol[scope.Name] = ol;
             }
             ol.Append(scope);//todo 重複判定を実装する。
