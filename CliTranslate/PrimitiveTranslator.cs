@@ -27,7 +27,7 @@ namespace CliTranslate
             Root.RegisterBuilder(path, Prim);
         }
 
-        private Type GetPrimitiveType(PrimitivePragmaType type)
+        internal static Type GetPrimitiveType(PrimitivePragmaType type)
         {
             switch(type)
             {

@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
@@ -8,9 +9,23 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class LeftAssign : DyadicExpression
     {
+        private Scope _ConversionRoutine;
+
         public override DataType DataType
         {
             get { return Right.DataType; }
+        }
+
+        public Scope ConversionRoutine
+        {
+            get
+            {
+                if (_ConversionRoutine == null)
+                {
+                    _ConversionRoutine = Root.Conversion.Find(Right.DataType, Left.DataType);
+                }
+                return _ConversionRoutine;
+            }
         }
 
         internal override void CheckSyntax()
@@ -33,13 +48,18 @@ namespace AbstractSyntax.Expression
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            if (Right != null && Left != null)
+            if (Right == null || Left == null)
             {
-                DeclateVariant temp = Left as DeclateVariant;
-                if(temp != null)
-                {
-                    temp.SetDataType(DataType);
-                }
+                return;
+            }
+            DeclateVariant temp = Left as DeclateVariant;
+            if(temp != null)
+            {
+                temp.SetDataType(Right.DataType);
+            }
+            if (Left.DataType != Right.DataType && ConversionRoutine is UndefinedSymbol)
+            {
+                CompileError("not-convertable-left");
             }
         }
     }

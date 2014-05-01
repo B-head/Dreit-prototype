@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    [Serializable]
     public class ClassSymbol : DataType
     {
         protected List<ClassSymbol> _InheritRefer; 

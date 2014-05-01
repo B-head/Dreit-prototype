@@ -221,6 +221,11 @@ namespace CliTranslate
             Translate((dynamic)element.Ident, trans);
         }
 
+        private void TranslateAddress(DeclateVariant element, Translator trans)
+        {
+            TranslateAddress((dynamic)element.Ident, trans);
+        }
+
         private void TranslateAssign(DeclateVariant element, Translator trans)
         {
             TranslateAssign((dynamic)element.Ident, trans);
@@ -230,11 +235,11 @@ namespace CliTranslate
         {
             if (element.ScopeReference is ThisSymbol)
             {
-                trans.GenerateControl(CodeType.This);
+                trans.GenerateLoad(element.ThisReference);
             }
             else if (element.IsTacitThis)
             {
-                trans.GenerateControl(CodeType.This);
+                trans.GenerateLoad(element.ThisReference);
                 trans.GenerateLoad(element.ScopeReference);
             }
             else
@@ -243,16 +248,40 @@ namespace CliTranslate
             }
         }
 
+        private void TranslateAddress(IdentifierAccess element, Translator trans)
+        {
+            if (element.ScopeReference is ThisSymbol)
+            {
+                trans.GenerateLoad(element.ThisReference, true);
+            }
+            else if (element.IsTacitThis)
+            {
+                trans.GenerateLoad(element.ThisReference, true);
+                trans.GenerateLoad(element.ScopeReference, true);
+            }
+            else
+            {
+                trans.GenerateLoad(element.ScopeReference, true);
+            }
+        }
+
         private void TranslateAssign(IdentifierAccess element, Translator trans)
         {
-            trans.GenerateStore(element.ScopeReference);
+            if (element.ScopeReference is ThisSymbol)
+            {
+                trans.GenerateStore(element.ThisReference);
+            }
+            else
+            {
+                trans.GenerateStore(element.ScopeReference);
+            }
         }
 
         private Element TranslateAccess(IdentifierAccess element, Translator trans)
         {
             if (element.IsTacitThis)
             {
-                trans.GenerateControl(CodeType.This);
+                trans.GenerateLoad(element.ThisReference);
             }
             return element;
         }
@@ -282,17 +311,41 @@ namespace CliTranslate
         private void Translate(LeftAssign element, Translator trans)
         {
             var refer = TranslateAccess((dynamic)element.Left, trans);
-            Translate((dynamic)element.Right, trans);
-            TranslateAssign((dynamic)refer, trans);
-            Translate((dynamic)refer, trans);
+            if (element.ConversionRoutine is UndefinedSymbol)
+            {
+                Translate((dynamic)element.Right, trans);
+                TranslateAssign((dynamic)refer, trans);
+                Translate((dynamic)refer, trans);
+            }
+            else
+            {
+                Translate((dynamic)refer, trans);
+                Translate((dynamic)element.Right, trans);
+                trans.GenerateCall(element.ConversionRoutine);
+
+                TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
+                Translate((dynamic)refer, trans);
+            }
         }
 
         private void Translate(RightAssign element, Translator trans)
         {
             var refer = TranslateAccess((dynamic)element.Right, trans);
-            Translate((dynamic)element.Left, trans);
-            TranslateAssign((dynamic)refer, trans);
-            Translate((dynamic)refer, trans);
+            if (element.ConversionRoutine is UndefinedSymbol)
+            {
+                Translate((dynamic)element.Left, trans);
+                TranslateAssign((dynamic)refer, trans);
+                Translate((dynamic)refer, trans);
+            }
+            else
+            {
+                Translate((dynamic)refer, trans);
+                Translate((dynamic)element.Left, trans);
+                trans.GenerateCall(element.ConversionRoutine);
+
+                TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
+                Translate((dynamic)refer, trans);
+            }
         }
 
         private void Translate(CallRoutine element, Translator trans)
@@ -342,8 +395,8 @@ namespace CliTranslate
                 case PrimitivePragmaType.Binary64: trans.GenerateControl(CodeType.ConvR8); break;
                 default: throw new ArgumentException();
             }
-            //todo this参照への代入に対応する。
-            //TranslateAssign((dynamic)element.Argument[0], trans);
+            TranslateAssign((dynamic)element.Argument[0], trans);
+            Translate((dynamic)element.Argument[0], trans);
         }
 
         private void Translate(NumberLiteral element, Translator trans)

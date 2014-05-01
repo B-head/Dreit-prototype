@@ -42,6 +42,7 @@ namespace DlightTest
                     Category = category,
                     Name = category + "-" + ((string)e.Attribute("name") ?? count.ToString()),
                     Line = ((IXmlLineInfo)e).LineNumber,
+                    TimeOut = (int?)e.Attribute("timeout"),
                     Ignore = (bool?)e.Attribute("ignore") ?? false,
                     Explicit = (bool?)e.Attribute("explicit") ?? false,
                     NoExecute = (bool?)e.Attribute("no-execute") ?? false,

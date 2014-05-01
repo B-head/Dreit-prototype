@@ -6,11 +6,12 @@ using System.Text.RegularExpressions;
 namespace DlightTest
 {
     [Serializable]
-    class TestData
+    struct TestData
     {
         public string Category { get; set; }
         public string Name { get; set; }
         public int Line { get; set; }
+        public int? TimeOut { get; set; }
         public bool Ignore { get; set; }
         public bool Explicit { get; set; }
         public bool NoExecute { get; set; }

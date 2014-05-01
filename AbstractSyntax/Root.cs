@@ -12,20 +12,22 @@ namespace AbstractSyntax
     {
         private Dictionary<string, OverLoad> PragmaDictionary;
         private DirectiveList PragmaList;
+        internal VoidSymbol Void { get; private set; }
+        internal UndefinedSymbol Undefined { get; private set; }
+        internal UndefinedOverLoad UndefinedOverLoad { get; private set; }
+        internal ConversionManager Conversion;
         public CompileMessageManager MessageManager { get; private set; }
-        public VoidSymbol Void { get; private set; }
-        public UndefinedSymbol Undefined { get; private set; }
-        public UndefinedOverLoad UndefinedOverLoad { get; private set; }
 
         public Root()
         {
             Name = "global";
             PragmaList = new DirectiveList();
             PragmaDictionary = new Dictionary<string, OverLoad>();
-            MessageManager = new CompileMessageManager();
             Void = new VoidSymbol();
             Undefined = new UndefinedSymbol();
             UndefinedOverLoad = new UndefinedOverLoad(Undefined);
+            Conversion = new ConversionManager(Undefined);
+            MessageManager = new CompileMessageManager();
             CreatePragma();
         }
 

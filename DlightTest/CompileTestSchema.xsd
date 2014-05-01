@@ -21,6 +21,7 @@
         <element name="output" type="string" minOccurs="0"/>
       </sequence>
       <attribute name="name" type="NCName"/>
+      <attribute name="timeout" type="integer"/>
       <attribute name="ignore" type="boolean"/>
       <attribute name="explicit" type="boolean"/>
       <attribute name="no-execute" type="boolean"/>

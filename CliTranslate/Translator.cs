@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Pragma;
+using AbstractSyntax.Symbol;
+using AbstractSyntax.Daclate;
 
 namespace CliTranslate
 {
@@ -30,7 +32,6 @@ namespace CliTranslate
         ConvU8,
         ConvR4,
         ConvR8,
-        This,
     }
 
     public abstract class Translator
@@ -149,7 +150,6 @@ namespace CliTranslate
                 case CodeType.ConvU8: Generator.Emit(OpCodes.Conv_U8); break;
                 case CodeType.ConvR4: Generator.Emit(OpCodes.Conv_R4); break;
                 case CodeType.ConvR8: Generator.Emit(OpCodes.Conv_R8); break;
-                case CodeType.This: Generator.Emit(OpCodes.Ldarg_0); break;
                 default: throw new ArgumentException();
             }
         }
@@ -199,44 +199,100 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Ldstr, value);
         }
 
-        public virtual void GenerateLoad(Scope name)
+        public virtual void GenerateLoad(Scope name, bool address = false)
         {
+            if(name is ThisSymbol)
+            {
+                GenerateLoad((ThisSymbol)name, address);
+                return;
+            }
             dynamic temp = Root.GetBuilder(name);
-            BuildLoad(temp);
+            BuildLoad(temp, address);
         }
 
-        protected void BuildLoad(LocalBuilder local)
+        protected void GenerateLoad(ThisSymbol name, bool address)
         {
-            if (local.LocalIndex <= 255)
+            var c = name.DataType as DeclateClass;
+            var pe = c.GetPrimitiveType();
+            Generator.Emit(OpCodes.Ldarg_0);
+            return;
+            /*
+            if (pe == PrimitivePragmaType.NotPrimitive)
             {
-                switch (local.LocalIndex)
+                Generator.Emit(OpCodes.Ldarg_0);
+                return;
+            }
+            var pt = PrimitiveTranslator.GetPrimitiveType(pe);
+            Generator.Emit(OpCodes.Ldarg_0);
+            BuildLoad(pt, address);
+             */
+        }
+
+        protected void BuildLoad(Type type, bool address)
+        {
+            Generator.Emit(OpCodes.Ldobj, type);
+        }
+
+        protected void BuildLoad(LocalBuilder local, bool address)
+        {
+            if (address)
+            {
+                if (local.LocalIndex <= 255)
                 {
-                    case 0: Generator.Emit(OpCodes.Ldloc_0); break;
-                    case 1: Generator.Emit(OpCodes.Ldloc_1); break;
-                    case 2: Generator.Emit(OpCodes.Ldloc_2); break;
-                    case 3: Generator.Emit(OpCodes.Ldloc_3); break;
-                    default: Generator.Emit(OpCodes.Ldloc_S, local); break;
+                    Generator.Emit(OpCodes.Ldloca_S, local);
+                }
+                else
+                {
+                    Generator.Emit(OpCodes.Ldloca, local);
                 }
             }
             else
             {
-                Generator.Emit(OpCodes.Ldloc, local);
+                if (local.LocalIndex <= 255)
+                {
+                    switch (local.LocalIndex)
+                    {
+                        case 0: Generator.Emit(OpCodes.Ldloc_0); break;
+                        case 1: Generator.Emit(OpCodes.Ldloc_1); break;
+                        case 2: Generator.Emit(OpCodes.Ldloc_2); break;
+                        case 3: Generator.Emit(OpCodes.Ldloc_3); break;
+                        default: Generator.Emit(OpCodes.Ldloc_S, local); break;
+                    }
+                }
+                else
+                {
+                    Generator.Emit(OpCodes.Ldloc, local);
+                }
             }
         }
 
-        protected void BuildLoad(FieldBuilder field)
+        protected void BuildLoad(FieldBuilder field, bool address)
         {
             if (field.IsStatic)
             {
-                Generator.Emit(OpCodes.Ldsfld, field);
+                if (address)
+                {
+                    Generator.Emit(OpCodes.Ldsflda, field);
+                }
+                else
+                {
+                    Generator.Emit(OpCodes.Ldsfld, field);
+                }
             }
             else
             {
-                Generator.Emit(OpCodes.Ldfld, field);
+                if (address)
+                {
+                    Generator.Emit(OpCodes.Ldflda, field);
+                }
+                else
+                {
+                    Generator.Emit(OpCodes.Ldfld, field);
+                }
             }
         }
 
-        protected void BuildLoad(ParameterBuilder param)
+        protected void BuildLoad(ParameterBuilder param, bool address)
         {
             int index = param.Position - 1;
             if (index <= 255)
@@ -256,13 +312,44 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateStore(Scope name)
+        public virtual void GenerateStore(Scope name, bool address = false)
         {
+            if (name is ThisSymbol)
+            {
+                GenerateStore((ThisSymbol)name);
+                return;
+            }
             dynamic temp = Root.GetBuilder(name);
-            BuildStore(temp);
+            BuildStore(temp, address);
         }
 
-        protected void BuildStore(LocalBuilder local)
+        protected void GenerateStore(ThisSymbol name, bool address)
+        {
+            var c = name.DataType as DeclateClass;
+            var pe = c.GetPrimitiveType();
+            Generator.Emit(OpCodes.Starg_S, 0);
+            return;
+            /*
+            if (pe == PrimitivePragmaType.NotPrimitive)
+            {
+                Generator.Emit(OpCodes.Starg_S, 0);
+                return;
+            }
+            var pt = PrimitiveTranslator.GetPrimitiveType(pe);
+            var local = Generator.DeclareLocal(pt); //todo 後で整理する。
+            BuildStore(local, false);
+            Generator.Emit(OpCodes.Ldarg_0); 
+            BuildLoad(local, false);
+            BuildStore(pt, address);
+             */
+        }
+
+        protected void BuildStore(Type type, bool address)
+        {
+            Generator.Emit(OpCodes.Stobj, type);
+        }
+
+        protected void BuildStore(LocalBuilder local, bool address)
         {
             if (local.LocalIndex <= 255)
             {
@@ -281,7 +368,7 @@ namespace CliTranslate
             }
         }
 
-        protected void BuildStore(FieldBuilder field)
+        protected void BuildStore(FieldBuilder field, bool address)
         {
             if (field.IsStatic)
             {
@@ -293,7 +380,7 @@ namespace CliTranslate
             }
         }
 
-        protected void BuildStore(ParameterBuilder param)
+        protected void BuildStore(ParameterBuilder param, bool address)
         {
             int index = param.Position - 1;
             if (index <= 255)

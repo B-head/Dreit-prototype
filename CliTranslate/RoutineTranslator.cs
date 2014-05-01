@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
+using AbstractSyntax.Symbol;
 
 namespace CliTranslate
 {
@@ -39,7 +40,7 @@ namespace CliTranslate
                 Lexical = Parent.CreateLexical(Method.Name);
                 LexicalInstance = Generator.DeclareLocal(Lexical);
                 Generator.Emit(OpCodes.Newobj, Lexical.DefineDefaultConstructor(MethodAttributes.PrivateScope));
-                BuildStore(LexicalInstance);
+                BuildStore(LexicalInstance, false);
             }
         }
 
@@ -81,26 +82,36 @@ namespace CliTranslate
             }
         }
 
-        public override void GenerateLoad(Scope name)
+        public override void GenerateLoad(Scope name, bool address = false)
         {
+            if (name is ThisSymbol)
+            {
+                GenerateLoad((ThisSymbol)name, address);
+                return;
+            }
             dynamic temp = Root.GetBuilder(name);
             FieldBuilder field = temp as FieldBuilder;
             if(field != null && field.DeclaringType == Lexical)
             {
-                BuildLoad(LexicalInstance);
+                BuildLoad(LexicalInstance, false);
             }
-            BuildLoad(temp);
+            BuildLoad(temp, address);
         }
 
-        public override void GenerateStore(Scope name)
+        public override void GenerateStore(Scope name, bool address = false)
         {
+            if (name is ThisSymbol)
+            {
+                GenerateStore((ThisSymbol)name, address);
+                return;
+            }
             dynamic temp = Root.GetBuilder(name);
             FieldBuilder field = temp as FieldBuilder;
             if (field != null && field.DeclaringType == Lexical)
             {
-                BuildLoad(LexicalInstance);
+                BuildLoad(LexicalInstance, false);
             }
-            BuildStore(temp);
+            BuildStore(temp, address);
         }
     }
 }

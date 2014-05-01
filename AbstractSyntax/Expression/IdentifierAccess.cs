@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
@@ -31,6 +32,15 @@ namespace AbstractSyntax.Expression
                     _IsTacitThis = false;
                 }
                 return _IsTacitThis.Value;
+            }
+        }
+
+        public ThisSymbol ThisReference
+        {
+            get
+            {
+                var c = GetParentClass() as DeclateClass;
+                return c.This;
             }
         }
 

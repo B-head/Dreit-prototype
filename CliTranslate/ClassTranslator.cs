@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
+using AbstractSyntax.Symbol;
 
 namespace CliTranslate
 {
@@ -76,24 +77,34 @@ namespace CliTranslate
             CtorGenerator.Emit(OpCodes.Stfld, builder);
         }
 
-        public override void GenerateLoad(Scope name)
+        public override void GenerateLoad(Scope name, bool address = false)
         {
+            if (name is ThisSymbol)
+            {
+                GenerateLoad((ThisSymbol)name);
+                return;
+            }
             dynamic temp;
             if (!InitDictonary.TryGetValue(name, out temp))
             {
                 temp = Root.GetBuilder(name);
             }
-            BuildLoad(temp);
+            BuildLoad(temp, address);
         }
 
-        public override void GenerateStore(Scope name)
+        public override void GenerateStore(Scope name, bool address = false)
         {
+            if (name is ThisSymbol)
+            {
+                GenerateStore((ThisSymbol)name);
+                return;
+            }
             dynamic temp;
             if (!InitDictonary.TryGetValue(name, out temp))
             {
                 temp = Root.GetBuilder(name);
             }
-            BuildStore(temp);
+            BuildStore(temp, address);
         }
     }
 }

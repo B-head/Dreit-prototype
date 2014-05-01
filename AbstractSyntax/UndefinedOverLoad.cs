@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
+    [Serializable]
     public class UndefinedOverLoad : OverLoad
     {
         private UndefinedSymbol Undefined;

@@ -38,7 +38,7 @@ namespace DlightTest
                     istream.DisposeLocalCopyOfClientHandle();
                     formatter.Serialize(ostream, data);
                     process.StandardInput.WriteLine(data.Input);
-                    if (!process.WaitForExit(3000))
+                    if (!process.WaitForExit(data.TimeOut ?? 500))
                     {
                         process.Kill();
                         Assert.Fail("Timeout execution");
@@ -102,7 +102,7 @@ namespace DlightTest
                     ostream = new AnonymousPipeClientStream(PipeDirection.Out, args[1]))
                 {
                     var formatter = new BinaryFormatter();
-                    TestData data = formatter.Deserialize(istream) as TestData;
+                    TestData data = (TestData)formatter.Deserialize(istream);
                     try
                     {
                         Execute(data, o => formatter.Serialize(ostream, o));

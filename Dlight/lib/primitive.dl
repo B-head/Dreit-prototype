@@ -16,6 +16,12 @@ class Integer8 : @@Integer8
 	routine from(other:Integer16) :: @@cast(this, other)
 	routine from(other:Integer32) :: @@cast(this, other)
 	routine from(other:Integer64) :: @@cast(this, other)
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 alias Integer16 Int16
@@ -30,6 +36,12 @@ class Integer16 : @@Integer16
 	routine from(other:Integer8) :: @@cast(this, other)
 	routine from(other:Integer32) :: @@cast(this, other)
 	routine from(other:Integer64) :: @@cast(this, other)
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 alias Integer32 Int32
@@ -44,6 +56,12 @@ class Integer32 : @@Integer32
 	routine from(other:Integer8) :: @@cast(this, other)
 	routine from(other:Integer16) :: @@cast(this, other)
 	routine from(other:Integer64) :: @@cast(this, other)
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 alias Integer64 Int64
@@ -58,6 +76,12 @@ class Integer64 : @@Integer64
 	routine from(other:Integer8) :: @@cast(this, other)
 	routine from(other:Integer16) :: @@cast(this, other)
 	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 alias Natural8 Byte
@@ -68,10 +92,16 @@ class Natural8 : @@Natural8
 	operator *(other:Natural8) :: @@mul(this, other)
 	operator /(other:Natural8) :: @@div(this, other)
 	operator %(other:Natural8) :: @@mod(this, other)
-
+	
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
 	routine from(other:Natural16) :: @@cast(this, other)
 	routine from(other:Natural32) :: @@cast(this, other)
 	routine from(other:Natural64) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 class Natural16 : @@Natural16
@@ -81,10 +111,16 @@ class Natural16 : @@Natural16
 	operator *(other:Natural16) :: @@mul(this, other)
 	operator /(other:Natural16) :: @@div(this, other)
 	operator %(other:Natural16) :: @@mod(this, other)
-
+	
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
 	routine from(other:Natural8) :: @@cast(this, other)
 	routine from(other:Natural32) :: @@cast(this, other)
 	routine from(other:Natural64) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 class Natural32 : @@Natural32
@@ -94,10 +130,16 @@ class Natural32 : @@Natural32
 	operator *(other:Natural32) :: @@mul(this, other)
 	operator /(other:Natural32) :: @@div(this, other)
 	operator %(other:Natural32) :: @@mod(this, other)
-
+	
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
 	routine from(other:Natural8) :: @@cast(this, other)
 	routine from(other:Natural16) :: @@cast(this, other)
 	routine from(other:Natural64) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 class Natural64 : @@Natural64
@@ -107,10 +149,16 @@ class Natural64 : @@Natural64
 	operator *(other:Natural64) :: @@mul(this, other)
 	operator /(other:Natural64) :: @@div(this, other)
 	operator %(other:Natural64) :: @@mod(this, other)
-
+	
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
 	routine from(other:Natural8) :: @@cast(this, other)
 	routine from(other:Natural16) :: @@cast(this, other)
 	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Binary32) :: @@cast(this, other)
+	routine from(other:Binary64) :: @@cast(this, other)
 }
 
 class Binary32 : @@Binary32
@@ -121,6 +169,14 @@ class Binary32 : @@Binary32
 	operator /(other:Binary32) :: @@div(this, other)
 	operator %(other:Binary32) :: @@mod(this, other)
 	
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
 	routine from(other:Binary64) :: @@cast(this, other)
 }
 
@@ -132,5 +188,13 @@ class Binary64 : @@Binary64
 	operator /(other:Binary64) :: @@div(this, other)
 	operator %(other:Binary64) :: @@mod(this, other)
 	
+	routine from(other:Integer8) :: @@cast(this, other)
+	routine from(other:Integer16) :: @@cast(this, other)
+	routine from(other:Integer32) :: @@cast(this, other)
+	routine from(other:Integer64) :: @@cast(this, other)
+	routine from(other:Natural8) :: @@cast(this, other)
+	routine from(other:Natural16) :: @@cast(this, other)
+	routine from(other:Natural32) :: @@cast(this, other)
+	routine from(other:Natural64) :: @@cast(this, other)
 	routine from(other:Binary32) :: @@cast(this, other)
 }

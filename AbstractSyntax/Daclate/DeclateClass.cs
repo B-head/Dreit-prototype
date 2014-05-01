@@ -103,5 +103,18 @@ namespace AbstractSyntax.Daclate
                 return prim.Type;
             }
         }
+
+        protected override void SpreadElement(Element parent, Scope scope)
+        {
+            base.SpreadElement(parent, scope);
+            foreach(var e in Block)
+            {
+                var r = e as RoutineSymbol;
+                if(r != null && r.Name == "from")
+                {
+                    Root.Conversion.Append(r);
+                }
+            }
+        }
     }
 }
