@@ -46,6 +46,8 @@ namespace SyntacticAnalysisTest
         [TestCase("   abc", "   ", TokenType.WhiteSpace)]
         [TestCase("\t\t\tabc", "\t\t\t", TokenType.WhiteSpace)]
         [TestCase(" \t \t \tabc", " \t \t \t", TokenType.WhiteSpace)]
+        [TestCase(" \t \t \n \t", " \t \t ", TokenType.WhiteSpace)]
+        [TestCase(" \t \t \r \t", " \t \t ", TokenType.WhiteSpace)]
         [TestCase("abc \t \t \t", "", TokenType.Unknoun)]
         public void WhiteSpace(string text, string eText, TokenType eType)
         {

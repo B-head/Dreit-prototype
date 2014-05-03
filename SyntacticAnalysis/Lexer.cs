@@ -21,11 +21,15 @@ namespace SyntacticAnalysis
 
         private static TokenType LexPartion(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
         {
-            Token temp;
+            Token temp = LineTerminator(t);
+            if(temp)
+            {
+                tokenList.Add(temp);
+                return temp.Type;
+            }
             temp = DisjunctionLexer
                 (
                 t,
-                LineTerminator,
                 WhiteSpace,
                 BlockComment,
                 LineCommnet
@@ -96,7 +100,7 @@ namespace SyntacticAnalysis
             int i;
             for (i = 0; t.IsReadable(i); i++)
             {
-                if (t.MatchRange(i, '\x00', '\x20') || t.MatchAny(i, "\x7F"))
+                if (t.MatchRange(i, '\x00', '\x09') || t.MatchRange(i, '\x0B', '\x0C') || t.MatchRange(i, '\x0E', '\x20') || t.MatchAny(i, "\x7F"))
                 {
                     continue;
                 }
