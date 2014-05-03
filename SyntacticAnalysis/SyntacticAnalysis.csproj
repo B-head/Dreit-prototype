@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChainParser.cs" />
     <Compile Include="DeclateParser.cs" />
     <Compile Include="DirectiveParser.cs" />
     <Compile Include="ExpressionParser.cs" />

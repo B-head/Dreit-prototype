@@ -16,6 +16,7 @@ namespace SyntacticAnalysis
         public IReadOnlyList<Token> TokenList { get { return _TokenList; } }
         private List<Token> _ErrorToken;
         public IReadOnlyList<Token> ErrorToken { get { return _ErrorToken; } }
+        public TextPosition FirstPosition { get; private set; }
         public TextPosition LastPosition { get; private set; }
 
         public TokenCollection(string text, string fileName, List<Token> tokenList, List<Token> errorToken, TextPosition lastPosition)
@@ -24,6 +25,7 @@ namespace SyntacticAnalysis
             FileName = fileName;
             _TokenList = tokenList;
             _ErrorToken = errorToken;
+            FirstPosition = new TextPosition { File = fileName };
             LastPosition = lastPosition;
         }
 

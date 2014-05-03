@@ -24,7 +24,14 @@ namespace SyntacticAnalysis
             {
                 exp.Position = p;
             }
-            return new DeclateModule { Name = collection.GetName(), SourceText = collection.Text, ExpList = exp, ErrorToken = collection.ErrorToken, Position = collection.LastPosition };
+            return new DeclateModule 
+            { 
+                Name = collection.GetName(),
+                SourceText = collection.Text,
+                ExpList = exp,
+                ErrorToken = collection.ErrorToken,
+                Position = collection.FirstPosition.AlterLength(collection.LastPosition),
+            };
         }
 
         private static Element CoalesceParser(TokenCollection c, ref int i, params ParserFunction[] func)
