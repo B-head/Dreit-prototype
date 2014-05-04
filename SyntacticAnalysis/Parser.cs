@@ -12,18 +12,8 @@ namespace SyntacticAnalysis
 
         public static Element Parse(TokenCollection collection)
         {
-            int i = -1;
-            collection.MoveNextToken(ref i);
-            var p = collection.GetTextPosition(i);
-            DirectiveList exp = DirectiveList(collection, ref i, true);
-            if (exp.Count > 0)
-            {
-                exp.Position = p.AlterLength((TextPosition?)exp[exp.Count - 1]);
-            }
-            else
-            {
-                exp.Position = p;
-            }
+            var cp = new ChainParser(collection);
+            var exp = DirectiveList(cp, true);
             return new DeclateModule 
             { 
                 Name = collection.GetName(),

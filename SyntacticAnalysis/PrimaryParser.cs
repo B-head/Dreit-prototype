@@ -19,7 +19,7 @@ namespace SyntacticAnalysis
             }
             var p = c.GetTextPosition(temp);
             c.MoveNextToken(ref temp);
-            Element exp = DirectiveList(c, ref temp);
+            Element exp = Directive(c, ref temp);
             if (!c.CheckToken(temp, TokenType.RightParenthesis))
             {
                 return null;

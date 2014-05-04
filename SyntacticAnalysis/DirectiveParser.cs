@@ -4,8 +4,12 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static DirectiveList DirectiveList(TokenCollection c, ref int i, bool root = false)
+        private static DirectiveList DirectiveList(ChainParser cp, bool root = false)
         {
+            return cp.Begin<DirectiveList>()
+                .Skip(TokenType.EndExpression, TokenType.LineTerminator)
+                .End();
+            /*
             DirectiveList result = new DirectiveList();
             while (c.IsReadable(i))
             {
@@ -28,6 +32,7 @@ namespace SyntacticAnalysis
                 result.Append(temp);
             }
             return result;
+             */
         }
 
         private static DirectiveList Block(TokenCollection c, ref int i)
@@ -46,7 +51,7 @@ namespace SyntacticAnalysis
             {
                 TextPosition last;
                 c.MoveNextToken(ref i);
-                result = DirectiveList(c, ref i);
+                //result = DirectiveList(c, ref i);
                 if (c.CheckToken(i, TokenType.RightBrace))
                 {
                     last = c.GetTextPosition(i);

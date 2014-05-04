@@ -29,16 +29,19 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Begin<T>() where T : Element, new ()
         {
-            return new ChainParser<T>(collection, index);
+            var resurt = new ChainParser<T>(collection, index);
+            resurt.EndEvent += i => index = i;
+            return resurt;
         }
     }
 
     class ChainParser<T> : ChainParser where T : Element, new()
     {
+        public event Action<int> EndEvent;
         private T self;
         private bool failure;
         
-        public ChainParser(TokenCollection collection, int index = 0)
+        public ChainParser(TokenCollection collection, int index)
             : base(collection, index)
         {
             self = new T();
@@ -51,6 +54,7 @@ namespace SyntacticAnalysis
                 return null;
             }
             self.Position = beginPosition.AlterLength(endPosition);
+            EndEvent(index);
             return self;
         }
 
@@ -70,6 +74,7 @@ namespace SyntacticAnalysis
             {
                 action(self, collection.Read(index));
                 endPosition = collection.GetTextPosition(index);
+                ++index;
             }
             Post(s);
             return this;
@@ -91,6 +96,7 @@ namespace SyntacticAnalysis
             {
                 action(self, collection.Read(index));
                 endPosition = collection.GetTextPosition(index);
+                ++index;
             }
             Post(s);
             return this;
@@ -117,13 +123,23 @@ namespace SyntacticAnalysis
             return this;
         }
 
-        private void Post(bool success)
+        public ChainParser<T> Skip(params TokenType[] type)
         {
-            failure = !success;
-            if(success)
+            while (collection.CheckToken(index, type))
             {
                 ++index;
             }
+            return this;
+        }
+
+        public ChainParser<T> Lt()
+        {
+            return Skip(TokenType.LineTerminator);
+        }
+
+        private void Post(bool success)
+        {
+            failure = !success;
         }
     }
 }
