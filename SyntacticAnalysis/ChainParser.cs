@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace SyntacticAnalysis
 {
-    delegate T ParserFunction<T>(ChainParser chain) where T : Element;
+    delegate Element ParserFunction(ChainParser chain);
+    delegate void TokenAction<T>(T self, Token token) where T : Element;
+    delegate void ElementAction<T>(T self, Element element) where T : Element;
 
     class ChainParser
     {
@@ -54,23 +56,64 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Text(params string[] text)
         {
+            return Text(null, text);
+        }
+
+        public ChainParser<T> Text(TokenAction<T> action, params string[] text)
+        {
             if (failure)
             {
                 return this;
             }
             var s = collection.CheckText(index, text);
+            if (s)
+            {
+                action(self, collection.Read(index));
+                endPosition = collection.GetTextPosition(index);
+            }
             Post(s);
             return this;
         }
 
         public ChainParser<T> Type(params TokenType[] type)
         {
+            return Type(null, type);
+        }
+
+        public ChainParser<T> Type(TokenAction<T> action, params TokenType[] type)
+        {
             if (failure)
             {
                 return this;
             }
             var s = collection.CheckToken(index, type);
+            if (s)
+            {
+                action(self, collection.Read(index));
+                endPosition = collection.GetTextPosition(index);
+            }
             Post(s);
+            return this;
+        }
+
+        public ChainParser<T> Transfer(ElementAction<T> action, params ParserFunction[] func)
+        {
+            if (failure)
+            {
+                return this;
+            }
+            Element result = null;
+            foreach (var f in func)
+            {
+                result = f(this);
+                if (result != null)
+                {
+                    action(self, result);
+                    endPosition = result.Position;
+                    break;
+                }
+            }
+            Post(result != null);
             return this;
         }
 
@@ -79,7 +122,6 @@ namespace SyntacticAnalysis
             failure = !success;
             if(success)
             {
-                endPosition = collection.GetTextPosition(index);
                 ++index;
             }
         }
