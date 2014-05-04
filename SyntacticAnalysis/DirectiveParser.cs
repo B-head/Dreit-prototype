@@ -4,10 +4,14 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
+        private static SyntacticAnalysis.ParserFunction[] directive = { }; 
+
         private static DirectiveList DirectiveList(ChainParser cp, bool root = false)
         {
             return cp.Begin<DirectiveList>()
-                .Skip(TokenType.EndExpression, TokenType.LineTerminator)
+                .If().Is(!root).Than().Type(TokenType.LeftBrace).EndIf()
+                .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
+                .Transfer((s, e) => s.Append(e), directive)
                 .End();
             /*
             DirectiveList result = new DirectiveList();

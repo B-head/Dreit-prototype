@@ -40,6 +40,12 @@ namespace SyntacticAnalysis
         public event Action<int> EndEvent;
         private T self;
         private bool failure;
+        private bool justFailure;
+        private bool phaseIf;
+        private bool phaseSkip;
+        private bool phaseOrSkip;
+        private bool phaseNot;
+        private bool phaseOpt;
         
         public ChainParser(TokenCollection collection, int index)
             : base(collection, index)
@@ -65,14 +71,17 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Text(TokenAction<T> action, params string[] text)
         {
-            if (failure)
+            if (IsSkip())
             {
                 return this;
             }
             var s = collection.CheckText(index, text);
             if (s)
             {
-                action(self, collection.Read(index));
+                if (action != null)
+                {
+                    action(self, collection.Read(index));
+                }
                 endPosition = collection.GetTextPosition(index);
                 ++index;
             }
@@ -87,14 +96,17 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Type(TokenAction<T> action, params TokenType[] type)
         {
-            if (failure)
+            if (IsSkip())
             {
                 return this;
             }
             var s = collection.CheckToken(index, type);
             if (s)
             {
-                action(self, collection.Read(index));
+                if (action != null)
+                {
+                    action(self, collection.Read(index));
+                }
                 endPosition = collection.GetTextPosition(index);
                 ++index;
             }
@@ -104,7 +116,7 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Transfer(ElementAction<T> action, params ParserFunction[] func)
         {
-            if (failure)
+            if (IsSkip())
             {
                 return this;
             }
@@ -114,7 +126,10 @@ namespace SyntacticAnalysis
                 result = f(this);
                 if (result != null)
                 {
-                    action(self, result);
+                    if (action != null)
+                    {
+                        action(self, result);
+                    }
                     endPosition = result.Position;
                     break;
                 }
@@ -123,7 +138,16 @@ namespace SyntacticAnalysis
             return this;
         }
 
-        public ChainParser<T> Skip(params TokenType[] type)
+        public ChainParser<T> Is(bool value)
+        {
+            if (!IsSkip())
+            {
+                Post(value);
+            }
+            return this;
+        }
+
+        public ChainParser<T> Ignore(params TokenType[] type)
         {
             while (collection.CheckToken(index, type))
             {
@@ -134,12 +158,117 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Lt()
         {
-            return Skip(TokenType.LineTerminator);
+            return Ignore(TokenType.LineTerminator);
+        }
+
+        public ChainParser<T> If()
+        {
+            if (!IsSkip())
+            {
+                phaseIf = true;
+            }
+            return this;
+        }
+
+        public ChainParser<T> ElseIf()
+        {
+            if (phaseIf)
+            {
+                if (phaseSkip)
+                {
+                    phaseSkip = false;
+                }
+                else
+                {
+                    phaseIf = false;
+                    phaseSkip = true;
+                }
+            }
+            return this;
+        }
+
+        public ChainParser<T> Else()
+        {
+            if (phaseIf)
+            {
+                phaseSkip = !phaseSkip;
+            }
+            return this;
+        }
+
+        public ChainParser<T> Than()
+        {
+            if (phaseIf)
+            {
+                phaseSkip = failure;
+                failure = false;
+            }
+            return this;
+        }
+
+        public ChainParser<T> EndIf()
+        {
+            phaseIf = false;
+            phaseSkip = false;
+            return this;
+        }
+
+        public ChainParser<T> And()
+        {
+            return this;
+        }
+
+        public ChainParser<T> Or()
+        {
+            if(justFailure)
+            {
+                failure = false;
+                justFailure = false;
+            }
+            else
+            {
+                phaseOrSkip = true;
+            }
+            return this;
+        }
+
+        public ChainParser<T> Not()
+        {
+            phaseNot = true;
+            return this;
+        }
+
+        public ChainParser<T> Opt()
+        {
+            phaseOpt = true;
+            return this;
+        }
+
+        private bool IsSkip()
+        {
+            justFailure = false;
+            if(phaseOrSkip)
+            {
+                phaseOrSkip = false;
+                return true;
+            }
+            return failure || phaseSkip;
         }
 
         private void Post(bool success)
         {
-            failure = !success;
+            if (phaseNot)
+            {
+                failure = success;
+                justFailure = failure;
+            }
+            else if (!phaseOpt)
+            {
+                failure = !success;
+                justFailure = failure;
+            }
+            phaseNot = false;
+            phaseOpt = false;
         }
     }
 }
