@@ -65,7 +65,7 @@ namespace SyntacticAnalysisTest
             var cp = new ChainParser(tc);
             var count = 0;
             var element = new DirectiveList();
-            ElementAction<DirectiveList> action = (s, t) => ++count;
+            ElementAction<DirectiveList, Element> action = (s, t) => ++count;
             var ret = cp.Begin<DirectiveList>().Transfer(action, c => null, c => element).Transfer(action, c => element, c => null).End();
             Assert.That(ret, Is.Not.Null);
             Assert.That(count, Is.EqualTo(2));
@@ -77,7 +77,7 @@ namespace SyntacticAnalysisTest
             var tc = Lexer.Lex("var a", string.Empty);
             var cp = new ChainParser(tc);
             var count = 0;
-            ElementAction<DirectiveList> action = (s, t) => ++count;
+            ElementAction<DirectiveList, Element> action = (s, t) => ++count;
             var ret = cp.Begin<DirectiveList>().Transfer(action, c => null, c => null).Transfer(action, c => null, c => null).End();
             Assert.That(ret, Is.Null);
             Assert.That(count, Is.EqualTo(0));
@@ -231,6 +231,30 @@ namespace SyntacticAnalysisTest
             var ret = cp.Begin<DirectiveList>().Text("test")
                 .Opt().Type(TokenType.DigitStartString)
                 .Type(TokenType.LetterStartString).End();
+            if (expected == 0)
+            {
+                Assert.That(ret, Is.Null);
+            }
+            else
+            {
+                Assert.That(ret, Is.Not.Null);
+                Assert.That(ret.Position.Length, Is.EqualTo(expected));
+            }
+        }
+
+        [TestCase("test a b c d 5", 14)]
+        [TestCase("test 5 b", 6)]
+        [TestCase("test * b", 0)]
+        [TestCase("a b", 0)]
+        [TestCase("5 b", 0)]
+        public void Loop(string text, int expected)
+        {
+            var tc = Lexer.Lex(text, string.Empty);
+            var cp = new ChainParser(tc);
+            var ret = cp.Begin<DirectiveList>().Text("test")
+                .Loop().Not().Type(TokenType.DigitStartString)
+                .Than().Type(TokenType.LetterStartString)
+                .EndLoop().End();
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);

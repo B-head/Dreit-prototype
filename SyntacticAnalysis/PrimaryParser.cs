@@ -55,6 +55,11 @@ namespace SyntacticAnalysis
             return new NumberLiteral { Integral = a.Text, Position = a.Position };
         }
 
+        private static IdentifierAccess IdentifierAccess(ChainParser cp)
+        {
+            return null;
+        }
+
         private static IdentifierAccess IdentifierAccess(TokenCollection c, ref int i)
         {
             bool pragma = false;

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace SyntacticAnalysis
 {
-    delegate Element ParserFunction(ChainParser chain);
+    delegate T ParserFunction<out T>(ChainParser chain) where T : Element;
     delegate void TokenAction<T>(T self, Token token) where T : Element;
-    delegate void ElementAction<T>(T self, Element element) where T : Element;
+    delegate void ElementAction<T, E>(T self, E element) where T : Element where E : Element;
 
     class ChainParser
     {
@@ -39,7 +39,7 @@ namespace SyntacticAnalysis
     {
         public event Action<int> EndEvent;
         private T self;
-        private bool failure;
+        internal bool failure { get; private set; }
         private bool justFailure;
         private bool phaseIf;
         private bool phaseSkip;
@@ -114,13 +114,18 @@ namespace SyntacticAnalysis
             return this;
         }
 
-        public ChainParser<T> Transfer(ElementAction<T> action, params ParserFunction[] func)
+        public ChainParser<T> Transfer<E>(ElementAction<T, E> action, ParserFunction<E> func) where E : Element
+        {
+            return Transfer<E>(action, new ParserFunction<E>[] { func });
+        }
+
+        public ChainParser<T> Transfer<E>(ElementAction<T, E> action, params ParserFunction<E>[] func) where E : Element
         {
             if (IsSkip())
             {
                 return this;
             }
-            Element result = null;
+            E result = null;
             foreach (var f in func)
             {
                 result = f(this);
@@ -198,11 +203,18 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Than()
         {
+            bool skip;
+            return Than(out skip);
+        }
+
+        public ChainParser<T> Than(out bool skip)
+        {
             if (phaseIf)
             {
                 phaseSkip = failure;
                 failure = false;
             }
+            skip = phaseSkip;
             return this;
         }
 
@@ -244,6 +256,24 @@ namespace SyntacticAnalysis
             return this;
         }
 
+        public ChainParser<T> Error()
+        {
+            if (IsSkip())
+            {
+                return this;
+            }
+            collection.AddError(index);
+            ++index;
+            Post(true);
+            return this;
+        }
+
+        public LoopChainParser<T> Loop()
+        {
+            var resurt = new LoopChainParser<T>(collection, index, this);
+            return resurt;
+        }
+
         private bool IsSkip()
         {
             justFailure = false;
@@ -269,6 +299,148 @@ namespace SyntacticAnalysis
             }
             phaseNot = false;
             phaseOpt = false;
+        }
+    }
+
+    class LoopChainParser<T> : ChainParser where T : Element, new()
+    {
+        private ChainParser<T> self;
+        public List<Action<ChainParser<T>>> LoopList;
+        private bool condFailure;
+
+        public LoopChainParser(TokenCollection collection, int index, ChainParser<T> self)
+            : base(collection, index)
+        {
+            LoopList = new List<Action<ChainParser<T>>>();
+            this.self = self;
+        }
+
+        public LoopChainParser<T> Text(params string[] text)
+        {
+            LoopList.Add(cp => cp.Text(text));
+            return this;
+        }
+
+        public LoopChainParser<T> Text(TokenAction<T> action, params string[] text)
+        {
+            LoopList.Add(cp => cp.Text(action, text));
+            return this;
+        }
+
+        public LoopChainParser<T> Type(params TokenType[] type)
+        {
+            LoopList.Add(cp => cp.Type(type));
+            return this;
+        }
+
+        public LoopChainParser<T> Type(TokenAction<T> action, params TokenType[] type)
+        {
+            LoopList.Add(cp => cp.Type(action, type));
+            return this;
+        }
+
+        public LoopChainParser<T> Transfer<E>(ElementAction<T, E> action, ParserFunction<E> func) where E : Element
+        {
+            LoopList.Add(cp => cp.Transfer(action, func));
+            return this;
+        }
+
+        public LoopChainParser<T> Transfer<E>(ElementAction<T, E> action, params ParserFunction<E>[] func) where E : Element
+        {
+            LoopList.Add(cp => cp.Transfer(action, func));
+            return this;
+        }
+
+        public LoopChainParser<T> Is(bool value)
+        {
+            LoopList.Add(cp => cp.Is(value));
+            return this;
+        }
+
+        public LoopChainParser<T> Ignore(params TokenType[] type)
+        {
+            LoopList.Add(cp => cp.Ignore(type));
+            return this;
+        }
+
+        public LoopChainParser<T> Lt()
+        {
+            LoopList.Add(cp => cp.Lt());
+            return this;
+        }
+
+        public LoopChainParser<T> If()
+        {
+            LoopList.Add(cp => cp.If());
+            return this;
+        }
+
+        public LoopChainParser<T> ElseIf()
+        {
+            LoopList.Add(cp => cp.ElseIf());
+            return this;
+        }
+
+        public LoopChainParser<T> Else()
+        {
+            LoopList.Add(cp => cp.Else());
+            return this;
+        }
+
+        public LoopChainParser<T> Than()
+        {
+            LoopList.Add(cp => cp.Than(out condFailure));
+            return this;
+        }
+
+        public LoopChainParser<T> EndIf()
+        {
+            LoopList.Add(cp => cp.EndIf());
+            return this;
+        }
+
+        public LoopChainParser<T> And()
+        {
+            LoopList.Add(cp => cp.And());
+            return this;
+        }
+
+        public LoopChainParser<T> Or()
+        {
+            LoopList.Add(cp => cp.Or());
+            return this;
+        }
+
+        public LoopChainParser<T> Not()
+        {
+            LoopList.Add(cp => cp.Not());
+            return this;
+        }
+
+        public LoopChainParser<T> Opt()
+        {
+            LoopList.Add(cp => cp.Opt());
+            return this;
+        }
+
+        public LoopChainParser<T> Error()
+        {
+            LoopList.Add(cp => cp.Error());
+            return this;
+        }
+
+        public ChainParser<T> EndLoop()
+        {
+            while (!condFailure && !self.failure)
+            {
+                self.If();
+                foreach(var f in LoopList)
+                {
+                    f(self);
+                }
+                self.EndIf();
+            }
+            return self;
         }
     }
 }

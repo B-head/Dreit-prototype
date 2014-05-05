@@ -5,9 +5,9 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static Element Expression(TokenCollection c, ref int i)
+        private static DyadicCalculate LeftAssign(ChainParser cp)
         {
-            return LeftAssign(c, ref i);
+            return null;
         }
 
         private static Element LeftAssign(TokenCollection c, ref int i)
