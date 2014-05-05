@@ -1,2 +1,8 @@
 ﻿
-      echo 10 + 10
+      class A
+      {
+      var value := 500
+      }
+
+      A() =: var a:A
+      echo a.value

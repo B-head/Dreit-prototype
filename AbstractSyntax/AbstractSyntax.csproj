@@ -69,7 +69,7 @@
     <Compile Include="ReturnDirective.cs" />
     <Compile Include="EchoDirective.cs" />
     <Compile Include="Element.cs" />
-    <Compile Include="Expression\ExpressionGrouping.cs" />
+    <Compile Include="Expression\ExpressionGroup.cs" />
     <Compile Include="DirectiveList.cs" />
     <Compile Include="Expression\IdentifierAccess.cs" />
     <Compile Include="Expression\LeftAssign.cs" />

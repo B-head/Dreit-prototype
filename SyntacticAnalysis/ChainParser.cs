@@ -55,6 +55,10 @@ namespace SyntacticAnalysis
 
         public T End()
         {
+            if (phaseIf)
+            {
+                throw new InvalidOperationException();
+            }
             if(failure)
             {
                 return null;
@@ -114,6 +118,23 @@ namespace SyntacticAnalysis
             return this;
         }
 
+        public ChainParser<T> Token(TokenAction<T> action)
+        {
+            if (IsSkip())
+            {
+                return this;
+            }
+            var s = collection.IsReadable(index);
+            if (s)
+            {
+                action(self, collection.Read(index));
+                endPosition = collection.GetTextPosition(index);
+                ++index;
+            }
+            Post(s);
+            return this;
+        }
+
         public ChainParser<T> Transfer<E>(ElementAction<T, E> action, ParserFunction<E> func) where E : Element
         {
             return Transfer<E>(action, new ParserFunction<E>[] { func });
@@ -140,6 +161,26 @@ namespace SyntacticAnalysis
                 }
             }
             Post(result != null);
+            return this;
+        }
+
+        public ChainParser<T> Self(Action<T> action)
+        {
+            if (IsSkip())
+            {
+                return this;
+            }
+            action(self);
+            Post(true);
+            return this;
+        }
+        
+        public ChainParser<T> Readble()
+        {
+            if (!IsSkip())
+            {
+                Post(collection.IsReadable(index));
+            }
             return this;
         }
 
@@ -262,9 +303,13 @@ namespace SyntacticAnalysis
             {
                 return this;
             }
-            collection.AddError(index);
-            ++index;
-            Post(true);
+            var s = collection.IsReadable(index);
+            if (s)
+            {
+                collection.AddError(index);
+                ++index;
+            }
+            Post(s);
             return this;
         }
 
@@ -339,6 +384,12 @@ namespace SyntacticAnalysis
             return this;
         }
 
+        public LoopChainParser<T> Token(TokenAction<T> action)
+        {
+            LoopList.Add(cp => cp.Token(action));
+            return this;
+        }
+
         public LoopChainParser<T> Transfer<E>(ElementAction<T, E> action, ParserFunction<E> func) where E : Element
         {
             LoopList.Add(cp => cp.Transfer(action, func));
@@ -348,6 +399,18 @@ namespace SyntacticAnalysis
         public LoopChainParser<T> Transfer<E>(ElementAction<T, E> action, params ParserFunction<E>[] func) where E : Element
         {
             LoopList.Add(cp => cp.Transfer(action, func));
+            return this;
+        }
+
+        public LoopChainParser<T> Self(Action<T> action)
+        {
+            LoopList.Add(cp => cp.Self(action));
+            return this;
+        }
+
+        public LoopChainParser<T> Readble()
+        {
+            LoopList.Add(cp => cp.Readble());
             return this;
         }
 

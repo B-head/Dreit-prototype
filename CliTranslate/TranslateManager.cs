@@ -43,14 +43,15 @@ namespace CliTranslate
                 if (scope is DeclateModule) return 2;
                 if (scope is DeclateClass) return 3;
                 if (scope is DeclateEnum) return 4;
-                if (scope is DeclateGeneric) return 9;
+                if (scope is DeclateGeneric) return 5;
                 if (scope is DeclateRoutine) return 10;
                 if (scope is DeclateOperator) return 11;
                 if (scope is DeclateArgument) return 20;
                 if (scope is DeclateVariant) return 21;
                 if (scope is VoidSymbol) return 30;
-                if (scope is ThisSymbol) return 31;
-                if (scope is AliasDirective) return 32;
+                if (scope is UndefinedSymbol) return 31;
+                if (scope is ThisSymbol) return 32;
+                if (scope is AliasDirective) return 33;
                 throw new ArgumentException();
             }
         }

@@ -33,7 +33,7 @@ namespace AbstractSyntax
 
         public override int Count
         {
-            get { return 3; }
+            get { return 4; }
         }
 
         public override Element this[int index]
@@ -45,6 +45,7 @@ namespace AbstractSyntax
                     case 0: return ExpList;
                     case 1: return PragmaList;
                     case 2: return Void;
+                    case 3: return Undefined;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }

@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class ExpressionGrouping : MonadicExpression
+    public class ExpressionGroup : MonadicExpression
     {
         public override DataType DataType
         {

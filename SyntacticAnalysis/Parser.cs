@@ -8,12 +8,13 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        internal delegate Element ParserFunction(TokenCollection c, ref int i);
+        private static ParserFunction<Element>[] directive = { Echo, Alias, Return, LeftAssign };
+        private static ParserFunction<Element>[] primary = { Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, IdentifierAccess }; 
 
         public static Element Parse(TokenCollection collection)
         {
             var cp = new ChainParser(collection);
-            var exp = DirectiveList(cp, true);
+            var exp = RootDirectiveList(cp);
             return new DeclateModule 
             { 
                 Name = collection.GetName(),
@@ -24,74 +25,53 @@ namespace SyntacticAnalysis
             };
         }
 
-        private static Element CoalesceParser(TokenCollection c, ref int i, params ParserFunction[] func)
+        private static T CoalesceParser<T>(ChainParser cp, params ParserFunction<T>[] func) where T : Element
         {
-            Element result = null;
-            foreach (ParserFunction f in func)
+            T result = null;
+            foreach (var f in func)
             {
-                int temp = i;
-                result = f(c, ref temp);
+                result = f(cp);
                 if (result != null)
                 {
-                    i = temp;
                     break;
                 }
             }
             return result;
         }
 
-        private static Element LeftAssociative<R>(TokenCollection c, ref int i, ParserFunction next, params TokenType[] type) where R : DyadicExpression, new()
+        private static Element LeftAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : DyadicExpression, new() where T : Element
         {
-            Element left = next(c, ref i);
-            TokenType match;
-            while (c.CheckToken(i, out match, type))
-            {
-                c.MoveNextToken(ref i);
-                Element right = next(c, ref i);
-                left = new R { Left = left, Right = right, Operator = match, Position = left.Position.AlterLength(right.Position) };
-            }
-            return left;
+            Element current = next(cp);
+            return current == null ? null : LeftAssociative<R, T>(current, cp, next, type);
         }
 
-        private static Element RightAssociative<R>(TokenCollection c, ref int i, ParserFunction next, params TokenType[] type) where R : DyadicExpression, new()
+        private static Element LeftAssociative<R, T>(Element current, ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : DyadicExpression, new() where T : Element
         {
-            Element left = next(c, ref i);
-            TokenType match;
-            if (!c.CheckToken(i, out match, type))
-            {
-                return left;
-            }
-            c.MoveNextToken(ref i);
-            Element right = RightAssociative<R>(c, ref i, next, type);
-            return new R { Left = left, Right = right, Operator = match, Position = left.Position.AlterLength(right.Position) };
+            var ret = cp.Begin<R>()
+                .Self(s => s.Left = current)
+                .Type((s, t) => s.Operator = t.Type, type).Lt()
+                .Transfer((s, e) => s.Right = e, next)
+                .End();
+            return ret == null ? current : LeftAssociative<R, T>(ret, cp, next, type);
         }
 
-        private static TupleList ParseTuple(TokenCollection c, ref int i, ParserFunction next)
+        private static Element RightAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : DyadicExpression, new() where T : Element
         {
-            TupleList tuple = new TupleList();
-            while (c.IsReadable(i))
-            {
-                var temp = next(c, ref i);
-                if(temp == null)
-                {
-                    break;
-                }
-                tuple.Append(temp);
-                if (!c.CheckToken(i, TokenType.List))
-                {
-                    break;
-                }
-                c.MoveNextToken(ref i);
-            }
-            if(tuple.Count > 0)
-            {
-                tuple.Position = tuple[0].Position.AlterLength((TextPosition?)tuple[tuple.Count - 1]);
-            }
-            else
-            {
-                tuple.Position = c.GetTextPosition(i);
-            }
-            return tuple;
+            Element current = next(cp);
+            var ret = cp.Begin<R>()
+                .Self(s => s.Left = current)
+                .Type((s, t) => s.Operator = t.Type, type).Lt()
+                .Transfer((s, e) => s.Right = e, c => RightAssociative<R, T>(c, next, type))
+                .End();
+            return ret ?? current;
+        }
+
+        private static TupleList ParseTuple<T>(ChainParser cp, ParserFunction<T> next) where T : Element
+        {
+            return cp.Begin<TupleList>().Loop()
+                .Transfer((s, e)=> s.Append(e), next)
+                .Type(TokenType.List).Lt()
+                .Than().EndLoop().End(); 
         }
     }
 }

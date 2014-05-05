@@ -5,29 +5,24 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static DyadicCalculate LeftAssign(ChainParser cp)
+        private static Element LeftAssign(ChainParser cp)
         {
-            return null;
+            return RightAssociative<LeftAssign, Element>(cp, RightAssign, TokenType.LeftAssign);
         }
 
-        private static Element LeftAssign(TokenCollection c, ref int i)
+        private static Element RightAssign(ChainParser cp)
         {
-            return RightAssociative<LeftAssign>(c, ref i, RightAssign, TokenType.LeftAssign);
+            return LeftAssociative<RightAssign, Element>(cp, TupleList, TokenType.RightAssign);
         }
 
-        private static Element RightAssign(TokenCollection c, ref int i)
+        private static Element TupleList(ChainParser cp)
         {
-            return LeftAssociative<RightAssign>(c, ref i, TupleList, TokenType.RightAssign);
-        }
-
-        private static Element TupleList(TokenCollection c, ref int i)
-        {
-            var tuple = ParseTuple(c, ref i, Addtive);
+            var tuple = ParseTuple(cp, Addtive);
             if (tuple.Count > 1)
             {
                 return tuple;
             }
-            if (tuple.Count > 0)
+            else if (tuple.Count > 0)
             {
                 return tuple[0];
             }
@@ -37,45 +32,36 @@ namespace SyntacticAnalysis
             }
         }
 
-        private static Element Addtive(TokenCollection c, ref int i)
+        private static Element Addtive(ChainParser cp)
         {
-            return LeftAssociative<DyadicCalculate>(c, ref i, Multiplicative, TokenType.Add, TokenType.Subtract, TokenType.Combine);
+            return LeftAssociative<DyadicCalculate, Element>(cp, Multiplicative, TokenType.Add, TokenType.Subtract, TokenType.Combine);
         }
 
-        private static Element Multiplicative(TokenCollection c, ref int i)
+        private static Element Multiplicative(ChainParser cp)
         {
-            return LeftAssociative<DyadicCalculate>(c, ref i, Exponentive, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
+            return LeftAssociative<DyadicCalculate, Element>(cp, Exponentive, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
         }
 
-        private static Element Exponentive(TokenCollection c, ref int i)
+        private static Element Exponentive(ChainParser cp)
         {
-            return RightAssociative<DyadicCalculate>(c, ref i, CallRoutine, TokenType.Exponent);
+            return RightAssociative<DyadicCalculate, Element>(cp, CallRoutine, TokenType.Exponent);
         }
 
-        private static Element CallRoutine(TokenCollection c, ref int i)
+        private static Element CallRoutine(ChainParser cp)
         {
-            var p = c.GetTextPosition(i);
-            var access = MemberAccess(c, ref i);
-            int temp = i;
-            if (!c.CheckToken(temp, TokenType.LeftParenthesis))
-            {
-                return access;
-            }
-            c.MoveNextToken(ref temp);
-            var argument = ParseTuple(c, ref temp, Addtive); //todo デフォルト引数などに対応した専用の構文が必要。
-            if (!c.CheckToken(temp, TokenType.RightParenthesis))
-            {
-                return access;
-            }
-            p = p.AlterLength(c.GetTextPosition(temp));
-            c.MoveNextToken(ref temp);
-            i = temp;
-            return new CallRoutine { Access = access, Argument = argument, Position = p };
+            var access = MemberAccess(cp);
+            var ret = cp.Begin<CallRoutine>()
+                .Self(s => s.Access = access)
+                .Type(TokenType.LeftParenthesis).Lt()
+                .Transfer((s, e) => s.Argument = e, c => ParseTuple(c, Addtive))
+                .Type(TokenType.RightParenthesis).Lt()
+                .End();
+            return ret ?? access;
         }
 
-        private static Element MemberAccess(TokenCollection c, ref int i)
+        private static Element MemberAccess(ChainParser cp)
         {
-            return LeftAssociative<MemberAccess>(c, ref i, Primary, TokenType.Access);
+            return LeftAssociative<MemberAccess, Element>(cp, Primary, TokenType.Access);
         }
     }
 }

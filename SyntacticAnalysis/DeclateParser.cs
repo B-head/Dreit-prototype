@@ -6,141 +6,99 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static DeclateVariant DeclareVariant(TokenCollection c, ref int i)
+        private static DeclateVariant DeclareVariant(ChainParser cp)
         {
-            if (!c.CheckText(i, "var"))
-            {
-                return null;
-            }
-            var first = c.GetTextPosition(i);
-            c.MoveNextToken(ref i);
-            IdentifierAccess ident = IdentifierAccess(c, ref i);
-            var last = ident.Position;
-            Element explType = null;
-            if (c.CheckToken(i, TokenType.Peir))
-            {
-                c.MoveNextToken(ref i);
-                explType = MemberAccess(c, ref i);
-                last = explType.Position;
-            }
-            return new DeclateVariant { Ident = ident, ExplicitType = explType, Position = first.AlterLength(last) };
+            return cp.Begin<DeclateVariant>()
+                .Text("var").Lt()
+                .Transfer((s, e) => s.Ident = e, IdentifierAccess)
+                .If().Type(TokenType.Peir).Lt()
+                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive)
+                .EndIf().End();
         }
 
-        private static DeclateRoutine DeclateRoutine(TokenCollection c, ref int i)
+        private static DeclateRoutine DeclateRoutine(ChainParser cp)
         {
-            if (!c.CheckText(i, "rout", "routine"))
-            {
-                return null;
-            }
-            var p = c.GetTextPosition(i);
-            c.MoveNextToken(ref i);
-            string name = string.Empty;
-            TupleList attr = null;
-            Element retType = null;
-            if (c.CheckToken(i, TokenType.LetterStartString))
-            {
-                name = c.Read(i).Text;
-                c.MoveNextToken(ref i);
-            }
-            if (c.CheckToken(i, TokenType.LeftParenthesis))
-            {
-                c.MoveNextToken(ref i);
-                attr = ParseTuple(c, ref i, DeclateArgument);
-                if (c.CheckToken(i, TokenType.RightParenthesis))
-                {
-                    c.MoveNextToken(ref i);
-                }
-            }
-            else
-            {
-                attr = new TupleList();
-            }
-            if (c.CheckToken(i, TokenType.Peir))
-            {
-                c.MoveNextToken(ref i);
-                retType = MemberAccess(c, ref i);
-            }
-            var block = Block(c, ref i);
-            return new DeclateRoutine { Name = name, Argument = attr, ExplicitType = retType, Block = block, Position = p.AlterLength((TextPosition?)block) };
+            return cp.Begin<DeclateRoutine>()
+                .Text("rout", "routine").Lt()
+                .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
+                .Transfer((s, e) => s.Generic = e, GenericList)
+                .Transfer((s, e)=> s.Argument = e, ArgumentList)
+                .If().Type(TokenType.Peir).Lt()
+                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive).EndIf()
+                .Transfer((s, e)=> s.Block = e, Block)
+                .End();
         }
 
-        private static DeclateOperator DeclateOperator(TokenCollection c, ref int i)
+        private static DeclateOperator DeclateOperator(ChainParser cp)
         {
-            if (!c.CheckText(i, "operator"))
-            {
-                return null;
-            }
-            var p = c.GetTextPosition(i);
-            c.MoveNextToken(ref i);
-            Token op = c.Read(i++);
-            TupleList attr = null;
-            Element retType = null;
-            if (c.CheckToken(i, TokenType.LeftParenthesis))
-            {
-                c.MoveNextToken(ref i);
-                attr = ParseTuple(c, ref i, DeclateArgument);
-                if (c.CheckToken(i, TokenType.RightParenthesis))
-                {
-                    c.MoveNextToken(ref i);
-                }
-            }
-            else
-            {
-                attr = new TupleList();
-            }
-            if (c.CheckToken(i, TokenType.Peir))
-            {
-                c.MoveNextToken(ref i);
-                retType = MemberAccess(c, ref i);
-            }
-            var block = Block(c, ref i);
-            return new DeclateOperator { Name = op.Text, Operator = op.Type, Argument = attr, ExplicitType = retType, Block = block, Position = p.AlterLength((TextPosition?)block) };
+            return cp.Begin<DeclateOperator>()
+                .Text("operator").Lt()
+                .Token((s, t) => { s.Operator = t.Type; s.Name = t.Text; }).Lt()
+                .Transfer((s, e) => s.Generic = e, GenericList)
+                .Transfer((s, e) => s.Argument = e, ArgumentList)
+                .If().Type(TokenType.Peir).Lt()
+                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive).EndIf()
+                .Transfer((s, e) => s.Block = e, Block)
+                .End();
         }
 
-        private static DeclateArgument DeclateArgument(TokenCollection c, ref int i)
+        private static DeclateClass DeclateClass(ChainParser cp)
         {
-            IdentifierAccess ident = IdentifierAccess(c, ref i);
-            if(ident == null)
-            {
-                return null;
-            }
-            var p = ident.Position;
-            Element explType = null;
-            if (c.CheckToken(i, TokenType.Peir))
-            {
-                c.MoveNextToken(ref i);
-                explType = MemberAccess(c, ref i);
-                p = p.AlterLength((TextPosition?)explType);
-            }
-            return new DeclateArgument { Ident = ident, ExplicitType = explType, Position = p };
+            return cp.Begin<DeclateClass>()
+                .Text("class").Lt()
+                .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
+                .Transfer((s, e) => s.Generic = e, GenericList)
+                .If().Type(TokenType.Peir).Lt()
+                .Than().Transfer((s, e) => s.Inherit = e, c => ParseTuple(c, Addtive))
+                .Else().Self(s => s.Inherit = new TupleList()).EndIf()
+                .Transfer((s, e) => s.Block = e, Block)
+                .End();
         }
 
-        private static DeclateClass DeclateClass(TokenCollection c, ref int i)
+        private static TupleList GenericList(ChainParser cp)
         {
-            if (!c.CheckText(i, "class"))
-            {
-                return null;
-            }
-            var p = c.GetTextPosition(i);
-            c.MoveNextToken(ref i);
-            string name = string.Empty;
-            TupleList inherit = null;
-            if (c.CheckToken(i, TokenType.LetterStartString))
-            {
-                name = c.Read(i).Text;
-                c.MoveNextToken(ref i);
-            }
-            if (c.CheckToken(i, TokenType.Peir))
-            {
-                c.MoveNextToken(ref i);
-                inherit = ParseTuple(c, ref i, MemberAccess);
-            }
-            else
-            {
-                inherit = new TupleList();
-            }
-            var block = Block(c, ref i);
-            return new DeclateClass { Name = name, Inherit = inherit, Block = block, Position = p.AlterLength((TextPosition?)block) };
+            var ret = cp.Begin<TupleList>()
+                .Type(TokenType.Not).Lt()
+                .Type(TokenType.LeftParenthesis).Lt()
+                .Loop()
+                .Transfer((s, e) => s.Append(e), DeclateGeneric)
+                .Type(TokenType.List).Lt()
+                .Than().EndLoop()
+                .Type(TokenType.RightParenthesis).Lt()
+                .End();
+            return ret ?? new TupleList();
+        }
+
+        private static DeclateGeneric DeclateGeneric(ChainParser cp)
+        {
+            return cp.Begin<DeclateGeneric>()
+                .Transfer((s, e) => s.Ident = e, IdentifierAccess)
+                .If().Type(TokenType.Peir).Lt()
+                .Than().Transfer((s, e) => s.SpecializationType = e, Addtive)
+                .EndIf().End();
+        }
+
+        private static TupleList ArgumentList(ChainParser cp)
+        {
+            var ret = cp.Begin<TupleList>()
+                .Type(TokenType.LeftParenthesis).Lt()
+                .Loop()
+                .Transfer((s, e) => s.Append(e), DeclateArgument)
+                .Type(TokenType.List).Lt()
+                .Than().EndLoop()
+                .Type(TokenType.RightParenthesis).Lt()
+                .End();
+            return ret ?? new TupleList();
+        }
+
+        //todo デフォルト引数に対応した専用の構文が必要。
+        private static DeclateArgument DeclateArgument(ChainParser cp)
+        {
+            return cp.Begin<DeclateArgument>()
+                .Transfer((s, e) => s.Ident = e, IdentifierAccess)
+                .If().Type(TokenType.Peir).Lt()
+                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive)
+                .EndIf().End();
         }
     }
 }

@@ -9,6 +9,7 @@ namespace AbstractSyntax.Daclate
     public class DeclateGeneric : DataType
     {
         public IdentifierAccess Ident { get; set; }
+        public Element SpecializationType { get; set; }
 
         public override int Count
         {
