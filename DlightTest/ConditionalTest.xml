@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      if true :: echo 10
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      if not false :: echo 10
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      if true than echo 10
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      routine foo(a:Bool){
+      if a than echo 10 else echo 20 
+      }
+      foo(true)
+      foo(false)
+    </code>
+    <output>10 20</output>
+  </case>
+
+  <case>
+    <code>
+      routine foo(a:Bool, b:Bool){
+      if a than if b than echo 10 else echo 40 else if b than echo 20 else echo 30
+      }
+      foo(true, true)
+      foo(true, false)
+      foo(false, true)
+      foo(false, false)
+    </code>
+    <output>10 40 20 30</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+        if 2 < 5 :: echo 10
+      ]]>
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+        if 2 <= 5 <= 8 :: echo 10
+      ]]>
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+        if 22 > 6 && 33 >= 9 :: echo 10
+      ]]>
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+        routine foo(a:Int32){
+          if a = 5 || a = 10 :: echo 10 else echo 20
+        }
+        foo(5)
+        foo(10)
+        foo(15)
+      ]]>
+    </code>
+    <output>10 10 20</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+        routine foo(a:Int32){
+          if 3 <> a <> 6 :: echo 10 else echo 20
+        }
+        foo(1)
+        foo(3)
+        foo(6)
+      ]]>
+    </code>
+    <output>10 20 20</output>
+  </case>
+</compile-test>
