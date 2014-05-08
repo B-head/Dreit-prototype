@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      var a:Int32
+      echo a
+    </code>
+    <output>0</output>
+  </case>
+
+  <case>
+    <code>
+      echo abc
+    </code>
+    <error key="undefined-identifier"/>
+  </case>
+
+  <case>
+    <code>
+      var a:Int32
+      a := 10
+      echo a
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      var a:Int32
+      a(10)
+      echo a
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      var a
+      a := 10
+      echo a
+    </code>
+    <error key="require-type"/>
+  </case>
+
+  <case>
+    <code>
+      var a:Integer32 := 40
+      echo a
+    </code>
+    <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      var a:Int32 := 70
+      echo a
+    </code>
+    <output>70</output>
+  </case>
+
+  <case>
+    <code>
+      var a:Integ45 := 40
+      echo a
+    </code>
+    <error key="undefined-identifier"/>
+  </case>
+
+  <case>
+    <code>
+      var a := 40
+      echo a
+    </code>
+    <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      50 =: var a =: var b
+      echo a * b
+    </code>
+    <output>2500</output>
+  </case>
+
+  <case>
+    <code>
+      50 =: var a := var b
+      echo a * b
+    </code>
+    <error key="not-collide-assign"/>
+  </case>
+  
+  <case>
+    <code>
+      var e:Binary64 := 25.5
+      var f:Integer32 := e
+      echo f
+    </code>
+    <output>25</output>
+  </case>
+
+  <case>
+    <code>
+      var e:Binary64 := 25.5
+      echo Integer32(e)
+    </code>
+    <output>25</output>
+  </case>
+</compile-test>
