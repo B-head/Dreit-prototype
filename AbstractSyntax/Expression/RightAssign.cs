@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class RightAssign : DyadicExpression
+    public class RightAssign : DyadicExpression, ICaller
     {
         private Scope _ConversionRoutine;
 
@@ -44,15 +44,20 @@ namespace AbstractSyntax.Expression
             {
                 return;
             }
-            DeclateVariant temp = Right as DeclateVariant;
-            if (temp != null)
-            {
-                temp.SetDataType(Left.DataType);
-            }
-            if (Left.DataType != Right.DataType && ConversionRoutine is UndefinedSymbol)
+            if (Left.DataType != Right.DataType && ConversionRoutine is VoidSymbol)
             {
                 CompileError("not-convertable-right");
             }
+        }
+
+        public DataType GetCallType()
+        {
+            DeclateVariant temp = Right as DeclateVariant;
+            if (Left == null || temp == null)
+            {
+                return Root.Unknown;
+            }
+            return Left.DataType;
         }
     }
 }

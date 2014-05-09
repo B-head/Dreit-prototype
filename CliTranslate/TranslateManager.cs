@@ -49,7 +49,7 @@ namespace CliTranslate
                 if (scope is DeclateArgument) return 20;
                 if (scope is DeclateVariant) return 21;
                 if (scope is VoidSymbol) return 30;
-                if (scope is UndefinedSymbol) return 31;
+                if (scope is UnknownSymbol) return 31;
                 if (scope is ThisSymbol) return 32;
                 if (scope is AliasDirective) return 33;
                 throw new ArgumentException();
@@ -312,7 +312,7 @@ namespace CliTranslate
         private void Translate(LeftAssign element, Translator trans)
         {
             var refer = TranslateAccess((dynamic)element.Left, trans);
-            if (element.ConversionRoutine is UndefinedSymbol)
+            if (element.ConversionRoutine is VoidSymbol)
             {
                 Translate((dynamic)element.Right, trans);
                 TranslateAssign((dynamic)refer, trans);
@@ -332,7 +332,7 @@ namespace CliTranslate
         private void Translate(RightAssign element, Translator trans)
         {
             var refer = TranslateAccess((dynamic)element.Right, trans);
-            if (element.ConversionRoutine is UndefinedSymbol)
+            if (element.ConversionRoutine is VoidSymbol)
             {
                 Translate((dynamic)element.Left, trans);
                 TranslateAssign((dynamic)refer, trans);

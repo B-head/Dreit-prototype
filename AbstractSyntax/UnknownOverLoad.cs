@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class UndefinedOverLoad : OverLoad
+    public class UnknownOverLoad : OverLoad
     {
-        private UndefinedSymbol Undefined;
-
-        public UndefinedOverLoad(UndefinedSymbol undefined)
+        public UnknownOverLoad(UnknownSymbol unknown)
+            :base(unknown)
         {
-            Undefined = undefined;
         }
 
         public override void Append(Scope scope)
@@ -29,17 +27,17 @@ namespace AbstractSyntax
 
         public override DataType GetDataType()
         {
-            return Undefined;
+            return Unknown;
         }
 
         public override Scope TypeSelect()
         {
-            return Undefined;
+            return Unknown;
         }
 
         public override Scope TypeSelect(List<DataType> type)
         {
-            return Undefined;
+            return Unknown;
         }
     }
 }

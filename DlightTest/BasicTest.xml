@@ -30,7 +30,7 @@
     <output>7</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       echo 1 + 2.5
     </code>
@@ -87,7 +87,7 @@
     <output>1 2 3</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       class A
       {

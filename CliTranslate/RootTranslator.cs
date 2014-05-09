@@ -36,6 +36,10 @@ namespace CliTranslate
             {
                 return typeof(void);
             }
+            if(path is UnknownSymbol)
+            {
+                throw new ArgumentException();
+            }
             return BuilderDictonary[path];
         }
 
@@ -44,6 +48,10 @@ namespace CliTranslate
             if (path is VoidSymbol)
             {
                 return typeof(void);
+            }
+            if (path is UnknownSymbol)
+            {
+                throw new ArgumentException();
             }
             return BuilderDictonary[path];
         }
@@ -74,6 +82,10 @@ namespace CliTranslate
             if (path == null)
             {
                 throw new ArgumentNullException();
+            }
+            if (path is UnknownSymbol || path is VoidSymbol)
+            {
+                throw new ArgumentException();
             }
             return CtorDictonary[path];
         }

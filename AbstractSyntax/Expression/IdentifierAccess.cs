@@ -109,7 +109,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckDataType()
         {
-            if (Reference is UndefinedOverLoad)
+            if (Reference is UnknownOverLoad)
             {
                 if (IsPragmaAccess)
                 {

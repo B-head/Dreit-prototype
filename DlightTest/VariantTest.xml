@@ -64,6 +64,7 @@
       echo a
     </code>
     <error key="undefined-identifier"/>
+    <error key="require-type"/>
   </case>
 
   <case>
@@ -72,6 +73,22 @@
       echo a
     </code>
     <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      var a(10)
+      echo a
+    </code>
+    <output>10</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      var a(10):Int32
+      echo a
+    </code>
+    <output>10</output>
   </case>
 
   <case>

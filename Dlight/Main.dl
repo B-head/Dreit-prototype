@@ -1,4 +1,3 @@
 ﻿
-      var a
-      a := 10
-      echo a
+      50 =: var a =: var b
+      echo a * b

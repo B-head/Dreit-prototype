@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -114,9 +115,9 @@ namespace AbstractSyntax.Visualizer
             {
                 item.BackColor = Color.LightBlue;
             }
-            else if(value is IList)
+            else if (value is IReadOnlyList<object>)
             {
-                var list = (IList)value;
+                var list = (IReadOnlyList<object>)value;
                 for(var i = 0; i < list.Count; ++i)
                 {
                     AddValue(group, name + "[" + i + "]", list[i]);

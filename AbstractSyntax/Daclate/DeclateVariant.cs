@@ -25,9 +25,14 @@ namespace AbstractSyntax.Daclate
                 {
                     _DataType = ExplicitType.DataType;
                 }
+                else if(Parent is ICaller)
+                {
+                    var caller = (ICaller)Parent;
+                    _DataType = caller.GetCallType();
+                }
                 else
                 {
-                    _DataType = Root.Undefined;
+                    _DataType = Root.Unknown;
                 }
                 return _DataType;
             }
@@ -58,14 +63,6 @@ namespace AbstractSyntax.Daclate
                     case 1: return ExplicitType;
                     default: throw new ArgumentOutOfRangeException();
                 }
-            }
-        }
-
-        public void SetDataType(DataType type)
-        {
-            if(DataType is UndefinedSymbol)
-            {
-                _DataType = type;
             }
         }
 

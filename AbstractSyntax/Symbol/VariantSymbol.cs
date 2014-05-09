@@ -38,5 +38,14 @@ namespace AbstractSyntax.Symbol
                 return TypeMatchResult.MissMatchCount;
             }
         }
+
+        internal override void CheckDataType()
+        {
+            base.CheckDataType();
+            if (DataType is UnknownSymbol)
+            {
+                CompileError("require-type");
+            }
+        }
     }
 }

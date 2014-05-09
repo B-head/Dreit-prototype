@@ -11,9 +11,14 @@ namespace AbstractSyntax
 
     }
 
-    public interface IAccess
+    interface IAccess
     {
         OverLoad Reference { get; }
         void RefarenceResolution(Scope scope);
+    }
+
+    interface ICaller
+    {
+        DataType GetCallType();
     }
 }

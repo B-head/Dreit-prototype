@@ -36,7 +36,7 @@ namespace AbstractSyntax
                 }
                 else
                 {
-                    ol = new OverLoad();
+                    ol = new OverLoad(Root.Unknown);
                     ScopeSymbol[v.Key] = ol;
                 }
                 ol.Merge(v.Value);
@@ -52,7 +52,7 @@ namespace AbstractSyntax
             }
             if (this is Root)
             {
-                return Root.UndefinedOverLoad;
+                return Root.UnknownOverLoad;
             }
             return CurrentScope.NameResolution(name);
         }
@@ -83,7 +83,7 @@ namespace AbstractSyntax
             }
             else
             {
-                ol = new OverLoad();
+                ol = new OverLoad(Root.Unknown);
                 ScopeSymbol[scope.Name] = ol;
             }
             ol.Append(scope);//todo 重複判定を実装する。
