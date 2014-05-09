@@ -354,11 +354,34 @@ namespace CliTranslate
             CallTranslate((dynamic)element.CallScope, element, trans);
         }
 
-        private void CallTranslate(Scope call, CallRoutine element, Translator trans)
+        private void CallTranslate(RoutineSymbol call, CallRoutine element, Translator trans)
         {
             TranslateAccess((dynamic)element.Access, trans);
             Translate((dynamic)element.Argument, trans);
             trans.GenerateCall(call);
+        }
+
+        private void CallTranslate(ClassSymbol call, CallRoutine element, Translator trans)
+        {
+            TranslateAccess((dynamic)element.Access, trans);
+            Translate((dynamic)element.Argument, trans);
+            trans.GenerateCall(call);
+        }
+
+        private void CallTranslate(VariantSymbol call, CallRoutine element, Translator trans)
+        {
+            TranslateAccess((dynamic)element.Access, trans);
+            Translate((dynamic)element.Argument, trans);
+            trans.GenerateStore(call);
+            trans.GenerateLoad(call);
+        }
+
+        private void CallTranslate(ThisSymbol call, CallRoutine element, Translator trans)
+        {
+            TranslateAccess((dynamic)element.Access, trans);
+            Translate((dynamic)element.Argument, trans);
+            trans.GenerateStore(call);
+            trans.GenerateLoad(call);
         }
 
         private void CallTranslate(CalculatePragma call, CallRoutine element, Translator trans)

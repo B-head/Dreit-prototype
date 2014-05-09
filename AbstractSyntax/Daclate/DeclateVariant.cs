@@ -69,29 +69,6 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        internal override TypeMatchResult TypeMatch(List<DataType> type)
-        {
-            if (type.Count == 0)
-            {
-                return TypeMatchResult.PerfectMatch;
-            }
-            else if (type.Count == 1)
-            {
-                if (type[0] == _DataType)
-                {
-                    return TypeMatchResult.PerfectMatch;
-                }
-                else
-                {
-                    return TypeMatchResult.MissMatchType;
-                }
-            }
-            else
-            {
-                return TypeMatchResult.MissMatchCount;
-            }
-        }
-
         protected override void SpreadElement(Element parent, Scope scope)
         {
             Name = Ident == null ? string.Empty : Ident.Value;

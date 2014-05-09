@@ -75,35 +75,6 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        internal override TypeMatchResult TypeMatch(List<DataType> type)
-        {
-            if (type.Count == 0)
-            {
-                return TypeMatchResult.PerfectMatch;
-            }
-            else
-            {
-                return TypeMatchResult.MissMatchCount;
-            }
-        }
-
-        public override PrimitivePragmaType GetPrimitiveType()
-        {
-            PrimitivePragma prim = null;
-            if (InheritRefer.Count == 1)
-            {
-                prim = InheritRefer[0] as PrimitivePragma;
-            }
-            if(prim == null)
-            {
-                return PrimitivePragmaType.NotPrimitive;
-            }
-            else
-            {
-                return prim.Type;
-            }
-        }
-
         protected override void SpreadElement(Element parent, Scope scope)
         {
             base.SpreadElement(parent, scope);

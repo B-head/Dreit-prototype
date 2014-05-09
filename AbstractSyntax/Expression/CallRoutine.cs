@@ -24,9 +24,9 @@ namespace AbstractSyntax.Expression
                 {
                     return ArgumentType[0];
                 }
-                else if(CallScope is DeclateRoutine)
+                else if(CallScope is RoutineSymbol)
                 {
-                    var rout = (DeclateRoutine)CallScope;
+                    var rout = (RoutineSymbol)CallScope;
                     return rout.DataType;
                 }
                 else

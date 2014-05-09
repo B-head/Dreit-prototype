@@ -116,24 +116,5 @@ namespace AbstractSyntax.Daclate
                 }
             }
         }
-
-        internal override TypeMatchResult TypeMatch(List<DataType> type)
-        {
-            if (ArgumentType.Count != type.Count)
-            {
-                return TypeMatchResult.MissMatchCount;
-            }
-            else
-            {
-                for (int i = 0; i < ArgumentType.Count; i++)
-                {
-                    if (ArgumentType[i] != type[i])
-                    {
-                        return TypeMatchResult.MissMatchType;
-                    }
-                }
-            }
-            return TypeMatchResult.PerfectMatch;
-        }
     }
 }
