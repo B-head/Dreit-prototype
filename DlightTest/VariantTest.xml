@@ -105,6 +105,7 @@
       echo a * b
     </code>
     <error key="not-collide-assign"/>
+    <error key="require-type"/>
   </case>
   
   <case>
@@ -116,7 +117,7 @@
     <output>25</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       var e:Binary64 := 25.5
       echo Integer32(e)
