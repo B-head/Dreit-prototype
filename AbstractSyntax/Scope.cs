@@ -103,7 +103,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual TypeMatchResult TypeMatch(List<DataType> type)
+        internal virtual TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
         {
             if(type.Count == 0)
             {

@@ -12,7 +12,7 @@ namespace AbstractSyntax.Symbol
         protected List<DataType> _ArgumentType;
         protected DataType _ReturnType;
 
-        internal override TypeMatchResult TypeMatch(List<DataType> type)
+        internal override TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
         {
             if (ArgumentType.Count != type.Count)
             {

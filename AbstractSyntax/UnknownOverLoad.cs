@@ -35,7 +35,7 @@ namespace AbstractSyntax
             return Unknown;
         }
 
-        public override Scope TypeSelect(List<DataType> type)
+        public override Scope TypeSelect(IReadOnlyList<DataType> type)
         {
             return Unknown;
         }

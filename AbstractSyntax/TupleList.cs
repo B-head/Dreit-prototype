@@ -15,6 +15,12 @@ namespace AbstractSyntax
             Child = new List<Element>();
         }
 
+        public TupleList(Element append)
+        {
+            Child = new List<Element>();
+            Append(append);
+        }
+
         public void Append(Element append)
         {
             Child.Add(append);

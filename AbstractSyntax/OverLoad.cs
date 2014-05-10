@@ -63,7 +63,7 @@ namespace AbstractSyntax
             return TypeSelect(new List<DataType>());
         }
 
-        public virtual Scope TypeSelect(List<DataType> type)
+        public virtual Scope TypeSelect(IReadOnlyList<DataType> type)
         {
             if (isHoldAlias)
             {

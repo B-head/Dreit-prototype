@@ -22,7 +22,7 @@ namespace AbstractSyntax.Symbol
             get { return _DataType; }
         }
 
-        internal override TypeMatchResult TypeMatch(List<DataType> type)
+        internal override TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
         {
             if (type.Count == 0)
             {

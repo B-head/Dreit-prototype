@@ -13,24 +13,37 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; set; }
         public TupleList Argument { get; set; }
-        public Scope CallScope { get; set; }
-        private List<DataType> _ArgumentType { get; set; }
+        private Scope _CallScope;
+        private List<DataType> _ArgumentDataType;
 
-        public List<DataType> ArgumentType
+        public Scope CallScope
+        {
+            get
+            {
+                if (_CallScope == null)
+                {
+                    var access = Access as IAccess;
+                    _CallScope = access.Reference.TypeSelect(ArgumentDataType);
+                }
+                return _CallScope;
+            }
+        }
+
+        public IReadOnlyList<DataType> ArgumentDataType
         {
             get 
             { 
-                if(_ArgumentType != null)
+                if(_ArgumentDataType != null)
                 {
-                    return _ArgumentType;
+                    return _ArgumentDataType;
                 }
-                _ArgumentType = new List<DataType>();
+                _ArgumentDataType = new List<DataType>();
                 foreach (var v in Argument)
                 {
                     var temp = v.DataType;
-                    _ArgumentType.Add(temp);
+                    _ArgumentDataType.Add(temp);
                 }
-                return _ArgumentType;
+                return _ArgumentDataType;
             }
         }
 
@@ -38,18 +51,18 @@ namespace AbstractSyntax.Expression
         {
             get 
             {
-                if (CallScope is CalculatePragma || CallScope is CastPragma)
+                if (_CallScope is CalculatePragma || _CallScope is CastPragma)
                 {
-                    return ArgumentType[0];
+                    return ArgumentDataType[0];
                 }
-                else if(CallScope is RoutineSymbol)
+                else if(_CallScope is RoutineSymbol)
                 {
-                    var rout = (RoutineSymbol)CallScope;
+                    var rout = (RoutineSymbol)_CallScope;
                     return rout.DataType;
                 }
                 else
                 {
-                    return CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
+                    return _CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
                 }
             }
         }
@@ -75,29 +88,27 @@ namespace AbstractSyntax.Expression
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            var access = Access as IAccess;
-            CallScope = access.Reference.TypeSelect(ArgumentType);
             if(CallScope == null)
             {
                 CompileError("unmatch-overroad");
             }
-            /*var ret = CallScope.TypeMatch(ArgumentType);
-            switch(ret)
-            {
-                case TypeMatchResult.Unknown: CompileError("原因不明の呼び出しエラーです。"); break;
-                case TypeMatchResult.NotCallable: CompileError("関数ではありません。"); break;
-                case TypeMatchResult.MissMatchCount: CompileError("引数の数が合っていません。"); break;
-                case TypeMatchResult.MissMatchType: CompileError("引数の型が合っていません。"); break;
-            }*/
+            //var ret = CallScope.TypeMatch(ArgumentType);
+            //switch(ret)
+            //{
+            //    case TypeMatchResult.Unknown: CompileError("原因不明の呼び出しエラーです。"); break;
+            //    case TypeMatchResult.NotCallable: CompileError("関数ではありません。"); break;
+            //    case TypeMatchResult.MissMatchCount: CompileError("引数の数が合っていません。"); break;
+            //    case TypeMatchResult.MissMatchType: CompileError("引数の型が合っていません。"); break;
+            //}
         }
 
         public DataType GetCallType()
         {
-            if(ArgumentType.Count == 0)
+            if(ArgumentDataType.Count != 1)
             {
                 return Root.Unknown;
             }
-            return ArgumentType[0];//todo こういう適当実装を減らしたいな～
+            return ArgumentDataType[0];
         }
     }
 }

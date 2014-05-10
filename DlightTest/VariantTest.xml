@@ -35,6 +35,15 @@
 
   <case>
     <code>
+      var a:Int32
+      a(10)
+      echo a()
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
       var a
       a := 10
       echo a

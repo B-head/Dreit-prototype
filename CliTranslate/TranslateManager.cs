@@ -153,12 +153,12 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateArgument scope, Translator trans)
         {
-            //何もしない。
+            return;
         }
 
         private void SpreadTranslate(DeclateGeneric scope, Translator trans)
         {
-            //何もしない。
+            return;
         }
 
         private void ChildTranslate(Element element, Translator trans)
@@ -222,14 +222,28 @@ namespace CliTranslate
             Translate((dynamic)element.Ident, trans);
         }
 
-        private void TranslateAddress(DeclateVariant element, Translator trans)
+        private void Translate(ReturnDirective element, Translator trans)
         {
-            TranslateAddress((dynamic)element.Ident, trans);
+            ChildTranslate(element, trans);
+            trans.GenerateControl(CodeType.Ret);
         }
 
-        private void TranslateAssign(DeclateVariant element, Translator trans)
+        private void Translate(EchoDirective element, Translator trans)
         {
-            TranslateAssign((dynamic)element.Ident, trans);
+            ChildTranslate(element, trans);
+            trans.GenerateEcho(element.Exp.DataType);
+        }
+
+        private void Translate(NumberLiteral element, Translator trans)
+        {
+            dynamic number = element.Parse();
+            trans.GeneratePrimitive(number);
+        }
+
+        private void Translate(DyadicCalculate element, Translator trans)
+        {
+            ChildTranslate(element, trans);
+            trans.GenerateCall(element.CallScope);
         }
 
         private void Translate(IdentifierAccess element, Translator trans)
@@ -241,41 +255,130 @@ namespace CliTranslate
             else if (element.IsTacitThis)
             {
                 trans.GenerateLoad(element.ThisReference);
-                trans.GenerateLoad(element.ScopeReference);
+                CallTranslate((dynamic)element.ScopeReference, new TupleList(), trans);
             }
             else
             {
-                trans.GenerateLoad(element.ScopeReference);
+                CallTranslate((dynamic)element.ScopeReference, new TupleList(), trans);
             }
         }
 
-        private void TranslateAddress(IdentifierAccess element, Translator trans)
+        private void Translate(LeftAssign element, Translator trans)
         {
-            if (element.ScopeReference is ThisSymbol)
+            var refer = TranslateAccess((dynamic)element.Left, trans);
+            if (element.ConversionRoutine is VoidSymbol)
             {
-                trans.GenerateLoad(element.ThisReference, true);
-            }
-            else if (element.IsTacitThis)
-            {
-                trans.GenerateLoad(element.ThisReference, true);
-                trans.GenerateLoad(element.ScopeReference, true);
+                CallTranslate((dynamic)refer, new TupleList(element.Right), trans);
             }
             else
             {
-                trans.GenerateLoad(element.ScopeReference, true);
+                Translate((dynamic)refer, trans);
+                Translate((dynamic)element.Right, trans);
+                trans.GenerateCall(element.ConversionRoutine);
+
+                //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
+                //Translate((dynamic)refer, trans);
             }
         }
 
-        private void TranslateAssign(IdentifierAccess element, Translator trans)
+        private void Translate(RightAssign element, Translator trans)
         {
-            if (element.ScopeReference is ThisSymbol)
+            var refer = TranslateAccess((dynamic)element.Right, trans);
+            if (element.ConversionRoutine is VoidSymbol)
             {
-                trans.GenerateStore(element.ThisReference);
+                CallTranslate((dynamic)refer, new TupleList(element.Left), trans);
             }
             else
             {
-                trans.GenerateStore(element.ScopeReference);
+                Translate((dynamic)refer, trans);
+                Translate((dynamic)element.Left, trans);
+                trans.GenerateCall(element.ConversionRoutine);
+
+                //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
+                //Translate((dynamic)refer, trans);
             }
+        }
+
+        private void Translate(CallRoutine element, Translator trans)
+        {
+            TranslateAccess((dynamic)element.Access, trans);
+            CallTranslate((dynamic)element.CallScope, element.Argument, trans);
+        }
+
+        private void CallTranslate(RoutineSymbol call, TupleList argument, Translator trans)
+        {
+            Translate((dynamic)argument, trans);
+            trans.GenerateCall(call);
+        }
+
+        private void CallTranslate(ClassSymbol call, TupleList argument, Translator trans)
+        {
+            Translate((dynamic)argument, trans);
+            trans.GenerateCall(call);
+        }
+
+        private void CallTranslate(IdentifierAccess call, TupleList argument, Translator trans)
+        {
+            CallTranslate((dynamic)call.ScopeReference, argument, trans);
+        }
+
+        private void CallTranslate(VariantSymbol call, TupleList argument, Translator trans)
+        {
+            Translate((dynamic)argument, trans);
+            if (argument.Count > 0)
+            {
+                trans.GenerateStore(call);
+            }
+            trans.GenerateLoad(call);
+        }
+
+        private void CallTranslate(ThisSymbol call, TupleList argument, Translator trans)
+        {
+            Translate((dynamic)argument, trans);
+            if (argument.Count > 0)
+            {
+                trans.GenerateStore(call);
+            }
+            trans.GenerateLoad(call);
+        }
+
+        private void CallTranslate(CalculatePragma call, TupleList argument, Translator trans)
+        {
+            foreach (var v in argument)
+            {
+                Translate((dynamic)v, trans);
+            }
+            switch (call.Type)
+            {
+                case CalculatePragmaType.Add: trans.GenerateControl(CodeType.Add); break;
+                case CalculatePragmaType.Sub: trans.GenerateControl(CodeType.Sub); break;
+                case CalculatePragmaType.Mul: trans.GenerateControl(CodeType.Mul); break;
+                case CalculatePragmaType.Div: trans.GenerateControl(CodeType.Div); break;
+                case CalculatePragmaType.Mod: trans.GenerateControl(CodeType.Mod); break;
+                default: throw new ArgumentException();
+            }
+        }
+
+        private void CallTranslate(CastPragma call, TupleList argument, Translator trans)
+        {
+            Translate((dynamic)argument[1], trans);
+            PrimitivePragmaType prim = argument[0].DataType.GetPrimitiveType();
+            switch(prim)
+            {
+                case PrimitivePragmaType.Integer8: trans.GenerateControl(CodeType.ConvI1); break;
+                case PrimitivePragmaType.Integer16: trans.GenerateControl(CodeType.ConvI2); break;
+                case PrimitivePragmaType.Integer32: trans.GenerateControl(CodeType.ConvI4); break;
+                case PrimitivePragmaType.Integer64: trans.GenerateControl(CodeType.ConvI8); break;
+                case PrimitivePragmaType.Natural8: trans.GenerateControl(CodeType.ConvU1); break;
+                case PrimitivePragmaType.Natural16: trans.GenerateControl(CodeType.ConvU2); break;
+                case PrimitivePragmaType.Natural32: trans.GenerateControl(CodeType.ConvU4); break;
+                case PrimitivePragmaType.Natural64: trans.GenerateControl(CodeType.ConvU8); break;
+                case PrimitivePragmaType.Binary32: trans.GenerateControl(CodeType.ConvR4); break;
+                case PrimitivePragmaType.Binary64: trans.GenerateControl(CodeType.ConvR8); break;
+                default: throw new ArgumentException();
+            }
+            //TranslateAssign((dynamic)argument[0], trans);
+            //Translate((dynamic)argument[0], trans);
         }
 
         private Element TranslateAccess(IdentifierAccess element, Translator trans)
@@ -301,144 +404,6 @@ namespace CliTranslate
         private Element TranslateAccess(Element element, Translator trans)
         {
             return element;
-        }
-
-        private void Translate(DyadicCalculate element, Translator trans)
-        {
-            ChildTranslate(element, trans);
-            trans.GenerateCall(element.CallScope);
-        }
-
-        private void Translate(LeftAssign element, Translator trans)
-        {
-            var refer = TranslateAccess((dynamic)element.Left, trans);
-            if (element.ConversionRoutine is VoidSymbol)
-            {
-                Translate((dynamic)element.Right, trans);
-                TranslateAssign((dynamic)refer, trans);
-                Translate((dynamic)refer, trans);
-            }
-            else
-            {
-                Translate((dynamic)refer, trans);
-                Translate((dynamic)element.Right, trans);
-                trans.GenerateCall(element.ConversionRoutine);
-
-                TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
-                Translate((dynamic)refer, trans);
-            }
-        }
-
-        private void Translate(RightAssign element, Translator trans)
-        {
-            var refer = TranslateAccess((dynamic)element.Right, trans);
-            if (element.ConversionRoutine is VoidSymbol)
-            {
-                Translate((dynamic)element.Left, trans);
-                TranslateAssign((dynamic)refer, trans);
-                Translate((dynamic)refer, trans);
-            }
-            else
-            {
-                Translate((dynamic)refer, trans);
-                Translate((dynamic)element.Left, trans);
-                trans.GenerateCall(element.ConversionRoutine);
-
-                TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
-                Translate((dynamic)refer, trans);
-            }
-        }
-
-        private void Translate(CallRoutine element, Translator trans)
-        {
-            CallTranslate((dynamic)element.CallScope, element, trans);
-        }
-
-        private void CallTranslate(RoutineSymbol call, CallRoutine element, Translator trans)
-        {
-            TranslateAccess((dynamic)element.Access, trans);
-            Translate((dynamic)element.Argument, trans);
-            trans.GenerateCall(call);
-        }
-
-        private void CallTranslate(ClassSymbol call, CallRoutine element, Translator trans)
-        {
-            TranslateAccess((dynamic)element.Access, trans);
-            Translate((dynamic)element.Argument, trans);
-            trans.GenerateCall(call);
-        }
-
-        private void CallTranslate(VariantSymbol call, CallRoutine element, Translator trans)
-        {
-            TranslateAccess((dynamic)element.Access, trans);
-            Translate((dynamic)element.Argument, trans);
-            trans.GenerateStore(call);
-            trans.GenerateLoad(call);
-        }
-
-        private void CallTranslate(ThisSymbol call, CallRoutine element, Translator trans)
-        {
-            TranslateAccess((dynamic)element.Access, trans);
-            Translate((dynamic)element.Argument, trans);
-            trans.GenerateStore(call);
-            trans.GenerateLoad(call);
-        }
-
-        private void CallTranslate(CalculatePragma call, CallRoutine element, Translator trans)
-        {
-            foreach (var v in element.Argument)
-            {
-                Translate((dynamic)v, trans);
-            }
-            switch (call.Type)
-            {
-                case CalculatePragmaType.Add: trans.GenerateControl(CodeType.Add); break;
-                case CalculatePragmaType.Sub: trans.GenerateControl(CodeType.Sub); break;
-                case CalculatePragmaType.Mul: trans.GenerateControl(CodeType.Mul); break;
-                case CalculatePragmaType.Div: trans.GenerateControl(CodeType.Div); break;
-                case CalculatePragmaType.Mod: trans.GenerateControl(CodeType.Mod); break;
-                default: throw new ArgumentException();
-            }
-        }
-
-        private void CallTranslate(CastPragma call, CallRoutine element, Translator trans)
-        {
-            Translate((dynamic)element.Argument[1], trans);
-            PrimitivePragmaType prim = element.ArgumentType[0].GetPrimitiveType();
-            switch(prim)
-            {
-                case PrimitivePragmaType.Integer8: trans.GenerateControl(CodeType.ConvI1); break;
-                case PrimitivePragmaType.Integer16: trans.GenerateControl(CodeType.ConvI2); break;
-                case PrimitivePragmaType.Integer32: trans.GenerateControl(CodeType.ConvI4); break;
-                case PrimitivePragmaType.Integer64: trans.GenerateControl(CodeType.ConvI8); break;
-                case PrimitivePragmaType.Natural8: trans.GenerateControl(CodeType.ConvU1); break;
-                case PrimitivePragmaType.Natural16: trans.GenerateControl(CodeType.ConvU2); break;
-                case PrimitivePragmaType.Natural32: trans.GenerateControl(CodeType.ConvU4); break;
-                case PrimitivePragmaType.Natural64: trans.GenerateControl(CodeType.ConvU8); break;
-                case PrimitivePragmaType.Binary32: trans.GenerateControl(CodeType.ConvR4); break;
-                case PrimitivePragmaType.Binary64: trans.GenerateControl(CodeType.ConvR8); break;
-                default: throw new ArgumentException();
-            }
-            TranslateAssign((dynamic)element.Argument[0], trans);
-            Translate((dynamic)element.Argument[0], trans);
-        }
-
-        private void Translate(NumberLiteral element, Translator trans)
-        {
-            dynamic number = element.Parse();
-            trans.GeneratePrimitive(number);
-        }
-
-        private void Translate(ReturnDirective element, Translator trans)
-        {
-            ChildTranslate(element, trans);
-            trans.GenerateControl(CodeType.Ret);
-        }
-
-        private void Translate(EchoDirective element, Translator trans)
-        {
-            ChildTranslate(element, trans);
-            trans.GenerateEcho(element.Exp.DataType);
         }
     }
 }
