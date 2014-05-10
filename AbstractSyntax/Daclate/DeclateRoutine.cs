@@ -11,7 +11,7 @@ namespace AbstractSyntax.Daclate
     public class DeclateRoutine : RoutineSymbol
     {
         public TupleList Generic { get; set; }
-        public TupleList Argument { get; set; }
+        public TupleList Arguments { get; set; }
         public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
 
@@ -24,7 +24,7 @@ namespace AbstractSyntax.Daclate
                     return _ArgumentType;
                 }
                 _ArgumentType = new List<DataType>();
-                foreach (var v in Argument)
+                foreach (var v in Arguments)
                 {
                     var temp = v.DataType;
                     _ArgumentType.Add(temp);
@@ -109,7 +109,7 @@ namespace AbstractSyntax.Daclate
                 switch (index)
                 {
                     case 0: return Generic;
-                    case 1: return Argument;
+                    case 1: return Arguments;
                     case 2: return ExplicitType;
                     case 3: return Block;
                     default: throw new ArgumentOutOfRangeException();

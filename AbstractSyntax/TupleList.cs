@@ -9,6 +9,7 @@ namespace AbstractSyntax
     public class TupleList : Element
     {
         public List<Element> Child { get; set; }
+        private List<DataType> DataTypes;
 
         public TupleList()
         {
@@ -36,14 +37,18 @@ namespace AbstractSyntax
             get { return Child[index]; }
         }
 
-        public TupleList GetDataTypes()
+        public IReadOnlyList<DataType> GetDataTypes()
         {
-            TupleList result = new TupleList();
+            if (DataTypes != null)
+            {
+                return DataTypes;
+            }
+            DataTypes = new List<DataType>();
             foreach(var v in Child)
             {
-                result.Append(v.DataType);
+                DataTypes.Add(v.DataType);
             }
-            return result;
+            return DataTypes;
         }
     }
 }

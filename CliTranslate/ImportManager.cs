@@ -199,9 +199,9 @@ namespace CliTranslate
 
         private Element ConvertConstructor(ConstructorInfo ctor)
         {
-            var argument = CreateArgumentList(ctor.GetArgumentList());
+            var arguments = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
-            DeclateRoutine result = new DeclateRoutine { Name = ctor.Name, Argument = argument, ExplicitType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Name = ctor.Name, Arguments = arguments, ExplicitType = expl, IsImport = true };
             AppendPeir(result, ctor);
             return result;
         }
@@ -226,17 +226,17 @@ namespace CliTranslate
         private DeclateRoutine ImportMethod(MethodInfo method)
         {
             var generic = CreateGenericList(method.GetGenericList());
-            var argument = CreateArgumentList(method.GetArgumentList());
+            var arguments = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
-            DeclateRoutine result = new DeclateRoutine { Name = method.GetPureName(), Generic = generic, Argument = argument, ExplicitType = expl, IsImport = true };
+            DeclateRoutine result = new DeclateRoutine { Name = method.GetPureName(), Generic = generic, Arguments = arguments, ExplicitType = expl, IsImport = true };
             AppendPeir(result, method);
             return result;
         }
 
-        private TupleList CreateArgumentList(List<ParameterInfo> argument)
+        private TupleList CreateArgumentList(List<ParameterInfo> arguments)
         {
             var tuple = new TupleList { IsImport = true };
-            foreach (var v in argument)
+            foreach (var v in arguments)
             {
                 var temp = ConvertArgument(v);
                 tuple.Append(temp);
@@ -244,12 +244,12 @@ namespace CliTranslate
             return tuple;
         }
 
-        private DeclateArgument ConvertArgument(ParameterInfo argument)
+        private DeclateArgument ConvertArgument(ParameterInfo arguments)
         {
-            var ident = new IdentifierAccess { Value = argument.Name, IsImport = true };
-            var expl = CreateAccess(argument.ParameterType);
+            var ident = new IdentifierAccess { Value = arguments.Name, IsImport = true };
+            var expl = CreateAccess(arguments.ParameterType);
             DeclateArgument result = new DeclateArgument { Ident = ident, ExplicitType = expl, IsImport = true };
-            AppendPeir(result, argument);
+            AppendPeir(result, arguments);
             return result;
         }
 

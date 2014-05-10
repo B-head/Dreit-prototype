@@ -12,9 +12,8 @@ namespace AbstractSyntax.Expression
     public class CallRoutine : Element, ICaller
     {
         public Element Access { get; set; }
-        public TupleList Argument { get; set; }
+        public TupleList Arguments { get; set; }
         private Scope _CallScope;
-        private List<DataType> _ArgumentDataType;
 
         public Scope CallScope
         {
@@ -23,27 +22,16 @@ namespace AbstractSyntax.Expression
                 if (_CallScope == null)
                 {
                     var access = Access as IAccess;
-                    _CallScope = access.Reference.TypeSelect(ArgumentDataType);
+                    if (access == null)
+                    {
+                        _CallScope = Root.Unknown;
+                    }
+                    else
+                    {
+                        _CallScope = access.Reference.TypeSelect(Arguments.GetDataTypes());
+                    }
                 }
                 return _CallScope;
-            }
-        }
-
-        public IReadOnlyList<DataType> ArgumentDataType
-        {
-            get 
-            { 
-                if(_ArgumentDataType != null)
-                {
-                    return _ArgumentDataType;
-                }
-                _ArgumentDataType = new List<DataType>();
-                foreach (var v in Argument)
-                {
-                    var temp = v.DataType;
-                    _ArgumentDataType.Add(temp);
-                }
-                return _ArgumentDataType;
             }
         }
 
@@ -51,18 +39,18 @@ namespace AbstractSyntax.Expression
         {
             get 
             {
-                if (_CallScope is CalculatePragma || _CallScope is CastPragma)
+                if (CallScope is CalculatePragma || CallScope is CastPragma)
                 {
-                    return ArgumentDataType[0];
+                    return Arguments.GetDataTypes()[0];
                 }
-                else if(_CallScope is RoutineSymbol)
+                else if(CallScope is RoutineSymbol)
                 {
-                    var rout = (RoutineSymbol)_CallScope;
+                    var rout = (RoutineSymbol)CallScope;
                     return rout.DataType;
                 }
                 else
                 {
-                    return _CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
+                    return CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
                 }
             }
         }
@@ -79,7 +67,7 @@ namespace AbstractSyntax.Expression
                 switch (index)
                 {
                     case 0: return Access;
-                    case 1: return Argument;
+                    case 1: return Arguments;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -104,11 +92,11 @@ namespace AbstractSyntax.Expression
 
         public DataType GetCallType()
         {
-            if(ArgumentDataType.Count != 1)
+            if (Arguments.GetDataTypes().Count != 1)
             {
                 return Root.Unknown;
             }
-            return ArgumentDataType[0];
+            return Arguments.GetDataTypes()[0];
         }
     }
 }

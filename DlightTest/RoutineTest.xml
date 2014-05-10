@@ -83,7 +83,7 @@
       echo foo := 10
       echo foo := 20, 30
     </code>
-    <output>40 105</output>
+    <output>30 105</output>
   </case>
 
   <case>

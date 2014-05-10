@@ -22,8 +22,8 @@ namespace AbstractSyntax.Expression
                 {
                     return _IsTacitThis.Value;
                 }
-                var voidSelect = ScopeReference;
-                if (voidSelect != null && voidSelect.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine)
+                var refer = ScopeReference;
+                if (refer != null && refer.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine && !(refer is ThisSymbol))
                 {
                     _IsTacitThis = true;
                 }

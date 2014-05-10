@@ -137,12 +137,12 @@ namespace CliTranslate
             }
             var temp = trans.CreateRoutine(scope, scope.ReturnType, argumentType.ToArray());
             TransDictionary.Add(scope, temp);
-            var argument = new List<Scope>();
-            foreach (var v in scope.Argument)
+            var arguments = new List<Scope>();
+            foreach (var v in scope.Arguments)
             {
-                argument.Add((Scope)v);
+                arguments.Add((Scope)v);
             }
-            temp.CreateArguments(argument.ToArray());
+            temp.CreateArguments(arguments.ToArray());
             ChildSpreadTranslate(scope, temp);
         }
 
@@ -248,103 +248,99 @@ namespace CliTranslate
 
         private void Translate(IdentifierAccess element, Translator trans)
         {
-            if (element.ScopeReference is ThisSymbol)
-            {
-                trans.GenerateLoad(element.ThisReference);
-            }
-            else if (element.IsTacitThis)
-            {
-                trans.GenerateLoad(element.ThisReference);
-                CallTranslate((dynamic)element.ScopeReference, new TupleList(), trans);
-            }
-            else
-            {
-                CallTranslate((dynamic)element.ScopeReference, new TupleList(), trans);
-            }
+            TranslateAccess((dynamic)element, trans);
+            CallTranslate((dynamic)element.ScopeReference, new TupleList(), trans);
         }
 
         private void Translate(LeftAssign element, Translator trans)
         {
-            var refer = TranslateAccess((dynamic)element.Left, trans);
-            if (element.ConversionRoutine is VoidSymbol)
+            var acs = TranslateAccess((dynamic)element.Left, trans);
+            if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
             {
-                CallTranslate((dynamic)refer, new TupleList(element.Right), trans);
+                trans.GenerateControl(CodeType.Dup);
             }
-            else
-            {
-                Translate((dynamic)refer, trans);
-                Translate((dynamic)element.Right, trans);
-                trans.GenerateCall(element.ConversionRoutine);
+            CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
+            //if (element.ConversionRoutine is VoidSymbol)
+            //{
+            //}
+            //else
+            //{
+            //    Translate((dynamic)refer, trans);
+            //    Translate((dynamic)element.Right, trans);
+            //    trans.GenerateCall(element.ConversionRoutine);
 
-                //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
-                //Translate((dynamic)refer, trans);
-            }
+            //    //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
+            //    //Translate((dynamic)refer, trans);
+            //}
         }
 
         private void Translate(RightAssign element, Translator trans)
         {
-            var refer = TranslateAccess((dynamic)element.Right, trans);
-            if (element.ConversionRoutine is VoidSymbol)
+            var acs = TranslateAccess((dynamic)element.Right, trans);
+            if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
             {
-                CallTranslate((dynamic)refer, new TupleList(element.Left), trans);
+                trans.GenerateControl(CodeType.Dup);
             }
-            else
-            {
-                Translate((dynamic)refer, trans);
-                Translate((dynamic)element.Left, trans);
-                trans.GenerateCall(element.ConversionRoutine);
+            CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
+            //if (element.ConversionRoutine is VoidSymbol)
+            //{
+            //}
+            //else
+            //{
+            //    Translate((dynamic)refer, trans);
+            //    Translate((dynamic)element.Left, trans);
+            //    trans.GenerateCall(element.ConversionRoutine);
 
-                //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
-                //Translate((dynamic)refer, trans);
-            }
+            //    //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
+            //    //Translate((dynamic)refer, trans);
+            //}
         }
 
         private void Translate(CallRoutine element, Translator trans)
         {
-            TranslateAccess((dynamic)element.Access, trans);
-            CallTranslate((dynamic)element.CallScope, element.Argument, trans);
+            var acs = TranslateAccess((dynamic)element.Access, trans);
+            if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
+            {
+                trans.GenerateControl(CodeType.Dup);
+            }
+            CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
         }
 
-        private void CallTranslate(RoutineSymbol call, TupleList argument, Translator trans)
+        private void CallTranslate(RoutineSymbol call, TupleList arguments, Translator trans)
         {
-            Translate((dynamic)argument, trans);
+            Translate((dynamic)arguments, trans);
             trans.GenerateCall(call);
         }
 
-        private void CallTranslate(ClassSymbol call, TupleList argument, Translator trans)
+        private void CallTranslate(ClassSymbol call, TupleList arguments, Translator trans)
         {
-            Translate((dynamic)argument, trans);
+            Translate((dynamic)arguments, trans);
             trans.GenerateCall(call);
         }
 
-        private void CallTranslate(IdentifierAccess call, TupleList argument, Translator trans)
+        private void CallTranslate(VariantSymbol call, TupleList arguments, Translator trans)
         {
-            CallTranslate((dynamic)call.ScopeReference, argument, trans);
-        }
-
-        private void CallTranslate(VariantSymbol call, TupleList argument, Translator trans)
-        {
-            Translate((dynamic)argument, trans);
-            if (argument.Count > 0)
+            Translate((dynamic)arguments, trans);
+            if (arguments.Count > 0)
             {
                 trans.GenerateStore(call);
             }
             trans.GenerateLoad(call);
         }
 
-        private void CallTranslate(ThisSymbol call, TupleList argument, Translator trans)
+        private void CallTranslate(ThisSymbol call, TupleList arguments, Translator trans)
         {
-            Translate((dynamic)argument, trans);
-            if (argument.Count > 0)
+            Translate((dynamic)arguments, trans);
+            if (arguments.Count > 0)
             {
                 trans.GenerateStore(call);
             }
             trans.GenerateLoad(call);
         }
 
-        private void CallTranslate(CalculatePragma call, TupleList argument, Translator trans)
+        private void CallTranslate(CalculatePragma call, TupleList arguments, Translator trans)
         {
-            foreach (var v in argument)
+            foreach (var v in arguments)
             {
                 Translate((dynamic)v, trans);
             }
@@ -359,10 +355,10 @@ namespace CliTranslate
             }
         }
 
-        private void CallTranslate(CastPragma call, TupleList argument, Translator trans)
+        private void CallTranslate(CastPragma call, TupleList arguments, Translator trans)
         {
-            Translate((dynamic)argument[1], trans);
-            PrimitivePragmaType prim = argument[0].DataType.GetPrimitiveType();
+            Translate((dynamic)arguments[1], trans);
+            PrimitivePragmaType prim = arguments[0].DataType.GetPrimitiveType();
             switch(prim)
             {
                 case PrimitivePragmaType.Integer8: trans.GenerateControl(CodeType.ConvI1); break;
@@ -377,33 +373,34 @@ namespace CliTranslate
                 case PrimitivePragmaType.Binary64: trans.GenerateControl(CodeType.ConvR8); break;
                 default: throw new ArgumentException();
             }
-            //TranslateAssign((dynamic)argument[0], trans);
-            //Translate((dynamic)argument[0], trans);
+            //TranslateAssign((dynamic)arguments[0], trans);
+            //Translate((dynamic)arguments[0], trans);
         }
 
-        private Element TranslateAccess(IdentifierAccess element, Translator trans)
+        private bool TranslateAccess(IdentifierAccess element, Translator trans)
         {
             if (element.IsTacitThis)
             {
                 trans.GenerateLoad(element.ThisReference);
+                return true;
             }
-            return element;
+            return false;
         }
 
-        private Element TranslateAccess(MemberAccess element, Translator trans)
+        private bool TranslateAccess(MemberAccess element, Translator trans)
         {
             Translate((dynamic)element.Left, trans);
             var temp = element.Right as MemberAccess;
             if (temp != null)
             {
-                return TranslateAccess(temp, trans);
+                TranslateAccess(temp, trans);
             }
-            return element.Right;
+            return true;
         }
 
-        private Element TranslateAccess(Element element, Translator trans)
+        private bool TranslateAccess(Element element, Translator trans)
         {
-            return element;
+            return false;
         }
     }
 }

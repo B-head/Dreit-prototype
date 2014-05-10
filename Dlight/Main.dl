@@ -1,3 +1,2 @@
 ﻿
-      50 =: var a =: var b
-      echo a * b
+      echo 10 + 10
