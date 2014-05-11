@@ -15,5 +15,37 @@ namespace AbstractSyntax.Symbol
         {
             get { return _DataType; }
         }
+
+        internal override TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
+        {
+            if (type.Count == 0)
+            {
+                return TypeMatchResult.PerfectMatch;
+            }
+            else if (type.Count == 1)
+            {
+                if (type[0] == DataType)
+                {
+                    return TypeMatchResult.PerfectMatch;
+                }
+                else
+                {
+                    return TypeMatchResult.MissMatchType;
+                }
+            }
+            else
+            {
+                return TypeMatchResult.MissMatchCount;
+            }
+        }
+
+        internal override void CheckDataType()
+        {
+            base.CheckDataType();
+            if (DataType is UnknownSymbol)
+            {
+                CompileError("require-type");
+            }
+        }
     }
 }

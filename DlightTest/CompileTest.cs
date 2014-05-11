@@ -17,69 +17,79 @@ namespace DlightTest
     {
         private static string primitive;
 
-        static CompileTest()
+        [TestFixtureSetUp]
+        public static void TestFixtureSetUp()
         {
             primitive = File.ReadAllText("lib/primitive.dl");
+            Directory.CreateDirectory("output");
+            Directory.SetCurrentDirectory("output");
         }
 
         [TestCaseSource(typeof(TestCaseReader))]
-        public void Test(TestData data)
+        public void Execute(TestData data)
         {
-            using (AnonymousPipeServerStream
-                ostream = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable),
-                istream = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable))
+            Root root = new Root();
+            ImportManager import = new ImportManager(root);
+            root.Append(CompileText("lib/primitive.dl", primitive));
+            root.Append(CompileText(data.Name, data.Code));
+            root.SemanticAnalysis();
+            if (root.MessageManager.MessageCount > 0)
             {
-                var arguments = ostream.GetClientHandleAsString() + " " + istream.GetClientHandleAsString();
-                var formatter = new BinaryFormatter();
-                using (var process = MakeProcess("DlightTest.exe", arguments))
+                Console.WriteLine(root.MessageManager);
+            }
+            Assert.That(root.MessageManager, Is.EquivalentTo(data.Message).Using<CompileMessage>(new CompileMessageEqualityComparer()));
+            if (root.MessageManager.ErrorCount > 0)
+            {
+                Assert.That(data.ErrorCount, Is.Not.EqualTo(0), "Compile error");
+                return;
+            }
+            if (data.NoExecute)
+            {
+                return;
+            }
+            TranslateManager trans = new TranslateManager(data.Name);
+            trans.TranslateTo(root, import);
+            trans.Save();
+            //var cd = Directory.GetCurrentDirectory();
+            //using (var process = MakeProcess(@"peverify.exe", data.Name + ".exe" + " /nologo /unique", cd))
+            //{
+            //    process.Start();
+            //    if (!process.WaitForExit(500))
+            //    {
+            //        process.Kill();
+            //        Assert.Fail("Peverify.exe timeout execution");
+            //    }
+            //    Console.WriteLine(process.StandardOutput.ReadToEnd());
+            //}
+            using (var process = MakeProcess(data.Name + ".exe"))
+            {
+                process.Start();
+                process.StandardInput.WriteLine(data.Input);
+                if (!process.WaitForExit(data.TimeOut ?? 500))
                 {
-                    process.Start();
-                    ostream.DisposeLocalCopyOfClientHandle();
-                    istream.DisposeLocalCopyOfClientHandle();
-                    formatter.Serialize(ostream, data);
-                    process.StandardInput.WriteLine(data.Input);
-                    if (!process.WaitForExit(data.TimeOut ?? 500))
-                    {
-                        process.Kill();
-                        Assert.Fail("Timeout execution");
-                    }
-                    var error = process.StandardError.ReadToEnd();
-                    if (!string.IsNullOrWhiteSpace(error))
-                    {
-                        Console.WriteLine(error);
-                    }
-                    while (true)
-                    {
-                        object obj = null;
-                        try
-                        {
-                            obj = formatter.Deserialize(istream);
-                        }
-                        catch (SerializationException)
-                        {
-                            break;
-                        }
-                        if (obj is AssertionException)
-                        {
-                            var e = (AssertionException)obj;
-                            throw new AssertionException(e.Message, e);
-                        }
-                        else if (obj is Exception)
-                        {
-                            throw new AggregateException("test error", (Exception)obj);
-                        }
-                        Console.WriteLine(obj);
-                    }
-                    if (data.Output != null)
-                    {
-                        var output = TestData.CodeNormalize(process.StandardOutput.ReadToEnd(), true);
-                        Assert.That(output, Is.EqualTo(data.Output));
-                    }
+                    process.Kill();
+                    Assert.Fail(data.Name + ".exe" + " timeout execution");
+                }
+                var error = process.StandardError.ReadToEnd();
+                if (!string.IsNullOrWhiteSpace(error))
+                {
+                    Assert.Fail(error);
+                }
+                if (data.Output != null)
+                {
+                    var output = TestData.CodeNormalize(process.StandardOutput.ReadToEnd(), true);
+                    Assert.That(output, Is.EqualTo(data.Output));
                 }
             }
         }
 
-        private Process MakeProcess(string fileName, string arguments)
+        private static Element CompileText(string fileName, string text)
+        {
+            var collection = Lexer.Lex(text, fileName);
+            return Parser.Parse(collection);
+        }
+
+        private Process MakeProcess(string fileName, string arguments = "", string workingDirectory = "")
         {
             var process = new Process();
             var info = process.StartInfo;
@@ -90,65 +100,8 @@ namespace DlightTest
             info.RedirectStandardInput = true;
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
+            info.WorkingDirectory = workingDirectory;
             return process;
-        }
-
-        public static void Main(string[] args)
-        {
-            try
-            {
-                using (AnonymousPipeClientStream
-                    istream = new AnonymousPipeClientStream(PipeDirection.In, args[0]),
-                    ostream = new AnonymousPipeClientStream(PipeDirection.Out, args[1]))
-                {
-                    var formatter = new BinaryFormatter();
-                    TestData data = (TestData)formatter.Deserialize(istream);
-                    try
-                    {
-                        Execute(data, o => formatter.Serialize(ostream, o));
-                    }
-                    catch (Exception e)
-                    {
-                        formatter.Serialize(ostream, e);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine(e);
-            }
-        }
-
-        private static void Execute(TestData data, Action<object> send)
-        {
-            Root root = new Root();
-            ImportManager import = new ImportManager(root);
-            root.Append(CompileText("lib/primitive.dl", primitive));
-            root.Append(CompileText(data.Name, data.Code));
-            root.SemanticAnalysis();
-            if (root.MessageManager.MessageCount > 0)
-            {
-                send(CompileMessageBuilder.Build(root.MessageManager));
-            }
-            Assert.That(root.MessageManager, Is.EquivalentTo(data.Message).Using<CompileMessage>(new CompileMessageEqualityComparer()));
-            if (root.MessageManager.ErrorCount > 0)
-            {
-                Assert.That(data.ErrorCount, Is.Not.EqualTo(0), "Compile error");
-                return;
-            }
-            if(data.NoExecute)
-            {
-                return;
-            }
-            TranslateManager trans = new TranslateManager(data.Name);
-            trans.TranslateTo(root, import);
-            trans.Run();
-        }
-
-        private static Element CompileText(string fileName, string text)
-        {
-            var collection = Lexer.Lex(text, fileName);
-            return Parser.Parse(collection);
         }
     }
 }

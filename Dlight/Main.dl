@@ -1,8 +1,2 @@
 ﻿
-      class A
-      {
-      var value := 500
-      }
-
-      A() =: var a:A
-      echo a.value
+      echo 10 + 10

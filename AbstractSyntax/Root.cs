@@ -13,8 +13,8 @@ namespace AbstractSyntax
         private Dictionary<string, OverLoad> PragmaDictionary;
         private DirectiveList PragmaList;
         internal VoidSymbol Void { get; private set; }
-        internal UndefinedSymbol Undefined { get; private set; }
-        internal UndefinedOverLoad UndefinedOverLoad { get; private set; }
+        internal UnknownSymbol Unknown { get; private set; }
+        internal UnknownOverLoad UnknownOverLoad { get; private set; }
         internal ConversionManager Conversion;
         public CompileMessageManager MessageManager { get; private set; }
 
@@ -24,9 +24,9 @@ namespace AbstractSyntax
             PragmaList = new DirectiveList();
             PragmaDictionary = new Dictionary<string, OverLoad>();
             Void = new VoidSymbol();
-            Undefined = new UndefinedSymbol();
-            UndefinedOverLoad = new UndefinedOverLoad(Undefined);
-            Conversion = new ConversionManager(Undefined);
+            Unknown = new UnknownSymbol();
+            UnknownOverLoad = new UnknownOverLoad(Unknown);
+            Conversion = new ConversionManager(Void, Unknown);
             MessageManager = new CompileMessageManager();
             CreatePragma();
         }
@@ -45,7 +45,7 @@ namespace AbstractSyntax
                     case 0: return ExpList;
                     case 1: return PragmaList;
                     case 2: return Void;
-                    case 3: return Undefined;
+                    case 3: return Unknown;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -69,7 +69,7 @@ namespace AbstractSyntax
         {
             pragma.Name = "@@" + name;
             PragmaList.Append(pragma);
-            var ol = new OverLoad();
+            var ol = new OverLoad(Unknown);
             ol.Append(pragma);
             PragmaDictionary.Add(name, ol);
         }

@@ -10,7 +10,7 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class CastPragma : RoutineSymbol, IPragma
     {
-        internal override TypeMatchResult TypeMatch(List<DataType> type)
+        internal override TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
         {
             if (type.Count != 2)
             {

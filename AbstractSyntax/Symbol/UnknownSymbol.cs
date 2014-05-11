@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class UndefinedSymbol : DataType
+    public class UnknownSymbol : DataType
     {
-        public UndefinedSymbol()
+        public UnknownSymbol()
         {
             Name = "@@undefined";
         }

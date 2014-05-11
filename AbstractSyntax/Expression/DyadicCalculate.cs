@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace AbstractSyntax.Expression
             base.CheckDataType();
             DataType l = Left.DataType;
             DataType r = Right.DataType;
-            if (l != r)
+            if (l != r && !(l is UnknownSymbol) && !(r is UnknownSymbol))
             {
                 CompileError("impossible-calculate");
             }

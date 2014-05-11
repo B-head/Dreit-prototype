@@ -53,7 +53,7 @@ namespace SyntacticAnalysis
             var ret = cp.Begin<CallRoutine>()
                 .Self(s => s.Access = access)
                 .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer((s, e) => s.Argument = e, c => ParseTuple(c, Addtive))
+                .Transfer((s, e) => s.Arguments = e, c => ParseTuple(c, Addtive))
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
             return ret ?? access;

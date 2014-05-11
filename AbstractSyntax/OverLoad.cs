@@ -6,14 +6,16 @@ using System.Linq;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class OverLoad
+    public class OverLoad : IReadOnlyList<Scope>
     {
         private List<Scope> ScopeList;
         private bool isHoldAlias;
+        protected UnknownSymbol Unknown;
 
-        public OverLoad()
+        public OverLoad(UnknownSymbol unknown)
         {
             ScopeList = new List<Scope>();
+            Unknown = unknown;
         }
 
         public virtual void Append(Scope scope)
@@ -47,7 +49,7 @@ namespace AbstractSyntax
             var refer = TypeSelect();
             if (refer == null)
             {
-                throw new InvalidOperationException();
+                return Unknown;
             }
             return refer.DataType;
         }
@@ -61,7 +63,7 @@ namespace AbstractSyntax
             return TypeSelect(new List<DataType>());
         }
 
-        public virtual Scope TypeSelect(List<DataType> type)
+        public virtual Scope TypeSelect(IReadOnlyList<DataType> type)
         {
             if (isHoldAlias)
             {
@@ -79,6 +81,26 @@ namespace AbstractSyntax
                 var ol = ((AliasDirective)v).RefarenceResolution();
                 Merge(ol);
             }
+        }
+
+        public Scope this[int index]
+        {
+            get { return ScopeList[index]; }
+        }
+
+        public int Count
+        {
+            get { return ScopeList.Count; }
+        }
+
+        public IEnumerator<Scope> GetEnumerator()
+        {
+            return ScopeList.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

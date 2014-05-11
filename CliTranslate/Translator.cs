@@ -12,10 +12,12 @@ using AbstractSyntax.Daclate;
 
 namespace CliTranslate
 {
-    public enum CodeType
+    //todo これのお掃除をする。
+    public enum CodeType 
     {
         Nop,
         Pop,
+        Dup,
         Ret,
         Add,
         Sub,
@@ -134,6 +136,7 @@ namespace CliTranslate
             {
                 case CodeType.Nop: Generator.Emit(OpCodes.Nop); break;
                 case CodeType.Pop: Generator.Emit(OpCodes.Pop); break;
+                case CodeType.Dup: Generator.Emit(OpCodes.Dup); break;
                 case CodeType.Ret: Generator.Emit(OpCodes.Ret); break;
                 case CodeType.Add: Generator.Emit(OpCodes.Add); break;
                 case CodeType.Sub: Generator.Emit(OpCodes.Sub); break;

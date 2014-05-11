@@ -83,10 +83,10 @@
     <Compile Include="Scope.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
-    <Compile Include="Symbol\UndefinedSymbol.cs" />
+    <Compile Include="Symbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="TextPosition.cs" />
-    <Compile Include="UndefinedOverLoad.cs" />
+    <Compile Include="UnknownOverLoad.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="Symbol\ThisSymbol.cs" />
     <Compile Include="Token.cs" />
