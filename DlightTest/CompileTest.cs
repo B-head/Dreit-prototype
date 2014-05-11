@@ -50,18 +50,17 @@ namespace DlightTest
             TranslateManager trans = new TranslateManager(data.Name);
             trans.TranslateTo(root, import);
             trans.Save();
-            var cd = Directory.GetCurrentDirectory();
-            Console.WriteLine(cd);
-            using (var process = MakeProcess(@"peverify.exe", data.Name + ".exe" + " /nologo /unique"))
-            {
-                process.Start();
-                if (!process.WaitForExit(500))
-                {
-                    process.Kill();
-                    Assert.Fail("Peverify.exe timeout execution");
-                }
-                Console.WriteLine(process.StandardOutput.ReadToEnd());
-            }
+            //var cd = Directory.GetCurrentDirectory();
+            //using (var process = MakeProcess(@"peverify.exe", data.Name + ".exe" + " /nologo /unique", cd))
+            //{
+            //    process.Start();
+            //    if (!process.WaitForExit(500))
+            //    {
+            //        process.Kill();
+            //        Assert.Fail("Peverify.exe timeout execution");
+            //    }
+            //    Console.WriteLine(process.StandardOutput.ReadToEnd());
+            //}
             using (var process = MakeProcess(data.Name + ".exe"))
             {
                 process.Start();
@@ -74,7 +73,7 @@ namespace DlightTest
                 var error = process.StandardError.ReadToEnd();
                 if (!string.IsNullOrWhiteSpace(error))
                 {
-                    Console.WriteLine(error);
+                    Assert.Fail(error);
                 }
                 if (data.Output != null)
                 {
