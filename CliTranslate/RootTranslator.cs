@@ -19,14 +19,14 @@ namespace CliTranslate
         public string Name { get; private set; }
         public string FileName { get; private set; }
 
-        public RootTranslator(string name)
+        public RootTranslator(string name, string dir = null)
             : base(null, null)
         {
             BuilderDictonary = new Dictionary<Scope, dynamic>();
             CtorDictonary = new Dictionary<Scope, ConstructorInfo>();
             Name = name;
             FileName = name + ".exe";
-            Assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave);
+            Assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave, dir);
             Module = Assembly.DefineDynamicModule(Name, FileName);
         }
 

@@ -17,11 +17,11 @@ namespace CliTranslate
         private Dictionary<Scope, Translator> TransDictionary;
         private RootTranslator Root;
 
-        public TranslateManager(string name)
+        public TranslateManager(string name, string dir = null)
         {
             SpreadQueue = new SortedSet<Scope>(new SpreadPriority());
             TransDictionary = new Dictionary<Scope, Translator>();
-            Root = new RootTranslator(name);
+            Root = new RootTranslator(name, dir);
         }
 
         class SpreadPriority : IComparer<Scope>
