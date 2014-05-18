@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Statement;
 
 namespace SyntacticAnalysis
 {
@@ -33,6 +34,15 @@ namespace SyntacticAnalysis
             return cp.Begin<IdentifierAccess>()
                 .Opt().Type((s, t) => s.IsPragmaAccess = true, TokenType.Pragma).Lt()
                 .Type((s, t) => s.Value = t.Text, TokenType.LetterStartString).Lt()
+                .End();
+        }
+
+        private static IfStatement IfStatement(ChainParser cp)
+        {
+            return cp.Begin<IfStatement>()
+                .Text("if").Transfer((s, e) => s.Condition = e, Condition)
+                .Type(TokenType.Separator).Or().Text("than").Transfer((s, e) => s.Than = e, Block)
+                .If().Text("else").Than().Text("than").Transfer((s, e) => s.Than = e, Block).EndIf()
                 .End();
         }
     }

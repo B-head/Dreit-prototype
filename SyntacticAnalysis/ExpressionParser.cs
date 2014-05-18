@@ -31,6 +31,12 @@ namespace SyntacticAnalysis
                 return null;
             }
         }
+        
+        private static Element Condition(ChainParser cp)
+        {
+            return LeftAssociative<DyadicCalculate, Element>(cp, Addtive, TokenType.Equal, TokenType.NotEqual,
+                TokenType.LessThan, TokenType.LessThanOrEqual, TokenType.GreaterThan, TokenType.GreaterThanOrEqual, TokenType.Incompare);
+        }
 
         private static Element Addtive(ChainParser cp)
         {

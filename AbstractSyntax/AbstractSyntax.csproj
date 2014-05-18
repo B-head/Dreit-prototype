@@ -81,6 +81,7 @@
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Statement\IfStatement.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
     <Compile Include="Symbol\UnknownSymbol.cs" />
