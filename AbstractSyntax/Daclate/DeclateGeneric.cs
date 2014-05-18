@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
@@ -6,10 +7,9 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateGeneric : DataType
+    public class DeclateGeneric : GenericSymbol
     {
-        public IdentifierAccess Ident { get; set; }
-        public Element SpecializationType { get; set; }
+        public Element SpecialTypeAccess { get; set; }
 
         public override int Count
         {
@@ -22,16 +22,10 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Ident;
+                    case 0: return SpecialTypeAccess;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        protected override void SpreadElement(Element parent, Scope scope)
-        {
-            Name = Ident == null ? string.Empty : Ident.Value;
-            base.SpreadElement(parent, scope);
         }
     }
 }

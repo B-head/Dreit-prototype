@@ -15,8 +15,13 @@ namespace AbstractSyntax
         public IReadOnlyList<DataType> Formal { get; set; }
         public IReadOnlyList<Scope> Converters { get; set; }
 
-        //todo さらに詳しい順位付けをする。
         internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call, IReadOnlyList<DataType> actual, IReadOnlyList<DataType> formal)
+        {
+            return MakeTypeMatch(manager, call, actual, formal, new GenericSymbol[] { });
+        }
+
+        //todo さらに詳しい順位付けをする。
+        internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call, IReadOnlyList<DataType> actual, IReadOnlyList<DataType> formal, IReadOnlyList<GenericSymbol> generic)
         {
             TypeMatch result = new TypeMatch()
             {

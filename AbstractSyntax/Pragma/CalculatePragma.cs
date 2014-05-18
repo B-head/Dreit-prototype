@@ -11,29 +11,34 @@ namespace AbstractSyntax.Pragma
     public class CalculatePragma : RoutineSymbol, IPragma
     {
         public CalculatePragmaType Type { get; private set; }
+        public GenericSymbol GenericType { get; set; }
 
         public CalculatePragma(CalculatePragmaType type)
         {
             Type = type;
+            GenericType = new GenericSymbol { Name = "T" };
         }
 
-        //internal override TypeMatchResult GetTypeMatch(IReadOnlyList<DataType> type)
-        //{
-        //    if (type.Count != 2)
-        //    {
-        //        return TypeMatchResult.MissMatchCount;
-        //    }
-        //    else if (type[0] != type[1])
-        //    {
-        //        return TypeMatchResult.MissMatchType;
-        //    }
-        //    return TypeMatchResult.PerfectMatch;
-        //}
+        public override int Count
+        {
+            get { return 1; }
+        }
 
-        //todo これもジェネリクスいるねえ・・・
+        public override Element this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0: return GenericType;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
         }
     }
 

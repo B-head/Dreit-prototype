@@ -109,7 +109,7 @@ namespace AbstractSyntax.Daclate
             if (Block.IsInline)
             {
                 var ret = Block[0];
-                if (_ReturnType != ret.DataType)
+                if (ReturnType != ret.DataType)
                 {
                     CompileError("disagree-return-type");
                 }
@@ -119,7 +119,7 @@ namespace AbstractSyntax.Daclate
                 var ret = Block.FindElements<ReturnDirective>();
                 foreach (var v in ret)
                 {
-                    if (_ReturnType != v.Exp.DataType)
+                    if (ReturnType != v.Exp.DataType)
                     {
                         CompileError("disagree-return-type");
                     }

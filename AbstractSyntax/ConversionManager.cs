@@ -34,7 +34,11 @@ namespace AbstractSyntax
             {
                 return Void;
             }
-            if(from is UnknownSymbol || to is UnknownSymbol)
+            if (from is GenericSymbol || to is GenericSymbol)
+            {
+                return Void;
+            }
+            if (from is UnknownSymbol || to is UnknownSymbol)
             {
                 return Unknown;
             }
