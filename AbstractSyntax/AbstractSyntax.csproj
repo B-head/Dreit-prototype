@@ -81,11 +81,14 @@
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Statement\IfStatement.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
     <Compile Include="Symbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
+    <Compile Include="Symbol\ErrorSymbol.cs" />
     <Compile Include="TextPosition.cs" />
+    <Compile Include="TypeMatch.cs" />
     <Compile Include="UnknownOverLoad.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="Symbol\ThisSymbol.cs" />
