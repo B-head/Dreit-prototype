@@ -49,7 +49,8 @@ namespace CliTranslate
                 if (scope is DeclateArgument) return 20;
                 if (scope is DeclateVariant) return 21;
                 if (scope is VoidSymbol) return 30;
-                if (scope is UnknownSymbol) return 31;
+                if (scope is ErrorSymbol) return 31;
+                if (scope is UnknownSymbol) return 32;
                 if (scope is ThisSymbol) return 32;
                 if (scope is AliasDirective) return 33;
                 throw new ArgumentException();
@@ -240,7 +241,7 @@ namespace CliTranslate
             trans.GeneratePrimitive(number);
         }
 
-        private void Translate(DyadicCalculate element, Translator trans)
+        private void Translate(Calculate element, Translator trans)
         {
             ChildTranslate(element, trans);
             trans.GenerateCall(element.CallScope);

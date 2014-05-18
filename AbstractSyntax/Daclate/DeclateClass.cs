@@ -81,9 +81,17 @@ namespace AbstractSyntax.Daclate
             foreach(var e in Block)
             {
                 var r = e as RoutineSymbol;
-                if(r != null && r.Name == "from")
+                if (r == null)
+                {
+                    continue;
+                }
+                if (r.Name == "from")
                 {
                     Root.Conversion.Append(r);
+                }
+                if (r.Operator != TokenType.Unknoun)
+                {
+                    Root.OpManager[r.Operator].Append(r);
                 }
             }
         }

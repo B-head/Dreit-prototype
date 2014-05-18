@@ -30,10 +30,6 @@ namespace AbstractSyntax
 
         public Scope Find(DataType from, DataType to)
         {
-            if(from == to)
-            {
-                return Void;
-            }
             if (from is GenericSymbol || to is GenericSymbol)
             {
                 return Void;
@@ -50,7 +46,14 @@ namespace AbstractSyntax
             }
             else
             {
-                return Error;
+                if (from == to) //todo 応急処置的な。
+                {
+                    return Void;
+                }
+                else
+                {
+                    return Error;
+                }
             }
         }
     }

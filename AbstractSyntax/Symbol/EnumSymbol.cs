@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    [Serializable]
     public class EnumSymbol : DataType
     {
 

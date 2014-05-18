@@ -50,7 +50,6 @@
     <Compile Include="ConversionManager.cs" />
     <Compile Include="DataType.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="OperatorManager.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
     <Compile Include="Expression\CallRoutine.cs" />
@@ -62,7 +61,7 @@
     <Compile Include="Daclate\DeclateOperator.cs" />
     <Compile Include="Daclate\DeclateRoutine.cs" />
     <Compile Include="Daclate\DeclateVariant.cs" />
-    <Compile Include="Expression\DyadicCalculate.cs" />
+    <Compile Include="Expression\Calculate.cs" />
     <Compile Include="Expression\DyadicExpression.cs" />
     <Compile Include="Pragma\CastPragma.cs" />
     <Compile Include="Pragma\PrimitivePragma.cs" />

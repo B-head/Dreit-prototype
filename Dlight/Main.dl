@@ -1,3 +1,2 @@
 ﻿
-      var a:Int32
-      echo a
+      echo 1 + 2.5

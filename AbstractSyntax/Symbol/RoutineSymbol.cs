@@ -9,6 +9,7 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class RoutineSymbol : Scope
     {
+        public TokenType Operator { get; set; }
         protected List<DataType> _ArgumentType;
         protected DataType _ReturnType;
 

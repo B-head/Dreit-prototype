@@ -34,17 +34,17 @@ namespace SyntacticAnalysis
 
         private static Element Addtive(ChainParser cp)
         {
-            return LeftAssociative<DyadicCalculate, Element>(cp, Multiplicative, TokenType.Add, TokenType.Subtract, TokenType.Combine);
+            return LeftAssociative<Calculate, Element>(cp, Multiplicative, TokenType.Add, TokenType.Subtract, TokenType.Combine);
         }
 
         private static Element Multiplicative(ChainParser cp)
         {
-            return LeftAssociative<DyadicCalculate, Element>(cp, Exponentive, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
+            return LeftAssociative<Calculate, Element>(cp, Exponentive, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
         }
 
         private static Element Exponentive(ChainParser cp)
         {
-            return RightAssociative<DyadicCalculate, Element>(cp, CallRoutine, TokenType.Exponent);
+            return RightAssociative<Calculate, Element>(cp, CallRoutine, TokenType.Exponent);
         }
 
         private static Element CallRoutine(ChainParser cp)
