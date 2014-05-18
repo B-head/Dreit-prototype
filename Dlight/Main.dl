@@ -1,2 +1,5 @@
 ﻿
-      echo 10 + 10
+      routine foo(a:Int32, x:Binary64) :: a + x + 20
+      routine foo(b:Int32, c:Int32) :: b + c + 55
+      echo foo := 10, 55.55
+      echo foo := 20, 30

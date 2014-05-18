@@ -45,42 +45,28 @@ namespace AbstractSyntax.Daclate
                 {
                     _ReturnType = ExplicitType.DataType;
                 }
-                else
-                {
-                    _ReturnType = Root.Void;
-                }
-                if (Block.IsInline)
+                else if (Block.IsInline)
                 {
                     var ret = Block[0];
-                    if (_ReturnType is VoidSymbol)
+                    if (ret is ReturnDirective)
                     {
-                        if (ret is ReturnDirective)
-                        {
-                            _ReturnType = ((ReturnDirective)ret).Exp.DataType;
-                        }
-                        else
-                        {
-                            _ReturnType = ret.DataType;
-                        }
+                        _ReturnType = ((ReturnDirective)ret).Exp.DataType;
                     }
-                    else if (_ReturnType != ret.DataType)
+                    else
                     {
-                        CompileError("disagree-return-type");
+                        _ReturnType = ret.DataType;
                     }
                 }
                 else
                 {
                     var ret = Block.FindElements<ReturnDirective>();
-                    if (_ReturnType is VoidSymbol && ret.Count > 0)
+                    if (ret.Count > 0)
                     {
                         _ReturnType = ret[0].Exp.DataType;
                     }
-                    foreach (var v in ret)
+                    else
                     {
-                        if (_ReturnType != v.Exp.DataType)
-                        {
-                            CompileError("disagree-return-type");
-                        }
+                        _ReturnType = Root.Void;
                     }
                 }
                 return _ReturnType;
@@ -113,6 +99,30 @@ namespace AbstractSyntax.Daclate
                     case 2: return ExplicitType;
                     case 3: return Block;
                     default: throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        internal override void CheckDataType()
+        {
+            base.CheckDataType();
+            if (Block.IsInline)
+            {
+                var ret = Block[0];
+                if (_ReturnType != ret.DataType)
+                {
+                    CompileError("disagree-return-type");
+                }
+            }
+            else
+            {
+                var ret = Block.FindElements<ReturnDirective>();
+                foreach (var v in ret)
+                {
+                    if (_ReturnType != v.Exp.DataType)
+                    {
+                        CompileError("disagree-return-type");
+                    }
                 }
             }
         }

@@ -46,30 +46,52 @@ namespace AbstractSyntax
             {
                 return find;
             }
-            var refer = TypeSelect();
-            if (refer == null)
+            var refer = TypeSelect();//todo 引数なしのDataTypeを返しているのを見直す。
+            if (refer.Result == TypeMatchResult.NotCallable)
             {
                 return Unknown;
             }
-            return refer.DataType;
+            return refer.Call.DataType; 
         }
 
-        public virtual Scope TypeSelect()
+        public virtual TypeMatch TypeSelect()
         {
-            if (isHoldAlias)
-            {
-                SpreadAlias();
-            }
             return TypeSelect(new List<DataType>());
         }
 
-        public virtual Scope TypeSelect(IReadOnlyList<DataType> type)
+        public virtual TypeMatch TypeSelect(IReadOnlyList<DataType> type)
         {
             if (isHoldAlias)
             {
                 SpreadAlias();
             }
-            return ScopeList.Find(s => s.TypeMatch(type) == TypeMatchResult.PerfectMatch);
+            TypeMatch result = new TypeMatch();
+            foreach(var a in ScopeList)
+            {
+                foreach(var b in a.GetTypeMatch(type))
+                {
+                    if (GetMatchPriority(result.Result) < GetMatchPriority(b.Result))
+                    {
+                        result = b;
+                    }
+                    else if(result.Call == null)
+                    {
+                        result = b;
+                    }
+                }
+            }
+            return result;
+        }
+
+        private int GetMatchPriority(TypeMatchResult r)
+        {
+            switch(r)
+            {
+                case TypeMatchResult.Unknown: return 10;
+                case TypeMatchResult.PerfectMatch: return 9;
+                case TypeMatchResult.ConvertMatch: return 5;
+                default: return 0;
+            }
         }
 
         private void SpreadAlias()

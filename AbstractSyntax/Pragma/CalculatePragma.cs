@@ -17,17 +17,23 @@ namespace AbstractSyntax.Pragma
             Type = type;
         }
 
-        internal override TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
+        //internal override TypeMatchResult GetTypeMatch(IReadOnlyList<DataType> type)
+        //{
+        //    if (type.Count != 2)
+        //    {
+        //        return TypeMatchResult.MissMatchCount;
+        //    }
+        //    else if (type[0] != type[1])
+        //    {
+        //        return TypeMatchResult.MissMatchType;
+        //    }
+        //    return TypeMatchResult.PerfectMatch;
+        //}
+
+        //todo これもジェネリクスいるねえ・・・
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
-            if (type.Count != 2)
-            {
-                return TypeMatchResult.MissMatchCount;
-            }
-            else if (type[0] != type[1])
-            {
-                return TypeMatchResult.MissMatchType;
-            }
-            return TypeMatchResult.PerfectMatch;
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);
         }
     }
 

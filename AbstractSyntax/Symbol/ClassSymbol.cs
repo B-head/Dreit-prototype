@@ -18,16 +18,10 @@ namespace AbstractSyntax.Symbol
             get { return _InheritRefer; }
         }
 
-        internal override TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
+        //todo コンストラクタや明示的変換に対応する。
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
-            if (type.Count == 0)
-            {
-                return TypeMatchResult.PerfectMatch;
-            }
-            else
-            {
-                return TypeMatchResult.MissMatchCount;
-            }
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { });
         }
 
         public override PrimitivePragmaType GetPrimitiveType()

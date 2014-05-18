@@ -36,7 +36,7 @@ namespace AbstractSyntax.Expression
                 default: throw new InvalidOperationException();
             }
             var ol = l.NameResolution(callName);
-            CallScope = ol.TypeSelect(new DataType[] { r }.ToList());
+            CallScope = ol.TypeSelect(new DataType[] { r }.ToList()).Call;
         }
     }
 }

@@ -30,14 +30,14 @@ namespace AbstractSyntax
             return Unknown;
         }
 
-        public override Scope TypeSelect()
+        public override TypeMatch TypeSelect()
         {
-            return Unknown;
+            return TypeMatch.MakeNotCallable(Unknown);
         }
 
-        public override Scope TypeSelect(IReadOnlyList<DataType> type)
+        public override TypeMatch TypeSelect(IReadOnlyList<DataType> type)
         {
-            return Unknown;
+            return TypeMatch.MakeNotCallable(Unknown);
         }
     }
 }

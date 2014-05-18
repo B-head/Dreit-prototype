@@ -13,6 +13,7 @@ namespace AbstractSyntax
         private Dictionary<string, OverLoad> PragmaDictionary;
         private DirectiveList PragmaList;
         internal VoidSymbol Void { get; private set; }
+        internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
         internal UnknownOverLoad UnknownOverLoad { get; private set; }
         internal ConversionManager Conversion;
@@ -24,9 +25,10 @@ namespace AbstractSyntax
             PragmaList = new DirectiveList();
             PragmaDictionary = new Dictionary<string, OverLoad>();
             Void = new VoidSymbol();
+            Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
             UnknownOverLoad = new UnknownOverLoad(Unknown);
-            Conversion = new ConversionManager(Void, Unknown);
+            Conversion = new ConversionManager(Void, Error, Unknown);
             MessageManager = new CompileMessageManager();
             CreatePragma();
         }

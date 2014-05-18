@@ -103,16 +103,9 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
+        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
-            if(type.Count == 0)
-            {
-                return TypeMatchResult.PerfectMatch;
-            }
-            else
-            {
-                return TypeMatchResult.NotCallable;
-            }
+            yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }
 
         internal override void CheckSyntax()

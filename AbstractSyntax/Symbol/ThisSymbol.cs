@@ -22,27 +22,10 @@ namespace AbstractSyntax.Symbol
             get { return _DataType; }
         }
 
-        internal override TypeMatchResult TypeMatch(IReadOnlyList<DataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
-            if (type.Count == 0)
-            {
-                return TypeMatchResult.PerfectMatch;
-            }
-            else if (type.Count == 1)
-            {
-                if (type[0] == DataType)
-                {
-                    return TypeMatchResult.PerfectMatch;
-                }
-                else
-                {
-                    return TypeMatchResult.MissMatchType;
-                }
-            }
-            else
-            {
-                return TypeMatchResult.MissMatchCount;
-            }
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { DataType });
         }
     }
 }

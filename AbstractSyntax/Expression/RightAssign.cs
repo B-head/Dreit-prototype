@@ -27,7 +27,7 @@ namespace AbstractSyntax.Expression
                     }
                     else
                     {
-                        _CallScope = access.Reference.TypeSelect(Arguments.GetDataTypes());
+                        _CallScope = access.Reference.TypeSelect(Arguments.GetDataTypes()).Call;
                     }
                 }
                 return _CallScope;

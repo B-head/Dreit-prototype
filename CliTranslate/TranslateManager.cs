@@ -249,7 +249,7 @@ namespace CliTranslate
         private void Translate(IdentifierAccess element, Translator trans)
         {
             TranslateAccess((dynamic)element, trans);
-            CallTranslate((dynamic)element.ScopeReference, new TupleList(), trans);
+            CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
         }
 
         private void Translate(LeftAssign element, Translator trans)

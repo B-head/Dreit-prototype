@@ -12,12 +12,14 @@ namespace AbstractSyntax
     {
         private List<RoutineSymbol> ConvList;
         private VoidSymbol Void;
+        private ErrorSymbol Error;
         private UnknownSymbol Unknown;
 
-        public ConversionManager(VoidSymbol voidSym, UnknownSymbol unknown)
+        public ConversionManager(VoidSymbol voidSym, ErrorSymbol error, UnknownSymbol unknown)
         {
             ConvList = new List<RoutineSymbol>();
             Void = voidSym;
+            Error = error;
             Unknown = unknown;
         }
 
@@ -28,6 +30,10 @@ namespace AbstractSyntax
 
         public Scope Find(DataType from, DataType to)
         {
+            if(from == to)
+            {
+                return Void;
+            }
             if(from is UnknownSymbol || to is UnknownSymbol)
             {
                 return Unknown;
@@ -40,7 +46,7 @@ namespace AbstractSyntax
             }
             else
             {
-                return Void;
+                return Error;
             }
         }
     }

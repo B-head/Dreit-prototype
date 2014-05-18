@@ -1,6 +1,7 @@
 ﻿using AbstractSyntax.Pragma;
 using AbstractSyntax.Visualizer;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace AbstractSyntax
@@ -12,14 +13,5 @@ namespace AbstractSyntax
         {
             throw new NotSupportedException();
         }
-    }
-
-    enum TypeMatchResult
-    {
-        Unknown,
-        PerfectMatch,
-        NotCallable,
-        MissMatchCount,
-        MissMatchType,
     }
 }

@@ -22,7 +22,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _IsTacitThis.Value;
                 }
-                var refer = ScopeReference;
+                var refer = CallScope;
                 if (refer != null && refer.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine && !(refer is ThisSymbol))
                 {
                     _IsTacitThis = true;
@@ -64,9 +64,9 @@ namespace AbstractSyntax.Expression
             get { return Reference.GetDataType(); }
         }
 
-        public Scope ScopeReference
+        public Scope CallScope
         {
-            get { return Reference.TypeSelect(); }
+            get { return Reference.TypeSelect().Call; }
         }
 
         public OverLoad Reference
