@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      class A
+      {
+      var value := 500
+      }
+
+      A() =: var a:A
+      echo a.value
+    </code>
+    <output>500</output>
+  </case>
+
+  <case>
+    <code>
+      class A
+      {
+      var value := 500
+      }
+
+      A() =: var a
+      echo a.value
+    </code>
+    <output>500</output>
+  </case>
+
+  <case>
+    <code>
+      class Counter
+      {
+      var value := 0
+      routine next() :: value := value + 1
+      }
+
+      Counter() =: var counter
+      echo counter.next()
+      echo counter.next()
+      echo counter.next()
+    </code>
+    <output>1 2 3</output>
+  </case>
+  
+  <case>
+    <code>
+      class Counter
+      {
+      var value := 0
+      routine next :: value := value + 1
+      }
+
+      Counter =: var counter
+      echo counter.next
+      echo counter.next
+      echo counter.next
+    </code>
+    <output>1 2 3</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        routine new {
+          x := 3
+          y := 6
+        }
+        
+        var x:Int32
+        var y:Int32
+      }
+      
+      a := A
+      echo a.x * a.y
+      ]]>
+    </code>
+    <output>18</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        routine new(_x:Int32, _y:Int32) {
+          x := _x
+          y := _y
+        }
+        
+        var x:Int32
+        var y:Int32
+      }
+      
+      a := A(4, 7)
+      echo a.x * a.y
+      ]]>
+    </code>
+    <output>28</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        routine new(x:Int32, y:Int32) {
+          this.x := x
+          this.y := y
+        }
+        
+        var x:Int32
+        var y:Int32
+      }
+      
+      a := A(5, 8)
+      echo a.x * a.y
+      ]]>
+    </code>
+    <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        var x := 11
+        var y := 22
+        
+        operator +(other:A) {
+          var ret := A
+          ret.x := x + other.x
+          ret.y := y + other.y
+          return ret
+        }
+      }
+      
+      var a := A
+      var b := A
+      var c := a + b
+      echo c.x
+      echo c.y
+      ]]>
+    </code>
+    <output>22 44</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        var value := 11
+      }
+
+      class B
+      {
+        var value := 22
+        routine from(a:A)
+        {
+          value := a.value
+          return this
+        }
+      }
+
+      var a := A()
+      var b:B := a
+      echo b.value
+      ]]>
+    </code>
+    <output>11</output>
+  </case>
+</compile-test>

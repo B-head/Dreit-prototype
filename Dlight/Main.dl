@@ -1,2 +1,15 @@
-﻿
-      echo 1 + 2.5
+﻿Rand =: var rand
+echo rand.value
+echo rand.gen
+echo rand.gen
+echo rand.gen
+
+class Rand
+{
+	var value := 98765
+
+	routine gen
+	{
+		return value := value * 1103515245 + 12345
+	}
+}

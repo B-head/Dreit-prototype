@@ -102,11 +102,13 @@
     </Compile>
     <Compile Include="Symbol\VoidSymbol.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Visualizer\SyntaxVisualizerForm.resx">
       <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SyntaxDiagram.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
