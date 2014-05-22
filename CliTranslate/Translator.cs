@@ -12,30 +12,6 @@ using AbstractSyntax.Daclate;
 
 namespace CliTranslate
 {
-    //todo これのお掃除をする。
-    public enum CodeType 
-    {
-        Nop,
-        Pop,
-        Dup,
-        Ret,
-        Add,
-        Sub,
-        Mul,
-        Div,
-        Mod,
-        ConvI1,
-        ConvI2,
-        ConvI4,
-        ConvI8,
-        ConvU1,
-        ConvU2,
-        ConvU4,
-        ConvU8,
-        ConvR4,
-        ConvR8,
-    }
-
     public abstract class Translator
     {
         public RootTranslator Root { get; private set; }
@@ -79,6 +55,11 @@ namespace CliTranslate
             return this.GetType().Name + ": " + Scope.GetFullName() + "(" + Scope.Id + ")";
         }
 
+        public virtual bool IsThisArg
+        {
+            get { return false; }
+        }
+
         internal virtual TypeBuilder CreateLexical(string name)
         {
             throw new NotSupportedException();
@@ -94,7 +75,7 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual RoutineTranslator CreateOperation(CodeType operation)
+        public virtual RoutineTranslator CreateOperation(OpCodes operation)
         {
             throw new NotSupportedException();
         }
@@ -130,31 +111,9 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Call, method);
         }
 
-        public void GenerateControl(CodeType type)
+        public void GenerateControl(OpCode type)
         {
-            switch (type)
-            {
-                case CodeType.Nop: Generator.Emit(OpCodes.Nop); break;
-                case CodeType.Pop: Generator.Emit(OpCodes.Pop); break;
-                case CodeType.Dup: Generator.Emit(OpCodes.Dup); break;
-                case CodeType.Ret: Generator.Emit(OpCodes.Ret); break;
-                case CodeType.Add: Generator.Emit(OpCodes.Add); break;
-                case CodeType.Sub: Generator.Emit(OpCodes.Sub); break;
-                case CodeType.Mul: Generator.Emit(OpCodes.Mul); break;
-                case CodeType.Div: Generator.Emit(OpCodes.Div); break;
-                case CodeType.Mod: Generator.Emit(OpCodes.Rem); break;
-                case CodeType.ConvI1: Generator.Emit(OpCodes.Conv_I1); break;
-                case CodeType.ConvI2: Generator.Emit(OpCodes.Conv_I2); break;
-                case CodeType.ConvI4: Generator.Emit(OpCodes.Conv_I4); break;
-                case CodeType.ConvI8: Generator.Emit(OpCodes.Conv_I8); break;
-                case CodeType.ConvU1: Generator.Emit(OpCodes.Conv_U1); break;
-                case CodeType.ConvU2: Generator.Emit(OpCodes.Conv_U2); break;
-                case CodeType.ConvU4: Generator.Emit(OpCodes.Conv_U4); break;
-                case CodeType.ConvU8: Generator.Emit(OpCodes.Conv_U8); break;
-                case CodeType.ConvR4: Generator.Emit(OpCodes.Conv_R4); break;
-                case CodeType.ConvR8: Generator.Emit(OpCodes.Conv_R8); break;
-                default: throw new ArgumentException();
-            }
+            Generator.Emit(type);
         }
 
         public void GeneratePrimitive(int value)
@@ -297,7 +256,7 @@ namespace CliTranslate
 
         protected void BuildLoad(ParameterBuilder param, bool address)
         {
-            int index = param.Position - 1;
+            int index = IsThisArg ? param.Position : param.Position - 1;
             if (index <= 255)
             {
                 switch (index)
@@ -385,7 +344,7 @@ namespace CliTranslate
 
         protected void BuildStore(ParameterBuilder param, bool address)
         {
-            int index = param.Position - 1;
+            int index = IsThisArg ? param.Position : param.Position - 1;
             if (index <= 255)
             {
                 Generator.Emit(OpCodes.Starg_S, index);
@@ -399,10 +358,9 @@ namespace CliTranslate
         public virtual void GenerateCall(Scope name)
         {
             var temp = Root.GetBuilder(name);
-            if (temp is Type)
+            if (temp is ConstructorInfo)
             {
-                var ctor = Root.GetConstructor(name);
-                Generator.Emit(OpCodes.Newobj, ctor);
+                Generator.Emit(OpCodes.Newobj, temp);
             }
             else
             {

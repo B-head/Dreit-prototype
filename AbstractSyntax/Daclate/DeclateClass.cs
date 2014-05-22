@@ -5,6 +5,7 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace AbstractSyntax.Daclate
 {
@@ -14,7 +15,14 @@ namespace AbstractSyntax.Daclate
         public TupleList Generic { get; set; }
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
-        public ThisSymbol This { get; set; }
+        public ThisSymbol This { get; private set; }
+        public DefaultSymbol Default { get; private set; }
+
+        public DeclateClass()
+        {
+            This = new ThisSymbol(this);
+            Default = new DefaultSymbol(this);
+        }
 
         public override List<ClassSymbol> InheritRefer 
         {
@@ -31,18 +39,9 @@ namespace AbstractSyntax.Daclate
                     {
                         InheritRefer.Add((ClassSymbol)v.DataType);
                     }
-                    else
-                    {
-                        CompileError("not-datatype-inherit");
-                    }
                 }
                 return _InheritRefer;
             }
-        }
-
-        public DeclateClass()
-        {
-            This = new ThisSymbol(this);
         }
 
         public override bool IsVoidValue
@@ -50,14 +49,14 @@ namespace AbstractSyntax.Daclate
             get { return true; } //todo この代わりのプロパティが必要。
         }
 
-        public override DataType DataType
+        public bool IsDefaultConstructor
         {
-            get { return this; }
+            get { return initializer.Any(v => v is DefaultSymbol); }
         }
 
         public override int Count
         {
-            get { return 4; }
+            get { return 5; }
         }
 
         public override Element this[int index]
@@ -70,6 +69,7 @@ namespace AbstractSyntax.Daclate
                     case 1: return Inherit;
                     case 2: return Block;
                     case 3: return This;
+                    case 4: return Default;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -85,6 +85,10 @@ namespace AbstractSyntax.Daclate
                 {
                     continue;
                 }
+                if(r.Name == "new")
+                {
+                    initializer.Add(r);
+                }
                 if (r.Name == "from")
                 {
                     Root.Conversion.Append(r);
@@ -92,6 +96,22 @@ namespace AbstractSyntax.Daclate
                 if (r.Operator != TokenType.Unknoun)
                 {
                     Root.OpManager[r.Operator].Append(r);
+                }
+            }
+            if(initializer.Count == 0)
+            {
+                initializer.Add(Default);
+            }
+        }
+
+        internal override void CheckDataType()
+        {
+            base.CheckDataType();
+            foreach (var v in Inherit)
+            {
+                if (!(v.DataType is ClassSymbol))
+                {
+                    CompileError("not-datatype-inherit");
                 }
             }
         }

@@ -14,6 +14,7 @@ namespace AbstractSyntax.Daclate
         public TupleList Arguments { get; set; }
         public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
+        public bool IsThisReturn { get; private set; }
 
         public override List<DataType> ArgumentType
         {
@@ -64,6 +65,11 @@ namespace AbstractSyntax.Daclate
                     {
                         _ReturnType = ret[0].Exp.DataType;
                     }
+                    else if(CurrentScope is DeclateClass)
+                    {
+                        _ReturnType = (DeclateClass)CurrentScope;
+                        IsThisReturn = true;
+                    }
                     else
                     {
                         _ReturnType = Root.Void;
@@ -73,14 +79,41 @@ namespace AbstractSyntax.Daclate
             }
         }
 
+        public bool IsConstructor
+        {
+            get
+            {
+                if(!(CurrentScope is DeclateClass))
+                {
+                    return false;
+                }
+                if(Name != "new")
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public bool IsDestructor
+        {
+            get
+            {
+                if (!(CurrentScope is DeclateClass))
+                {
+                    return false;
+                }
+                if (Name != "free")
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
         public override bool IsVoidValue
         {
             get { return true; } //todo この代わりのプロパティが必要。
-        }
-
-        public override DataType DataType
-        {
-            get { return ReturnType; }
         }
 
         public override int Count

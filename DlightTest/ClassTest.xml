@@ -71,7 +71,7 @@
         var y:Int32
       }
       
-      a := A
+      var a := A
       echo a.x * a.y
       ]]>
     </code>
@@ -91,7 +91,27 @@
         var y:Int32
       }
       
-      a := A(4, 7)
+      var a:A := A(4, 7)
+      echo a.x * a.y
+      ]]>
+    </code>
+    <output>28</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        routine new(_x:Int32, _y:Int32) {
+          x := _x
+          y := _y
+        }
+        
+        var x:Int32
+        var y:Int32
+      }
+      
+      var a := A(4, 7)
       echo a.x * a.y
       ]]>
     </code>
@@ -111,11 +131,23 @@
         var y:Int32
       }
       
-      a := A(5, 8)
+      var a := A(5, 8)
       echo a.x * a.y
       ]]>
     </code>
     <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        routine free { }
+      }
+      
+      var a := A
+      ]]>
+    </code>
   </case>
 
   <case>

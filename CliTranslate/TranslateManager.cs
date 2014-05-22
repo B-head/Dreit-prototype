@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AbstractSyntax;
+﻿using AbstractSyntax;
 using AbstractSyntax.Daclate;
-using AbstractSyntax.Pragma;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
+using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace CliTranslate
 {
@@ -48,12 +46,7 @@ namespace CliTranslate
                 if (scope is DeclateOperator) return 11;
                 if (scope is DeclateArgument) return 20;
                 if (scope is DeclateVariant) return 21;
-                if (scope is VoidSymbol) return 30;
-                if (scope is ErrorSymbol) return 31;
-                if (scope is UnknownSymbol) return 32;
-                if (scope is ThisSymbol) return 32;
-                if (scope is AliasDirective) return 33;
-                throw new ArgumentException();
+                return 100;
             }
         }
 
@@ -136,7 +129,21 @@ namespace CliTranslate
             {
                 argumentType.Add(v);
             }
-            var temp = trans.CreateRoutine(scope, scope.ReturnType, argumentType.ToArray());
+            RoutineTranslator temp;
+            if (scope.IsConstructor)
+            {
+                var cls = (ClassTranslator)trans;
+                temp = cls.CreateConstructor(scope, argumentType.ToArray());
+            }
+            else if (scope.IsDestructor)
+            {
+                var cls = (ClassTranslator)trans;
+                temp = cls.CreateDestructor(scope);
+            }
+            else
+            {
+                temp = trans.CreateRoutine(scope, scope.ReturnType, argumentType.ToArray());
+            }
             TransDictionary.Add(scope, temp);
             var arguments = new List<Scope>();
             foreach (var v in scope.Arguments)
@@ -191,12 +198,18 @@ namespace CliTranslate
                 Translate((dynamic)v, trans);
                 if (!v.IsVoidValue && !element.IsInline)
                 {
-                    trans.GenerateControl(CodeType.Pop);
+                    trans.GenerateControl(OpCodes.Pop);
                 }
             }
-            if (element.Count <= 0 || !(element[element.Count - 1] is ReturnDirective)) //todo VoidSymbolで調べた方がいい？
+            var rout = element.Parent as DeclateRoutine;
+            if (rout != null && rout.IsThisReturn)
             {
-                trans.GenerateControl(CodeType.Ret);
+                trans.GenerateControl(OpCodes.Ldarg_0);
+                trans.GenerateControl(OpCodes.Ret);
+            }
+            else if (element.Count <= 0 || !(element[element.Count - 1] is ReturnDirective)) //todo VoidSymbolで調べた方がいい？
+            {
+                trans.GenerateControl(OpCodes.Ret);
             }
         }
 
@@ -226,7 +239,7 @@ namespace CliTranslate
         private void Translate(ReturnDirective element, Translator trans)
         {
             ChildTranslate(element, trans);
-            trans.GenerateControl(CodeType.Ret);
+            trans.GenerateControl(OpCodes.Ret);
         }
 
         private void Translate(EchoDirective element, Translator trans)
@@ -258,21 +271,9 @@ namespace CliTranslate
             var acs = TranslateAccess((dynamic)element.Left, trans);
             if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
             {
-                trans.GenerateControl(CodeType.Dup);
+                trans.GenerateControl(OpCodes.Dup);
             }
             CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
-            //if (element.ConversionRoutine is VoidSymbol)
-            //{
-            //}
-            //else
-            //{
-            //    Translate((dynamic)refer, trans);
-            //    Translate((dynamic)element.Right, trans);
-            //    trans.GenerateCall(element.ConversionRoutine);
-
-            //    //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
-            //    //Translate((dynamic)refer, trans);
-            //}
         }
 
         private void Translate(RightAssign element, Translator trans)
@@ -280,21 +281,9 @@ namespace CliTranslate
             var acs = TranslateAccess((dynamic)element.Right, trans);
             if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
             {
-                trans.GenerateControl(CodeType.Dup);
+                trans.GenerateControl(OpCodes.Dup);
             }
             CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
-            //if (element.ConversionRoutine is VoidSymbol)
-            //{
-            //}
-            //else
-            //{
-            //    Translate((dynamic)refer, trans);
-            //    Translate((dynamic)element.Left, trans);
-            //    trans.GenerateCall(element.ConversionRoutine);
-
-            //    //TranslateAssign((dynamic)refer, trans); //todo 後でこの処理を無くす。
-            //    //Translate((dynamic)refer, trans);
-            //}
         }
 
         private void Translate(CallRoutine element, Translator trans)
@@ -302,7 +291,7 @@ namespace CliTranslate
             var acs = TranslateAccess((dynamic)element.Access, trans);
             if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
             {
-                trans.GenerateControl(CodeType.Dup);
+                trans.GenerateControl(OpCodes.Dup);
             }
             CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
         }
@@ -347,11 +336,11 @@ namespace CliTranslate
             }
             switch (call.Type)
             {
-                case CalculatePragmaType.Add: trans.GenerateControl(CodeType.Add); break;
-                case CalculatePragmaType.Sub: trans.GenerateControl(CodeType.Sub); break;
-                case CalculatePragmaType.Mul: trans.GenerateControl(CodeType.Mul); break;
-                case CalculatePragmaType.Div: trans.GenerateControl(CodeType.Div); break;
-                case CalculatePragmaType.Mod: trans.GenerateControl(CodeType.Mod); break;
+                case CalculatePragmaType.Add: trans.GenerateControl(OpCodes.Add); break;
+                case CalculatePragmaType.Sub: trans.GenerateControl(OpCodes.Sub); break;
+                case CalculatePragmaType.Mul: trans.GenerateControl(OpCodes.Mul); break;
+                case CalculatePragmaType.Div: trans.GenerateControl(OpCodes.Div); break;
+                case CalculatePragmaType.Mod: trans.GenerateControl(OpCodes.Rem); break;
                 default: throw new ArgumentException();
             }
         }
@@ -362,20 +351,18 @@ namespace CliTranslate
             PrimitivePragmaType prim = arguments[0].DataType.GetPrimitiveType();
             switch(prim)
             {
-                case PrimitivePragmaType.Integer8: trans.GenerateControl(CodeType.ConvI1); break;
-                case PrimitivePragmaType.Integer16: trans.GenerateControl(CodeType.ConvI2); break;
-                case PrimitivePragmaType.Integer32: trans.GenerateControl(CodeType.ConvI4); break;
-                case PrimitivePragmaType.Integer64: trans.GenerateControl(CodeType.ConvI8); break;
-                case PrimitivePragmaType.Natural8: trans.GenerateControl(CodeType.ConvU1); break;
-                case PrimitivePragmaType.Natural16: trans.GenerateControl(CodeType.ConvU2); break;
-                case PrimitivePragmaType.Natural32: trans.GenerateControl(CodeType.ConvU4); break;
-                case PrimitivePragmaType.Natural64: trans.GenerateControl(CodeType.ConvU8); break;
-                case PrimitivePragmaType.Binary32: trans.GenerateControl(CodeType.ConvR4); break;
-                case PrimitivePragmaType.Binary64: trans.GenerateControl(CodeType.ConvR8); break;
+                case PrimitivePragmaType.Integer8: trans.GenerateControl(OpCodes.Conv_I1); break;
+                case PrimitivePragmaType.Integer16: trans.GenerateControl(OpCodes.Conv_I2); break;
+                case PrimitivePragmaType.Integer32: trans.GenerateControl(OpCodes.Conv_I4); break;
+                case PrimitivePragmaType.Integer64: trans.GenerateControl(OpCodes.Conv_I8); break;
+                case PrimitivePragmaType.Natural8: trans.GenerateControl(OpCodes.Conv_U1); break;
+                case PrimitivePragmaType.Natural16: trans.GenerateControl(OpCodes.Conv_U2); break;
+                case PrimitivePragmaType.Natural32: trans.GenerateControl(OpCodes.Conv_U4); break;
+                case PrimitivePragmaType.Natural64: trans.GenerateControl(OpCodes.Conv_U8); break;
+                case PrimitivePragmaType.Binary32: trans.GenerateControl(OpCodes.Conv_R4); break;
+                case PrimitivePragmaType.Binary64: trans.GenerateControl(OpCodes.Conv_R8); break;
                 default: throw new ArgumentException();
             }
-            //TranslateAssign((dynamic)arguments[0], trans);
-            //Translate((dynamic)arguments[0], trans);
         }
 
         private bool TranslateAccess(IdentifierAccess element, Translator trans)

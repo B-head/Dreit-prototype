@@ -81,6 +81,7 @@
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
+    <Compile Include="Symbol\DefaultSymbol.cs" />
     <Compile Include="Symbol\EnumSymbol.cs" />
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />

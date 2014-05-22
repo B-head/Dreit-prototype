@@ -103,11 +103,6 @@ namespace AbstractSyntax.Expression
 
         public DataType GetCallType()
         {
-            DeclateVariant temp = Right as DeclateVariant;
-            if (temp == null)
-            {
-                return Root.Unknown;
-            }
             return Left.DataType;
         }
     }

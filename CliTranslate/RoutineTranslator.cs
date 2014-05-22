@@ -12,16 +12,43 @@ namespace CliTranslate
 {
     public class RoutineTranslator : Translator
     {
-        private MethodBuilder Method;
+        private MethodBase Method;
         private TypeBuilder Lexical;
         private LocalBuilder LexicalInstance;
 
-        public RoutineTranslator(Scope path, Translator parent, MethodBuilder method)
+        public RoutineTranslator(Scope path, Translator parent, MethodBuilder method, bool isDestructor = false)
             : base(path, parent)
         {
             Method = method;
-            Generator = Method.GetILGenerator();
-            Root.RegisterBuilder(path, Method);
+            Root.RegisterBuilder(path, method);
+            Generator = method.GetILGenerator();
+            if(isDestructor)
+            {
+                Generator.Emit(OpCodes.Ldarg_0);
+                Generator.Emit(OpCodes.Call, typeof(object).GetMethod("Finalize", BindingFlags.NonPublic | BindingFlags.Instance));
+                Generator.Emit(OpCodes.Ret);
+            }
+        }
+
+        public RoutineTranslator(Scope path, Translator parent, ConstructorBuilder method, MethodBuilder init)
+            : base(path, parent)
+        {
+            Method = method;
+            Root.RegisterBuilder(path, method);
+            Generator = method.GetILGenerator();
+            Generator.Emit(OpCodes.Ldarg_0);
+            Generator.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes));
+            Generator.Emit(OpCodes.Ldarg_0);
+            Generator.Emit(OpCodes.Call, init);
+            if(path is DefaultSymbol)
+            {
+                Generator.Emit(OpCodes.Ret);
+            }
+        }
+
+        public override bool IsThisArg
+        {
+            get { return Parent is ClassTranslator; }
         }
 
         public override void BuildCode()
@@ -46,7 +73,7 @@ namespace CliTranslate
 
         internal override TypeBuilder CreateLexical(string name)
         {
-            return Lexical.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName);
+            return Lexical.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
         public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
@@ -77,8 +104,18 @@ namespace CliTranslate
             int next = Parent is PrimitiveTranslator ? 2 : 1;
             foreach (var v in path)
             {
-                var builder = Method.DefineParameter(next++, ParameterAttributes.None, v.Name);
-                Root.RegisterBuilder(v, builder);
+                if (Method is MethodBuilder)
+                {
+                    var m = (MethodBuilder)Method;
+                    var builder = m.DefineParameter(next++, ParameterAttributes.None, v.Name);
+                    Root.RegisterBuilder(v, builder);
+                }
+                else if (Method is ConstructorBuilder)
+                {
+                    var c = (ConstructorBuilder)Method;
+                    var builder = c.DefineParameter(next++, ParameterAttributes.None, v.Name);
+                    Root.RegisterBuilder(v, builder);
+                }
             }
         }
 

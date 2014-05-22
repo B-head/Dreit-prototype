@@ -11,7 +11,12 @@ namespace AbstractSyntax.Symbol
     {
         public UnknownSymbol()
         {
-            Name = "@@undefined";
+            Name = "@@unknown";
+        }
+
+        public override DataType DataType
+        {
+            get { return Root.Unknown; }
         }
     }
 }

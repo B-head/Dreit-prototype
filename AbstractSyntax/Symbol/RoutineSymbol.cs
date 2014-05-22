@@ -23,6 +23,11 @@ namespace AbstractSyntax.Symbol
             get { return _ReturnType; }
         }
 
+        public override DataType DataType
+        {
+            get { return ReturnType; }
+        }
+
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);

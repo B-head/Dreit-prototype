@@ -30,9 +30,9 @@ namespace AbstractSyntax
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            if(Exp != null && Exp.DataType is VoidSymbol) //todo UndefinedSymbolでの識別が必要。
+            if(Exp != null && Exp.DataType is VoidSymbol)
             {
-                //CompileError("invalid-void");
+                CompileError("invalid-void");
             }
         }
     }
