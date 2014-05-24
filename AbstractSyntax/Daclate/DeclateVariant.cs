@@ -21,13 +21,13 @@ namespace AbstractSyntax.Daclate
                 {
                     return _DataType;
                 }
+                 var caller = Parent as ICaller;
                 if (ExplicitType != null)
                 {
                     _DataType = ExplicitType.DataType;
                 }
-                else if(Parent is ICaller)
+                else if(caller != null && caller.HasCallTarget(this))
                 {
-                    var caller = (ICaller)Parent;
                     _DataType = caller.GetCallType();
                 }
                 else

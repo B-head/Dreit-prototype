@@ -109,6 +109,11 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public bool HasCallTarget(Element element)
+        {
+            return Left == element;
+        }
+
         public DataType GetCallType()
         {
             return Right.DataType;

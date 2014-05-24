@@ -89,11 +89,12 @@ namespace AbstractSyntax.Daclate
                 {
                     initializer.Add(r);
                 }
-                if (r.Name == "from")
+                else if (r.Name == "from")
                 {
                     Root.Conversion.Append(r);
+                    initializer.Add(r);
                 }
-                if (r.Operator != TokenType.Unknoun)
+                else if (r.Operator != TokenType.Unknoun)
                 {
                     Root.OpManager[r.Operator].Append(r);
                 }

@@ -95,7 +95,8 @@ namespace CliTranslate
         public override void CreateVariant(Scope path, Scope type)
         {
             PrepareLexical();
-            var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Public);
+            //var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Public);
+            var builder = Generator.DeclareLocal(Root.GetBuilder(type));
             Root.RegisterBuilder(path, builder);
         }
 
@@ -127,11 +128,11 @@ namespace CliTranslate
                 return;
             }
             dynamic temp = Root.GetBuilder(name);
-            FieldBuilder field = temp as FieldBuilder;
-            if(field != null && field.DeclaringType == Lexical)
-            {
-                BuildLoad(LexicalInstance, false);
-            }
+            //FieldBuilder field = temp as FieldBuilder;
+            //if(field != null && field.DeclaringType == Lexical)
+            //{
+            //    BuildLoad(LexicalInstance, false);
+            //}
             BuildLoad(temp, address);
         }
 
@@ -143,11 +144,11 @@ namespace CliTranslate
                 return;
             }
             dynamic temp = Root.GetBuilder(name);
-            FieldBuilder field = temp as FieldBuilder;
-            if (field != null && field.DeclaringType == Lexical)
-            {
-                BuildLoad(LexicalInstance, false);
-            }
+            //FieldBuilder field = temp as FieldBuilder;
+            //if (field != null && field.DeclaringType == Lexical)
+            //{
+            //    BuildLoad(LexicalInstance, false);
+            //}
             BuildStore(temp, address);
         }
     }
