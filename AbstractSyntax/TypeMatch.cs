@@ -9,11 +9,11 @@ namespace AbstractSyntax
 {
     public struct TypeMatch
     {
-        public Scope Call { get; set; }
-        public TypeMatchResult Result { get; set; }
-        public IReadOnlyList<IDataType> Actual { get; set; }
-        public IReadOnlyList<IDataType> Formal { get; set; }
-        public IReadOnlyList<Scope> Converters { get; set; }
+        public Scope Call { get; private set; }
+        public TypeMatchResult Result { get; private set; }
+        public IReadOnlyList<IDataType> Actual { get; private set; }
+        public IReadOnlyList<IDataType> Formal { get; private set; }
+        public IReadOnlyList<IScope> Converters { get; private set; }
 
         internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call, IReadOnlyList<IDataType> actual, IReadOnlyList<IDataType> formal, IReadOnlyList<GenericSymbol> generic)
         {

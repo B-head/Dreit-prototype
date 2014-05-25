@@ -17,12 +17,12 @@ namespace AbstractSyntax
 
         public override void Append(Scope scope)
         {
-            base.Append(scope);
+            throw new NotSupportedException();
         }
 
         public override void Merge(OverLoad other)
         {
-            base.Merge(other);
+            throw new NotSupportedException();
         }
 
         public override IDataType GetDataType()

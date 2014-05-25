@@ -9,7 +9,7 @@ namespace AbstractSyntax
     [Serializable]
     public class DirectiveList : Element
     {
-        public List<IElement> Child { get; set; }
+        private List<IElement> Child;
         public bool IsInline { get; set; }
 
         public DirectiveList()

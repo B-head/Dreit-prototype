@@ -8,7 +8,7 @@ namespace AbstractSyntax
     [Serializable]
     public class TupleList : Element
     {
-        public List<Element> Child { get; set; }
+        private List<Element> Child;
         private List<IDataType> DataTypes;
 
         public TupleList()

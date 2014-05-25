@@ -6,7 +6,7 @@ using System.Linq;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class OverLoad : IReadOnlyList<Scope>
+    public class OverLoad : IReadOnlyList<IScope>
     {
         private List<Scope> ScopeList;
         private bool isHoldAlias;
@@ -105,7 +105,7 @@ namespace AbstractSyntax
             }
         }
 
-        public Scope this[int index]
+        public IScope this[int index]
         {
             get { return ScopeList[index]; }
         }
@@ -115,7 +115,7 @@ namespace AbstractSyntax
             get { return ScopeList.Count; }
         }
 
-        public IEnumerator<Scope> GetEnumerator()
+        public IEnumerator<IScope> GetEnumerator()
         {
             return ScopeList.GetEnumerator();
         }
