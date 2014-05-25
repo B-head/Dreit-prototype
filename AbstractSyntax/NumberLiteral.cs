@@ -10,9 +10,9 @@ namespace AbstractSyntax
     {
         public string Integral { get; set; }
         public string Fraction { get; set; }
-        private DataType _DataType;
+        private IDataType _DataType;
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get
             {
@@ -32,18 +32,15 @@ namespace AbstractSyntax
             }
         }
 
-        protected override string ElementInfo
+        protected override string GetElementInfo()
         {
-            get
+            if (Fraction == null)
             {
-                if (Fraction == null)
-                {
-                    return Integral;
-                }
-                else
-                {
-                    return Integral + "." + Fraction;
-                }
+                return Integral;
+            }
+            else
+            {
+                return Integral + "." + Fraction;
             }
         }
 

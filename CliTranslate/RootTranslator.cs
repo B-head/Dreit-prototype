@@ -12,7 +12,7 @@ namespace CliTranslate
 {
     public class RootTranslator : Translator
     {
-        private Dictionary<Scope, dynamic> BuilderDictonary;
+        private Dictionary<IScope, dynamic> BuilderDictonary;
         private AssemblyBuilder Assembly;
         private ModuleBuilder Module;
         public string Name { get; private set; }
@@ -21,14 +21,14 @@ namespace CliTranslate
         public RootTranslator(string name, string dir = null)
             : base(null, null)
         {
-            BuilderDictonary = new Dictionary<Scope, dynamic>();
+            BuilderDictonary = new Dictionary<IScope, dynamic>();
             Name = name;
             FileName = name + ".exe";
             Assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave, dir);
             Module = Assembly.DefineDynamicModule(Name, FileName);
         }
 
-        internal dynamic GetBuilder(Scope path)
+        internal dynamic GetBuilder(IScope path)
         {
             if (path is VoidSymbol)
             {
@@ -37,7 +37,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type GetReturnBuilder(Scope path)
+        internal Type GetReturnBuilder(IScope path)
         {
             if (path is VoidSymbol)
             {
@@ -46,7 +46,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type[] GetArgumentBuilders(IEnumerable<Scope> path)
+        internal Type[] GetArgumentBuilders(IEnumerable<IScope> path)
         {
             List<Type> result = new List<Type>();
             foreach(var v in path)
@@ -56,7 +56,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        internal Type[] GetArgumentBuilders(Type prim, IEnumerable<Scope> path)
+        internal Type[] GetArgumentBuilders(Type prim, IEnumerable<IScope> path)
         {
             List<Type> result = new List<Type>();
             result.Add(prim);
@@ -67,7 +67,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        public void RegisterBuilder(Scope path, dynamic builder)
+        public void RegisterBuilder(IScope path, dynamic builder)
         {
             if(path == null || builder == null)
             {
@@ -79,7 +79,7 @@ namespace CliTranslate
             }
         }
 
-        public override ModuleTranslator CreateModule(Scope path)
+        public override ModuleTranslator CreateModule(IScope path)
         {
             return new ModuleTranslator(path, this, Module);
         }

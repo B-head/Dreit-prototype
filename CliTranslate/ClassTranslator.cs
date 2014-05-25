@@ -15,17 +15,17 @@ namespace CliTranslate
     {
         private TypeBuilder Class;
         private MethodBuilder ClassContext;
-        private Dictionary<Scope, dynamic> InitDictonary;
+        private Dictionary<IScope, dynamic> InitDictonary;
         private MethodBuilder InitContext;
         private ILGenerator InitGenerator;
 
-        public ClassTranslator(Scope path, Translator parent, TypeBuilder builder)
+        public ClassTranslator(IScope path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
             Class = builder;
             ClassContext = Class.DefineMethod("@@static_init", MethodAttributes.SpecialName | MethodAttributes.Static);
             parent.BuildInitCall(ClassContext);
-            InitDictonary = new Dictionary<Scope, dynamic>();
+            InitDictonary = new Dictionary<IScope, dynamic>();
             InitContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName);
             InitGenerator = InitContext.GetILGenerator();
             Generator = ClassContext.GetILGenerator();
@@ -33,7 +33,7 @@ namespace CliTranslate
             var deccls = path as DeclateClass;
             if (deccls != null && deccls.IsDefaultConstructor)
             {
-                CreateConstructor(deccls.Default, new Scope[] { });
+                CreateConstructor(deccls.Default, new IScope[] { });
             }
         }
 
@@ -49,7 +49,7 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public RoutineTranslator CreateConstructor(Scope path, IEnumerable<Scope> argumentType)
+        public RoutineTranslator CreateConstructor(IScope path, IEnumerable<IScope> argumentType)
         {
             var argbld = Root.GetArgumentBuilders(argumentType);
             var ctor = Class.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, argbld);
@@ -57,13 +57,13 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, ctor, InitContext);
         }
 
-        public RoutineTranslator CreateDestructor(Scope path)
+        public RoutineTranslator CreateDestructor(IScope path)
         {
             var builder = Class.DefineMethod("Finalize", MethodAttributes.ReuseSlot | MethodAttributes.Family);
             return new RoutineTranslator(path, this, builder, true);
         }
 
-        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, IEnumerable<Scope> argumentType)
+        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(argumentType);
@@ -71,13 +71,13 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(Scope path)
+        public override ClassTranslator CreateClass(IScope path)
         {
             var builder = Class.DefineNestedType(path.Name);
             return new ClassTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(Scope path, Scope typeName)
+        public override void CreateVariant(IScope path, IScope typeName)
         {
             var type = Root.GetBuilder(typeName);
             var builder = Class.DefineField(path.Name, type, FieldAttributes.Public);
@@ -89,7 +89,7 @@ namespace CliTranslate
             InitGenerator.Emit(OpCodes.Stfld, builder);
         }
 
-        public override void GenerateLoad(Scope name, bool address = false)
+        public override void GenerateLoad(IScope name, bool address = false)
         {
             if (name is ThisSymbol)
             {
@@ -104,7 +104,7 @@ namespace CliTranslate
             BuildLoad(temp, address);
         }
 
-        public override void GenerateStore(Scope name, bool address = false)
+        public override void GenerateStore(IScope name, bool address = false)
         {
             if (name is ThisSymbol)
             {

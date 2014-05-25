@@ -7,7 +7,7 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class ExpressionGroup : MonadicExpression
     {
-        public override DataType DataType
+        public override IDataType DataType
         {
             get { return Child.DataType; }
         }

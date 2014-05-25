@@ -58,7 +58,7 @@ namespace AbstractSyntax.Visualizer
                 nodes.Add(node);
                 foreach (var v in element)
                 {
-                    AddTree(node.Nodes, v);
+                    AddTree(node.Nodes, (Element)v);
                 }
             }
         }

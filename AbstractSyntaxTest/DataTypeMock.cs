@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntaxTest
 {
-    class DataTypeMock : DataType
+    class DataTypeMock : Scope, IDataType
     {
     }
 }

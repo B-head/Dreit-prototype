@@ -18,7 +18,7 @@ namespace AbstractSyntax.Symbol
         protected override void SpreadElement(Element parent, Scope scope)
         {
             base.SpreadElement(parent, scope);
-            _ArgumentType = new List<DataType>();
+            _ArgumentType = new List<IDataType>();
         }
     }
 }

@@ -7,16 +7,29 @@ using System.Text;
 
 namespace AbstractSyntax
 {
+    public interface IElement : IReadOnlyList<IElement>
+    {
+        TextPosition Position { get; }
+        IScope CurrentIScope { get; }
+        IDataType DataType { get; }
+        bool IsVoidValue { get; }
+    }
+
     [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
-    public abstract class Element : IReadOnlyList<Element>
+    public abstract class Element : IElement
     {
-        public TextPosition Position { get; internal set; }
-        public Element Parent { get; private set; }
-        public Scope CurrentScope { get; private set; }
-        public Root Root { get; private set; }
+        public TextPosition Position { get; set; }
+        internal Element Parent { get; private set; }
+        internal Scope CurrentScope { get; private set; }
+        internal Root Root { get; private set; }
 
-        public virtual DataType DataType
+        public IScope CurrentIScope 
+        {
+            get { return CurrentScope; }
+        }
+
+        public virtual IDataType DataType
         {
             get { return Root.Void; }
         }
@@ -26,17 +39,12 @@ namespace AbstractSyntax
             get { return DataType is VoidSymbol; }
         }
 
-        protected virtual string ElementInfo
-        {
-            get { return null; }
-        }
-
         public virtual int Count
         {
             get { return 0; }
         }
 
-        public virtual Element this[int index]
+        public virtual IElement this[int index]
         {
             get { throw new ArgumentOutOfRangeException(); }
         }
@@ -115,11 +123,16 @@ namespace AbstractSyntax
             Root.MessageManager.Append(info);
         }
 
+        protected virtual string GetElementInfo()
+        {
+            return null;
+        }
+
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(Position).Append(" ").Append(this.GetType().Name);
-            var add = ElementInfo;
+            var add = GetElementInfo();
             if (add != null)
             {
                 builder.Append(": ").Append(add);
@@ -127,7 +140,7 @@ namespace AbstractSyntax
             return builder.ToString();
         }
 
-        public IEnumerator<Element> GetEnumerator()
+        public IEnumerator<IElement> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
             {

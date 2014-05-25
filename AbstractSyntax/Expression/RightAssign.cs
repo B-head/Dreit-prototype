@@ -34,7 +34,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get
             {
@@ -101,12 +101,12 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public bool HasCallTarget(Element element)
+        public bool HasCallTarget(IElement element)
         {
             return Right == element;
         }
 
-        public DataType GetCallType()
+        public IDataType GetCallType()
         {
             return Left.DataType;
         }

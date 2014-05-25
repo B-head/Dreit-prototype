@@ -35,7 +35,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get 
             {
@@ -60,7 +60,7 @@ namespace AbstractSyntax.Expression
             get { return 2; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get
             {
@@ -90,12 +90,12 @@ namespace AbstractSyntax.Expression
             //}
         }
 
-        public bool HasCallTarget(Element element)
+        public bool HasCallTarget(IElement element)
         {
             return Access == element;
         }
 
-        public DataType GetCallType()
+        public IDataType GetCallType()
         {
             if (Arguments.GetDataTypes().Count != 1)
             {

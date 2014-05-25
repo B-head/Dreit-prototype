@@ -16,7 +16,7 @@ namespace CliTranslate
         private Type Prim;
         private MethodBuilder ClassContext;
 
-        public PrimitiveTranslator(Scope path, Translator parent, TypeBuilder builder, PrimitivePragmaType type)
+        public PrimitiveTranslator(IScope path, Translator parent, TypeBuilder builder, PrimitivePragmaType type)
             : base(path, parent)
         {
             Class = builder;
@@ -58,7 +58,7 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, IEnumerable<Scope> argumentType)
+        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(Prim, argumentType);

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class UnknownSymbol : DataType
+    public class UnknownSymbol : Scope, IDataType
     {
         public UnknownSymbol()
         {
             Name = "@@unknown";
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get { return Root.Unknown; }
         }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class ClassSymbol : DataType
+    public class ClassSymbol : Scope, IDataType
     {
         protected List<RoutineSymbol> initializer;
         protected List<ClassSymbol> _InheritRefer;
@@ -24,12 +24,12 @@ namespace AbstractSyntax.Symbol
             get { return _InheritRefer; }
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get { return this; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             foreach(var a in initializer)
             {
@@ -40,7 +40,7 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        public override PrimitivePragmaType GetPrimitiveType()
+        public PrimitivePragmaType GetPrimitiveType()
         {
             PrimitivePragma prim = null;
             if (InheritRefer.Count == 1)

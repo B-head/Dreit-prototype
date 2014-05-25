@@ -13,7 +13,7 @@ namespace AbstractSyntax.Daclate
         public IdentifierAccess Ident { get; set; }
         public Element ExplicitType { get; set; }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get
             {
@@ -43,7 +43,7 @@ namespace AbstractSyntax.Daclate
             get { return Ident.Reference; }
         }
 
-        public void RefarenceResolution(Scope scope)
+        public void RefarenceResolution(IScope scope)
         {
             Ident.RefarenceResolution(scope);
         }
@@ -53,7 +53,7 @@ namespace AbstractSyntax.Daclate
             get { return 2; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get
             {

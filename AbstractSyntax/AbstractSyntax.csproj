@@ -48,7 +48,6 @@
     <Compile Include="AliasDirective.cs" />
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
-    <Compile Include="DataType.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />

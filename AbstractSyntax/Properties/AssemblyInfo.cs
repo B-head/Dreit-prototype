@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: InternalsVisibleTo("SyntacticAnalysis")]
 [assembly: InternalsVisibleTo("AbstractSyntaxTest")]
 
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。

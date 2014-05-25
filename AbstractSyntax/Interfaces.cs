@@ -6,15 +6,20 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
+    public interface IDataType : IScope
+    {
+
+    }
+
     interface IAccess
     {
         OverLoad Reference { get; }
-        void RefarenceResolution(Scope scope);
+        void RefarenceResolution(IScope scope);
     }
 
     interface ICaller
     {
-        bool HasCallTarget(Element element);
-        DataType GetCallType();
+        bool HasCallTarget(IElement element);
+        IDataType GetCallType();
     }
 }

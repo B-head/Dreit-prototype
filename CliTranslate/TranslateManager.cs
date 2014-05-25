@@ -12,14 +12,14 @@ namespace CliTranslate
 {
     public class TranslateManager
     {
-        private Dictionary<Scope, Translator> TransDictionary;
-        private LinkedList<Scope> SpreadQueue;
+        private Dictionary<IScope, Translator> TransDictionary;
+        private LinkedList<IScope> SpreadQueue;
         private RootTranslator Root;
 
         public TranslateManager(string name, string dir = null)
         {
-            TransDictionary = new Dictionary<Scope, Translator>();
-            SpreadQueue = new LinkedList<Scope>();
+            TransDictionary = new Dictionary<IScope, Translator>();
+            SpreadQueue = new LinkedList<IScope>();
             Root = new RootTranslator(name, dir);
         }
 
@@ -43,9 +43,9 @@ namespace CliTranslate
                 var f = SpreadQueue.First.Value;
                 SpreadQueue.RemoveFirst();
                 Translator t = null;
-                if (TransDictionary.ContainsKey(f.CurrentScope))
+                if (TransDictionary.ContainsKey(f.CurrentIScope))
                 {
-                    t = TransDictionary[f.CurrentScope];
+                    t = TransDictionary[f.CurrentIScope];
                 }
                 SpreadTranslate((dynamic)f, t);
             }
@@ -53,7 +53,7 @@ namespace CliTranslate
             Root.BuildCode();
         }
 
-        private void ChildSpreadTranslate(Scope scope, Translator trans)
+        private void ChildSpreadTranslate(IScope scope, Translator trans)
         {
             foreach (var v in scope.ScopeChild)
             {
@@ -61,7 +61,7 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                if(v is DataType)
+                if(v is IDataType)
                 {
                     SpreadQueue.AddFirst(v);
                 }
@@ -72,7 +72,7 @@ namespace CliTranslate
             }
         }
 
-        private void SpreadTranslate(Scope scope, Translator trans)
+        private void SpreadTranslate(IScope scope, Translator trans)
         {
             ChildSpreadTranslate(scope, trans);
         }
@@ -131,7 +131,7 @@ namespace CliTranslate
                 temp = trans.CreateRoutine(scope, scope.ReturnType, scope.ArgumentType);
             }
             TransDictionary.Add(scope, temp);
-            temp.CreateArguments(scope.Arguments.Cast<Scope>());
+            temp.CreateArguments(scope.Arguments.Cast<IScope>());
             ChildSpreadTranslate(scope, temp);
         }
 
@@ -144,7 +144,7 @@ namespace CliTranslate
             trans.CreateVariant(scope, scope.DataType);
         }
 
-        private void ChildTranslate(Element element, Translator trans)
+        private void ChildTranslate(IElement element, Translator trans)
         {
             foreach(var v in element)
             {
@@ -156,14 +156,14 @@ namespace CliTranslate
             }
         }
 
-        private void Translate(Element element, Translator trans)
+        private void Translate(IElement element, Translator trans)
         {
             ChildTranslate(element, trans);
         }
 
         private void Translate(DirectiveList element, Translator trans)
         {
-            if(element.Parent is NameSpace && !(element.Parent is DeclateModule))
+            if (element.IsNoReturn)
             {
                 ChildTranslate(element, trans);
                 return;
@@ -176,8 +176,7 @@ namespace CliTranslate
                     trans.GenerateControl(OpCodes.Pop);
                 }
             }
-            var rout = element.Parent as DeclateRoutine;
-            if (rout != null && rout.IsThisReturn)
+            if (element.IsThisReturn)
             {
                 trans.GenerateControl(OpCodes.Ldarg_0);
                 trans.GenerateControl(OpCodes.Ret);
@@ -323,7 +322,8 @@ namespace CliTranslate
         private void CallTranslate(CastPragma call, TupleList arguments, Translator trans)
         {
             Translate((dynamic)arguments[1], trans);
-            PrimitivePragmaType prim = arguments[0].DataType.GetPrimitiveType();
+            var cls = arguments[0].DataType as ClassSymbol;
+            var prim = cls.GetPrimitiveType();
             switch(prim)
             {
                 case PrimitivePragmaType.Integer8: trans.GenerateControl(OpCodes.Conv_I1); break;

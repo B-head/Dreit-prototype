@@ -16,7 +16,7 @@ namespace CliTranslate
         private TypeBuilder Lexical;
         private LocalBuilder LexicalInstance;
 
-        public RoutineTranslator(Scope path, Translator parent, MethodBuilder method, bool isDestructor = false)
+        public RoutineTranslator(IScope path, Translator parent, MethodBuilder method, bool isDestructor = false)
             : base(path, parent)
         {
             Method = method;
@@ -30,7 +30,7 @@ namespace CliTranslate
             }
         }
 
-        public RoutineTranslator(Scope path, Translator parent, ConstructorBuilder method, MethodBuilder init)
+        public RoutineTranslator(IScope path, Translator parent, ConstructorBuilder method, MethodBuilder init)
             : base(path, parent)
         {
             Method = method;
@@ -76,7 +76,7 @@ namespace CliTranslate
             return Lexical.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, IEnumerable<Scope> argumentType)
+        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
         {
             PrepareLexical();
             var retbld = Root.GetReturnBuilder(returnType);
@@ -85,14 +85,14 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(Scope path)
+        public override ClassTranslator CreateClass(IScope path)
         {
             PrepareLexical();
             var builder = Lexical.DefineNestedType(path.Name);
             return new ClassTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(Scope path, Scope type)
+        public override void CreateVariant(IScope path, IScope type)
         {
             PrepareLexical();
             //var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Public);
@@ -100,7 +100,7 @@ namespace CliTranslate
             Root.RegisterBuilder(path, builder);
         }
 
-        public void CreateArguments(IEnumerable<Scope> path)
+        public void CreateArguments(IEnumerable<IScope> path)
         {
             int next = Parent is PrimitiveTranslator ? 2 : 1;
             foreach (var v in path)
@@ -120,7 +120,7 @@ namespace CliTranslate
             }
         }
 
-        public override void GenerateLoad(Scope name, bool address = false)
+        public override void GenerateLoad(IScope name, bool address = false)
         {
             if (name is ThisSymbol)
             {
@@ -136,7 +136,7 @@ namespace CliTranslate
             BuildLoad(temp, address);
         }
 
-        public override void GenerateStore(Scope name, bool address = false)
+        public override void GenerateStore(IScope name, bool address = false)
         {
             if (name is ThisSymbol)
             {
