@@ -23,7 +23,7 @@ namespace AbstractSyntax.Expression
                     return _IsTacitThis.Value;
                 }
                 var refer = CallScope;
-                if (refer != null && refer.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine && !(refer is ThisSymbol))
+                if (refer != null && refer.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine && !(refer is ThisSymbol) && !(Parent is MemberAccess))
                 {
                     _IsTacitThis = true;
                 }

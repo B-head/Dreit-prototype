@@ -5,8 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using AbstractSyntax;
 
-namespace AbstractSyntax
+namespace Dlight
 {
     public static class CompileMessageBuilder
     {
@@ -103,7 +104,7 @@ namespace AbstractSyntax
         }
     }
 
-    [SerializableAttribute]
+    [Serializable]
     public class CompileMessageBuildExcepsion : Exception
     {
         public string Exp { get; set; }

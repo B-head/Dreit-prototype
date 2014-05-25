@@ -1,5 +1,15 @@
-﻿
-      routine foo(a:Int32, x:Binary64) :: a + x + 20
-      routine foo(b:Int32, c:Int32) :: b + c + 55
-      echo foo := 10, 55.55
-      echo foo := 20, 30
+﻿Rand =: var rand
+echo rand.value
+echo rand.gen
+echo rand.gen
+echo rand.gen
+
+class Rand
+{
+	var value := 98765
+
+	routine gen
+	{
+		return value := value * 1103515245 + 12345
+	}
+}

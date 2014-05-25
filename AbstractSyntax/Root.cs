@@ -16,7 +16,8 @@ namespace AbstractSyntax
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
         internal UnknownOverLoad UnknownOverLoad { get; private set; }
-        internal ConversionManager Conversion;
+        internal ConversionManager Conversion { get; set; }
+        internal Dictionary<TokenType, ConversionManager> OpManager { get; set; }
         public CompileMessageManager MessageManager { get; private set; }
 
         public Root()
@@ -31,11 +32,12 @@ namespace AbstractSyntax
             Conversion = new ConversionManager(Void, Error, Unknown);
             MessageManager = new CompileMessageManager();
             CreatePragma();
+            CreateOperatorManager();
         }
 
         public override int Count
         {
-            get { return 4; }
+            get { return 5; }
         }
 
         public override Element this[int index]
@@ -47,7 +49,8 @@ namespace AbstractSyntax
                     case 0: return ExpList;
                     case 1: return PragmaList;
                     case 2: return Void;
-                    case 3: return Unknown;
+                    case 3: return Error;
+                    case 4: return Unknown;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -96,6 +99,16 @@ namespace AbstractSyntax
             AppendPragma("Natural64", new PrimitivePragma(PrimitivePragmaType.Natural64));
             AppendPragma("Binary32", new PrimitivePragma(PrimitivePragmaType.Binary32));
             AppendPragma("Binary64", new PrimitivePragma(PrimitivePragmaType.Binary64));
+        }
+
+        private void CreateOperatorManager()
+        {
+            OpManager = new Dictionary<TokenType, ConversionManager>();
+            OpManager.Add(TokenType.Add, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.Subtract, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.Multiply, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.Divide, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.Modulo, new ConversionManager(Void, Error, Unknown));
         }
     }
 }

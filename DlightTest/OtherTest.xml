@@ -30,7 +30,7 @@
     <output>7</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       echo 1 + 2.5
     </code>
@@ -43,71 +43,5 @@
     </code>
     <error key="error-token"/>
     <error key="error-token"/>
-  </case>
-
-  <case>
-    <code>
-      class A
-      {
-      var value := 500
-      }
-
-      A() =: var a:A
-      echo a.value
-    </code>
-    <output>500</output>
-  </case>
-
-  <case>
-    <code>
-      class A
-      {
-      var value := 500
-      }
-
-      A() =: var a
-      echo a.value
-    </code>
-    <output>500</output>
-  </case>
-
-  <case>
-    <code>
-      class Counter
-      {
-      var value := 0
-      routine next() :: value := value + 1
-      }
-
-      Counter() =: var counter
-      echo counter.next()
-      echo counter.next()
-      echo counter.next()
-    </code>
-    <output>1 2 3</output>
-  </case>
-
-  <case ignore="true">
-    <code>
-      class A
-      {
-      var value := 11
-      }
-
-      class B
-      {
-      var value := 22
-      routine from(a:A)
-      {
-      value := a.value
-      return this
-      }
-
-      var a := A()
-      var b:B := a
-      echo b.value
-      }
-    </code>
-    <output>11</output>
   </case>
 </compile-test>

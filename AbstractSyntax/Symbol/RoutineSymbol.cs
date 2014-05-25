@@ -9,6 +9,7 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class RoutineSymbol : Scope
     {
+        public TokenType Operator { get; set; }
         protected List<DataType> _ArgumentType;
         protected DataType _ReturnType;
 
@@ -20,6 +21,11 @@ namespace AbstractSyntax.Symbol
         public virtual DataType ReturnType
         {
             get { return _ReturnType; }
+        }
+
+        public override DataType DataType
+        {
+            get { return ReturnType; }
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)

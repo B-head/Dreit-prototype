@@ -10,23 +10,34 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class CastPragma : RoutineSymbol, IPragma
     {
-        //internal override TypeMatchResult GetTypeMatch(IReadOnlyList<DataType> type)
-        //{
-        //    if (type.Count != 2)
-        //    {
-        //        return TypeMatchResult.MissMatchCount;
-        //    }
-        //    else if (type[0] == type[1])
-        //    {
-        //        return TypeMatchResult.MissMatchType;
-        //    }
-        //    return TypeMatchResult.PerfectMatch;
-        //}
+        public GenericSymbol GenericType { get; set; }
+
+        public CastPragma()
+        {
+            GenericType = new GenericSymbol { Name = "T" };
+        }
+
+        public override int Count
+        {
+            get { return 1; }
+        }
+
+        public override Element this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0: return GenericType;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
 
         //todo ジェネリクスの構文で型検査をする。
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
         }
     }
 }

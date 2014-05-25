@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Symbol;
+using AbstractSyntax.Daclate;
 
 namespace CliTranslate
 {
@@ -15,40 +16,51 @@ namespace CliTranslate
         private TypeBuilder Class;
         private MethodBuilder ClassContext;
         private Dictionary<Scope, dynamic> InitDictonary;
-        private ILGenerator CtorGenerator;
+        private MethodBuilder InitContext;
+        private ILGenerator InitGenerator;
 
         public ClassTranslator(Scope path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
             Class = builder;
-            ClassContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName | MethodAttributes.Static);
+            ClassContext = Class.DefineMethod("@@static_init", MethodAttributes.SpecialName | MethodAttributes.Static);
             parent.BuildInitCall(ClassContext);
             InitDictonary = new Dictionary<Scope, dynamic>();
+            InitContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName);
+            InitGenerator = InitContext.GetILGenerator();
             Generator = ClassContext.GetILGenerator();
             Root.RegisterBuilder(path, Class);
-            CreateConstructor(path);
+            var deccls = path as DeclateClass;
+            if (deccls != null && deccls.IsDefaultConstructor)
+            {
+                CreateConstructor(deccls.Default, new Scope[] { });
+            }
         }
 
         public override void BuildCode()
         {
             base.BuildCode();
-            CtorGenerator.Emit(OpCodes.Ret);
+            InitGenerator.Emit(OpCodes.Ret);
             Class.CreateType();
-        }
-
-        private ConstructorBuilder CreateConstructor(Scope path)
-        {
-            var ctor = Class.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, Type.EmptyTypes);
-            Root.RegisterBuilder(path, ctor);
-            CtorGenerator = ctor.GetILGenerator();
-            CtorGenerator.Emit(OpCodes.Ldarg_0);
-            CtorGenerator.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes));
-            return ctor;
         }
 
         internal override TypeBuilder CreateLexical(string name)
         {
-            return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName);
+            return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
+        }
+
+        public RoutineTranslator CreateConstructor(Scope path, Scope[] argumentType)
+        {
+            var argbld = Root.GetArgumentBuilders(argumentType);
+            var ctor = Class.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, argbld);
+            Root.RegisterBuilder(path, ctor);
+            return new RoutineTranslator(path, this, ctor, InitContext);
+        }
+
+        public RoutineTranslator CreateDestructor(Scope path)
+        {
+            var builder = Class.DefineMethod("Finalize", MethodAttributes.ReuseSlot | MethodAttributes.Family);
+            return new RoutineTranslator(path, this, builder, true);
         }
 
         public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
@@ -72,9 +84,9 @@ namespace CliTranslate
             Root.RegisterBuilder(path, builder);
             var init = Class.DefineField(path.Name + "@@default", type, FieldAttributes.Static | FieldAttributes.SpecialName);
             InitDictonary.Add(path, init);
-            CtorGenerator.Emit(OpCodes.Ldarg_0);
-            CtorGenerator.Emit(OpCodes.Ldsfld, init);
-            CtorGenerator.Emit(OpCodes.Stfld, builder);
+            InitGenerator.Emit(OpCodes.Ldarg_0);
+            InitGenerator.Emit(OpCodes.Ldsfld, init);
+            InitGenerator.Emit(OpCodes.Stfld, builder);
         }
 
         public override void GenerateLoad(Scope name, bool address = false)

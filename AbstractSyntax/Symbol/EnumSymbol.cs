@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Symbol
 {
-    class OperatorManager
+    [Serializable]
+    public class EnumSymbol : DataType
     {
+
     }
 }

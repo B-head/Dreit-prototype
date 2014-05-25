@@ -13,7 +13,6 @@ namespace CliTranslate
     public class RootTranslator : Translator
     {
         private Dictionary<Scope, dynamic> BuilderDictonary;
-        private Dictionary<Scope, ConstructorInfo> CtorDictonary;
         private AssemblyBuilder Assembly;
         private ModuleBuilder Module;
         public string Name { get; private set; }
@@ -23,7 +22,6 @@ namespace CliTranslate
             : base(null, null)
         {
             BuilderDictonary = new Dictionary<Scope, dynamic>();
-            CtorDictonary = new Dictionary<Scope, ConstructorInfo>();
             Name = name;
             FileName = name + ".exe";
             Assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave, dir);
@@ -36,10 +34,6 @@ namespace CliTranslate
             {
                 return typeof(void);
             }
-            if(path is UnknownSymbol)
-            {
-                throw new ArgumentException();
-            }
             return BuilderDictonary[path];
         }
 
@@ -48,10 +42,6 @@ namespace CliTranslate
             if (path is VoidSymbol)
             {
                 return typeof(void);
-            }
-            if (path is UnknownSymbol)
-            {
-                throw new ArgumentException();
             }
             return BuilderDictonary[path];
         }
@@ -77,38 +67,15 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        internal ConstructorInfo GetConstructor(Scope path)
-        {
-            if (path == null)
-            {
-                throw new ArgumentNullException();
-            }
-            if (path is UnknownSymbol || path is VoidSymbol)
-            {
-                throw new ArgumentException();
-            }
-            return CtorDictonary[path];
-        }
-
         public void RegisterBuilder(Scope path, dynamic builder)
         {
             if(path == null || builder == null)
             {
                 throw new ArgumentNullException();
             }
-            if(builder is ConstructorInfo)
+            if (!BuilderDictonary.ContainsKey(path))
             {
-                if (!CtorDictonary.ContainsKey(path))
-                {
-                    CtorDictonary.Add(path, builder);
-                }
-            }
-            else
-            {
-                if (!BuilderDictonary.ContainsKey(path))
-                {
-                    BuilderDictonary.Add(path, builder);
-                }
+                BuilderDictonary.Add(path, builder);
             }
         }
 

@@ -90,6 +90,11 @@ namespace AbstractSyntax.Expression
             //}
         }
 
+        public bool HasCallTarget(Element element)
+        {
+            return Access == element;
+        }
+
         public DataType GetCallType()
         {
             if (Arguments.GetDataTypes().Count != 1)

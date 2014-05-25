@@ -19,6 +19,7 @@ namespace AbstractSyntax
 
     interface ICaller
     {
+        bool HasCallTarget(Element element);
         DataType GetCallType();
     }
 }

@@ -158,8 +158,7 @@ namespace CliTranslate
 
         private DeclateGeneric ConvertGeneric(Type generic)
         {
-            var ident = new IdentifierAccess { Value = generic.GetPureName(), IsImport = true };
-            return new DeclateGeneric { Ident = ident, IsImport = true };//型制約を扱えるようにする必要あり。
+            return new DeclateGeneric { Name = generic.GetPureName(), IsImport = true };//型制約を扱えるようにする必要あり。
         }
 
         private TupleList CreateInheritList(List<Type> inherit)
@@ -217,8 +216,7 @@ namespace CliTranslate
 
         private DeclateEnum ImportEnum(Type enumType)
         {
-            var ident = new IdentifierAccess { Value = enumType.GetPureName(), IsImport = true };
-            var result = new DeclateEnum { Ident = ident, IsImport = true }; //後で作る。
+            var result = new DeclateEnum { Name = enumType.GetPureName(), IsImport = true }; //todo enum型を扱えるようにする。
             AppendPeir(result, enumType);
             return result;
         }

@@ -48,10 +48,12 @@ alias Integer32 Int32
 class Integer32 : @@Integer32
 {
 	operator +(other:Integer32) :: @@add(this, other)
+	operator +(other:Binary64) :: @@add(@@cast(other, this), other)
 	operator -(other:Integer32) :: @@sub(this, other)
 	operator *(other:Integer32) :: @@mul(this, other)
 	operator /(other:Integer32) :: @@div(this, other)
 	operator %(other:Integer32) :: @@mod(this, other)
+	operator %(other:Binary64) :: @@mod(@@cast(other, this), other)
 
 	routine from(other:Integer8) :: @@cast(this, other)
 	routine from(other:Integer16) :: @@cast(this, other)
@@ -85,6 +87,7 @@ class Integer64 : @@Integer64
 }
 
 alias Natural8 Byte
+alias Natural8 UInt8
 class Natural8 : @@Natural8
 {
 	operator +(other:Natural8) :: @@add(this, other)
@@ -104,6 +107,7 @@ class Natural8 : @@Natural8
 	routine from(other:Binary64) :: @@cast(this, other)
 }
 
+alias Natural16 UInt16
 class Natural16 : @@Natural16
 {
 	operator +(other:Natural16) :: @@add(this, other)
@@ -123,6 +127,7 @@ class Natural16 : @@Natural16
 	routine from(other:Binary64) :: @@cast(this, other)
 }
 
+alias Natural32 UInt32
 class Natural32 : @@Natural32
 {
 	operator +(other:Natural32) :: @@add(this, other)
@@ -142,6 +147,7 @@ class Natural32 : @@Natural32
 	routine from(other:Binary64) :: @@cast(this, other)
 }
 
+alias Natural64 UInt64
 class Natural64 : @@Natural64
 {
 	operator +(other:Natural64) :: @@add(this, other)
@@ -183,10 +189,12 @@ class Binary32 : @@Binary32
 class Binary64 : @@Binary64
 {
 	operator +(other:Binary64) :: @@add(this, other)
+	operator +(other:Integer32) :: @@add(this, @@cast(this, other))
 	operator -(other:Binary64) :: @@sub(this, other)
 	operator *(other:Binary64) :: @@mul(this, other)
 	operator /(other:Binary64) :: @@div(this, other)
 	operator %(other:Binary64) :: @@mod(this, other)
+	operator %(other:Integer32) :: @@mod(this, @@cast(this, other))
 	
 	routine from(other:Integer8) :: @@cast(this, other)
 	routine from(other:Integer16) :: @@cast(this, other)

@@ -50,7 +50,6 @@
     <Compile Include="ConversionManager.cs" />
     <Compile Include="DataType.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="OperatorManager.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
     <Compile Include="Expression\CallRoutine.cs" />
@@ -62,7 +61,7 @@
     <Compile Include="Daclate\DeclateOperator.cs" />
     <Compile Include="Daclate\DeclateRoutine.cs" />
     <Compile Include="Daclate\DeclateVariant.cs" />
-    <Compile Include="Expression\DyadicCalculate.cs" />
+    <Compile Include="Expression\Calculate.cs" />
     <Compile Include="Expression\DyadicExpression.cs" />
     <Compile Include="Pragma\CastPragma.cs" />
     <Compile Include="Pragma\PrimitivePragma.cs" />
@@ -81,8 +80,10 @@
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
-    <Compile Include="Statement\IfStatement.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
+    <Compile Include="Symbol\DefaultSymbol.cs" />
+    <Compile Include="Symbol\EnumSymbol.cs" />
+    <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
     <Compile Include="Symbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
@@ -102,11 +103,13 @@
     </Compile>
     <Compile Include="Symbol\VoidSymbol.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Visualizer\SyntaxVisualizerForm.resx">
       <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SyntaxDiagram.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

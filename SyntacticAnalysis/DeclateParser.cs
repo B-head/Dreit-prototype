@@ -72,9 +72,9 @@ namespace SyntacticAnalysis
         private static DeclateGeneric DeclateGeneric(ChainParser cp)
         {
             return cp.Begin<DeclateGeneric>()
-                .Transfer((s, e) => s.Ident = e, IdentifierAccess)
+                .Type((s, t)=> s.Name = t.Text, TokenType.LetterStartString)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.SpecializationType = e, Addtive)
+                .Than().Transfer((s, e) => s.SpecialTypeAccess = e, Addtive)
                 .EndIf().End();
         }
 

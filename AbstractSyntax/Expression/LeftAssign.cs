@@ -109,13 +109,13 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public bool HasCallTarget(Element element)
+        {
+            return Left == element;
+        }
+
         public DataType GetCallType()
         {
-            DeclateVariant temp = Left as DeclateVariant;
-            if (temp == null)
-            {
-                return Root.Unknown;
-            }
             return Right.DataType;
         }
     }

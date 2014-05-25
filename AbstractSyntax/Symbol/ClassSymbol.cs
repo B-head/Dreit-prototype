@@ -11,17 +11,33 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class ClassSymbol : DataType
     {
-        protected List<ClassSymbol> _InheritRefer; 
+        protected List<RoutineSymbol> initializer;
+        protected List<ClassSymbol> _InheritRefer;
+
+        public ClassSymbol()
+        {
+            initializer = new List<RoutineSymbol>();
+        }
         
         public virtual List<ClassSymbol> InheritRefer
         {
             get { return _InheritRefer; }
         }
 
-        //todo コンストラクタや明示的変換に対応する。
+        public override DataType DataType
+        {
+            get { return this; }
+        }
+
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { });
+            foreach(var a in initializer)
+            {
+                foreach(var b in a.GetTypeMatch(type))
+                {
+                    yield return b;
+                }
+            }
         }
 
         public override PrimitivePragmaType GetPrimitiveType()
