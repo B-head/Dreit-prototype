@@ -52,7 +52,7 @@ namespace CliTranslate
 
         public override string ToString()
         {
-            return this.GetType().Name + ": " + Scope.GetFullName() + "(" + Scope.Id + ")";
+            return this.GetType().Name + ": " + Scope.GetFullName();
         }
 
         public virtual bool IsThisArg
@@ -70,7 +70,7 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
+        public virtual RoutineTranslator CreateRoutine(Scope path, Scope returnType, IEnumerable<Scope> argumentType)
         {
             throw new NotSupportedException();
         }

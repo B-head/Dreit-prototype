@@ -62,13 +62,13 @@ namespace CliTranslate
 
         private void PrepareLexical()
         {
-            if(Lexical == null)
-            {
-                Lexical = Parent.CreateLexical(Method.Name);
-                LexicalInstance = Generator.DeclareLocal(Lexical);
-                Generator.Emit(OpCodes.Newobj, Lexical.DefineDefaultConstructor(MethodAttributes.PrivateScope));
-                BuildStore(LexicalInstance, false);
-            }
+            //if(Lexical == null)
+            //{
+            //    Lexical = Parent.CreateLexical(Method.Name);
+            //    LexicalInstance = Generator.DeclareLocal(Lexical);
+            //    Generator.Emit(OpCodes.Newobj, Lexical.DefineDefaultConstructor(MethodAttributes.PrivateScope));
+            //    BuildStore(LexicalInstance, false);
+            //}
         }
 
         internal override TypeBuilder CreateLexical(string name)
@@ -76,7 +76,7 @@ namespace CliTranslate
             return Lexical.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
+        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, IEnumerable<Scope> argumentType)
         {
             PrepareLexical();
             var retbld = Root.GetReturnBuilder(returnType);
@@ -100,7 +100,7 @@ namespace CliTranslate
             Root.RegisterBuilder(path, builder);
         }
 
-        public void CreateArguments(Scope[] path)
+        public void CreateArguments(IEnumerable<Scope> path)
         {
             int next = Parent is PrimitiveTranslator ? 2 : 1;
             foreach (var v in path)

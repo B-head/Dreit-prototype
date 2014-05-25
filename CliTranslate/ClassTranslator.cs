@@ -49,7 +49,7 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public RoutineTranslator CreateConstructor(Scope path, Scope[] argumentType)
+        public RoutineTranslator CreateConstructor(Scope path, IEnumerable<Scope> argumentType)
         {
             var argbld = Root.GetArgumentBuilders(argumentType);
             var ctor = Class.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, argbld);
@@ -63,7 +63,7 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, builder, true);
         }
 
-        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
+        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, IEnumerable<Scope> argumentType)
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(argumentType);

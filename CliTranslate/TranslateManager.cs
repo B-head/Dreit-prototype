@@ -6,58 +6,21 @@ using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Linq;
 
 namespace CliTranslate
 {
     public class TranslateManager
     {
-        private SortedSet<Scope> SpreadQueue;
         private Dictionary<Scope, Translator> TransDictionary;
+        private LinkedList<Scope> SpreadQueue;
         private RootTranslator Root;
 
         public TranslateManager(string name, string dir = null)
         {
-            SpreadQueue = new SortedSet<Scope>(new SpreadPriority());
             TransDictionary = new Dictionary<Scope, Translator>();
+            SpreadQueue = new LinkedList<Scope>();
             Root = new RootTranslator(name, dir);
-        }
-
-        class SpreadPriority : IComparer<Scope>
-        {
-            public int Compare(Scope x, Scope y)
-            {
-                var a = ScopePriority(x) - ScopePriority(y);
-                if(a != 0)
-                {
-                    return a;
-                }
-                return x.Id - y.Id;
-            }
-
-            private int ScopePriority(Scope scope)
-            {
-                if (scope is Root) return 0;
-                if (scope is NameSpace) return 1;
-                if (scope is DeclateModule) return 2;
-                if (scope is DeclateClass) return 3;
-                if (scope is DeclateEnum) return 4;
-                if (scope is DeclateGeneric) return 5;
-                if (scope is DeclateRoutine) return 10;
-                if (scope is DeclateOperator) return 11;
-                if (scope is DeclateArgument) return 20;
-                if (scope is DeclateVariant) return 21;
-                return 100;
-            }
-        }
-
-        public void TranslateTo(Root root, ImportManager manager)
-        {
-            manager.TranslateImport(Root);
-            TransDictionary.Add(root, Root);
-            ChildSpreadTranslate(root, Root);
-            EnumSpreadTranslate();
-            Translate(root, Root);
-            Root.BuildCode();
         }
 
         public void Save()
@@ -70,26 +33,42 @@ namespace CliTranslate
             Root.Run();
         }
 
-        private void EnumSpreadTranslate()
+        public void TranslateTo(Root root, ImportManager manager)
         {
-            while(SpreadQueue.Count > 0)
+            manager.TranslateImport(Root);
+            TransDictionary.Add(root, Root);
+            SpreadTranslate(root, Root);
+            while (SpreadQueue.Count > 0)
             {
-                var v = SpreadQueue.Min;
-                SpreadQueue.Remove(v);
-                var trans = TransDictionary[v.CurrentScope];
-                SpreadTranslate((dynamic)v, trans);
+                var f = SpreadQueue.First.Value;
+                SpreadQueue.RemoveFirst();
+                Translator t = null;
+                if (TransDictionary.ContainsKey(f.CurrentScope))
+                {
+                    t = TransDictionary[f.CurrentScope];
+                }
+                SpreadTranslate((dynamic)f, t);
             }
+            Translate(root, Root);
+            Root.BuildCode();
         }
 
         private void ChildSpreadTranslate(Scope scope, Translator trans)
         {
             foreach (var v in scope.ScopeChild)
             {
-                if (v == null || v.IsImport || v is IPragma)
+                if (v == null)
                 {
                     continue;
                 }
-                SpreadQueue.Add(v);
+                if(v is DataType)
+                {
+                    SpreadQueue.AddFirst(v);
+                }
+                else
+                {
+                    SpreadQueue.AddLast(v);
+                }
             }
         }
 
@@ -100,6 +79,10 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateModule scope, Translator trans)
         {
+            if(TransDictionary.ContainsKey(scope))
+            {
+                return;
+            }
             var temp = trans.CreateModule(scope);
             TransDictionary.Add(scope, temp);
             ChildSpreadTranslate(scope, temp);
@@ -107,6 +90,10 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateClass scope, Translator trans)
         {
+            if (TransDictionary.ContainsKey(scope))
+            {
+                return;
+            }
             PrimitivePragmaType prim = scope.GetPrimitiveType();
             if (prim != PrimitivePragmaType.NotPrimitive)
             {
@@ -124,16 +111,15 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateRoutine scope, Translator trans)
         {
-            List<Scope> argumentType = new List<Scope>();
-            foreach(var v in scope.ArgumentType)
+            if (TransDictionary.ContainsKey(scope))
             {
-                argumentType.Add(v);
+                return;
             }
             RoutineTranslator temp;
             if (scope.IsConstructor)
             {
                 var cls = (ClassTranslator)trans;
-                temp = cls.CreateConstructor(scope, argumentType.ToArray());
+                temp = cls.CreateConstructor(scope, scope.ArgumentType);
             }
             else if (scope.IsDestructor)
             {
@@ -142,38 +128,27 @@ namespace CliTranslate
             }
             else
             {
-                temp = trans.CreateRoutine(scope, scope.ReturnType, argumentType.ToArray());
+                temp = trans.CreateRoutine(scope, scope.ReturnType, scope.ArgumentType);
             }
             TransDictionary.Add(scope, temp);
-            var arguments = new List<Scope>();
-            foreach (var v in scope.Arguments)
-            {
-                arguments.Add((Scope)v);
-            }
-            temp.CreateArguments(arguments.ToArray());
+            temp.CreateArguments(scope.Arguments.Cast<Scope>());
             ChildSpreadTranslate(scope, temp);
         }
 
         private void SpreadTranslate(DeclateVariant scope, Translator trans)
         {
+            if (TransDictionary.ContainsKey(scope))
+            {
+                return;
+            }
             trans.CreateVariant(scope, scope.DataType);
-        }
-
-        private void SpreadTranslate(DeclateArgument scope, Translator trans)
-        {
-            return;
-        }
-
-        private void SpreadTranslate(DeclateGeneric scope, Translator trans)
-        {
-            return;
         }
 
         private void ChildTranslate(Element element, Translator trans)
         {
             foreach(var v in element)
             {
-                if (v == null || v.IsImport || v is IPragma)
+                if (v == null)
                 {
                     continue;
                 }

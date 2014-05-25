@@ -46,7 +46,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type[] GetArgumentBuilders(params Scope[] path)
+        internal Type[] GetArgumentBuilders(IEnumerable<Scope> path)
         {
             List<Type> result = new List<Type>();
             foreach(var v in path)
@@ -56,7 +56,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        internal Type[] GetArgumentBuilders(Type prim, params Scope[] path)
+        internal Type[] GetArgumentBuilders(Type prim, IEnumerable<Scope> path)
         {
             List<Type> result = new List<Type>();
             result.Add(prim);

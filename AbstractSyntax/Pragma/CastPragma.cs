@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CastPragma : RoutineSymbol, IPragma
+    public class CastPragma : RoutineSymbol
     {
         public GenericSymbol GenericType { get; set; }
 

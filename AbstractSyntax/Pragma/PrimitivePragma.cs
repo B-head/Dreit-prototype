@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class PrimitivePragma : ClassSymbol, IPragma
+    public class PrimitivePragma : ClassSymbol
     {
         public PrimitivePragmaType Type { get; private set; }
 

@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CalculatePragma : RoutineSymbol, IPragma
+    public class CalculatePragma : RoutineSymbol
     {
         public CalculatePragmaType Type { get; private set; }
         public GenericSymbol GenericType { get; set; }

@@ -11,18 +11,10 @@ namespace AbstractSyntax
     [Serializable]
     public abstract class Element : IReadOnlyList<Element>
     {
-        private static int NextId = 1;
-        public int Id { get; private set; }
-        public TextPosition Position { get; set; }
+        public TextPosition Position { get; internal set; }
         public Element Parent { get; private set; }
         public Scope CurrentScope { get; private set; }
         public Root Root { get; private set; }
-        public bool IsImport { get; set; }
-
-        public Element()
-        {
-            Id = NextId++;
-        }
 
         public virtual DataType DataType
         {

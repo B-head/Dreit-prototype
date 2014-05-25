@@ -6,11 +6,6 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
-    public interface IPragma
-    {
-
-    }
-
     interface IAccess
     {
         OverLoad Reference { get; }
