@@ -27,3 +27,4 @@ class Random //クラス定義
 	}
 }
 ```
+このほかのコード例は、[DlightTest](https://github.com/B-head/Dlight-prototype/tree/master/DlightTest)のテストケースを御覧ください。
