@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CalculatePragma : RoutineSymbol, IPragma
+    public class CalculatePragma : RoutineSymbol
     {
         public CalculatePragmaType Type { get; private set; }
         public GenericSymbol GenericType { get; set; }
@@ -24,7 +24,7 @@ namespace AbstractSyntax.Pragma
             get { return 1; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get
             {
@@ -36,9 +36,9 @@ namespace AbstractSyntax.Pragma
             }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
         }
     }
 

@@ -17,15 +17,15 @@ namespace AbstractSyntax.Symbol
             _DataType = dataType;
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get { return _DataType; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { });
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { DataType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { DataType });
         }
     }
 }

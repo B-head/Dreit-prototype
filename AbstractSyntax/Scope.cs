@@ -6,23 +6,25 @@ using System.Text;
 
 namespace AbstractSyntax
 {
+    public interface IScope : IElement
+    {
+        string Name { get; }
+        IReadOnlyList<IScope> ScopeChild { get; }
+        string GetFullName();
+    }
+
     [Serializable]
-    public abstract class Scope : Element
+    public abstract class Scope : Element, IScope
     {
         public string Name { get; set; }
         private Dictionary<string, OverLoad> ScopeSymbol;
         private List<Scope> _ScopeChild;
-        public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }
+        public IReadOnlyList<IScope> ScopeChild { get { return _ScopeChild; } }
 
         public Scope()
         {
             ScopeSymbol = new Dictionary<string, OverLoad>();
             _ScopeChild = new List<Scope>();
-        }
-
-        protected override string ElementInfo
-        {
-            get { return Name; }
         }
 
         private void Merge(Scope other)
@@ -74,7 +76,7 @@ namespace AbstractSyntax
             builder.Append(Name);
         }
 
-        public void AppendChild(Scope scope)
+        private void AppendChild(Scope scope)
         {
             OverLoad ol;
             if (ScopeSymbol.ContainsKey(scope.Name))
@@ -103,7 +105,12 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
+        protected override string GetElementInfo()
+        {
+            return Name;
+        }
+
+        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }

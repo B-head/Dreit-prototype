@@ -16,7 +16,7 @@ namespace AbstractSyntax.Daclate
         public DirectiveList Block { get; set; }
         public bool IsThisReturn { get; private set; }
 
-        public override List<DataType> ArgumentType
+        public override List<IDataType> ArgumentType
         {
             get
             {
@@ -24,7 +24,7 @@ namespace AbstractSyntax.Daclate
                 {
                     return _ArgumentType;
                 }
-                _ArgumentType = new List<DataType>();
+                _ArgumentType = new List<IDataType>();
                 foreach (var v in Arguments)
                 {
                     var temp = v.DataType;
@@ -34,7 +34,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override DataType ReturnType
+        public override IDataType ReturnType
         {
             get
             {
@@ -121,7 +121,7 @@ namespace AbstractSyntax.Daclate
             get { return 4; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get
             {

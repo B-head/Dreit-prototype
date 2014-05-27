@@ -8,8 +8,8 @@ namespace AbstractSyntax
     [Serializable]
     public class TupleList : Element
     {
-        public List<Element> Child { get; set; }
-        private List<DataType> DataTypes;
+        private List<Element> Child;
+        private List<IDataType> DataTypes;
 
         public TupleList()
         {
@@ -32,18 +32,18 @@ namespace AbstractSyntax
             get { return Child.Count; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get { return Child[index]; }
         }
 
-        public IReadOnlyList<DataType> GetDataTypes()
+        public IReadOnlyList<IDataType> GetDataTypes()
         {
             if (DataTypes != null)
             {
                 return DataTypes;
             }
-            DataTypes = new List<DataType>();
+            DataTypes = new List<IDataType>();
             foreach(var v in Child)
             {
                 DataTypes.Add(v.DataType);

@@ -9,9 +9,9 @@ namespace SyntacticAnalysis
     public partial class Parser
     {
         private static ParserFunction<Element>[] directive = { Echo, Alias, Return, LeftAssign };
-        private static ParserFunction<Element>[] primary = { Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, IdentifierAccess, IfStatement }; 
+        private static ParserFunction<Element>[] primary = { Group, Number, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, IdentifierAccess, IfStatement };
 
-        public static Element Parse(TokenCollection collection)
+        public static DeclateModule Parse(TokenCollection collection)
         {
             var cp = new ChainParser(collection);
             var exp = RootDirectiveList(cp);

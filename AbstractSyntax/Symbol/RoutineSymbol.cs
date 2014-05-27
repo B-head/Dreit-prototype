@@ -10,25 +10,25 @@ namespace AbstractSyntax.Symbol
     public class RoutineSymbol : Scope
     {
         public TokenType Operator { get; set; }
-        protected List<DataType> _ArgumentType;
-        protected DataType _ReturnType;
+        protected List<IDataType> _ArgumentType;
+        protected IDataType _ReturnType;
 
-        public virtual List<DataType> ArgumentType
+        public virtual List<IDataType> ArgumentType
         {
             get { return _ArgumentType; }
         }
 
-        public virtual DataType ReturnType
+        public virtual IDataType ReturnType
         {
             get { return _ReturnType; }
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get { return ReturnType; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);
         }

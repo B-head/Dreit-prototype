@@ -16,7 +16,7 @@ namespace CliTranslate
         private TypeBuilder GlobalField;
         private MethodBuilder EntryContext;
 
-        public ModuleTranslator(Scope path, Translator parent, ModuleBuilder module)
+        public ModuleTranslator(IScope path, Translator parent, ModuleBuilder module)
             : base(path, parent)
         {
             Module = module;
@@ -37,7 +37,7 @@ namespace CliTranslate
             return Module.DefineType(name + "@@lexical", TypeAttributes.SpecialName);
         }
 
-        public override RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
+        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
         {
             var retbld = Root.GetReturnBuilder(returnType);
             var argbld = Root.GetArgumentBuilders(argumentType);
@@ -45,19 +45,19 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(Scope path)
+        public override ClassTranslator CreateClass(IScope path)
         {
             var builder = Module.DefineType(path.GetFullName());
             return new ClassTranslator(path, this, builder);
         }
 
-        public override PrimitiveTranslator CreatePrimitive(Scope path, PrimitivePragmaType type)
+        public override PrimitiveTranslator CreatePrimitive(IScope path, PrimitivePragmaType type)
         {
             var builder = Module.DefineType(path.GetFullName());
             return new PrimitiveTranslator(path, this, builder, type);
         }
 
-        public override void CreateVariant(Scope path, Scope type)
+        public override void CreateVariant(IScope path, IScope type)
         {
             var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Static);
             Root.RegisterBuilder(path, builder);

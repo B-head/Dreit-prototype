@@ -17,15 +17,15 @@ namespace AbstractSyntax
 
         public override void Append(Scope scope)
         {
-            base.Append(scope);
+            throw new NotSupportedException();
         }
 
         public override void Merge(OverLoad other)
         {
-            base.Merge(other);
+            throw new NotSupportedException();
         }
 
-        public override DataType GetDataType()
+        public override IDataType GetDataType()
         {
             return Unknown;
         }
@@ -35,7 +35,7 @@ namespace AbstractSyntax
             return TypeMatch.MakeNotCallable(Unknown);
         }
 
-        public override TypeMatch TypeSelect(IReadOnlyList<DataType> type)
+        public override TypeMatch TypeSelect(IReadOnlyList<IDataType> type)
         {
             return TypeMatch.MakeNotCallable(Unknown);
         }

@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class VoidSymbol : DataType
+    public class VoidSymbol : Scope, IDataType
     {
         public VoidSymbol()
         {

@@ -59,7 +59,7 @@ namespace AbstractSyntax.Daclate
             get { return 5; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get
             {

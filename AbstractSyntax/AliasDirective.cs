@@ -17,7 +17,7 @@ namespace AbstractSyntax
             base.SpreadElement(parent, scope);
         }
 
-        public OverLoad RefarenceResolution()
+        internal OverLoad RefarenceResolution()
         {
             return CurrentScope.NameResolution(From.Value);
         }

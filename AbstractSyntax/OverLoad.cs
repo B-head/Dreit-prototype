@@ -6,7 +6,7 @@ using System.Linq;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class OverLoad : IReadOnlyList<Scope>
+    public class OverLoad : IReadOnlyList<IScope>
     {
         private List<Scope> ScopeList;
         private bool isHoldAlias;
@@ -35,13 +35,13 @@ namespace AbstractSyntax
             }
         }
 
-        public virtual DataType GetDataType()
+        public virtual IDataType GetDataType()
         {
             if(isHoldAlias)
             {
                 SpreadAlias();
             }
-            var find = (DataType)ScopeList.Find(s => s is DataType);
+            var find = (IDataType)ScopeList.Find(s => s is IDataType);
             if(find != null)
             {
                 return find;
@@ -56,10 +56,10 @@ namespace AbstractSyntax
 
         public virtual TypeMatch TypeSelect()
         {
-            return TypeSelect(new List<DataType>());
+            return TypeSelect(new List<IDataType>());
         }
 
-        public virtual TypeMatch TypeSelect(IReadOnlyList<DataType> type)
+        public virtual TypeMatch TypeSelect(IReadOnlyList<IDataType> type)
         {
             if (isHoldAlias)
             {
@@ -105,7 +105,7 @@ namespace AbstractSyntax
             }
         }
 
-        public Scope this[int index]
+        public IScope this[int index]
         {
             get { return ScopeList[index]; }
         }
@@ -115,7 +115,7 @@ namespace AbstractSyntax
             get { return ScopeList.Count; }
         }
 
-        public IEnumerator<Scope> GetEnumerator()
+        public IEnumerator<IScope> GetEnumerator()
         {
             return ScopeList.GetEnumerator();
         }

@@ -23,7 +23,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get { return CallScope.DataType; }
         }

@@ -44,22 +44,19 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        protected override string ElementInfo
+        protected override string GetElementInfo()
         {
-            get
+            if (IsPragmaAccess)
             {
-                if (IsPragmaAccess)
-                {
-                    return "@@" + Value;
-                }
-                else
-                {
-                    return Value;
-                }
+                return "@@" + Value;
+            }
+            else
+            {
+                return Value;
             }
         }
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get { return Reference.GetDataType(); }
         }
@@ -81,7 +78,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public void RefarenceResolution(Scope scope)
+        public void RefarenceResolution(IScope scope)
         {
             if (IsPragmaAccess)
             {
@@ -89,7 +86,7 @@ namespace AbstractSyntax.Expression
             }
             else
             {
-                _Reference = scope.NameResolution(Value);
+                _Reference = ((Scope)scope).NameResolution(Value);
             }
         }
 

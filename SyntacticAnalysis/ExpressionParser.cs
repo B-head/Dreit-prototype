@@ -24,7 +24,7 @@ namespace SyntacticAnalysis
             }
             else if (tuple.Count > 0)
             {
-                return tuple[0];
+                return (Element)tuple[0];
             }
             else
             {

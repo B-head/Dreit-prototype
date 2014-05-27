@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Pragma
 {
     [Serializable]
-    public class CastPragma : RoutineSymbol, IPragma
+    public class CastPragma : RoutineSymbol
     {
         public GenericSymbol GenericType { get; set; }
 
@@ -22,7 +22,7 @@ namespace AbstractSyntax.Pragma
             get { return 1; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get
             {
@@ -35,9 +35,9 @@ namespace AbstractSyntax.Pragma
         }
 
         //todo ジェネリクスの構文で型検査をする。
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<DataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new DataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
         }
     }
 }

@@ -28,7 +28,7 @@ namespace AbstractSyntax
             ConvList.Add(symbol);
         }
 
-        public Scope Find(DataType from, DataType to)
+        public Scope Find(IDataType from, IDataType to)
         {
             if (from is GenericSymbol || to is GenericSymbol)
             {

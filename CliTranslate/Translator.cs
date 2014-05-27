@@ -18,10 +18,10 @@ namespace CliTranslate
         public Translator Parent { get; private set; }
         private List<Translator> _Child;
         public IReadOnlyList<Translator> Child { get { return _Child; } }
-        public Scope Scope { get; private set; }
+        public IScope Scope { get; private set; }
         protected ILGenerator Generator;
 
-        protected Translator(Scope scope, Translator parent)
+        protected Translator(IScope scope, Translator parent)
         {
             Scope = scope;
             _Child = new List<Translator>();
@@ -52,7 +52,7 @@ namespace CliTranslate
 
         public override string ToString()
         {
-            return this.GetType().Name + ": " + Scope.GetFullName() + "(" + Scope.Id + ")";
+            return this.GetType().Name + ": " + Scope.GetFullName();
         }
 
         public virtual bool IsThisArg
@@ -65,12 +65,12 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual ModuleTranslator CreateModule(Scope path)
+        public virtual ModuleTranslator CreateModule(IScope path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual RoutineTranslator CreateRoutine(Scope path, Scope returnType, Scope[] argumentType)
+        public virtual RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
         {
             throw new NotSupportedException();
         }
@@ -80,27 +80,27 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public virtual ClassTranslator CreateClass(Scope path)
+        public virtual ClassTranslator CreateClass(IScope path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual PrimitiveTranslator CreatePrimitive(Scope path, PrimitivePragmaType type)
+        public virtual PrimitiveTranslator CreatePrimitive(IScope path, PrimitivePragmaType type)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void CreateEnum(Scope path)
+        public virtual void CreateEnum(IScope path)
         {
             throw new NotSupportedException();
         }
 
-        public virtual void CreateVariant(Scope path, Scope type)
+        public virtual void CreateVariant(IScope path, IScope type)
         {
             throw new NotSupportedException();
         }
 
-        public void CreateLabel(Scope path)
+        public void CreateLabel(IScope path)
         {
             var builder = Generator.DefineLabel();
             Root.RegisterBuilder(path, builder);
@@ -161,7 +161,7 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Ldstr, value);
         }
 
-        public virtual void GenerateLoad(Scope name, bool address = false)
+        public virtual void GenerateLoad(IScope name, bool address = false)
         {
             if(name is ThisSymbol)
             {
@@ -274,7 +274,7 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateStore(Scope name, bool address = false)
+        public virtual void GenerateStore(IScope name, bool address = false)
         {
             if (name is ThisSymbol)
             {
@@ -355,7 +355,7 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateCall(Scope name)
+        public virtual void GenerateCall(IScope name)
         {
             var temp = Root.GetBuilder(name);
             if (temp is ConstructorInfo)
@@ -368,7 +368,7 @@ namespace CliTranslate
             }
         }
 
-        public void GenerateEcho(Scope type)
+        public void GenerateEcho(IScope type)
         {
             var temp = Root.GetBuilder(type) as Type;
             var types = new Type[] { temp };

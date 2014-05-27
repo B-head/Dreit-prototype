@@ -15,7 +15,7 @@ namespace AbstractSyntax.Expression
             get { return 1; }
         }
 
-        public override Element this[int index]
+        public override IElement this[int index]
         {
             get
             {
@@ -27,12 +27,9 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        protected override string ElementInfo
+        protected override string GetElementInfo()
         {
-            get
-            {
-                return Enum.GetName(typeof(TokenType), Operator);
-            }
+            return Enum.GetName(typeof(TokenType), Operator);
         }
 
         internal override void CheckSyntax()

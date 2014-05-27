@@ -9,7 +9,7 @@ namespace AbstractSyntax.Expression
     {
         private OverLoad _Reference;
 
-        public override DataType DataType
+        public override IDataType DataType
         {
             get 
             {
@@ -33,7 +33,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public void RefarenceResolution(Scope scope)
+        public void RefarenceResolution(IScope scope)
         {
             var left = Left as IAccess;
             var right = Right as IAccess;
