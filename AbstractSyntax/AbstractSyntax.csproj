@@ -48,6 +48,8 @@
     <Compile Include="AliasDirective.cs" />
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
+    <Compile Include="Expression\Condition.cs" />
+    <Compile Include="Expression\Logical.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
@@ -79,6 +81,7 @@
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Statement\IfStatement.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
     <Compile Include="Symbol\DefaultSymbol.cs" />
     <Compile Include="Symbol\EnumSymbol.cs" />

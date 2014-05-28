@@ -86,8 +86,9 @@ class Integer64 : @@Integer64
 	routine from(other:Binary64) :: @@cast(this, other)
 }
 
-alias Natural8 Byte
 alias Natural8 UInt8
+alias Natural8 Nat8
+alias Natural8 Byte
 class Natural8 : @@Natural8
 {
 	operator +(other:Natural8) :: @@add(this, other)
@@ -108,6 +109,7 @@ class Natural8 : @@Natural8
 }
 
 alias Natural16 UInt16
+alias Natural16 Nat16
 class Natural16 : @@Natural16
 {
 	operator +(other:Natural16) :: @@add(this, other)
@@ -128,6 +130,7 @@ class Natural16 : @@Natural16
 }
 
 alias Natural32 UInt32
+alias Natural32 Nat32
 class Natural32 : @@Natural32
 {
 	operator +(other:Natural32) :: @@add(this, other)
@@ -148,6 +151,7 @@ class Natural32 : @@Natural32
 }
 
 alias Natural64 UInt64
+alias Natural64 Nat64
 class Natural64 : @@Natural64
 {
 	operator +(other:Natural64) :: @@add(this, other)
@@ -167,6 +171,7 @@ class Natural64 : @@Natural64
 	routine from(other:Binary64) :: @@cast(this, other)
 }
 
+alias Binary32 Bin32
 class Binary32 : @@Binary32
 {
 	operator +(other:Binary32) :: @@add(this, other)
@@ -186,6 +191,7 @@ class Binary32 : @@Binary32
 	routine from(other:Binary64) :: @@cast(this, other)
 }
 
+alias Binary64 Bin64
 class Binary64 : @@Binary64
 {
 	operator +(other:Binary64) :: @@add(this, other)

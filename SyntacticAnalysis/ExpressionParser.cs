@@ -17,7 +17,7 @@ namespace SyntacticAnalysis
 
         private static Element TupleList(ChainParser cp)
         {
-            var tuple = ParseTuple(cp, Addtive);
+            var tuple = ParseTuple(cp, Logical);
             if (tuple.Count > 1)
             {
                 return tuple;
@@ -31,26 +31,26 @@ namespace SyntacticAnalysis
                 return null;
             }
         }
+
+        private static Element Logical(ChainParser cp)
+        {
+            return LeftAssociative<Logical, Element>(cp, Condition, TokenType.AndElse, TokenType.OrElse);
+        }
         
         private static Element Condition(ChainParser cp)
         {
-            return LeftAssociative<DyadicCalculate, Element>(cp, Addtive, TokenType.Equal, TokenType.NotEqual,
+            return LeftAssociative<Condition, Element>(cp, Addtive, TokenType.Equal, TokenType.NotEqual,
                 TokenType.LessThan, TokenType.LessThanOrEqual, TokenType.GreaterThan, TokenType.GreaterThanOrEqual, TokenType.Incompare);
         }
 
         private static Element Addtive(ChainParser cp)
         {
-            return LeftAssociative<Calculate, Element>(cp, Multiplicative, TokenType.Add, TokenType.Subtract, TokenType.Combine);
+            return LeftAssociative<Calculate, Element>(cp, Multiplicative, TokenType.Add, TokenType.Subtract);
         }
 
         private static Element Multiplicative(ChainParser cp)
         {
-            return LeftAssociative<Calculate, Element>(cp, Exponentive, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
-        }
-
-        private static Element Exponentive(ChainParser cp)
-        {
-            return RightAssociative<Calculate, Element>(cp, CallRoutine, TokenType.Exponent);
+            return LeftAssociative<Calculate, Element>(cp, CallRoutine, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
         }
 
         private static Element CallRoutine(ChainParser cp)
