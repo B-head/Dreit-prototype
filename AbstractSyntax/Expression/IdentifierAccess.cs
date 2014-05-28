@@ -23,13 +23,17 @@ namespace AbstractSyntax.Expression
                     return _IsTacitThis.Value;
                 }
                 var refer = CallScope;
-                if (refer != null && refer.CurrentScope == GetParentClass() && CurrentScope is DeclateRoutine && !(refer is ThisSymbol) && !(Parent is MemberAccess))
+                if (refer == null || refer.CurrentScope != GetParentClass() || refer is ThisSymbol)
                 {
-                    _IsTacitThis = true;
+                    _IsTacitThis = false;
+                }
+                else if (!(CurrentScope is DeclateRoutine) || Parent is MemberAccess)
+                {
+                    _IsTacitThis = false;
                 }
                 else
                 {
-                    _IsTacitThis = false;
+                    _IsTacitThis = true;
                 }
                 return _IsTacitThis.Value;
             }
@@ -82,7 +86,7 @@ namespace AbstractSyntax.Expression
         {
             if (IsPragmaAccess)
             {
-                _Reference = Root.GetPragma(Value);
+                _Reference = ((Scope)scope).NameResolution("@@" +  Value);
             }
             else
             {

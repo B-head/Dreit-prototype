@@ -78,6 +78,11 @@ namespace AbstractSyntax
 
         private void AppendChild(Scope scope)
         {
+            _ScopeChild.Add(scope);
+            if (string.IsNullOrEmpty(scope.Name))
+            {
+                return;
+            }
             OverLoad ol;
             if (ScopeSymbol.ContainsKey(scope.Name))
             {
@@ -89,7 +94,6 @@ namespace AbstractSyntax
                 ScopeSymbol[scope.Name] = ol;
             }
             ol.Append(scope);//todo 重複判定を実装する。
-            _ScopeChild.Add(scope);
             if (scope is NameSpace)
             {
                 Merge(scope);
@@ -113,19 +117,6 @@ namespace AbstractSyntax
         internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
-        }
-
-        internal override void CheckSyntax()
-        {
-            if (string.IsNullOrEmpty(Name))
-            {
-                CompileError("null-scope-name");
-            }
-            /*else if (false)
-            {
-                CompileError("識別子 " + Name + " は既に宣言されています。");
-            }*/
-            base.CheckSyntax();
         }
     }
 }

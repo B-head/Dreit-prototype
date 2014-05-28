@@ -302,6 +302,11 @@ namespace CliTranslate
             trans.GenerateLoad(call);
         }
 
+        private void CallTranslate(BooleanSymbol call, TupleList arguments, Translator trans)
+        {
+            trans.GeneratePrimitive(call.Value);
+        }
+
         private void CallTranslate(CalculatePragma call, TupleList arguments, Translator trans)
         {
             foreach (var v in arguments)

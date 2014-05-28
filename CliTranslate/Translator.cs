@@ -161,6 +161,18 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Ldstr, value);
         }
 
+        public void GeneratePrimitive(bool value)
+        {
+            if(value)
+            {
+                Generator.Emit(OpCodes.Ldc_I4_1);
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Ldc_I4_0);
+            }
+        }
+
         public virtual void GenerateLoad(IScope name, bool address = false)
         {
             if(name is ThisSymbol)

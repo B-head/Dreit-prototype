@@ -10,8 +10,7 @@ namespace AbstractSyntax
     [Serializable]
     public class Root : NameSpace
     {
-        private Dictionary<string, OverLoad> PragmaDictionary;
-        private DirectiveList PragmaList;
+        private DirectiveList BuiltInList;
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
@@ -23,8 +22,7 @@ namespace AbstractSyntax
         public Root()
         {
             Name = "global";
-            PragmaList = new DirectiveList();
-            PragmaDictionary = new Dictionary<string, OverLoad>();
+            BuiltInList = new DirectiveList();
             Void = new VoidSymbol();
             Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
@@ -32,12 +30,13 @@ namespace AbstractSyntax
             Conversion = new ConversionManager(Void, Error, Unknown);
             MessageManager = new CompileMessageManager();
             CreatePragma();
+            CreateBuiltInIdentifier();
             CreateOperatorManager();
         }
 
         public override int Count
         {
-            get { return 5; }
+            get { return 4; }
         }
 
         public override IElement this[int index]
@@ -47,10 +46,9 @@ namespace AbstractSyntax
                 switch (index)
                 {
                     case 0: return ExpList;
-                    case 1: return PragmaList;
-                    case 2: return Void;
-                    case 3: return Error;
-                    case 4: return Unknown;
+                    case 1: return BuiltInList;
+                    case 2: return Error;
+                    case 3: return Unknown;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -63,20 +61,10 @@ namespace AbstractSyntax
             CheckDataType();
         }
 
-        internal OverLoad GetPragma(string name)
-        {
-            OverLoad temp;
-            PragmaDictionary.TryGetValue(name, out temp);
-            return temp;
-        }
-
         private void AppendPragma(string name, Scope pragma)
         {
             pragma.Name = "@@" + name;
-            PragmaList.Append(pragma);
-            var ol = new OverLoad(Unknown);
-            ol.Append(pragma);
-            PragmaDictionary.Add(name, ol);
+            BuiltInList.Append(pragma);
         }
 
         private void CreatePragma()
@@ -99,6 +87,13 @@ namespace AbstractSyntax
             AppendPragma("Natural64", new PrimitivePragma(PrimitivePragmaType.Natural64));
             AppendPragma("Binary32", new PrimitivePragma(PrimitivePragmaType.Binary32));
             AppendPragma("Binary64", new PrimitivePragma(PrimitivePragmaType.Binary64));
+        }
+
+        private void CreateBuiltInIdentifier()
+        {
+            BuiltInList.Append(Void);
+            BuiltInList.Append(new BooleanSymbol(false) { Name = "false" });
+            BuiltInList.Append(new BooleanSymbol(true) { Name = "true" });
         }
 
         private void CreateOperatorManager()

@@ -9,14 +9,7 @@
 
   <case>
     <code>
-      if not false :: echo 10
-    </code>
-    <output>10</output>
-  </case>
-
-  <case>
-    <code>
-      if true than echo 10
+      if not false than echo 10
     </code>
     <output>10</output>
   </case>

@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax;
 using CliTranslate;
+using Dlight;
 using NUnit.Framework;
 using SyntacticAnalysis;
 using System;
@@ -35,7 +36,9 @@ namespace DlightTest
             root.SemanticAnalysis();
             if (root.MessageManager.MessageCount > 0)
             {
-                Console.WriteLine(root.MessageManager);
+                Directory.SetCurrentDirectory("..");
+                Console.WriteLine(CompileMessageBuilder.Build(root.MessageManager));
+                Directory.SetCurrentDirectory("output");
             }
             Assert.That(root.MessageManager, Is.EquivalentTo(data.Message).Using<CompileMessage>(new CompileMessageEqualityComparer()));
             if (root.MessageManager.ErrorCount > 0)
