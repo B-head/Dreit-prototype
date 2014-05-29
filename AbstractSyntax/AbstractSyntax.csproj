@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AliasDirective.cs" />
+    <Compile Include="Directive\AliasDirective.cs" />
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
     <Compile Include="Expression\Condition.cs" />
@@ -66,8 +66,8 @@
     <Compile Include="Expression\DyadicExpression.cs" />
     <Compile Include="Pragma\CastPragma.cs" />
     <Compile Include="Pragma\PrimitivePragma.cs" />
-    <Compile Include="ReturnDirective.cs" />
-    <Compile Include="EchoDirective.cs" />
+    <Compile Include="Directive\ReturnDirective.cs" />
+    <Compile Include="Directive\EchoDirective.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="Expression\ExpressionGroup.cs" />
     <Compile Include="DirectiveList.cs" />
@@ -76,7 +76,7 @@
     <Compile Include="Expression\MemberAccess.cs" />
     <Compile Include="NameSpace.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
-    <Compile Include="NumberLiteral.cs" />
+    <Compile Include="Literal\NumberLiteral.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Expression\RightAssign.cs" />
     <Compile Include="Root.cs" />

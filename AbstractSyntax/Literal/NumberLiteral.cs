@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Literal
 {
     [Serializable]
     public class NumberLiteral : Element

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Linq;
 using AbstractSyntax.Statement;
+using AbstractSyntax.Literal;
+using AbstractSyntax.Directive;
 
 namespace CliTranslate
 {

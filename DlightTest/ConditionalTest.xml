@@ -10,8 +10,9 @@
   <case>
     <code>
       if not false than echo 10
+      echo 20
     </code>
-    <output>10</output>
+    <output>10 20</output>
   </case>
 
   <case>

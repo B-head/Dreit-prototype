@@ -1,12 +1,11 @@
-﻿using AbstractSyntax.Symbol;
-using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Directive
 {
     [Serializable]
-    public class EchoDirective : Element
+    public class ReturnDirective : Element
     {
         public Element Exp { get; set; }
 
@@ -24,15 +23,6 @@ namespace AbstractSyntax
                     case 0: return Exp;
                     default: throw new ArgumentOutOfRangeException();
                 }
-            }
-        }
-
-        internal override void CheckDataType()
-        {
-            base.CheckDataType();
-            if(Exp != null && Exp.DataType is VoidSymbol)
-            {
-                CompileError("invalid-void");
             }
         }
     }
