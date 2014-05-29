@@ -6,20 +6,14 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Statement
 {
-    public class IfStatement : Scope
+    [Serializable]
+    public class NotStatement : Element
     {
-        public Element Condition { get; set; }
-        public DirectiveList Than { get; set; }
-        public DirectiveList Else { get; set; }
-
-        public bool IsDefinedElse
-        {
-            get { return Else != null; }
-        }
+        public IElement Exp { get; set; }
 
         public override int Count
         {
-            get { return 3; }
+            get { return 1; }
         }
 
         public override IElement this[int index]
@@ -28,9 +22,7 @@ namespace AbstractSyntax.Statement
             {
                 switch (index)
                 {
-                    case 0: return Condition;
-                    case 1: return Than;
-                    case 2: return Else;
+                    case 0: return Exp;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }

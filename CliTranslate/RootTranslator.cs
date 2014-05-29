@@ -28,6 +28,15 @@ namespace CliTranslate
             Module = Assembly.DefineDynamicModule(Name, FileName);
         }
 
+        internal bool ContainsBuilder(IScope path)
+        {
+            if (path is VoidSymbol)
+            {
+                return true;
+            }
+            return BuilderDictonary.ContainsKey(path);
+        }
+
         internal dynamic GetBuilder(IScope path)
         {
             if (path is VoidSymbol)

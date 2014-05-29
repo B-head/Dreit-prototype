@@ -82,6 +82,7 @@
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Statement\IfStatement.cs" />
+    <Compile Include="Statement\NotStatement.cs" />
     <Compile Include="Symbol\BooleanSymbol.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
     <Compile Include="Symbol\DefaultSymbol.cs" />

@@ -37,12 +37,19 @@ namespace SyntacticAnalysis
                 .End();
         }
 
+        private static NotStatement NotStatement(ChainParser cp)
+        {
+            return cp.Begin<NotStatement>()
+                .Text("not").Lt().Transfer((s, e) => s.Exp = e, Directive)
+                .End();
+        }
+
         private static IfStatement IfStatement(ChainParser cp)
         {
             return cp.Begin<IfStatement>()
-                .Text("if").Transfer((s, e) => s.Condition = e, Condition)
-                .Type(TokenType.Separator).Or().Text("than").Transfer((s, e) => s.Than = e, Block)
-                .If().Text("else").Than().Text("than").Transfer((s, e) => s.Than = e, Block).EndIf()
+                .Text("if").Lt().Transfer((s, e) => s.Condition = e, Condition)
+                .Transfer((s, e) => s.Than = e, IfInlineDirectiveList, Block)
+                .If().Text("else").Lt().Than().Transfer((s, e) => s.Else = e, PureInlineDirectiveList, Block).EndIf()
                 .End();
         }
     }

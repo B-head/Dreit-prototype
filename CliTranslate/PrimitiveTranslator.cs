@@ -22,7 +22,7 @@ namespace CliTranslate
             Class = builder;
             Prim = GetPrimitiveType(type);
             ClassContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName | MethodAttributes.Static);
-            parent.BuildInitCall(ClassContext);
+            parent.GenerateCall(ClassContext);
             Generator = ClassContext.GetILGenerator();
             Root.RegisterBuilder(path, Prim);
         }

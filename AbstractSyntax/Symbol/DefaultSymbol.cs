@@ -11,7 +11,6 @@ namespace AbstractSyntax.Symbol
     {
         public DefaultSymbol(ClassSymbol parent)
         {
-            Name = "default";
             _ReturnType = parent;
         }
 

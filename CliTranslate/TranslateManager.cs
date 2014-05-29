@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Linq;
+using AbstractSyntax.Statement;
 
 namespace CliTranslate
 {
@@ -208,6 +209,41 @@ namespace CliTranslate
         private void Translate(DeclateVariant element, Translator trans)
         {
             Translate((dynamic)element.Ident, trans);
+        }
+
+        private void Translate(NotStatement element, Translator trans)
+        {
+            ChildTranslate(element, trans);
+            trans.GenerateControl(OpCodes.Not);
+        }
+
+        private void Translate(IfStatement element, Translator trans)
+        {
+            Translate((dynamic)element.Condition, trans);
+            if (element.IsDefinedElse)
+            {
+                var belse = trans.CreateLabel();
+                var bend = trans.CreateLabel();
+                trans.GenerateJamp(OpCodes.Brfalse, belse);
+                trans.BeginScope();
+                Translate(element.Than, trans);
+                trans.EndScope();
+                trans.GenerateJamp(OpCodes.Br, bend);
+                trans.MarkLabel(belse);
+                trans.BeginScope();
+                Translate(element.Else, trans);
+                trans.EndScope();
+                trans.MarkLabel(bend);
+            }
+            else
+            {
+                var bend = trans.CreateLabel();
+                trans.GenerateJamp(OpCodes.Brfalse, bend);
+                trans.BeginScope();
+                Translate(element.Than, trans);
+                trans.EndScope();
+                trans.MarkLabel(bend);
+            }
         }
 
         private void Translate(ReturnDirective element, Translator trans)

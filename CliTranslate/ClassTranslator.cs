@@ -24,7 +24,7 @@ namespace CliTranslate
         {
             Class = builder;
             ClassContext = Class.DefineMethod("@@static_init", MethodAttributes.SpecialName | MethodAttributes.Static);
-            parent.BuildInitCall(ClassContext);
+            parent.GenerateCall(ClassContext);
             InitDictonary = new Dictionary<IScope, dynamic>();
             InitContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName);
             InitGenerator = InitContext.GetILGenerator();

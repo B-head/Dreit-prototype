@@ -16,11 +16,17 @@
 
   <case>
     <code>
+      <![CDATA[
       routine foo(a:Bool){
-      if a than echo 10 else echo 20 
+        if a {
+          echo 10
+        } else {
+          echo 20
+        }
       }
       foo(true)
       foo(false)
+      ]]>
     </code>
     <output>10 20</output>
   </case>

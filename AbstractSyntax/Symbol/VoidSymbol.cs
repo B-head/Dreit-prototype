@@ -7,9 +7,6 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class VoidSymbol : Scope, IDataType
     {
-        public VoidSymbol()
-        {
-            Name = "void";
-        }
+
     }
 }

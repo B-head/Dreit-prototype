@@ -100,15 +100,46 @@ namespace CliTranslate
             throw new NotSupportedException();
         }
 
-        public void CreateLabel(IScope path)
+        public Label CreateLabel(IScope path = null)
         {
             var builder = Generator.DefineLabel();
-            Root.RegisterBuilder(path, builder);
+            if (path != null)
+            {
+                Root.RegisterBuilder(path, builder);
+            }
+            return builder;
         }
 
-        internal void BuildInitCall(MethodBuilder method)
+        public Label GetLabel(IScope path)
         {
-            Generator.Emit(OpCodes.Call, method);
+            if (Root.ContainsBuilder(path))
+            {
+                return (Label)Root.GetBuilder(path);
+            }
+            else
+            {
+                return CreateLabel(path);
+            }
+        }
+
+        public void MarkLabel(Label label)
+        {
+            Generator.MarkLabel(label);
+        }
+
+        public void BeginScope()
+        {
+            Generator.BeginScope();
+        }
+
+        public void EndScope()
+        {
+            Generator.EndScope();
+        }
+
+        public void GenerateJamp(OpCode type, Label label)
+        {
+            Generator.Emit(type, label);
         }
 
         public void GenerateControl(OpCode type)
@@ -378,6 +409,11 @@ namespace CliTranslate
             {
                 Generator.Emit(OpCodes.Call, temp);
             }
+        }
+
+        internal void GenerateCall(MethodBuilder method)
+        {
+            Generator.Emit(OpCodes.Call, method);
         }
 
         public void GenerateEcho(IScope type)

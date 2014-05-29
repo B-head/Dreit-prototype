@@ -9,7 +9,7 @@ namespace SyntacticAnalysis
     public partial class Parser
     {
         private static ParserFunction<Element>[] directive = { Echo, Alias, Return, LeftAssign };
-        private static ParserFunction<Element>[] primary = { IfStatement, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, Group, Number, IdentifierAccess };
+        private static ParserFunction<Element>[] primary = { IfStatement, NotStatement, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, Group, Number, IdentifierAccess };
 
         public static DeclateModule Parse(TokenCollection collection)
         {

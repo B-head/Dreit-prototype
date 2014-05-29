@@ -9,11 +9,6 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class UnknownSymbol : Scope, IDataType
     {
-        public UnknownSymbol()
-        {
-            Name = "@@unknown";
-        }
-
         public override IDataType DataType
         {
             get { return Root.Unknown; }

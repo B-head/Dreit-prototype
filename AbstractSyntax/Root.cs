@@ -23,7 +23,7 @@ namespace AbstractSyntax
         {
             Name = "global";
             BuiltInList = new DirectiveList();
-            Void = new VoidSymbol();
+            Void = new VoidSymbol() { Name = "void" };
             Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
             UnknownOverLoad = new UnknownOverLoad(Unknown);
@@ -36,7 +36,7 @@ namespace AbstractSyntax
 
         public override int Count
         {
-            get { return 4; }
+            get { return 2; }
         }
 
         public override IElement this[int index]
@@ -47,8 +47,6 @@ namespace AbstractSyntax
                 {
                     case 0: return ExpList;
                     case 1: return BuiltInList;
-                    case 2: return Error;
-                    case 3: return Unknown;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -92,6 +90,8 @@ namespace AbstractSyntax
         private void CreateBuiltInIdentifier()
         {
             BuiltInList.Append(Void);
+            BuiltInList.Append(Unknown);
+            BuiltInList.Append(Error);
             BuiltInList.Append(new BooleanSymbol(false) { Name = "false" });
             BuiltInList.Append(new BooleanSymbol(true) { Name = "true" });
         }
@@ -104,6 +104,13 @@ namespace AbstractSyntax
             OpManager.Add(TokenType.Multiply, new ConversionManager(Void, Error, Unknown));
             OpManager.Add(TokenType.Divide, new ConversionManager(Void, Error, Unknown));
             OpManager.Add(TokenType.Modulo, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.Equal, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.NotEqual, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.LessThan, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.LessThanOrEqual, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.GreaterThan, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.GreaterThanOrEqual, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.Incompare, new ConversionManager(Void, Error, Unknown));
         }
     }
 }
