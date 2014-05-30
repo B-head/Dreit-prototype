@@ -272,6 +272,34 @@ namespace CliTranslate
             trans.GenerateCall(element.CallScope);
         }
 
+        private void Translate(Condition element, Translator trans)
+        {
+            Translate((dynamic)element.Left, trans);
+            if (element.IsConnection)
+            {
+                Translate((dynamic)element.VirtualRight, trans);
+                trans.GenerateCall(element.CallScope);
+                Translate((dynamic)element.Right, trans);
+                trans.GenerateControl(OpCodes.And);
+            }
+            else
+            {
+                Translate((dynamic)element.Right, trans);
+                trans.GenerateCall(element.CallScope);
+            }
+        }
+
+        private void Translate(Logical element, Translator trans)
+        {
+            ChildTranslate(element, trans);
+            switch(element.Operator)
+            {
+                case TokenType.OrElse: trans.GenerateControl(OpCodes.Or); break;
+                case TokenType.AndElse: trans.GenerateControl(OpCodes.And); break;
+                default: throw new ArgumentException();
+            }
+        }
+
         private void Translate(IdentifierAccess element, Translator trans)
         {
             TranslateAccess((dynamic)element, trans);
@@ -356,11 +384,11 @@ namespace CliTranslate
                 case CalculatePragmaType.Div: trans.GenerateControl(OpCodes.Div); break;
                 case CalculatePragmaType.Mod: trans.GenerateControl(OpCodes.Rem); break;
                 case CalculatePragmaType.Eq: trans.GenerateControl(OpCodes.Ceq); break;
-                case CalculatePragmaType.Ne: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Not); break;
+                case CalculatePragmaType.Ne: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
                 case CalculatePragmaType.Lt: trans.GenerateControl(OpCodes.Clt); break;
-                case CalculatePragmaType.Le: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Not); break;
+                case CalculatePragmaType.Le: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
                 case CalculatePragmaType.Gt: trans.GenerateControl(OpCodes.Cgt); break;
-                case CalculatePragmaType.Ge: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Not); break;
+                case CalculatePragmaType.Ge: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
                 default: throw new ArgumentException();
             }
         }

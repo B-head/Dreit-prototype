@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Statement
 {
+    [Serializable]
     public class IfStatement : Scope
     {
         public Element Condition { get; set; }

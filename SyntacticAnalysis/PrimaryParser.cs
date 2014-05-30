@@ -48,7 +48,7 @@ namespace SyntacticAnalysis
         private static IfStatement IfStatement(ChainParser cp)
         {
             return cp.Begin<IfStatement>()
-                .Text("if").Lt().Transfer((s, e) => s.Condition = e, Condition)
+                .Text("if").Lt().Transfer((s, e) => s.Condition = e, Directive)
                 .Transfer((s, e) => s.Than = e, IfInlineDirectiveList, Block)
                 .If().Text("else").Lt().Than().Transfer((s, e) => s.Else = e, PureInlineDirectiveList, Block).EndIf()
                 .End();

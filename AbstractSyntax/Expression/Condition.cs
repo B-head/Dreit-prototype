@@ -18,7 +18,7 @@ namespace AbstractSyntax.Expression
             {
                 if (_CallScope == null)
                 {
-                    _CallScope = Root.OpManager[Operator].Find(Right.DataType, Left.DataType);
+                    _CallScope = Root.OpManager[Operator].Find(VirtualRight.DataType, Left.DataType);
                 }
                 return _CallScope;
             }
@@ -27,6 +27,27 @@ namespace AbstractSyntax.Expression
         public override IDataType DataType
         {
             get { return CallScope.DataType; }
+        }
+
+        public bool IsConnection
+        {
+            get { return Right is Condition; }
+        }
+
+        public IElement VirtualRight
+        {
+            get
+            {
+                if (IsConnection)
+                {
+                    var c = (Condition)Right;
+                    return c.Left;
+                }
+                else
+                {
+                    return Right;
+                }
+            }
         }
 
         internal override void CheckDataType()

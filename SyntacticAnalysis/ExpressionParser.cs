@@ -34,12 +34,12 @@ namespace SyntacticAnalysis
 
         private static Element Logical(ChainParser cp)
         {
-            return LeftAssociative<Logical, Element>(cp, Condition, TokenType.AndElse, TokenType.OrElse);
+            return RightAssociative<Logical, Element>(cp, Condition, TokenType.AndElse, TokenType.OrElse);
         }
         
         private static Element Condition(ChainParser cp)
         {
-            return LeftAssociative<Condition, Element>(cp, Addtive, TokenType.Equal, TokenType.NotEqual,
+            return RightAssociative<Condition, Element>(cp, Addtive, TokenType.Equal, TokenType.NotEqual,
                 TokenType.LessThan, TokenType.LessThanOrEqual, TokenType.GreaterThan, TokenType.GreaterThanOrEqual, TokenType.Incompare);
         }
 

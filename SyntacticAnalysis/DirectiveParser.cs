@@ -26,7 +26,7 @@ namespace SyntacticAnalysis
         private static DirectiveList PureInlineDirectiveList(ChainParser cp)
         {
             return cp.Begin<DirectiveList>()
-                .Transfer((s, e) => s.Append(e), directive)
+                .Transfer((s, e) => s.Append(e), Directive)
                 .Self(s => s.IsInline = true)
                 .End();
         }
@@ -35,7 +35,7 @@ namespace SyntacticAnalysis
         {
             return cp.Begin<DirectiveList>()
                 .Type(TokenType.Separator).Lt()
-                .Transfer((s, e) => s.Append(e), directive)
+                .Transfer((s, e) => s.Append(e), Directive)
                 .Self(s => s.IsInline = true)
                 .End();
         }
@@ -44,7 +44,7 @@ namespace SyntacticAnalysis
         {
             return cp.Begin<DirectiveList>()
                 .Type(TokenType.Separator).Or().Text("than").Lt()
-                .Transfer((s, e) => s.Append(e), directive)
+                .Transfer((s, e) => s.Append(e), Directive)
                 .Self(s => s.IsInline = true)
                 .End();
         }

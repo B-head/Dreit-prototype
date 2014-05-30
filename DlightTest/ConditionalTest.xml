@@ -34,13 +34,15 @@
 
   <case>
     <code>
+      <![CDATA[
       routine foo(a:Bool, b:Bool){
-      if a than if b than echo 10 else echo 40 else if b than echo 20 else echo 30
+        if a than if b than echo 10 else echo 40 else if b than echo 20 else echo 30
       }
       foo(true, true)
       foo(true, false)
       foo(false, true)
       foo(false, false)
+      ]]>
     </code>
     <output>10 40 20 30</output>
   </case>
@@ -49,27 +51,30 @@
     <code>
       <![CDATA[
         if 2 < 5 :: echo 10
+        if not 2 > 5 :: echo 20
       ]]>
     </code>
-    <output>10</output>
+    <output>10 20</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
         if 2 <= 5 <= 8 :: echo 10
+        if not 8 <= 5 <= 2 :: echo 20
       ]]>
     </code>
-    <output>10</output>
+    <output>10 20</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
         if 22 > 6 && 33 >= 9 :: echo 10
+        if not 22 < 6 && 33 <= 9 :: echo 20
       ]]>
     </code>
-    <output>10</output>
+    <output>10 20</output>
   </case>
 
   <case>
