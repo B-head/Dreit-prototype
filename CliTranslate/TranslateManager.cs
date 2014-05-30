@@ -226,11 +226,11 @@ namespace CliTranslate
             {
                 var belse = trans.CreateLabel();
                 var bend = trans.CreateLabel();
-                trans.GenerateJamp(OpCodes.Brfalse, belse);
+                trans.GenerateJump(OpCodes.Brfalse, belse);
                 trans.BeginScope();
                 Translate(element.Than, trans);
                 trans.EndScope();
-                trans.GenerateJamp(OpCodes.Br, bend);
+                trans.GenerateJump(OpCodes.Br, bend);
                 trans.MarkLabel(belse);
                 trans.BeginScope();
                 Translate(element.Else, trans);
@@ -240,7 +240,7 @@ namespace CliTranslate
             else
             {
                 var bend = trans.CreateLabel();
-                trans.GenerateJamp(OpCodes.Brfalse, bend);
+                trans.GenerateJump(OpCodes.Brfalse, bend);
                 trans.BeginScope();
                 Translate(element.Than, trans);
                 trans.EndScope();
@@ -291,12 +291,28 @@ namespace CliTranslate
 
         private void Translate(Logical element, Translator trans)
         {
-            ChildTranslate(element, trans);
-            switch(element.Operator)
+            var bend = trans.CreateLabel();
+            if(element.Operator == TokenType.OrElse)
             {
-                case TokenType.OrElse: trans.GenerateControl(OpCodes.Or); break;
-                case TokenType.AndElse: trans.GenerateControl(OpCodes.And); break;
-                default: throw new ArgumentException();
+                Translate((dynamic)element.Left, trans);
+                trans.GenerateControl(OpCodes.Dup);
+                trans.GenerateJump(OpCodes.Brtrue, bend);
+                trans.GenerateControl(OpCodes.Pop);
+                Translate((dynamic)element.Right, trans);
+                trans.MarkLabel(bend);
+            }
+            else if (element.Operator == TokenType.AndElse)
+            {
+                Translate((dynamic)element.Left, trans);
+                trans.GenerateControl(OpCodes.Dup);
+                trans.GenerateJump(OpCodes.Brfalse, bend);
+                trans.GenerateControl(OpCodes.Pop);
+                Translate((dynamic)element.Right, trans);
+                trans.MarkLabel(bend);
+            }
+            else
+            {
+                throw new ArgumentException();
             }
         }
 
@@ -414,6 +430,11 @@ namespace CliTranslate
             }
         }
 
+        private bool TranslateAccess(Element element, Translator trans)
+        {
+            return false;
+        }
+
         private bool TranslateAccess(IdentifierAccess element, Translator trans)
         {
             if (element.IsTacitThis)
@@ -435,9 +456,63 @@ namespace CliTranslate
             return true;
         }
 
-        private bool TranslateAccess(Element element, Translator trans)
+        private void TranslateBrunch(Element element, Translator trans, Label bfalse, bool isnot)
         {
-            return false;
+            Translate((dynamic)element, trans);
+            if (isnot)
+            {
+                trans.GenerateJump(OpCodes.Brfalse, bfalse);
+            }
+            else
+            {
+                trans.GenerateJump(OpCodes.Brtrue, bfalse);
+            }
+        }
+
+        private void TranslateBrunch(NotStatement element, Translator trans, Label bfalse, bool isnot)
+        {
+            TranslateBrunch((dynamic)element.Exp, trans, bfalse, !isnot);
+        }
+
+        private void TranslateBrunch(Condition element, Translator trans, Label bfalse, bool isnot)
+        {
+            Translate((dynamic)element.Left, trans);
+            if (element.IsConnection)
+            {
+                Translate((dynamic)element.VirtualRight, trans);
+                TranslateBrunchCall(element.CallScope, trans, bfalse, isnot);
+                TranslateBrunch((dynamic)element.Right, trans, bfalse, isnot);
+            }
+            else
+            {
+                Translate((dynamic)element.Right, trans);
+                TranslateBrunchCall(element.CallScope, trans, bfalse, isnot);
+            }
+        }
+
+        private void TranslateBrunch(Logical element, Translator trans, Label bfalse, bool isnot)
+        {
+            if(element.Operator == TokenType.OrElse)
+            {
+                var bend = trans.CreateLabel();
+                TranslateBrunch((dynamic)element.Left, trans, bend, !isnot);
+                TranslateBrunch((dynamic)element.Right, trans, bfalse, isnot);
+                trans.MarkLabel(bend);
+            }
+            else if (element.Operator == TokenType.AndElse)
+            {
+                TranslateBrunch((dynamic)element.Left, trans, bfalse, isnot);
+                TranslateBrunch((dynamic)element.Right, trans, bfalse, isnot);
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        private void TranslateBrunchCall(Scope call, Translator trans, Label bfalse, bool isnot)
+        {
+            //todo 短縮コードの出力に対応する。
         }
     }
 }

@@ -137,7 +137,7 @@ namespace CliTranslate
             Generator.EndScope();
         }
 
-        public void GenerateJamp(OpCode type, Label label)
+        public void GenerateJump(OpCode type, Label label)
         {
             Generator.Emit(type, label);
         }
