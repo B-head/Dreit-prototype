@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Statement;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,14 @@ namespace AbstractSyntax
 
         public bool IsNoReturn
         {
-            get { return Parent is NameSpace && !(Parent is DeclateModule); }
+            get 
+            { 
+                if(Parent is IfStatement)
+                {
+                    return true;
+                }
+                return Parent is NameSpace && !(Parent is DeclateModule); 
+            }
         }
 
         public bool IsThisReturn

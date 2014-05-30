@@ -49,5 +49,11 @@ namespace AbstractSyntax.Pragma
         Mul,
         Div,
         Mod,
+        Eq,
+        Ne,
+        Lt,
+        Le,
+        Gt,
+        Ge,
     }
 }

@@ -67,12 +67,18 @@ namespace AbstractSyntax
 
         private void CreatePragma()
         {
+            AppendPragma("cast", new CastPragma());
             AppendPragma("add", new CalculatePragma(CalculatePragmaType.Add));
             AppendPragma("sub", new CalculatePragma(CalculatePragmaType.Sub));
             AppendPragma("mul", new CalculatePragma(CalculatePragmaType.Mul));
             AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
             AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
-            AppendPragma("cast", new CastPragma());
+            AppendPragma("eq", new CalculatePragma(CalculatePragmaType.Eq));
+            AppendPragma("ne", new CalculatePragma(CalculatePragmaType.Ne));
+            AppendPragma("lt", new CalculatePragma(CalculatePragmaType.Lt));
+            AppendPragma("le", new CalculatePragma(CalculatePragmaType.Le));
+            AppendPragma("gt", new CalculatePragma(CalculatePragmaType.Gt));
+            AppendPragma("ge", new CalculatePragma(CalculatePragmaType.Ge));
             AppendPragma("Object", new PrimitivePragma(PrimitivePragmaType.Object));
             AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
             AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));

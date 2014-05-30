@@ -54,6 +54,12 @@ class Integer32 : @@Integer32
 	operator /(other:Integer32) :: @@div(this, other)
 	operator %(other:Integer32) :: @@mod(this, other)
 	operator %(other:Binary64) :: @@mod(@@cast(other, this), other)
+	operator =(other:Integer32) :: @@eq(this, other)
+	operator <>(other:Integer32) :: @@ne(this, other)
+	operator <(other:Integer32) :: @@lt(this, other)
+	operator <=(other:Integer32) :: @@le(this, other)
+	operator >(other:Integer32) :: @@gt(this, other)
+	operator >=(other:Integer32) :: @@ge(this, other)
 
 	routine from(other:Integer8) :: @@cast(this, other)
 	routine from(other:Integer16) :: @@cast(this, other)

@@ -347,10 +347,7 @@ namespace CliTranslate
 
         private void CallTranslate(CalculatePragma call, TupleList arguments, Translator trans)
         {
-            foreach (var v in arguments)
-            {
-                Translate((dynamic)v, trans);
-            }
+            ChildTranslate(arguments, trans);
             switch (call.Type)
             {
                 case CalculatePragmaType.Add: trans.GenerateControl(OpCodes.Add); break;
@@ -358,6 +355,12 @@ namespace CliTranslate
                 case CalculatePragmaType.Mul: trans.GenerateControl(OpCodes.Mul); break;
                 case CalculatePragmaType.Div: trans.GenerateControl(OpCodes.Div); break;
                 case CalculatePragmaType.Mod: trans.GenerateControl(OpCodes.Rem); break;
+                case CalculatePragmaType.Eq: trans.GenerateControl(OpCodes.Ceq); break;
+                case CalculatePragmaType.Ne: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Not); break;
+                case CalculatePragmaType.Lt: trans.GenerateControl(OpCodes.Clt); break;
+                case CalculatePragmaType.Le: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Not); break;
+                case CalculatePragmaType.Gt: trans.GenerateControl(OpCodes.Cgt); break;
+                case CalculatePragmaType.Ge: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Not); break;
                 default: throw new ArgumentException();
             }
         }
