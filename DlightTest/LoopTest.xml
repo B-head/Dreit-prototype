@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      <![CDATA[
+      var a := 0
+      loop a < 10 :: echo a := a + 2
+      ]]>
+    </code>
+    <output>2 4 6 8 10</output>
+  </case>
+  <case>
+    <code>
+      <![CDATA[
+      loop a < 10 on a = 0 by a := a + 2 do echo a
+      ]]>
+    </code>
+    <output>0 2 4 6 8</output>
+  </case>
+  <case>
+    <code>
+      <![CDATA[
+      var a := 0
+      loop {
+        echo a := a + 2
+        if a > 10 :: break
+      }
+      ]]>
+    </code>
+    <output>2 4 6 8 10</output>
+  </case>
+  <case>
+    <code>
+      <![CDATA[
+      loop a < 10 on a = 0 by a := a + 1 {
+        if a % 3 <> 0 :: continue
+        echo a
+      }
+      ]]>
+    </code>
+    <output>0 3 6 9</output>
+  </case>
+</compile-test>

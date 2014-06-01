@@ -53,14 +53,6 @@
 
   <case>
     <code>
-      var a:Integer32 := 40
-      echo a
-    </code>
-    <output>40</output>
-  </case>
-
-  <case>
-    <code>
       var a:Int32 := 70
       echo a
     </code>
@@ -98,6 +90,13 @@
       echo a
     </code>
     <output>10</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      var a := a + 10
+      echo a
+    </code>
   </case>
 
   <case>
