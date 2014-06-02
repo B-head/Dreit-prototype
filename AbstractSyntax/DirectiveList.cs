@@ -32,7 +32,7 @@ namespace AbstractSyntax
         {
             get 
             { 
-                if(Parent is IfStatement)
+                if(Parent is IfStatement || Parent is LoopStatement)
                 {
                     return true;
                 }

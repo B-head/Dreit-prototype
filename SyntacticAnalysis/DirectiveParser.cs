@@ -34,7 +34,7 @@ namespace SyntacticAnalysis
         private static DirectiveList InlineDirectiveList(ChainParser cp)
         {
             return cp.Begin<DirectiveList>()
-                .Type(TokenType.Separator).Lt()
+                .Type(TokenType.Separator).Or().Text("do").Lt()
                 .Transfer((s, e) => s.Append(e), Directive)
                 .Self(s => s.IsInline = true)
                 .End();
@@ -43,7 +43,7 @@ namespace SyntacticAnalysis
         private static DirectiveList IfInlineDirectiveList(ChainParser cp)
         {
             return cp.Begin<DirectiveList>()
-                .Type(TokenType.Separator).Or().Text("than").Lt()
+                .Type(TokenType.Separator).Or().Text("do").Or().Text("than").Lt()
                 .Transfer((s, e) => s.Append(e), Directive)
                 .Self(s => s.IsInline = true)
                 .End();
@@ -98,6 +98,20 @@ namespace SyntacticAnalysis
             return cp.Begin<ReturnDirective>()
                 .Text("return").Lt()
                 .Transfer((s, e) => s.Exp = e, Directive)
+                .End();
+        }
+
+        private static BreakDirective Break(ChainParser cp)
+        {
+            return cp.Begin<BreakDirective>()
+                .Text("break").Lt()
+                .End();
+        }
+
+        private static ContinueDirective Continue(ChainParser cp)
+        {
+            return cp.Begin<ContinueDirective>()
+                .Text("continue").Lt()
                 .End();
         }
     }

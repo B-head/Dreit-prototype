@@ -48,6 +48,8 @@
     <Compile Include="Directive\AliasDirective.cs" />
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
+    <Compile Include="Directive\BreakDirective.cs" />
+    <Compile Include="Directive\ContinueDirective.cs" />
     <Compile Include="Expression\Condition.cs" />
     <Compile Include="Expression\Logical.cs" />
     <Compile Include="Interfaces.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Root.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Statement\IfStatement.cs" />
+    <Compile Include="Statement\LoopStatement.cs" />
     <Compile Include="Statement\NotStatement.cs" />
     <Compile Include="Symbol\BooleanSymbol.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />

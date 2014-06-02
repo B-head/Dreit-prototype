@@ -46,9 +46,9 @@ namespace CliTranslate
                 var f = SpreadQueue.First.Value;
                 SpreadQueue.RemoveFirst();
                 Translator t = null;
-                if (TransDictionary.ContainsKey(f.CurrentIScope))
+                if (TransDictionary.ContainsKey(f.CurrentNameScope))
                 {
-                    t = TransDictionary[f.CurrentIScope];
+                    t = TransDictionary[f.CurrentNameScope];
                 }
                 SpreadTranslate((dynamic)f, t);
             }
@@ -246,6 +246,34 @@ namespace CliTranslate
                 trans.EndScope();
                 trans.MarkLabel(bend);
             }
+        }
+
+        private void Translate(LoopStatement element, Translator trans)
+        {
+            var bcontinue = trans.CreateLabel();
+            var bbreak = trans.CreateLabel();
+            if (element.IsDefinedOn)
+            {
+                Translate((dynamic)element.On, trans);
+                if (!element.On.IsVoidValue)
+                {
+                    trans.GenerateControl(OpCodes.Pop);
+                }
+            }
+            trans.MarkLabel(bcontinue);
+            Translate((dynamic)element.Condition, trans);
+            trans.GenerateJump(OpCodes.Brfalse, bbreak);
+            Translate((dynamic)element.Block, trans);
+            if (element.IsDefinedBy)
+            {
+                Translate((dynamic)element.By, trans);
+                if (!element.By.IsVoidValue)
+                {
+                    trans.GenerateControl(OpCodes.Pop);
+                }
+            }
+            trans.GenerateJump(OpCodes.Br, bcontinue);
+            trans.MarkLabel(bbreak);
         }
 
         private void Translate(ReturnDirective element, Translator trans)

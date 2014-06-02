@@ -53,5 +53,15 @@ namespace SyntacticAnalysis
                 .If().Text("else").Lt().Than().Transfer((s, e) => s.Else = e, PureInlineDirectiveList, Block).EndIf()
                 .End();
         }
+
+        private static LoopStatement LoopStatement(ChainParser cp)
+        {
+            return cp.Begin<LoopStatement>()
+                .Text("loop").Lt().Opt().Transfer((s, e) => s.Condition = e, Directive)
+                .If().Text("on").Lt().Than().Transfer((s, e) => s.On = e, Directive).EndIf()
+                .If().Text("by").Lt().Than().Transfer((s, e) => s.By = e, Directive).EndIf()
+                .Transfer((s, e) => s.Block = e, Block)
+                .End();
+        }
     }
 }
