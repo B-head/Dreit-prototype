@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassTranslator.cs" />
+    <Compile Include="BranchTranslator.cs" />
     <Compile Include="ImportManager.cs" />
+    <Compile Include="LoopTranslator.cs" />
     <Compile Include="ModuleTranslator.cs" />
     <Compile Include="PrimitiveTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

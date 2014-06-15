@@ -19,7 +19,7 @@ namespace CliTranslate
         private List<Translator> _Child;
         public IReadOnlyList<Translator> Child { get { return _Child; } }
         public IScope Scope { get; private set; }
-        protected ILGenerator Generator;
+        internal ILGenerator Generator;
 
         protected Translator(IScope scope, Translator parent)
         {
@@ -62,42 +62,52 @@ namespace CliTranslate
 
         internal virtual TypeBuilder CreateLexical(string name)
         {
-            throw new NotSupportedException();
+            return Parent.CreateLexical(name);
         }
 
         public virtual ModuleTranslator CreateModule(IScope path)
         {
-            throw new NotSupportedException();
+            return Parent.CreateModule(path);
         }
 
         public virtual RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
         {
-            throw new NotSupportedException();
+            return Parent.CreateRoutine(path, returnType, argumentType);
         }
 
         public virtual RoutineTranslator CreateOperation(OpCodes operation)
         {
-            throw new NotSupportedException();
+            return Parent.CreateOperation(operation);
         }
 
         public virtual ClassTranslator CreateClass(IScope path)
         {
-            throw new NotSupportedException();
+            return Parent.CreateClass(path);
         }
 
         public virtual PrimitiveTranslator CreatePrimitive(IScope path, PrimitivePragmaType type)
         {
-            throw new NotSupportedException();
+            return Parent.CreatePrimitive(path, type);
         }
 
         public virtual void CreateEnum(IScope path)
         {
-            throw new NotSupportedException();
+            Parent.CreateEnum(path);
         }
 
         public virtual void CreateVariant(IScope path, IScope type)
         {
-            throw new NotSupportedException();
+            Parent.CreateVariant(path, type);
+        }
+
+        public BranchTranslator CreateBranch(IScope path, bool definedElse = false)
+        {
+            return new BranchTranslator(path, this, definedElse);
+        }
+
+        public LoopTranslator CreateLoop(IScope path)
+        {
+            return new LoopTranslator(path, this);
         }
 
         public Label CreateLabel(IScope path = null)
@@ -120,6 +130,16 @@ namespace CliTranslate
             {
                 return CreateLabel(path);
             }
+        }
+
+        public virtual Label GetContinueLabel()
+        {
+            return Parent.GetContinueLabel();
+        }
+
+        public virtual Label GetBreakLabel()
+        {
+            return Parent.GetBreakLabel();
         }
 
         public void MarkLabel(Label label)

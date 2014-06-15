@@ -46,9 +46,9 @@ namespace CliTranslate
                 var f = SpreadQueue.First.Value;
                 SpreadQueue.RemoveFirst();
                 Translator t = null;
-                if (TransDictionary.ContainsKey(f.CurrentNameScope))
+                if (TransDictionary.ContainsKey(f.CurrentIScope))
                 {
-                    t = TransDictionary[f.CurrentNameScope];
+                    t = TransDictionary[f.CurrentIScope];
                 }
                 SpreadTranslate((dynamic)f, t);
             }
@@ -147,6 +147,20 @@ namespace CliTranslate
             trans.CreateVariant(scope, scope.DataType);
         }
 
+        private void SpreadTranslate(IfStatement scope, Translator trans)
+        {
+            var t = trans.CreateBranch(scope, scope.IsDefinedElse);
+            TransDictionary.Add(scope, t);
+            ChildSpreadTranslate(scope, t);
+        }
+
+        private void SpreadTranslate(LoopStatement scope, Translator trans)
+        {
+            var t = trans.CreateLoop(scope);
+            TransDictionary.Add(scope, t);
+            ChildSpreadTranslate(scope, t);
+        }
+
         private void ChildTranslate(IElement element, Translator trans)
         {
             foreach(var v in element)
@@ -221,59 +235,72 @@ namespace CliTranslate
 
         private void Translate(IfStatement element, Translator trans)
         {
+            var bt = (BranchTranslator)TransDictionary[element];
             Translate((dynamic)element.Condition, trans);
             if (element.IsDefinedElse)
             {
-                var belse = trans.CreateLabel();
-                var bend = trans.CreateLabel();
-                trans.GenerateJump(OpCodes.Brfalse, belse);
+                trans.GenerateJump(OpCodes.Brfalse, bt.ElseLabel);
                 trans.BeginScope();
-                Translate(element.Than, trans);
+                Translate(element.Than, bt);
                 trans.EndScope();
-                trans.GenerateJump(OpCodes.Br, bend);
-                trans.MarkLabel(belse);
+                trans.GenerateJump(OpCodes.Br, bt.EndLabel);
+                trans.MarkLabel(bt.ElseLabel);
                 trans.BeginScope();
-                Translate(element.Else, trans);
+                Translate(element.Else, bt);
                 trans.EndScope();
-                trans.MarkLabel(bend);
+                trans.MarkLabel(bt.EndLabel);
             }
             else
             {
-                var bend = trans.CreateLabel();
-                trans.GenerateJump(OpCodes.Brfalse, bend);
+                trans.GenerateJump(OpCodes.Brfalse, bt.ElseLabel);
                 trans.BeginScope();
-                Translate(element.Than, trans);
+                Translate(element.Than, bt);
                 trans.EndScope();
-                trans.MarkLabel(bend);
+                trans.MarkLabel(bt.ElseLabel);
             }
         }
 
         private void Translate(LoopStatement element, Translator trans)
         {
-            var bcontinue = trans.CreateLabel();
-            var bbreak = trans.CreateLabel();
+            var lt = (LoopTranslator)TransDictionary[element];
+            var bp = trans.CreateLabel();
             if (element.IsDefinedOn)
             {
-                Translate((dynamic)element.On, trans);
+                Translate((dynamic)element.On, lt);
                 if (!element.On.IsVoidValue)
                 {
                     trans.GenerateControl(OpCodes.Pop);
                 }
             }
-            trans.MarkLabel(bcontinue);
-            Translate((dynamic)element.Condition, trans);
-            trans.GenerateJump(OpCodes.Brfalse, bbreak);
-            Translate((dynamic)element.Block, trans);
+            trans.GenerateJump(OpCodes.Br, bp);
+            trans.MarkLabel(lt.GetContinueLabel());
             if (element.IsDefinedBy)
             {
-                Translate((dynamic)element.By, trans);
+                Translate((dynamic)element.By, lt);
                 if (!element.By.IsVoidValue)
                 {
                     trans.GenerateControl(OpCodes.Pop);
                 }
             }
-            trans.GenerateJump(OpCodes.Br, bcontinue);
-            trans.MarkLabel(bbreak);
+            trans.MarkLabel(bp);
+            if (element.IsDefinedCondition)
+            {
+                Translate((dynamic)element.Condition, lt);
+                trans.GenerateJump(OpCodes.Brfalse, lt.GetBreakLabel());
+            }
+            Translate((dynamic)element.Block, lt);
+            trans.GenerateJump(OpCodes.Br, lt.GetContinueLabel());
+            trans.MarkLabel(lt.GetBreakLabel());
+        }
+
+        private void Translate(ContinueDirective element, Translator trans)
+        {
+            trans.GenerateJump(OpCodes.Br, trans.GetContinueLabel());
+        }
+
+        private void Translate(BreakDirective element, Translator trans)
+        {
+            trans.GenerateJump(OpCodes.Br, trans.GetBreakLabel());
         }
 
         private void Translate(ReturnDirective element, Translator trans)

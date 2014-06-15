@@ -23,7 +23,7 @@
       var a := 0
       loop {
         echo a := a + 2
-        if a > 10 :: break
+        if a >= 10 :: break
       }
       ]]>
     </code>

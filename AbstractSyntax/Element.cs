@@ -10,7 +10,7 @@ namespace AbstractSyntax
     public interface IElement : IReadOnlyList<IElement>
     {
         TextPosition Position { get; }
-        IScope CurrentNameScope { get; }
+        IScope CurrentIScope { get; }
         IDataType DataType { get; }
         bool IsVoidValue { get; }
     }
@@ -24,17 +24,9 @@ namespace AbstractSyntax
         internal Scope CurrentScope { get; private set; }
         internal Root Root { get; private set; }
 
-        public IScope CurrentNameScope 
+        public IScope CurrentIScope 
         {
-            get 
-            {
-                var ret = CurrentScope;
-                while (string.IsNullOrEmpty(ret.Name))
-                {
-                    ret = ret.CurrentScope;
-                }
-                return ret;
-            }
+            get { return CurrentScope; }
         }
 
         public virtual IDataType DataType
