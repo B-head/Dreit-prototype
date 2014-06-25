@@ -153,6 +153,124 @@
   <case>
     <code>
       <![CDATA[
+      class A
+      {
+        public var a := 10
+        private var b := 20
+        
+        public routine foo :: 30
+        private routine ber :: 40
+      }
+
+      A() =: var o
+      echo o.a
+      echo o.b
+      echo o.foo
+      echo o.ber
+      ]]>
+    </code>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        @public var a := 10
+        @private var b := 20
+        
+        @public routine foo :: 30
+        @private routine ber :: 40
+      }
+
+      A() =: var o
+      echo o.a
+      echo o.b
+      echo o.foo
+      echo o.ber
+      ]]>
+    </code>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        #private
+        var a := 10
+        var b := 20
+        
+        routine foo :: 30
+        routine ber :: 40
+      }
+
+      A() =: var o
+      echo o.a
+      echo o.b
+      echo o.foo
+      echo o.ber
+      ]]>
+    </code>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        #private
+        public var a := 10
+        var b := 20
+        
+        public routine foo :: 30
+        routine ber :: 40
+      }
+
+      A() =: var o
+      echo o.a
+      echo o.b
+      echo o.foo
+      echo o.ber
+      ]]>
+    </code>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        public var a := 10
+        public static var b := 20
+        
+        public routine foo :: 30
+        public static routine ber :: 40
+      }
+
+      A() =: var o
+      echo o.a
+      echo A.b
+      echo o.foo
+      echo A.ber
+      ]]>
+    </code>
+    <output>10 20 30 40</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
       class A {
         var x := 11
         var y := 22

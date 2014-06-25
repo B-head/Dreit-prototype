@@ -101,6 +101,23 @@
 
   <case>
     <code>
+      let a := 40
+      echo a
+    </code>
+    <output>40</output>
+  </case>
+
+  <case>
+    <code>
+      let a := 40
+      a := 600
+      echo a
+    </code>
+    <error key="not-mutable"/>
+  </case>
+
+  <case>
+    <code>
       50 =: var a =: var b
       echo a * b
     </code>

@@ -50,6 +50,23 @@
 
   <case>
     <code>
+      function foo(a:Int32) :: a + 10
+      echo foo := 20
+    </code>
+    <output>30</output>
+  </case>
+
+  <case>
+    <code>
+      var x := 50
+      function foo(a:Int32) :: x := x + a
+      echo foo := 20
+    </code>
+    <error key="forbit-side-effect"/>
+  </case>
+
+  <case>
+    <code>
       routine foo(a:Integer32, b:Integer32) :: a % b
       echo foo(23, 5)
     </code>
