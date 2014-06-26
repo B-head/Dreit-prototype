@@ -12,6 +12,7 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateClass : ClassSymbol
     {
+        public TupleList Attribute { get; set; }
         public TupleList Generic { get; set; }
         public TupleList Inherit { get; set; }
         public DirectiveList Block { get; set; }
@@ -56,7 +57,7 @@ namespace AbstractSyntax.Daclate
 
         public override int Count
         {
-            get { return 5; }
+            get { return 6; }
         }
 
         public override IElement this[int index]
@@ -65,11 +66,12 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Generic;
-                    case 1: return Inherit;
-                    case 2: return Block;
-                    case 3: return This;
-                    case 4: return Default;
+                    case 0: return Attribute;
+                    case 1: return Generic;
+                    case 2: return Inherit;
+                    case 3: return Block;
+                    case 4: return This;
+                    case 5: return Default;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }

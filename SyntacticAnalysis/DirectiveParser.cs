@@ -11,7 +11,7 @@ namespace SyntacticAnalysis
         {
             var result = cp.Begin<DirectiveList>()
                 .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .Loop().Readble().Than()
+                .Loop().Readble().Do()
                 .Transfer((s, e) => s.Append(e), Directive)
                 .Or().Error()
                 .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
@@ -54,7 +54,7 @@ namespace SyntacticAnalysis
             var result = cp.Begin<DirectiveList>()
                 .Type(TokenType.LeftBrace)
                 .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .Loop().Not().Type(TokenType.RightBrace).Than()
+                .Loop().Not().Type(TokenType.RightBrace).Do()
                 .Transfer((s, e) => s.Append(e), Directive)
                 .Or().Error()
                 .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
@@ -74,6 +74,15 @@ namespace SyntacticAnalysis
         private static Element Directive(ChainParser cp)
         {
             return CoalesceParser(cp, directive);
+        }
+
+        private static AttributeZoneDirective AttributeZone(ChainParser cp)
+        {
+            return cp.Begin<AttributeZoneDirective>()
+                .Type(TokenType.Wild).Loop()
+                .Text((s, e) => s.Append(TextToIdentifier(cp, e.Text)))
+                .Type(TokenType.List)
+                .Do().EndLoop().End();
         }
 
         private static EchoDirective Echo(ChainParser cp)

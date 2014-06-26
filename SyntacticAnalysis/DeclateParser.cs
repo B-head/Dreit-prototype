@@ -9,7 +9,8 @@ namespace SyntacticAnalysis
         private static DeclateVariant DeclareVariant(ChainParser cp)
         {
             return cp.Begin<DeclateVariant>()
-                .Text("var").Lt()
+                .Transfer((s, e) => s.Attribute = e, AttributeList)
+                .Text("var", "let").Lt()
                 .Transfer((s, e) => s.Ident = e, IdentifierAccess)
                 .If().Type(TokenType.Peir).Lt()
                 .Than().Transfer((s, e) => s.ExplicitType = e, Addtive)
@@ -19,7 +20,8 @@ namespace SyntacticAnalysis
         private static DeclateRoutine DeclateRoutine(ChainParser cp)
         {
             return cp.Begin<DeclateRoutine>()
-                .Text("rout", "routine").Lt()
+                .Transfer((s, e) => s.Attribute = e, AttributeList)
+                .Text("rout", "routine", "func", "function").Lt()
                 .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer((s, e) => s.Generic = e, GenericList)
                 .Transfer((s, e)=> s.Arguments = e, ArgumentList)
@@ -32,6 +34,7 @@ namespace SyntacticAnalysis
         private static DeclateOperator DeclateOperator(ChainParser cp)
         {
             return cp.Begin<DeclateOperator>()
+                .Transfer((s, e) => s.Attribute = e, AttributeList)
                 .Text("operator").Lt()
                 .Token((s, t) => { s.Operator = t.Type; s.Name = t.Text; }).Lt()
                 .Transfer((s, e) => s.Generic = e, GenericList)
@@ -45,14 +48,31 @@ namespace SyntacticAnalysis
         private static DeclateClass DeclateClass(ChainParser cp)
         {
             return cp.Begin<DeclateClass>()
+                .Transfer((s, e) => s.Attribute = e, AttributeList)
                 .Text("class").Lt()
                 .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer((s, e) => s.Generic = e, GenericList)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.Inherit = e, c => ParseTuple(c, Addtive))
+                .Than().Transfer((s, e) => s.Inherit = e, c => ParseTuple(c, MemberAccess))
                 .Else().Self(s => s.Inherit = new TupleList()).EndIf()
                 .Transfer((s, e) => s.Block = e, Block)
                 .End();
+        }
+
+        private static TupleList AttributeList(ChainParser cp)
+        {
+            var atFlag = false;
+            var ret = cp.Begin<TupleList>()
+                .Loop()
+                .If().Type(TokenType.At).Lt()
+                .Than().Text((s, e) => s.Append(TextToIdentifier(cp, e.Text))).Self(s => atFlag = true)
+                .ElseIf().Is(atFlag).Type(TokenType.List)
+                .Than().Text((s, e) => s.Append(TextToIdentifier(cp, e.Text))).Self(s => atFlag = true)
+                .Else().Text((s, e) => s.Append(TextToIdentifier(cp, e.Text)), attribute).Self(s => atFlag = false)
+                .EndIf().Lt()
+                .Do().EndLoop()
+                .End();
+            return ret ?? new TupleList();
         }
 
         private static TupleList GenericList(ChainParser cp)
@@ -63,7 +83,7 @@ namespace SyntacticAnalysis
                 .Loop()
                 .Transfer((s, e) => s.Append(e), DeclateGeneric)
                 .Type(TokenType.List).Lt()
-                .Than().EndLoop()
+                .Do().EndLoop()
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
             return ret ?? new TupleList();
@@ -85,7 +105,7 @@ namespace SyntacticAnalysis
                 .Loop()
                 .Transfer((s, e) => s.Append(e), DeclateArgument)
                 .Type(TokenType.List).Lt()
-                .Than().EndLoop()
+                .Do().EndLoop()
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
             return ret ?? new TupleList();

@@ -11,6 +11,7 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateRoutine : RoutineSymbol
     {
+        public TupleList Attribute { get; set; }
         public TupleList Generic { get; set; }
         public TupleList Arguments { get; set; }
         public Element ExplicitType { get; set; }
@@ -119,7 +120,7 @@ namespace AbstractSyntax.Daclate
 
         public override int Count
         {
-            get { return 4; }
+            get { return 5; }
         }
 
         public override IElement this[int index]
@@ -128,10 +129,11 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Generic;
-                    case 1: return Arguments;
-                    case 2: return ExplicitType;
-                    case 3: return Block;
+                    case 0: return Attribute;
+                    case 1: return Generic;
+                    case 2: return Arguments;
+                    case 3: return ExplicitType;
+                    case 4: return Block;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }

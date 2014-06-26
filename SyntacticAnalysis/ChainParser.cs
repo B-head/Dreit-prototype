@@ -39,7 +39,7 @@ namespace SyntacticAnalysis
     {
         public event Action<int> EndEvent;
         private T self;
-        internal bool failure { get; private set; }
+        internal bool failure { get; set; }
         private bool justFailure;
         private bool phaseIf;
         private bool phaseSkip;
@@ -244,18 +244,11 @@ namespace SyntacticAnalysis
 
         public ChainParser<T> Than()
         {
-            bool skip;
-            return Than(out skip);
-        }
-
-        public ChainParser<T> Than(out bool skip)
-        {
             if (phaseIf)
             {
                 phaseSkip = failure;
                 failure = false;
             }
-            skip = phaseSkip;
             return this;
         }
 
@@ -452,7 +445,7 @@ namespace SyntacticAnalysis
 
         public LoopChainParser<T> Than()
         {
-            LoopList.Add(cp => cp.Than(out condFailure));
+            LoopList.Add(cp => cp.Than());
             return this;
         }
 
@@ -492,16 +485,30 @@ namespace SyntacticAnalysis
             return this;
         }
 
+        public LoopChainParser<T> Do()
+        {
+            LoopList.Add(cp => DoFunc(cp));
+            return this;
+        }
+
+        public void DoFunc(ChainParser<T> cp)
+        {
+            condFailure = cp.failure;
+            cp.failure = false;
+        }
+
         public ChainParser<T> EndLoop()
         {
             while (!condFailure && !self.failure)
             {
-                self.If();
                 foreach(var f in LoopList)
                 {
                     f(self);
+                    if(condFailure)
+                    {
+                        break;
+                    }
                 }
-                self.EndIf();
             }
             return self;
         }

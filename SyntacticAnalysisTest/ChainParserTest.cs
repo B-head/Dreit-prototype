@@ -253,7 +253,7 @@ namespace SyntacticAnalysisTest
             var cp = new ChainParser(tc);
             var ret = cp.Begin<DirectiveList>().Text("test")
                 .Loop().Not().Type(TokenType.DigitStartString)
-                .Than().Type(TokenType.LetterStartString)
+                .Do().Type(TokenType.LetterStartString)
                 .EndLoop().End();
             if (expected == 0)
             {

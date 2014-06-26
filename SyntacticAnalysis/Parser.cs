@@ -8,8 +8,9 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static ParserFunction<Element>[] directive = { Echo, Alias, Return, Break, Continue, LeftAssign };
+        private static ParserFunction<Element>[] directive = { AttributeZone, Echo, Alias, Return, Break, Continue, LeftAssign };
         private static ParserFunction<Element>[] primary = { IfStatement, LoopStatement, NotStatement, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, Group, Number, IdentifierAccess };
+        private static string[] attribute = { "static", "public", "protected", "private" };
 
         public static DeclateModule Parse(TokenCollection collection)
         {
@@ -71,7 +72,14 @@ namespace SyntacticAnalysis
             return cp.Begin<TupleList>().Loop()
                 .Transfer((s, e)=> s.Append(e), next)
                 .Type(TokenType.List).Lt()
-                .Than().EndLoop().End(); 
+                .Do().EndLoop().End(); 
+        }
+
+        private static IdentifierAccess TextToIdentifier(ChainParser cp, string text)
+        {
+            return cp.Begin<IdentifierAccess>()
+                .Self(s => s.Value = text)
+                .End();
         }
     }
 }

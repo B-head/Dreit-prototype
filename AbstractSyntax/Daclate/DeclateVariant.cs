@@ -10,6 +10,7 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateVariant : VariantSymbol, IAccess
     {
+        public TupleList Attribute { get; set; }
         public IdentifierAccess Ident { get; set; }
         public Element ExplicitType { get; set; }
 
@@ -50,7 +51,7 @@ namespace AbstractSyntax.Daclate
 
         public override int Count
         {
-            get { return 2; }
+            get { return 3; }
         }
 
         public override IElement this[int index]
@@ -59,8 +60,9 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Ident;
-                    case 1: return ExplicitType;
+                    case 0: return Attribute;
+                    case 1: return Ident;
+                    case 2: return ExplicitType;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }

@@ -48,6 +48,7 @@
     <Compile Include="Directive\AliasDirective.cs" />
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
+    <Compile Include="Directive\AttributeZoneDirective.cs" />
     <Compile Include="Directive\BreakDirective.cs" />
     <Compile Include="Directive\ContinueDirective.cs" />
     <Compile Include="Expression\Condition.cs" />
