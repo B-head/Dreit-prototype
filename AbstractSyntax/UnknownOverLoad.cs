@@ -30,6 +30,11 @@ namespace AbstractSyntax
             return Unknown;
         }
 
+        public override IScope SelectPlain()
+        {
+            return Unknown;
+        }
+
         public override TypeMatch TypeSelect()
         {
             return TypeMatch.MakeNotCallable(Unknown);

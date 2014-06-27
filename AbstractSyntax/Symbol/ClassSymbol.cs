@@ -9,19 +9,25 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class ClassSymbol : Scope, IDataType
+    public class ClassSymbol : Scope, IDataType, IAttribute
     {
         protected List<RoutineSymbol> initializer;
-        protected List<ClassSymbol> _InheritRefer;
+        protected List<IScope> _Attribute;
+        protected List<ClassSymbol> _Inherit;
 
         public ClassSymbol()
         {
             initializer = new List<RoutineSymbol>();
         }
-        
-        public virtual List<ClassSymbol> InheritRefer
+
+        public virtual IReadOnlyList<IScope> Attribute
         {
-            get { return _InheritRefer; }
+            get { return _Attribute; }
+        }
+
+        public virtual IReadOnlyList<ClassSymbol> Inherit
+        {
+            get { return _Inherit; }
         }
 
         public override IDataType DataType
@@ -43,9 +49,9 @@ namespace AbstractSyntax.Symbol
         public PrimitivePragmaType GetPrimitiveType()
         {
             PrimitivePragma prim = null;
-            if (InheritRefer.Count == 1)
+            if (Inherit.Count == 1)
             {
-                prim = InheritRefer[0] as PrimitivePragma;
+                prim = Inherit[0] as PrimitivePragma;
             }
             if (prim == null)
             {
@@ -68,7 +74,7 @@ namespace AbstractSyntax.Symbol
             {
                 return true;
             }
-            foreach (var v in InheritRefer)
+            foreach (var v in Inherit)
             {
                 if (v.IsConvert(other))
                 {

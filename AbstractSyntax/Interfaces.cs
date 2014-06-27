@@ -11,13 +11,19 @@ namespace AbstractSyntax
 
     }
 
-    interface IAccess
+    public interface IAttribute : IElement
+    {
+        IReadOnlyList<IScope> Attribute { get; }
+    }
+
+    interface IAccess : IElement
     {
         OverLoad Reference { get; }
+        void RefarenceResolution();
         void RefarenceResolution(IScope scope);
     }
 
-    interface ICaller
+    interface ICaller : IElement
     {
         bool HasCallTarget(IElement element);
         IDataType GetCallType();

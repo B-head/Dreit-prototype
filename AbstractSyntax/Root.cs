@@ -100,6 +100,10 @@ namespace AbstractSyntax
             BuiltInList.Append(Error);
             BuiltInList.Append(new BooleanSymbol(false) { Name = "false" });
             BuiltInList.Append(new BooleanSymbol(true) { Name = "true" });
+            BuiltInList.Append(new AttributeSymbol { Name = "static" });
+            BuiltInList.Append(new AttributeSymbol { Name = "public" });
+            BuiltInList.Append(new AttributeSymbol { Name = "protected" });
+            BuiltInList.Append(new AttributeSymbol { Name = "private" });
         }
 
         private void CreateOperatorManager()

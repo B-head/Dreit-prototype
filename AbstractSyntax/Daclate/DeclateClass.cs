@@ -12,9 +12,9 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateClass : ClassSymbol
     {
-        public TupleList Attribute { get; set; }
-        public TupleList Generic { get; set; }
-        public TupleList Inherit { get; set; }
+        public TupleList AttributeAccess { get; set; }
+        public TupleList DecGeneric { get; set; }
+        public TupleList InheritAccess { get; set; }
         public DirectiveList Block { get; set; }
         public ThisSymbol This { get; private set; }
         public DefaultSymbol Default { get; private set; }
@@ -25,23 +25,44 @@ namespace AbstractSyntax.Daclate
             Default = new DefaultSymbol(this);
         }
 
-        public override List<ClassSymbol> InheritRefer 
+        public override IReadOnlyList<IScope> Attribute
         {
             get
             {
-                if (_InheritRefer != null)
+                if (_Attribute != null)
                 {
-                    return _InheritRefer;
+                    return _Attribute;
                 }
-                _InheritRefer = new List<ClassSymbol>();
-                foreach (var v in Inherit)
+                _Attribute = new List<IScope>();
+                foreach (var v in AttributeAccess)
+                {
+                    var acs = v as IAccess;
+                    if (acs != null)
+                    {
+                        _Attribute.Add(acs.Reference.SelectPlain());
+                    }
+                }
+                return _Attribute;
+            }
+        }
+
+        public override IReadOnlyList<ClassSymbol> Inherit 
+        {
+            get
+            {
+                if (_Inherit != null)
+                {
+                    return _Inherit;
+                }
+                _Inherit = new List<ClassSymbol>();
+                foreach (var v in InheritAccess)
                 {
                     if (v.DataType is ClassSymbol)
                     {
-                        InheritRefer.Add((ClassSymbol)v.DataType);
+                        _Inherit.Add((ClassSymbol)v.DataType);
                     }
                 }
-                return _InheritRefer;
+                return _Inherit;
             }
         }
 
@@ -66,9 +87,9 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Attribute;
-                    case 1: return Generic;
-                    case 2: return Inherit;
+                    case 0: return AttributeAccess;
+                    case 1: return DecGeneric;
+                    case 2: return InheritAccess;
                     case 3: return Block;
                     case 4: return This;
                     case 5: return Default;
@@ -110,7 +131,7 @@ namespace AbstractSyntax.Daclate
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            foreach (var v in Inherit)
+            foreach (var v in InheritAccess)
             {
                 if (!(v.DataType is ClassSymbol))
                 {

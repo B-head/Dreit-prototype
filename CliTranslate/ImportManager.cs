@@ -136,7 +136,7 @@ namespace CliTranslate
             {
                 exp.Append(ImportType(n));
             }
-            DeclateClass result = new DeclateClass { Name = type.GetPureName(), Generic = generic, Inherit = inherit, Block = exp };
+            DeclateClass result = new DeclateClass { Name = type.GetPureName(), DecGeneric = generic, InheritAccess = inherit, Block = exp };
             AppendPeir(result, type);
             foreach (var c in ctor)
             {
@@ -200,7 +200,7 @@ namespace CliTranslate
         {
             var arguments = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
-            DeclateRoutine result = new DeclateRoutine { Name = ctor.Name, Arguments = arguments, ExplicitType = expl };
+            DeclateRoutine result = new DeclateRoutine { Name = ctor.Name, DecArguments = arguments, ExplicitType = expl };
             AppendPeir(result, ctor);
             return result;
         }
@@ -226,7 +226,7 @@ namespace CliTranslate
             var generic = CreateGenericList(method.GetGenericList());
             var arguments = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
-            DeclateRoutine result = new DeclateRoutine { Name = method.GetPureName(), Generic = generic, Arguments = arguments, ExplicitType = expl };
+            DeclateRoutine result = new DeclateRoutine { Name = method.GetPureName(), DecGeneric = generic, DecArguments = arguments, ExplicitType = expl };
             AppendPeir(result, method);
             return result;
         }

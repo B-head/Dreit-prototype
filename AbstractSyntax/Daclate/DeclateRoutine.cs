@@ -11,14 +11,35 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateRoutine : RoutineSymbol
     {
-        public TupleList Attribute { get; set; }
-        public TupleList Generic { get; set; }
-        public TupleList Arguments { get; set; }
+        public TupleList AttributeAccess { get; set; }
+        public TupleList DecGeneric { get; set; }
+        public TupleList DecArguments { get; set; }
         public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
         public bool IsThisReturn { get; private set; }
 
-        public override List<IDataType> ArgumentType
+        public override IReadOnlyList<IScope> Attribute
+        {
+            get
+            {
+                if (_Attribute != null)
+                {
+                    return _Attribute;
+                }
+                _Attribute = new List<IScope>();
+                foreach (var v in AttributeAccess)
+                {
+                    var acs = v as IAccess;
+                    if (acs != null)
+                    {
+                        _Attribute.Add(acs.Reference.SelectPlain());
+                    }
+                }
+                return _Attribute;
+            }
+        }
+
+        public override IReadOnlyList<IDataType> ArgumentType
         {
             get
             {
@@ -27,7 +48,7 @@ namespace AbstractSyntax.Daclate
                     return _ArgumentType;
                 }
                 _ArgumentType = new List<IDataType>();
-                foreach (var v in Arguments)
+                foreach (var v in DecArguments)
                 {
                     var temp = v.DataType;
                     _ArgumentType.Add(temp);
@@ -129,9 +150,9 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Attribute;
-                    case 1: return Generic;
-                    case 2: return Arguments;
+                    case 0: return AttributeAccess;
+                    case 1: return DecGeneric;
+                    case 2: return DecArguments;
                     case 3: return ExplicitType;
                     case 4: return Block;
                     default: throw new ArgumentOutOfRangeException();

@@ -134,7 +134,7 @@ namespace CliTranslate
                 temp = trans.CreateRoutine(scope, scope.ReturnType, scope.ArgumentType);
             }
             TransDictionary.Add(scope, temp);
-            temp.CreateArguments(scope.Arguments.Cast<IScope>());
+            temp.CreateArguments(scope.DecArguments.Cast<IScope>());
             ChildSpreadTranslate(scope, temp);
         }
 

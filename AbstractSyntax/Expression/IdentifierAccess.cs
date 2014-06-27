@@ -3,6 +3,7 @@ using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace AbstractSyntax.Expression
 {
@@ -76,9 +77,22 @@ namespace AbstractSyntax.Expression
             {
                 if(_Reference == null)
                 {
-                    RefarenceResolution(CurrentScope);
+                    RefarenceResolution();
                 }
                 return _Reference;
+            }
+        }
+
+        public void RefarenceResolution()
+        {
+            var p = Parent as IAccess;
+            if (p == null)
+            {
+                RefarenceResolution(CurrentIScope);
+            }
+            else
+            {
+                p.RefarenceResolution();
             }
         }
 
@@ -108,8 +122,36 @@ namespace AbstractSyntax.Expression
             return current;
         }
 
+        private bool HasCurrentAccess(IScope other)
+        {
+            var c = CurrentIScope;
+            while(c != null)
+            {
+                if(c == other)
+                {
+                    return true;
+                }
+                c = c.CurrentIScope;
+            }
+            return false;
+        }
+
+        internal override void CheckSyntax()
+        {
+            base.CheckSyntax();
+            var s = Reference.SelectPlain() as IAttribute;
+            if(s != null)
+            {
+                if(s.Attribute.Any(v => v.Name == "private") && !HasCurrentAccess(s.CurrentIScope))
+                {
+                    CompileError("not-accessable");
+                }
+            }
+        }
+
         internal override void CheckDataType()
         {
+            base.CheckDataType();
             if (Reference is UnknownOverLoad)
             {
                 if (IsPragmaAccess)
@@ -121,7 +163,6 @@ namespace AbstractSyntax.Expression
                     CompileError("undefined-identifier");
                 }
             }
-            base.CheckDataType();
         }
     }
 }

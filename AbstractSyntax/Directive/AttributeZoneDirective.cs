@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Directive
 {
     [Serializable]
-    public class AttributeZoneDirective : Element
+    public class AttributeZoneDirective : Element, IAttribute
     {
         private List<Element> Child;
+        private List<IScope> _Attribute;
 
         public AttributeZoneDirective()
         {
@@ -19,6 +20,27 @@ namespace AbstractSyntax.Directive
         public void Append(Element append)
         {
             Child.Add(append);
+        }
+
+        public IReadOnlyList<IScope> Attribute
+        {
+            get
+            {
+                if (_Attribute != null)
+                {
+                    return _Attribute;
+                }
+                _Attribute = new List<IScope>();
+                foreach (var v in Child)
+                {
+                    var acs = v as IAccess;
+                    if (acs != null)
+                    {
+                        _Attribute.Add(acs.Reference.SelectPlain());
+                    }
+                }
+                return _Attribute;
+            }
         }
 
         public override int Count

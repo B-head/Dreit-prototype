@@ -15,6 +15,7 @@ namespace AbstractSyntax.Pragma
         public CastPragma()
         {
             GenericType = new GenericSymbol { Name = "T" };
+            _Attribute = new List<IScope>();
         }
 
         public override int Count

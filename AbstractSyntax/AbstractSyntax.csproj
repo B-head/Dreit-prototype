@@ -62,7 +62,6 @@
     <Compile Include="Daclate\DeclateEnum.cs" />
     <Compile Include="Daclate\DeclateGeneric.cs" />
     <Compile Include="Daclate\DeclateModule.cs" />
-    <Compile Include="Daclate\DeclateOperator.cs" />
     <Compile Include="Daclate\DeclateRoutine.cs" />
     <Compile Include="Daclate\DeclateVariant.cs" />
     <Compile Include="Expression\Calculate.cs" />
@@ -87,6 +86,7 @@
     <Compile Include="Statement\IfStatement.cs" />
     <Compile Include="Statement\LoopStatement.cs" />
     <Compile Include="Statement\NotStatement.cs" />
+    <Compile Include="Symbol\AttributeSymbol.cs" />
     <Compile Include="Symbol\BooleanSymbol.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
     <Compile Include="Symbol\DefaultSymbol.cs" />

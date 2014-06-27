@@ -11,13 +11,9 @@ namespace AbstractSyntax.Symbol
     {
         public DefaultSymbol(ClassSymbol parent)
         {
-            _ReturnType = parent;
-        }
-
-        protected override void SpreadElement(Element parent, Scope scope)
-        {
-            base.SpreadElement(parent, scope);
+            _Attribute = new List<IScope>();
             _ArgumentType = new List<IDataType>();
+            _ReturnType = parent;
         }
     }
 }

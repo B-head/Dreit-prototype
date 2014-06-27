@@ -10,9 +10,30 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateVariant : VariantSymbol, IAccess
     {
-        public TupleList Attribute { get; set; }
+        public TupleList AttributeAccess { get; set; }
         public IdentifierAccess Ident { get; set; }
         public Element ExplicitType { get; set; }
+
+        public override IReadOnlyList<IScope> Attribute
+        {
+            get
+            {
+                if (_Attribute != null)
+                {
+                    return _Attribute;
+                }
+                _Attribute = new List<IScope>();
+                foreach (var v in AttributeAccess)
+                {
+                    var acs = v as IAccess;
+                    if (acs != null)
+                    {
+                        _Attribute.Add(acs.Reference.SelectPlain());
+                    }
+                }
+                return _Attribute;
+            }
+        }
 
         public override IDataType DataType
         {
@@ -44,9 +65,19 @@ namespace AbstractSyntax.Daclate
             get { return Ident.Reference; }
         }
 
+        public void RefarenceResolution()
+        {
+            RefarenceResolution(CurrentIScope);
+        }
+
         public void RefarenceResolution(IScope scope)
         {
             Ident.RefarenceResolution(scope);
+            var etacs = ExplicitType as IAccess;
+            if(etacs != null)
+            {
+                etacs.RefarenceResolution(scope);
+            }
         }
 
         public override int Count
@@ -60,7 +91,7 @@ namespace AbstractSyntax.Daclate
             {
                 switch (index)
                 {
-                    case 0: return Attribute;
+                    case 0: return AttributeAccess;
                     case 1: return Ident;
                     case 2: return ExplicitType;
                     default: throw new ArgumentOutOfRangeException();

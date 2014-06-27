@@ -27,9 +27,22 @@ namespace AbstractSyntax.Expression
             {
                 if(_Reference == null)
                 {
-                    RefarenceResolution(CurrentScope);
+                    RefarenceResolution();
                 }
                 return _Reference;
+            }
+        }
+
+        public void RefarenceResolution()
+        {
+            var p = Parent as IAccess;
+            if (p == null)
+            {
+                RefarenceResolution(CurrentIScope);
+            }
+            else
+            {
+                p.RefarenceResolution();
             }
         }
 

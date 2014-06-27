@@ -55,6 +55,16 @@ namespace AbstractSyntax
             return refer.Call.DataType; 
         }
 
+        public virtual IScope SelectPlain()
+        {
+            if (isHoldAlias)
+            {
+                SpreadAlias();
+            }
+            var refer = TypeSelect();
+            return refer.Call;
+        }
+
         public virtual TypeMatch TypeSelect()
         {
             return TypeSelect(new List<IDataType>());
