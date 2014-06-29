@@ -107,7 +107,7 @@
     <output>40</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       let a := 40
       a := 600

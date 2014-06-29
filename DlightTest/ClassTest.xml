@@ -158,8 +158,8 @@
         public var a := 10
         private var b := 20
         
-        public routine foo :: 30
-        private routine ber :: 40
+        public routine foo :: a + 30
+        private routine ber :: b + 40
       }
 
       A() =: var o
@@ -181,8 +181,8 @@
         @public var a := 10
         @private var b := 20
         
-        @public routine foo :: 30
-        @private routine ber :: 40
+        @public routine foo :: a + 30
+        @private routine ber :: b + 40
       }
 
       A() =: var o
@@ -196,7 +196,7 @@
     <error key="not-accessable"/>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class A
@@ -205,8 +205,8 @@
         var a := 10
         var b := 20
         
-        routine foo :: 30
-        routine ber :: 40
+        routine foo :: a + 30
+        routine ber :: b + 40
       }
 
       A() =: var o
@@ -222,7 +222,7 @@
     <error key="not-accessable"/>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class A
@@ -231,8 +231,8 @@
         public var a := 10
         var b := 20
         
-        public routine foo :: 30
-        routine ber :: 40
+        public routine foo :: a + 30
+        routine ber :: b + 40
       }
 
       A() =: var o
@@ -254,8 +254,8 @@
         public var a := 10
         public static var b := 20
         
-        public routine foo :: 30
-        public static routine ber :: 40
+        public routine foo :: a + 30
+        public static routine ber :: b + 40
       }
 
       A() =: var o
@@ -265,7 +265,7 @@
       echo A.ber
       ]]>
     </code>
-    <output>10 20 30 40</output>
+    <output>10 20 40 60</output>
   </case>
 
   <case>
