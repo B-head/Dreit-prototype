@@ -59,7 +59,7 @@
   <case ignore="true">
     <code>
       var x := 50
-      function foo(a:Int32) :: x := x + a
+      function foo(a:Int32) :: x += a
       echo foo := 20
     </code>
     <error key="forbit-side-effect"/>

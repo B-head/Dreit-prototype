@@ -18,27 +18,6 @@
   
   <case>
     <code>
-      echo 10 + 10
-    </code>
-    <output>20</output>
-  </case>
-
-  <case>
-    <code>
-      echo 1 + 2 * 3
-    </code>
-    <output>7</output>
-  </case>
-
-  <case>
-    <code>
-      echo 1 + 2.5
-    </code>
-    <output>3.5</output>
-  </case>
-  
-  <case>
-    <code>
       echo { 30 }
     </code>
     <error key="error-token"/>

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      echo 10 + 10
+    </code>
+    <output>20</output>
+  </case>
+
+  <case>
+    <code>
+      echo 1 + 2 * 3
+    </code>
+    <output>7</output>
+  </case>
+
+  <case>
+    <code>
+      echo 1 + 2.5
+    </code>
+    <output>3.5</output>
+  </case>
+
+  <case>
+    <code>
+      var a := 3
+      a := a + 4
+      echo a
+    </code>
+    <output>7</output>
+  </case>
+
+  <case>
+    <code>
+      var a := 3
+      a += 4
+      echo a
+    </code>
+    <output>7</output>
+  </case>
+
+  <case>
+    <code>
+      var a := 3
+      a += 4 * 5
+      echo a
+    </code>
+    <output>23</output>
+  </case>
+</compile-test>

@@ -2,58 +2,66 @@
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
+      <![CDATA[
       class A
       {
-      var value := 500
+        var value := 500
       }
 
       A() =: var a:A
       echo a.value
+      ]]>
     </code>
     <output>500</output>
   </case>
 
   <case>
     <code>
+      <![CDATA[
       class A
       {
-      var value := 500
+        var value := 500
       }
 
       A() =: var a
       echo a.value
+      ]]>
     </code>
     <output>500</output>
   </case>
 
   <case>
     <code>
+      <![CDATA[
       class Counter
       {
-      var value := 0
-      routine next() :: value := value + 1
+        var value := 0
+        routine next() :: value += 1
       }
 
       Counter() =: var counter
       echo counter.next()
       echo counter.next()
       echo counter.next()
+      ]]>
     </code>
     <output>1 2 3</output>
   </case>
   
   <case>
     <code>
+      <![CDATA[
       class Counter
       {
-      var value := 0
-      routine next :: value := value + 1
+        var value := 0
+        routine next :: value += 1
       }
 
       Counter =: var counter
       echo counter.next
       echo counter.next
       echo counter.next
+      ]]>
     </code>
     <output>1 2 3</output>
   </case>
