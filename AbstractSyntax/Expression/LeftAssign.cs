@@ -13,7 +13,6 @@ namespace AbstractSyntax.Expression
         public Element Left { get; set; }
         public Element Right { get; set; }
         public TokenType Operator { get; set; }
-        private Scope _ConversionRoutine;
         private TupleList _Arguments;
 
         public override Element Access
@@ -40,6 +39,11 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public override TokenType CalculateOperator
+        {
+            get { return Operator ^ TokenType.LeftAssign; }
+        }
+
         public override int Count
         {
             get { return 2; }
@@ -55,18 +59,6 @@ namespace AbstractSyntax.Expression
                     case 1: return Right;
                     default: throw new ArgumentOutOfRangeException();
                 }
-            }
-        }
-
-        public Scope ConversionRoutine
-        {
-            get
-            {
-                if (_ConversionRoutine == null)
-                {
-                    _ConversionRoutine = Root.Conversion.Find(Right.DataType, Left.DataType);
-                }
-                return _ConversionRoutine;
             }
         }
 
@@ -86,15 +78,6 @@ namespace AbstractSyntax.Expression
                 CompileError("not-collide-assign");
             }
             base.CheckSyntax();
-        }
-
-        internal override void CheckDataType()
-        {
-            base.CheckDataType();
-            if (Left.DataType != Right.DataType && ConversionRoutine is VoidSymbol)
-            {
-                CompileError("not-convertable-left");
-            }
         }
 
         public override bool HasCallTarget(IElement element)

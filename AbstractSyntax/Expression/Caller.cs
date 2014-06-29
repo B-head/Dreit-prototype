@@ -13,9 +13,11 @@ namespace AbstractSyntax.Expression
     {
         private TypeMatch? _Match;
         private Scope _CallScope;
+        private Scope _CalculateCallScope;
 
         public abstract Element Access { get; }
         public abstract TupleList Arguments { get; }
+        public abstract TokenType CalculateOperator { get; }
         public abstract bool HasCallTarget(IElement element);
         public abstract IDataType GetCallType();
 
@@ -71,6 +73,30 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public bool IsCalculate
+        {
+            get { return CalculateOperator != TokenType.Unknoun; }
+        }
+
+        public Scope CalculateCallScope
+        {
+            get
+            {
+                if (_CalculateCallScope == null)
+                {
+                    if (IsCalculate)
+                    {
+                        _CalculateCallScope = Root.OpManager[CalculateOperator].Find(Arguments[0].DataType, Access.DataType);
+                    }
+                    else
+                    {
+                        _CalculateCallScope = Root.Unknown;
+                    }
+                }
+                return _CalculateCallScope;
+            }
+        }
+
         internal override void CheckDataType()
         {
             base.CheckDataType();
@@ -79,6 +105,10 @@ namespace AbstractSyntax.Expression
                 case TypeMatchResult.NotCallable: CompileError("not-callable"); break;
                 case TypeMatchResult.UnMatchCount: CompileError("unmatch-overload-count"); break;
                 case TypeMatchResult.UnMatchType: CompileError("unmatch-overload-type"); break;
+            }
+            if (CalculateCallScope is ErrorSymbol)
+            {
+                CompileError("impossible-calculate");
             }
         }
     }

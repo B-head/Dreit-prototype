@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
+    [Serializable]
     public struct TypeMatch
     {
         public Scope Call { get; private set; }

@@ -305,13 +305,13 @@ namespace CliTranslate
 
         private void Translate(ReturnDirective element, Translator trans)
         {
-            ChildTranslate(element, trans);
+            Translate((dynamic)element.Exp, trans);
             trans.GenerateControl(OpCodes.Ret);
         }
 
         private void Translate(EchoDirective element, Translator trans)
         {
-            ChildTranslate(element, trans);
+            Translate((dynamic)element.Exp, trans);
             trans.GenerateEcho(element.Exp.DataType);
         }
 
@@ -323,7 +323,8 @@ namespace CliTranslate
 
         private void Translate(Calculate element, Translator trans)
         {
-            ChildTranslate(element, trans);
+            Translate((dynamic)element.Left, trans);
+            Translate((dynamic)element.Right, trans);
             trans.GenerateCall(element.CallScope);
         }
 
@@ -379,12 +380,27 @@ namespace CliTranslate
 
         private void Translate(Caller element, Translator trans)
         {
-            var acs = TranslateAccess((dynamic)element.Access, trans);
-            if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
+            if (element.IsCalculate)
             {
-                trans.GenerateControl(OpCodes.Dup);
+                var acs = TranslateAccess((dynamic)element.Access, trans);
+                if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
+                {
+                    trans.GenerateControl(OpCodes.Dup);
+                }
+                Translate((dynamic)element.Access, trans);
+                Translate((dynamic)element.Arguments[0], trans);
+                trans.GenerateCall(element.CalculateCallScope);
+                CallTranslate((dynamic)element.CallScope, new TupleList(new TupleList()), trans); //todo CallTlanslateにArgumentsを渡さなくても済むようにする。
             }
-            CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
+            else
+            {
+                var acs = TranslateAccess((dynamic)element.Access, trans);
+                if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
+                {
+                    trans.GenerateControl(OpCodes.Dup);
+                }
+                CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
+            }
         }
 
         private void CallTranslate(RoutineSymbol call, TupleList arguments, Translator trans)

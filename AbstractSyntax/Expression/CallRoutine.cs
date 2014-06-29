@@ -24,6 +24,11 @@ namespace AbstractSyntax.Expression
             get { return CallArguments; }
         }
 
+        public override TokenType CalculateOperator
+        {
+            get { return TokenType.Unknoun; }
+        }
+
         public override int Count
         {
             get { return 2; }
