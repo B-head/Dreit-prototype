@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        routine foo :: 10
+      }
+      
+      class B : A
+      {
+        routine bar :: foo + 25
+      }
+      
+      B =: var o
+      echo o.foo
+      echo o.bar
+      ]]>
+    </code>
+    <output>10 35</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        protected routine foo :: 10
+      }
+      
+      class B : A
+      {
+        public routine bar :: foo + 25
+      }
+      
+      B =: var o
+      echo o.bar
+      ]]>
+    </code>
+    <output>10 35</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        protected routine foo :: 10
+      }
+      
+      class B : A
+      {
+        public routine bar :: foo + 25
+      }
+      
+      B =: var o
+      echo o.foo
+      echo o.bar
+      ]]>
+    </code>
+    <error key="not-accessable"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        routine foo :: 10
+      }
+      
+      class B : A
+      {
+        routine foo :: 25
+      }
+      
+      B =: var o
+      echo o.foo
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        routine foo :: 10
+      }
+      
+      class B : A
+      {
+        routine foo :: 25
+      }
+      
+      var o:A
+      A =: o
+      echo o.foo
+      B =: o
+      echo o.foo
+      ]]>
+    </code>
+    <output>10 25</output>
+  </case>
+</compile-test>

@@ -42,6 +42,24 @@
   <case>
     <code>
       var a := 3
+      a -= 4
+      echo a
+    </code>
+    <output>-1</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      var a := 3
+      4 =- a
+      echo a
+    </code>
+    <output>1</output>
+  </case>
+
+  <case>
+    <code>
+      var a := 3
       a += 4 * 5
       echo a
     </code>

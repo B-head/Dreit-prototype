@@ -167,14 +167,14 @@
         private var b := 20
         
         public routine foo :: a + 30
-        private routine ber :: b + 40
+        private routine bar :: b + 40
       }
 
-      A() =: var o
+      A =: var o
       echo o.a
       echo o.b
       echo o.foo
-      echo o.ber
+      echo o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -190,14 +190,14 @@
         @private var b := 20
         
         @public routine foo :: a + 30
-        @private routine ber :: b + 40
+        @private routine bar :: b + 40
       }
 
-      A() =: var o
+      A =: var o
       echo o.a
       echo o.b
       echo o.foo
-      echo o.ber
+      echo o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -214,14 +214,14 @@
         var b := 20
         
         routine foo :: a + 30
-        routine ber :: b + 40
+        routine bar :: b + 40
       }
 
-      A() =: var o
+      A =: var o
       echo o.a
       echo o.b
       echo o.foo
-      echo o.ber
+      echo o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -240,14 +240,14 @@
         var b := 20
         
         public routine foo :: a + 30
-        routine ber :: b + 40
+        routine bar :: b + 40
       }
 
-      A() =: var o
+      A =: var o
       echo o.a
       echo o.b
       echo o.foo
-      echo o.ber
+      echo o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -263,17 +263,64 @@
         public static var b := 20
         
         public routine foo :: a + 30
-        public static routine ber :: b + 40
+        public static routine bar :: b + 40
       }
 
-      A() =: var o
+      A =: var o
       echo o.a
       echo A.b
       echo o.foo
-      echo A.ber
+      echo A.bar
       ]]>
     </code>
     <output>10 20 40 60</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        public var a := 10
+        public static var b := 20
+        
+        public routine foo :: a + 30
+        public static routine bar :: b + 40
+      }
+
+      A =: var o
+      echo A.a
+      echo o.b
+      echo A.foo
+      echo o.bar
+      ]]>
+    </code>
+    <error key="undefined-identifier"/>
+    <error key="undefined-identifier"/>
+    <error key="undefined-identifier"/>
+    <error key="undefined-identifier"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        public var a := 10
+        public static var b := 20
+        
+        public routine foo :: b + 30
+        public static routine bar :: a + 40
+      }
+
+      A =: var o
+      echo o.a
+      echo A.b
+      echo o.foo
+      echo A.bar
+      ]]>
+    </code>
+    <error key="undefined-identifier"/>
   </case>
 
   <case>
