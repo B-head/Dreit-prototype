@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public abstract class DyadicExpression : Element
+    public abstract class DyadicExpression : Element, IDyadicExpression
     {
         public Element Left { get; set; }
         public Element Right { get; set; }

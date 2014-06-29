@@ -40,13 +40,13 @@ namespace SyntacticAnalysis
             return result;
         }
 
-        private static Element LeftAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : DyadicExpression, new() where T : Element
+        private static Element LeftAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : Element, IDyadicExpression, new() where T : Element
         {
             Element current = next(cp);
             return current == null ? null : LeftAssociative<R, T>(current, cp, next, type);
         }
 
-        private static Element LeftAssociative<R, T>(Element current, ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : DyadicExpression, new() where T : Element
+        private static Element LeftAssociative<R, T>(Element current, ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : Element, IDyadicExpression, new() where T : Element
         {
             var ret = cp.Begin<R>()
                 .Self(s => s.Left = current)
@@ -56,7 +56,7 @@ namespace SyntacticAnalysis
             return ret == null ? current : LeftAssociative<R, T>(ret, cp, next, type);
         }
 
-        private static Element RightAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : DyadicExpression, new() where T : Element
+        private static Element RightAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type) where R : Element, IDyadicExpression, new() where T : Element
         {
             Element current = next(cp);
             var ret = cp.Begin<R>()

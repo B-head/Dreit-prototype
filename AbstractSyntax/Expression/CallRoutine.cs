@@ -9,50 +9,19 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class CallRoutine : Element, ICaller
+    public class CallRoutine : Caller
     {
-        public Element Access { get; set; }
-        public TupleList Arguments { get; set; }
-        private Scope _CallScope;
+        public Element CallAccess { get; set; }
+        public TupleList CallArguments { get; set; }
 
-        public Scope CallScope
+        public override Element Access
         {
-            get
-            {
-                if (_CallScope == null)
-                {
-                    var access = Access as IAccess;
-                    if (access == null)
-                    {
-                        _CallScope = Root.Unknown;
-                    }
-                    else
-                    {
-                        _CallScope = access.Reference.TypeSelect(Arguments.GetDataTypes()).Call;
-                    }
-                }
-                return _CallScope;
-            }
+            get { return CallAccess; }
         }
 
-        public override IDataType DataType
+        public override TupleList Arguments
         {
-            get 
-            {
-                if (CallScope is CalculatePragma || CallScope is CastPragma)
-                {
-                    return Arguments.GetDataTypes()[0];
-                }
-                else if(CallScope is RoutineSymbol)
-                {
-                    var rout = (RoutineSymbol)CallScope;
-                    return rout.DataType;
-                }
-                else
-                {
-                    return CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
-                }
-            }
+            get { return CallArguments; }
         }
 
         public override int Count
@@ -66,42 +35,25 @@ namespace AbstractSyntax.Expression
             {
                 switch (index)
                 {
-                    case 0: return Access;
-                    case 1: return Arguments;
+                    case 0: return CallAccess;
+                    case 1: return CallArguments;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
         }
 
-        internal override void CheckDataType()
+        public override bool HasCallTarget(IElement element)
         {
-            base.CheckDataType();
-            if(CallScope == null)
-            {
-                CompileError("unmatch-overroad");
-            }
-            //var ret = CallScope.TypeMatch(ArgumentType);
-            //switch(ret)
-            //{
-            //    case TypeMatchResult.Unknown: CompileError("原因不明の呼び出しエラーです。"); break;
-            //    case TypeMatchResult.NotCallable: CompileError("関数ではありません。"); break;
-            //    case TypeMatchResult.MissMatchCount: CompileError("引数の数が合っていません。"); break;
-            //    case TypeMatchResult.MissMatchType: CompileError("引数の型が合っていません。"); break;
-            //}
+            return CallAccess == element;
         }
 
-        public bool HasCallTarget(IElement element)
+        public override IDataType GetCallType()
         {
-            return Access == element;
-        }
-
-        public IDataType GetCallType()
-        {
-            if (Arguments.GetDataTypes().Count != 1)
+            if (CallArguments.GetDataTypes().Count != 1)
             {
                 return Root.Unknown;
             }
-            return Arguments.GetDataTypes()[0];
+            return CallArguments.GetDataTypes()[0];
         }
     }
 }

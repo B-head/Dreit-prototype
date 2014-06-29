@@ -43,7 +43,7 @@ namespace AbstractSyntax.Daclate
                 {
                     return _DataType;
                 }
-                 var caller = Parent as ICaller;
+                 var caller = Parent as Caller;
                 if (ExplicitType != null)
                 {
                     _DataType = ExplicitType.DataType;

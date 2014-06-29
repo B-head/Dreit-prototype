@@ -57,9 +57,9 @@ namespace SyntacticAnalysis
         {
             var access = MemberAccess(cp);
             var ret = cp.Begin<CallRoutine>()
-                .Self(s => s.Access = access)
+                .Self(s => s.CallAccess = access)
                 .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer((s, e) => s.Arguments = e, c => ParseTuple(c, Addtive))
+                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, Addtive))
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
             return ret ?? access;

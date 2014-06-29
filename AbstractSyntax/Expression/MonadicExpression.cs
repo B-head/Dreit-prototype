@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public abstract class MonadicExpression : Element
+    public abstract class MonadicExpression : Element, IMonadicExpression
     {
         public Element Child { get; set; }
         public TokenType Operator { get; set; }

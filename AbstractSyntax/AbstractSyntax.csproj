@@ -51,6 +51,7 @@
     <Compile Include="Directive\AttributeZoneDirective.cs" />
     <Compile Include="Directive\BreakDirective.cs" />
     <Compile Include="Directive\ContinueDirective.cs" />
+    <Compile Include="Expression\Caller.cs" />
     <Compile Include="Expression\Condition.cs" />
     <Compile Include="Expression\Logical.cs" />
     <Compile Include="Interfaces.cs" />

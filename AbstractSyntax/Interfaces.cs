@@ -16,16 +16,23 @@ namespace AbstractSyntax
         IReadOnlyList<IScope> Attribute { get; }
     }
 
-    interface IAccess : IElement
+    public interface IMonadicExpression : IElement
+    {
+        Element Child { get; set; }
+        TokenType Operator { get; set; }
+    }
+
+    public interface IDyadicExpression : IElement
+    {
+        Element Left { get; set; }
+        Element Right { get; set; }
+        TokenType Operator { get; set; }
+    }
+
+    public interface IAccess : IElement
     {
         OverLoad Reference { get; }
         void RefarenceResolution();
         void RefarenceResolution(IScope scope);
-    }
-
-    interface ICaller : IElement
-    {
-        bool HasCallTarget(IElement element);
-        IDataType GetCallType();
     }
 }

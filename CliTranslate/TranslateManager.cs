@@ -185,7 +185,7 @@ namespace CliTranslate
                 ChildTranslate(element, trans);
                 return;
             }
-            foreach (Element v in element)
+            foreach (var v in element)
             {
                 Translate((dynamic)v, trans);
                 if (!v.IsVoidValue && !element.IsInline)
@@ -377,27 +377,7 @@ namespace CliTranslate
             CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
         }
 
-        private void Translate(LeftAssign element, Translator trans)
-        {
-            var acs = TranslateAccess((dynamic)element.Left, trans);
-            if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
-            {
-                trans.GenerateControl(OpCodes.Dup);
-            }
-            CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
-        }
-
-        private void Translate(RightAssign element, Translator trans)
-        {
-            var acs = TranslateAccess((dynamic)element.Right, trans);
-            if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
-            {
-                trans.GenerateControl(OpCodes.Dup);
-            }
-            CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
-        }
-
-        private void Translate(CallRoutine element, Translator trans)
+        private void Translate(Caller element, Translator trans)
         {
             var acs = TranslateAccess((dynamic)element.Access, trans);
             if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)

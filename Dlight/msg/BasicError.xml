@@ -5,7 +5,9 @@
   <msg key="error-token">トークン {Text} をこの位置に書くことは出来ません。</msg>
   <msg key="not-datatype-inherit">継承元はクラスである必要があります。</msg>
   <msg key="disagree-return-type">返り値の型が合っていません。</msg>
-  <msg key="unmatch-overroad">引数型に合うオーバーロードが定義されていません。</msg>
+  <msg key="not-callable">呼び出し可能な関数ではありません。</msg>
+  <msg key="unmatch-overload-count">引数の数が合うオーバーロードが定義されていません。</msg>
+  <msg key="unmatch-overload-type">引数の型が合うオーバーロードが定義されていません。</msg>
   <msg key="impossible-calculate">{Left.DataType.Name} 型と {Right.DataType.Name} 型を演算することは出来ません。</msg>
   <msg key="require-expression">式が必要です。</msg>
   <msg key="require-type">型指定が必要です。</msg>

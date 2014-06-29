@@ -8,48 +8,52 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class RightAssign : DyadicExpression, ICaller
+    public class RightAssign : Caller, IDyadicExpression
     {
+        public Element Left { get; set; }
+        public Element Right { get; set; }
+        public TokenType Operator { get; set; }
         private Scope _ConversionRoutine;
-        private Scope _CallScope;
-        public TupleList Arguments { get; set; }
+        private TupleList _Arguments;
 
-        public Scope CallScope
+        public override Element Access
+        {
+            get { return Right; }
+        }
+
+        public override TupleList Arguments
         {
             get
             {
-                if (_CallScope == null)
+                if(_Arguments == null)
                 {
-                    var access = Right as IAccess;
-                    if (access == null)
+                    if (Left is TupleList)
                     {
-                        _CallScope = Root.Unknown;
+                        _Arguments = (TupleList)Left;
                     }
                     else
                     {
-                        _CallScope = access.Reference.TypeSelect(Arguments.GetDataTypes()).Call;
+                        _Arguments = new TupleList(Left);
                     }
                 }
-                return _CallScope;
+                return _Arguments;
             }
         }
 
-        public override IDataType DataType
+        public override int Count
+        {
+            get { return 2; }
+        }
+
+        public override IElement this[int index]
         {
             get
             {
-                if (CallScope is CalculatePragma || CallScope is CastPragma)
+                switch (index)
                 {
-                    return Arguments.GetDataTypes()[0];
-                }
-                else if (CallScope is RoutineSymbol)
-                {
-                    var rout = (RoutineSymbol)CallScope;
-                    return rout.DataType;
-                }
-                else
-                {
-                    return CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
+                    case 0: return Left;
+                    case 1: return Right;
+                    default: throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -66,47 +70,31 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        protected override void SpreadElement(Element parent, Scope scope)
+        protected override string GetElementInfo()
         {
-            if (Left is TupleList)
-            {
-                Arguments = (TupleList)Left;
-            }
-            else
-            {
-                Arguments = new TupleList(Left);
-            }
-            base.SpreadElement(parent, scope);
+            return Operator.ToString();
         }
 
         internal override void CheckSyntax()
         {
-            if (!(Right is IAccess))
-            {
-                CompileError("not-assignable");
-            }
             base.CheckSyntax();
         }
 
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            if (CallScope == null)
-            {
-                CompileError("unmatch-overroad");
-            }
             if (Left.DataType != Right.DataType && ConversionRoutine is VoidSymbol)
             {
                 CompileError("not-convertable-right");
             }
         }
 
-        public bool HasCallTarget(IElement element)
+        public override bool HasCallTarget(IElement element)
         {
             return Right == element;
         }
 
-        public IDataType GetCallType()
+        public override IDataType GetCallType()
         {
             return Left.DataType;
         }
