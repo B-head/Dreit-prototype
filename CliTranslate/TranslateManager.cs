@@ -347,7 +347,7 @@ namespace CliTranslate
         private void Translate(Logical element, Translator trans)
         {
             var bend = trans.CreateLabel();
-            if(element.Operator == TokenType.OrElse)
+            if(element.Operator == TokenType.Or)
             {
                 Translate((dynamic)element.Left, trans);
                 trans.GenerateControl(OpCodes.Dup);
@@ -356,7 +356,7 @@ namespace CliTranslate
                 Translate((dynamic)element.Right, trans);
                 trans.MarkLabel(bend);
             }
-            else if (element.Operator == TokenType.AndElse)
+            else if (element.Operator == TokenType.And)
             {
                 Translate((dynamic)element.Left, trans);
                 trans.GenerateControl(OpCodes.Dup);
@@ -547,14 +547,14 @@ namespace CliTranslate
 
         private void TranslateBrunch(Logical element, Translator trans, Label bfalse, bool isnot)
         {
-            if(element.Operator == TokenType.OrElse)
+            if(element.Operator == TokenType.Or)
             {
                 var bend = trans.CreateLabel();
                 TranslateBrunch((dynamic)element.Left, trans, bend, !isnot);
                 TranslateBrunch((dynamic)element.Right, trans, bfalse, isnot);
                 trans.MarkLabel(bend);
             }
-            else if (element.Operator == TokenType.AndElse)
+            else if (element.Operator == TokenType.And)
             {
                 TranslateBrunch((dynamic)element.Left, trans, bfalse, isnot);
                 TranslateBrunch((dynamic)element.Right, trans, bfalse, isnot);

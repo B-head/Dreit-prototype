@@ -31,7 +31,7 @@ namespace AbstractSyntax.Expression
 
         protected override string GetElementInfo()
         {
-            return Enum.GetName(typeof(TokenType), Operator);
+            return Operator.ToString();
         }
 
         internal override void CheckSyntax()

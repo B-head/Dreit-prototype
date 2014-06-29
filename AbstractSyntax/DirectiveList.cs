@@ -28,6 +28,11 @@ namespace AbstractSyntax
             get { return Child[index]; }
         }
 
+        protected override string GetElementInfo()
+        {
+            return "Count = " + Child.Count;
+        }
+
         public bool IsNoReturn
         {
             get 

@@ -79,7 +79,7 @@ namespace SyntacticAnalysis
         private static AttributeZoneDirective AttributeZone(ChainParser cp)
         {
             return cp.Begin<AttributeZoneDirective>()
-                .Type(TokenType.Wild).Lt().Loop()
+                .Type(TokenType.Zone).Lt().Loop()
                 .Token((s, e) => s.Append(TextToIdentifier(cp, e.Text))).Lt()
                 .Type(TokenType.List).Lt()
                 .Do().EndLoop().End();

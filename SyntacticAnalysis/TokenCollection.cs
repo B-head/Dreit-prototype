@@ -92,10 +92,21 @@ namespace SyntacticAnalysis
             Token t = Read(i);
             foreach (TokenType v in type)
             {
-                if (t.Type == v)
+                if (v == TokenType.LeftAssign || v == TokenType.RightAssign)
                 {
-                    match = v;
-                    return true;
+                    if ((t.Type & v) != 0)
+                    {
+                        match = v;
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (t.Type == v)
+                    {
+                        match = v;
+                        return true;
+                    }
                 }
             }
             return false;

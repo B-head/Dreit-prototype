@@ -64,7 +64,7 @@ namespace SyntacticAnalysis
             var atFlag = false;
             var ret = cp.Begin<TupleList>()
                 .Loop()
-                .If().Type(TokenType.At).Lt()
+                .If().Type(TokenType.Attribute).Lt()
                 .Than().Token((s, e) => s.Append(TextToIdentifier(cp, e.Text))).Self(s => atFlag = true)
                 .ElseIf().Is(atFlag).Type(TokenType.List)
                 .Than().Token((s, e) => s.Append(TextToIdentifier(cp, e.Text))).Self(s => atFlag = true)

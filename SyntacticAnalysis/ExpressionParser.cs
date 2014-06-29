@@ -34,7 +34,7 @@ namespace SyntacticAnalysis
 
         private static Element Logical(ChainParser cp)
         {
-            return RightAssociative<Logical, Element>(cp, Condition, TokenType.AndElse, TokenType.OrElse);
+            return RightAssociative<Logical, Element>(cp, Condition, TokenType.And, TokenType.Or);
         }
         
         private static Element Condition(ChainParser cp)
