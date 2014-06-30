@@ -22,6 +22,11 @@ namespace AbstractSyntax.Symbol
             get { return _DataType; }
         }
 
+        public override IDataType ReturnType
+        {
+            get { return DataType; }
+        }
+
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { });

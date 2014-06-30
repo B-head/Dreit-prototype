@@ -25,7 +25,7 @@ namespace AbstractSyntax.Expression
 
         public override IDataType DataType
         {
-            get { return CallScope.DataType; }
+            get { return CallScope.ReturnType; }
         }
 
         internal override void CheckDataType()

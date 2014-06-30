@@ -30,11 +30,6 @@ namespace AbstractSyntax.Symbol
             get { return _Inherit; }
         }
 
-        public override IDataType DataType
-        {
-            get { return this; }
-        }
-
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             foreach(var a in initializer)

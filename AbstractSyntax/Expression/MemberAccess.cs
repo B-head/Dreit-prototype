@@ -21,6 +21,11 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public Scope CallScope
+        {
+            get { return Reference.TypeSelect().Call; }
+        }
+
         public OverLoad Reference
         {
             get

@@ -32,6 +32,7 @@ namespace AbstractSyntax
     public interface IAccess : IElement
     {
         OverLoad Reference { get; }
+        Scope CallScope { get; }
         void RefarenceResolution();
         void RefarenceResolution(IScope scope);
     }

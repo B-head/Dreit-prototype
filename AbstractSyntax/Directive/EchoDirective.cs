@@ -30,7 +30,7 @@ namespace AbstractSyntax.Directive
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            if(Exp != null && Exp.DataType is VoidSymbol)
+            if(Exp != null && Exp.IsVoidReturn)
             {
                 CompileError("invalid-void");
             }

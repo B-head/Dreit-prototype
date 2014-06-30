@@ -57,18 +57,15 @@ namespace AbstractSyntax.Daclate
                 _Inherit = new List<ClassSymbol>();
                 foreach (var v in InheritAccess)
                 {
-                    if (v.DataType is ClassSymbol)
+                    var acs = v as IAccess;
+                    var dt = acs.Reference.GetDataType();
+                    if (dt is ClassSymbol)
                     {
-                        _Inherit.Add((ClassSymbol)v.DataType);
+                        _Inherit.Add((ClassSymbol)dt);
                     }
                 }
                 return _Inherit;
             }
-        }
-
-        public override bool IsVoidValue
-        {
-            get { return true; } //todo この代わりのプロパティが必要。
         }
 
         public bool IsDefaultConstructor
@@ -101,6 +98,7 @@ namespace AbstractSyntax.Daclate
         protected override void SpreadElement(Element parent, Scope scope)
         {
             base.SpreadElement(parent, scope);
+            var newFlag = false;
             foreach(var e in Block)
             {
                 var r = e as RoutineSymbol;
@@ -111,6 +109,7 @@ namespace AbstractSyntax.Daclate
                 if(r.Name == "new")
                 {
                     initializer.Add(r);
+                    newFlag = true;
                 }
                 else if (r.Name == "from")
                 {
@@ -122,7 +121,7 @@ namespace AbstractSyntax.Daclate
                     Root.OpManager[r.Operator].Append(r);
                 }
             }
-            if(initializer.Count == 0)
+            if(!newFlag)
             {
                 initializer.Add(Default);
             }
@@ -133,7 +132,9 @@ namespace AbstractSyntax.Daclate
             base.CheckDataType();
             foreach (var v in InheritAccess)
             {
-                if (!(v.DataType is ClassSymbol))
+                var acs = v as IAccess;
+                var dt = acs.Reference.GetDataType();
+                if (!(dt is ClassSymbol))
                 {
                     CompileError("not-datatype-inherit");
                 }

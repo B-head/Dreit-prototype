@@ -12,7 +12,7 @@ namespace AbstractSyntax
         TextPosition Position { get; }
         IScope CurrentIScope { get; }
         IDataType DataType { get; }
-        bool IsVoidValue { get; }
+        bool IsVoidReturn { get; }
     }
 
     [DebuggerVisualizer(typeof(SyntaxVisualizer))]
@@ -34,7 +34,7 @@ namespace AbstractSyntax
             get { return Root.Void; }
         }
 
-        public virtual bool IsVoidValue
+        public bool IsVoidReturn
         {
             get { return DataType is VoidSymbol; }
         }

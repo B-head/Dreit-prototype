@@ -76,7 +76,7 @@ namespace AbstractSyntax
             {
                 SpreadAlias();
             }
-            TypeMatch result = new TypeMatch();
+            TypeMatch result = TypeMatch.MakeNotCallable(Unknown);
             foreach(var a in ScopeList)
             {
                 foreach(var b in a.GetTypeMatch(type))

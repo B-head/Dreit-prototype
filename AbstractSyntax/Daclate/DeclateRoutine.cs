@@ -134,11 +134,6 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override bool IsVoidValue
-        {
-            get { return true; } //todo この代わりのプロパティが必要。
-        }
-
         public override int Count
         {
             get { return 5; }

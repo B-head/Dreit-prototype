@@ -118,5 +118,10 @@ namespace AbstractSyntax
         {
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }
+
+        public virtual IDataType ReturnType
+        {
+            get { return Root.Unknown; }
+        }
     }
 }

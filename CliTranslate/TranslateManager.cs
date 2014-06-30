@@ -188,7 +188,7 @@ namespace CliTranslate
             foreach (var v in element)
             {
                 Translate((dynamic)v, trans);
-                if (!v.IsVoidValue && !element.IsInline)
+                if (!v.IsVoidReturn && !element.IsInline)
                 {
                     trans.GenerateControl(OpCodes.Pop);
                 }
@@ -267,7 +267,7 @@ namespace CliTranslate
             if (element.IsDefinedOn)
             {
                 Translate((dynamic)element.On, lt);
-                if (!element.On.IsVoidValue)
+                if (!element.On.IsVoidReturn)
                 {
                     trans.GenerateControl(OpCodes.Pop);
                 }
@@ -277,7 +277,7 @@ namespace CliTranslate
             if (element.IsDefinedBy)
             {
                 Translate((dynamic)element.By, lt);
-                if (!element.By.IsVoidValue)
+                if (!element.By.IsVoidReturn)
                 {
                     trans.GenerateControl(OpCodes.Pop);
                 }

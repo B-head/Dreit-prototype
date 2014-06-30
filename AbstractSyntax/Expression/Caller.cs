@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
         public abstract TupleList Arguments { get; }
         public abstract TokenType CalculateOperator { get; }
         public abstract bool HasCallTarget(IElement element);
-        public abstract IDataType GetCallType();
+        public abstract IDataType GetCallType(); //todo Tuple型も返せるようにする。
 
         public TypeMatch Match
         {
@@ -30,7 +30,7 @@ namespace AbstractSyntax.Expression
                     var access = Access as IAccess;
                     if (access == null)
                     {
-                        _Match = new TypeMatch();
+                        _Match = TypeMatch.MakeNotCallable(Root.Unknown);
                     }
                     else
                     {
@@ -59,16 +59,11 @@ namespace AbstractSyntax.Expression
             {
                 if (CallScope is CalculatePragma || CallScope is CastPragma)
                 {
-                    return Arguments.GetDataTypes()[0];
-                }
-                else if (CallScope is RoutineSymbol)
-                {
-                    var rout = (RoutineSymbol)CallScope;
-                    return rout.DataType;
+                    return Arguments.GetDataTypes()[0]; //todo ジェネリクスを使用して型を返すようにする。
                 }
                 else
                 {
-                    return CallScope.DataType; //todo もっと適切な方法で型を取得する必要がある。
+                    return CallScope.ReturnType;
                 }
             }
         }

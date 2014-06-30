@@ -43,7 +43,7 @@ namespace AbstractSyntax.Daclate
                 {
                     return _DataType;
                 }
-                 var caller = Parent as Caller;
+                var caller = Parent as Caller;
                 if (ExplicitType != null)
                 {
                     _DataType = ExplicitType.DataType;
@@ -58,6 +58,11 @@ namespace AbstractSyntax.Daclate
                 }
                 return _DataType;
             }
+        }
+
+        public Scope CallScope
+        {
+            get { return Ident.CallScope; }
         }
 
         public OverLoad Reference

@@ -24,14 +24,9 @@ namespace AbstractSyntax.Symbol
             get { return _ArgumentType; }
         }
 
-        public virtual IDataType ReturnType
+        public override IDataType ReturnType
         {
             get { return _ReturnType; }
-        }
-
-        public override IDataType DataType
-        {
-            get { return ReturnType; }
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)

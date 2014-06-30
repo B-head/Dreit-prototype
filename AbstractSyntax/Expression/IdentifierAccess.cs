@@ -63,7 +63,7 @@ namespace AbstractSyntax.Expression
 
         public override IDataType DataType
         {
-            get { return Reference.GetDataType(); }
+            get { return CallScope.ReturnType; }
         }
 
         public Scope CallScope
