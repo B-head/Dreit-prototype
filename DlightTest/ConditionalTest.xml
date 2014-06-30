@@ -32,19 +32,42 @@
     <output>10 20</output>
   </case>
 
-  <case>
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      routine foo(a:Bool) if a :: 10 else 20
+      
+      echo foo(true)
+      echo foo(false)
+      ]]>
+    </code>
+    <output>10 20</output>
+  </case>
+
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo(a:Bool, b:Bool){
-        if a than if b than echo 10 else echo 40 else if b than echo 20 else echo 30
+        return if a than if b than 10 else 40 else if b than 20 else 30
       }
-      foo(true, true)
-      foo(true, false)
-      foo(false, true)
-      foo(false, false)
+      echo foo(true, true)
+      echo foo(true, false)
+      echo foo(false, true)
+      echo foo(false, false)
       ]]>
     </code>
     <output>10 40 20 30</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      routine foo(a:Int32) if a > 0 :: foo(a - 1) + 5 else 0
+      
+      echo foo(10)
+      ]]>
+    </code>
+    <output>50</output>
   </case>
 
   <case>

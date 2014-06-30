@@ -309,7 +309,7 @@
         public var a := 10
         public static var b := 20
         
-        public routine foo :: b + 30
+        public routine foo :: a + 30
         public static routine bar :: a + 40
       }
 
@@ -321,6 +321,28 @@
       ]]>
     </code>
     <error key="undefined-identifier"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        public var a := 10
+        public static var b := 20
+        
+        public routine foo :: b + 30
+        public static routine bar :: b + 40
+      }
+
+      A =: var o
+      echo o.a
+      echo A&.b
+      echo o.foo
+      echo A&.bar
+      ]]>
+    </code>
+    <output>10 20 50 60</output>
   </case>
 
   <case>

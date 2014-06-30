@@ -67,6 +67,47 @@
       <![CDATA[
       class A
       {
+        static routine foo :: 10
+      }
+      
+      class B : A
+      {
+        static routine bar :: foo + 25
+      }
+      
+      echo A&.foo
+      echo B&.bar
+      ]]>
+    </code>
+    <output>10 35</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        static routine foo :: 10
+      }
+      
+      class B : A
+      {
+        static routine bar :: foo + 25
+      }
+      
+      echo B&.foo
+      echo A&.bar
+      ]]>
+    </code>
+    <error key="undefined-identifier"/>
+    <error key="undefined-identifier"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
         routine foo :: 10
       }
       
