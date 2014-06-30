@@ -19,7 +19,7 @@ namespace CliTranslate
         private MethodBuilder InitContext;
         private ILGenerator InitGenerator;
 
-        public ClassTranslator(IScope path, Translator parent, TypeBuilder builder)
+        public ClassTranslator(DeclateClass path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
             Class = builder;
@@ -49,7 +49,7 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public RoutineTranslator CreateConstructor(IScope path, IEnumerable<IScope> argumentType)
+        public RoutineTranslator CreateConstructor(RoutineSymbol path, IEnumerable<IScope> argumentType)
         {
             var argbld = Root.GetArgumentBuilders(argumentType);
             var ctor = Class.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, argbld);
@@ -57,29 +57,29 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, ctor, InitContext);
         }
 
-        public RoutineTranslator CreateDestructor(IScope path)
+        public RoutineTranslator CreateDestructor(RoutineSymbol path)
         {
             var builder = Class.DefineMethod("Finalize", MethodAttributes.ReuseSlot | MethodAttributes.Family);
             return new RoutineTranslator(path, this, builder, true);
         }
 
-        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
+        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetReturnBuilder(returnType);
-            var argbld = Root.GetArgumentBuilders(argumentType);
+            var retbld = Root.GetReturnBuilder(path.ReturnType);
+            var argbld = Root.GetArgumentBuilders(path.ArgumentType);
             var builder = Class.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(IScope path)
+        public override ClassTranslator CreateClass(DeclateClass path)
         {
             var builder = Class.DefineNestedType(path.Name);
             return new ClassTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(IScope path, IScope typeName)
+        public override void CreateVariant(DeclateVariant path)
         {
-            var type = Root.GetBuilder(typeName);
+            var type = Root.GetBuilder(path.DataType);
             var builder = Class.DefineField(path.Name, type, FieldAttributes.Public);
             Root.RegisterBuilder(path, builder);
             var init = Class.DefineField(path.Name + "@@default", type, FieldAttributes.Static | FieldAttributes.SpecialName);

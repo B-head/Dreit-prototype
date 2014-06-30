@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Symbol;
+using AbstractSyntax.Daclate;
 
 namespace CliTranslate
 {
@@ -16,7 +17,7 @@ namespace CliTranslate
         private TypeBuilder Lexical;
         private LocalBuilder LexicalInstance;
 
-        public RoutineTranslator(IScope path, Translator parent, MethodBuilder method, bool isDestructor = false)
+        public RoutineTranslator(RoutineSymbol path, Translator parent, MethodBuilder method, bool isDestructor = false)
             : base(path, parent)
         {
             Method = method;
@@ -30,7 +31,7 @@ namespace CliTranslate
             }
         }
 
-        public RoutineTranslator(IScope path, Translator parent, ConstructorBuilder method, MethodBuilder init)
+        public RoutineTranslator(RoutineSymbol path, Translator parent, ConstructorBuilder method, MethodBuilder init)
             : base(path, parent)
         {
             Method = method;
@@ -76,27 +77,27 @@ namespace CliTranslate
             return Lexical.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
+        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
             PrepareLexical();
-            var retbld = Root.GetReturnBuilder(returnType);
-            var argbld = Root.GetArgumentBuilders(argumentType);
+            var retbld = Root.GetReturnBuilder(path.ReturnType);
+            var argbld = Root.GetArgumentBuilders(path.ArgumentType);
             var builder = Lexical.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(IScope path)
+        public override ClassTranslator CreateClass(DeclateClass path)
         {
             PrepareLexical();
             var builder = Lexical.DefineNestedType(path.Name);
             return new ClassTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(IScope path, IScope type)
+        public override void CreateVariant(DeclateVariant path)
         {
             PrepareLexical();
             //var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Public);
-            var builder = Generator.DeclareLocal(Root.GetBuilder(type));
+            var builder = Generator.DeclareLocal(Root.GetBuilder(path.DataType));
             Root.RegisterBuilder(path, builder);
         }
 

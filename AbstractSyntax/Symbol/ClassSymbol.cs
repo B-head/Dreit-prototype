@@ -30,6 +30,11 @@ namespace AbstractSyntax.Symbol
             get { return _Inherit; }
         }
 
+        public bool IsPrimitive
+        {
+            get { return GetPrimitiveType() != PrimitivePragmaType.NotPrimitive; }
+        }
+
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             foreach(var a in initializer)
@@ -56,27 +61,6 @@ namespace AbstractSyntax.Symbol
             {
                 return prim.Type;
             }
-        }
-
-        public bool IsContain(ClassSymbol other)
-        {
-            return Object.ReferenceEquals(this, other);
-        }
-
-        public bool IsConvert(ClassSymbol other)
-        {
-            if (IsContain(other))
-            {
-                return true;
-            }
-            foreach (var v in Inherit)
-            {
-                if (v.IsConvert(other))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

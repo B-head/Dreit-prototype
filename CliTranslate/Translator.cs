@@ -65,39 +65,34 @@ namespace CliTranslate
             return Parent.CreateLexical(name);
         }
 
-        public virtual ModuleTranslator CreateModule(IScope path)
+        public virtual ModuleTranslator CreateModule(DeclateModule path)
         {
             return Parent.CreateModule(path);
         }
 
-        public virtual RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
+        public virtual RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            return Parent.CreateRoutine(path, returnType, argumentType);
+            return Parent.CreateRoutine(path);
         }
 
-        public virtual RoutineTranslator CreateOperation(OpCodes operation)
-        {
-            return Parent.CreateOperation(operation);
-        }
-
-        public virtual ClassTranslator CreateClass(IScope path)
+        public virtual ClassTranslator CreateClass(DeclateClass path)
         {
             return Parent.CreateClass(path);
         }
 
-        public virtual PrimitiveTranslator CreatePrimitive(IScope path, PrimitivePragmaType type)
+        public virtual PrimitiveTranslator CreatePrimitive(DeclateClass path)
         {
-            return Parent.CreatePrimitive(path, type);
+            return Parent.CreatePrimitive(path);
         }
 
-        public virtual void CreateEnum(IScope path)
+        public virtual void CreateEnum(DeclateEnum path)
         {
             Parent.CreateEnum(path);
         }
 
-        public virtual void CreateVariant(IScope path, IScope type)
+        public virtual void CreateVariant(DeclateVariant path)
         {
-            Parent.CreateVariant(path, type);
+            Parent.CreateVariant(path);
         }
 
         public BranchTranslator CreateBranch(IScope path, bool definedElse = false)

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Pragma;
+using AbstractSyntax.Daclate;
 
 namespace CliTranslate
 {
@@ -16,7 +17,7 @@ namespace CliTranslate
         private TypeBuilder GlobalField;
         private MethodBuilder EntryContext;
 
-        public ModuleTranslator(IScope path, Translator parent, ModuleBuilder module)
+        public ModuleTranslator(DeclateModule path, Translator parent, ModuleBuilder module)
             : base(path, parent)
         {
             Module = module;
@@ -37,29 +38,29 @@ namespace CliTranslate
             return Module.DefineType(name + "@@lexical", TypeAttributes.SpecialName);
         }
 
-        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
+        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetReturnBuilder(returnType);
-            var argbld = Root.GetArgumentBuilders(argumentType);
+            var retbld = Root.GetReturnBuilder(path.ReturnType);
+            var argbld = Root.GetArgumentBuilders(path.ArgumentType);
             var builder = GlobalField.DefineMethod(path.Name, MethodAttributes.Static, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(IScope path)
+        public override ClassTranslator CreateClass(DeclateClass path)
         {
             var builder = Module.DefineType(path.GetFullName());
             return new ClassTranslator(path, this, builder);
         }
 
-        public override PrimitiveTranslator CreatePrimitive(IScope path, PrimitivePragmaType type)
+        public override PrimitiveTranslator CreatePrimitive(DeclateClass path)
         {
             var builder = Module.DefineType(path.GetFullName());
-            return new PrimitiveTranslator(path, this, builder, type);
+            return new PrimitiveTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(IScope path, IScope type)
+        public override void CreateVariant(DeclateVariant path)
         {
-            var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Static);
+            var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(path.DataType), FieldAttributes.Static);
             Root.RegisterBuilder(path, builder);
         }
     }

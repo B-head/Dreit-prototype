@@ -94,6 +94,7 @@
     <Compile Include="Symbol\EnumSymbol.cs" />
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
+    <Compile Include="Symbol\TypeofClassSymbol.cs" />
     <Compile Include="Symbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="Symbol\ErrorSymbol.cs" />

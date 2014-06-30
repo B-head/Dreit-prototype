@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Pragma;
+using AbstractSyntax.Daclate;
 
 namespace CliTranslate
 {
@@ -16,11 +17,11 @@ namespace CliTranslate
         private Type Prim;
         private MethodBuilder ClassContext;
 
-        public PrimitiveTranslator(IScope path, Translator parent, TypeBuilder builder, PrimitivePragmaType type)
+        public PrimitiveTranslator(DeclateClass path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
             Class = builder;
-            Prim = GetPrimitiveType(type);
+            Prim = GetPrimitiveType(path.GetPrimitiveType());
             ClassContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName | MethodAttributes.Static);
             parent.GenerateCall(ClassContext);
             Generator = ClassContext.GetILGenerator();
@@ -58,10 +59,10 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public override RoutineTranslator CreateRoutine(IScope path, IScope returnType, IEnumerable<IScope> argumentType)
+        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetReturnBuilder(returnType);
-            var argbld = Root.GetArgumentBuilders(Prim, argumentType);
+            var retbld = Root.GetReturnBuilder(path.ReturnType);
+            var argbld = Root.GetArgumentBuilders(Prim, path.ArgumentType);
             var builder = Class.DefineMethod(path.Name, MethodAttributes.Public | MethodAttributes.Static, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }

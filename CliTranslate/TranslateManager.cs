@@ -97,10 +97,9 @@ namespace CliTranslate
             {
                 return;
             }
-            PrimitivePragmaType prim = scope.GetPrimitiveType();
-            if (prim != PrimitivePragmaType.NotPrimitive)
+            if (scope.IsPrimitive)
             {
-                var temp = trans.CreatePrimitive(scope, prim);
+                var temp = trans.CreatePrimitive(scope);
                 TransDictionary.Add(scope, temp);
                 ChildSpreadTranslate(scope, temp);
             }
@@ -131,7 +130,7 @@ namespace CliTranslate
             }
             else
             {
-                temp = trans.CreateRoutine(scope, scope.ReturnType, scope.ArgumentType);
+                temp = trans.CreateRoutine(scope);
             }
             TransDictionary.Add(scope, temp);
             temp.CreateArguments(scope.DecArguments.Cast<IScope>());
@@ -144,7 +143,7 @@ namespace CliTranslate
             {
                 return;
             }
-            trans.CreateVariant(scope, scope.DataType);
+            trans.CreateVariant(scope);
         }
 
         private void SpreadTranslate(IfStatement scope, Translator trans)
