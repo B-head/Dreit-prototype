@@ -86,7 +86,7 @@
     <output>18</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class A {
@@ -268,9 +268,9 @@
 
       A =: var o
       echo o.a
-      echo A.b
+      echo A&.b
       echo o.foo
-      echo A.bar
+      echo A&.bar
       ]]>
     </code>
     <output>10 20 40 60</output>
@@ -289,9 +289,9 @@
       }
 
       A =: var o
-      echo A.a
+      echo A&.a
       echo o.b
-      echo A.foo
+      echo A&.foo
       echo o.bar
       ]]>
     </code>
@@ -315,9 +315,9 @@
 
       A =: var o
       echo o.a
-      echo A.b
+      echo A&.b
       echo o.foo
-      echo A.bar
+      echo A&.bar
       ]]>
     </code>
     <error key="undefined-identifier"/>

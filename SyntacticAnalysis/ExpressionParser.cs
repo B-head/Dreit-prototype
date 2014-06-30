@@ -50,24 +50,63 @@ namespace SyntacticAnalysis
 
         private static Element Multiplicative(ChainParser cp)
         {
-            return LeftAssociative<Calculate, Element>(cp, CallRoutine, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
+            return LeftAssociative<Calculate, Element>(cp, Prefix, TokenType.Multiply, TokenType.Divide, TokenType.Modulo);
         }
 
-        private static Element CallRoutine(ChainParser cp)
+        private static Element Prefix(ChainParser cp)
         {
-            var access = MemberAccess(cp);
+            var ret = cp.Begin<Prefix>()
+                   .Type((s, t) => s.Operator = t.Type, TokenType.Add, TokenType.Subtract, TokenType.Not).Lt()
+                   .Transfer((s, e) => s.Child = e, Prefix)
+                   .End();
+            return ret ?? Postfix(cp);
+        }
+
+        private static Element Postfix(ChainParser cp)
+        {
+            var current = Primary(cp);
+            return current == null ? null : Postfix(current, cp);
+        }
+
+        private static Element Postfix(Element current, ChainParser cp)
+        {
+            var ret = cp.Begin<Postfix>()
+                .Self(s => s.Child = current)
+                .Type((s, t) => s.Operator = t.Type, TokenType.Refer, TokenType.Typeof).Lt()
+                .End();
+            return ret == null ? MemberAccess(current, cp) : Postfix(ret, cp);
+        }
+
+        private static Element MemberAccess(Element current, ChainParser cp)
+        {
+            var ret = cp.Begin<MemberAccess>()
+                .Self(s => s.Access = current)
+                .Type(TokenType.Access).Lt()
+                .Transfer((s, e) => s.Ident = e, IdentifierAccess)
+                .End();
+            return ret == null ? ParenthesisCallRoutine(current, cp) : Postfix(ret, cp);
+        }
+
+        private static Element ParenthesisCallRoutine(Element current, ChainParser cp)
+        {
             var ret = cp.Begin<CallRoutine>()
-                .Self(s => s.CallAccess = access)
+                .Self(s => s.CallAccess = current)
                 .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, Addtive))
+                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, Logical))
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
-            return ret ?? access;
+            return ret == null ? BracketCallRoutine(current, cp) : Postfix(ret, cp);
         }
 
-        private static Element MemberAccess(ChainParser cp)
+        private static Element BracketCallRoutine(Element current, ChainParser cp)
         {
-            return LeftAssociative<MemberAccess, Element>(cp, Primary, TokenType.Access);
+            var ret = cp.Begin<CallRoutine>()
+                .Self(s => s.CallAccess = current)
+                .Type(TokenType.LeftBracket).Lt()
+                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, Logical))
+                .Type(TokenType.RightBracket).Lt()
+                .End();
+            return ret == null ? current : Postfix(ret, cp);
         }
     }
 }

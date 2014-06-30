@@ -497,12 +497,7 @@ namespace CliTranslate
 
         private bool TranslateAccess(MemberAccess element, Translator trans)
         {
-            Translate((dynamic)element.Left, trans);
-            var temp = element.Right as MemberAccess;
-            if (temp != null)
-            {
-                TranslateAccess(temp, trans);
-            }
+            Translate((dynamic)element.Access, trans);
             return true;
         }
 

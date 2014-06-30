@@ -13,7 +13,7 @@ namespace SyntacticAnalysis
                 .Text("var", "let").Lt()
                 .Transfer((s, e) => s.Ident = e, IdentifierAccess)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive)
+                .Than().Transfer((s, e) => s.ExplicitType = e, Logical)
                 .EndIf().End();
         }
 
@@ -26,7 +26,7 @@ namespace SyntacticAnalysis
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .Transfer((s, e)=> s.DecArguments = e, ArgumentList)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive).EndIf()
+                .Than().Transfer((s, e) => s.ExplicitType = e, Logical).EndIf()
                 .Transfer((s, e)=> s.Block = e, Block)
                 .End();
         }
@@ -40,7 +40,7 @@ namespace SyntacticAnalysis
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .Transfer((s, e) => s.DecArguments = e, ArgumentList)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive).EndIf()
+                .Than().Transfer((s, e) => s.ExplicitType = e, Logical).EndIf()
                 .Transfer((s, e) => s.Block = e, Block)
                 .End();
         }
@@ -53,7 +53,7 @@ namespace SyntacticAnalysis
                 .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.InheritAccess = e, c => ParseTuple(c, MemberAccess))
+                .Than().Transfer((s, e) => s.InheritAccess = e, c => ParseTuple(c, IdentifierAccess))
                 .Else().Self(s => s.InheritAccess = new TupleList()).EndIf()
                 .Transfer((s, e) => s.Block = e, Block)
                 .End();
@@ -94,7 +94,7 @@ namespace SyntacticAnalysis
             return cp.Begin<DeclateGeneric>()
                 .Type((s, t)=> s.Name = t.Text, TokenType.LetterStartString)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.SpecialTypeAccess = e, Addtive)
+                .Than().Transfer((s, e) => s.SpecialTypeAccess = e, Logical)
                 .EndIf().End();
         }
 
@@ -118,7 +118,7 @@ namespace SyntacticAnalysis
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
                 .Transfer((s, e) => s.Ident = e, IdentifierAccess)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Addtive)
+                .Than().Transfer((s, e) => s.ExplicitType = e, Logical)
                 .EndIf().End();
         }
     }

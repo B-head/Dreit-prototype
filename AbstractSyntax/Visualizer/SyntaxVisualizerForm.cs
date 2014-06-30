@@ -68,13 +68,16 @@ namespace AbstractSyntax.Visualizer
             valueList.BeginUpdate();
             valueList.Groups.Clear();
             valueList.Items.Clear();
-            var type = element.GetType();
-            AddGroup(element, type);
-            /*while(type != typeof(object))
+            if (element != null)
             {
+                var type = element.GetType();
                 AddGroup(element, type);
-                type = type.BaseType;
-            }*/
+                //while(type != typeof(object))
+                //{
+                //    AddGroup(element, type);
+                //    type = type.BaseType;
+                //}
+            }
             valueList.EndUpdate();
         }
 

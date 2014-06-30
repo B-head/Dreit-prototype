@@ -54,6 +54,8 @@
     <Compile Include="Expression\Caller.cs" />
     <Compile Include="Expression\Condition.cs" />
     <Compile Include="Expression\Logical.cs" />
+    <Compile Include="Expression\Postfix.cs" />
+    <Compile Include="Expression\Prefix.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
