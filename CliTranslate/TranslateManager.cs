@@ -377,6 +377,12 @@ namespace CliTranslate
             CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
         }
 
+        private void Translate(MemberAccess element, Translator trans)
+        {
+            TranslateAccess((dynamic)element, trans);
+            CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
+        }
+
         private void Translate(Caller element, Translator trans)
         {
             if (element.IsCalculate)

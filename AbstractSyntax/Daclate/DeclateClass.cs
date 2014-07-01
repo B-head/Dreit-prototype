@@ -36,11 +36,7 @@ namespace AbstractSyntax.Daclate
                 _Attribute = new List<IScope>();
                 foreach (var v in AttributeAccess)
                 {
-                    var acs = v as IAccess;
-                    if (acs != null)
-                    {
-                        _Attribute.Add(acs.Reference.GetDataType());
-                    }
+                    _Attribute.Add(v.Reference.GetDataType());
                 }
                 return _Attribute;
             }
@@ -57,8 +53,7 @@ namespace AbstractSyntax.Daclate
                 _Inherit = new List<ClassSymbol>();
                 foreach (var v in InheritAccess)
                 {
-                    var acs = v as IAccess;
-                    var dt = acs.Reference.GetDataType();
+                    var dt = v.Reference.GetDataType();
                     if (dt is ClassSymbol)
                     {
                         _Inherit.Add((ClassSymbol)dt);
@@ -132,8 +127,7 @@ namespace AbstractSyntax.Daclate
             base.CheckDataType();
             foreach (var v in InheritAccess)
             {
-                var acs = v as IAccess;
-                var dt = acs.Reference.GetDataType();
+                var dt = v.Reference.GetDataType();
                 if (!(dt is ClassSymbol))
                 {
                     CompileError("not-datatype-inherit");

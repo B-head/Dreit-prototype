@@ -9,7 +9,7 @@ using System.Linq;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class IdentifierAccess : Element, IAccess
+    public class IdentifierAccess : Element
     {
         public string Value { get; set; }
         public bool IsPragmaAccess { get; set; }
@@ -72,40 +72,23 @@ namespace AbstractSyntax.Expression
             get { return Reference.CallSelect().Call; }
         }
 
-        public OverLoad Reference
+        public override OverLoad Reference
         {
             get
             {
-                if(_Reference == null)
+                if(_Reference != null)
                 {
-                    RefarenceResolution();
+                    return _Reference;
+                }
+                if (IsPragmaAccess)
+                {
+                    _Reference = CurrentScope.NameResolution("@@" + Value);
+                }
+                else
+                {
+                    _Reference = CurrentScope.NameResolution(Value);
                 }
                 return _Reference;
-            }
-        }
-
-        public void RefarenceResolution()
-        {
-            var p = Parent as IAccess;
-            if (p == null)
-            {
-                RefarenceResolution(CurrentIScope);
-            }
-            else
-            {
-                p.RefarenceResolution();
-            }
-        }
-
-        public void RefarenceResolution(IScope scope)
-        {
-            if (IsPragmaAccess)
-            {
-                _Reference = ((Scope)scope).NameResolution("@@" +  Value);
-            }
-            else
-            {
-                _Reference = ((Scope)scope).NameResolution(Value);
             }
         }
 
@@ -135,20 +118,6 @@ namespace AbstractSyntax.Expression
                 current = current.CurrentScope;
             }
             return current;
-        }
-
-        private bool HasCurrentAccess(IScope other)
-        {
-            var c = CurrentIScope;
-            while(c != null)
-            {
-                if(c == other)
-                {
-                    return true;
-                }
-                c = c.CurrentIScope;
-            }
-            return false;
         }
 
         private bool IsStaticAccess()

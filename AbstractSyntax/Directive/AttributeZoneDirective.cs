@@ -33,11 +33,7 @@ namespace AbstractSyntax.Directive
                 _Attribute = new List<IScope>();
                 foreach (var v in Child)
                 {
-                    var acs = v as IAccess;
-                    if (acs != null)
-                    {
-                        _Attribute.Add(acs.Reference.GetDataType());
-                    }
+                    _Attribute.Add(v.Reference.GetDataType());
                 }
                 return _Attribute;
             }

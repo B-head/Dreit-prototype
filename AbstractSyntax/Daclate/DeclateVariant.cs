@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateVariant : VariantSymbol, IAccess
+    public class DeclateVariant : VariantSymbol
     {
         public TupleList AttributeAccess { get; set; }
         public IdentifierAccess Ident { get; set; }
@@ -25,11 +25,7 @@ namespace AbstractSyntax.Daclate
                 _Attribute = new List<IScope>();
                 foreach (var v in AttributeAccess)
                 {
-                    var acs = v as IAccess;
-                    if (acs != null)
-                    {
-                        _Attribute.Add(acs.Reference.GetDataType());
-                    }
+                    _Attribute.Add(v.Reference.GetDataType());
                 }
                 return _Attribute;
             }
@@ -60,29 +56,9 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public Scope CallScope
-        {
-            get { return Ident.CallScope; }
-        }
-
-        public OverLoad Reference
+        public override OverLoad Reference
         {
             get { return Ident.Reference; }
-        }
-
-        public void RefarenceResolution()
-        {
-            RefarenceResolution(CurrentIScope);
-        }
-
-        public void RefarenceResolution(IScope scope)
-        {
-            Ident.RefarenceResolution(scope);
-            var etacs = ExplicitType as IAccess;
-            if(etacs != null)
-            {
-                etacs.RefarenceResolution(scope);
-            }
         }
 
         public override int Count

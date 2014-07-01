@@ -120,7 +120,7 @@ namespace AbstractSyntax
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }
 
-        public bool IsAnyAttribute(AttributeType type)
+        internal bool IsAnyAttribute(AttributeType type)
         {
             foreach (var v in Attribute)
             {

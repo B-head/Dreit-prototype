@@ -12,6 +12,7 @@ namespace AbstractSyntax
         TextPosition Position { get; }
         IScope CurrentIScope { get; }
         IDataType DataType { get; }
+        OverLoad Reference { get; }
         bool IsVoidReturn { get; }
     }
 
@@ -32,6 +33,11 @@ namespace AbstractSyntax
         public virtual IDataType DataType
         {
             get { return Root.Void; }
+        }
+
+        public virtual OverLoad Reference
+        {
+            get { return Root.UndefinedOverLord; }
         }
 
         public bool IsVoidReturn
@@ -94,6 +100,20 @@ namespace AbstractSyntax
                     v.CheckDataType();
                 }
             }
+        }
+
+        internal bool HasCurrentAccess(IScope other)
+        {
+            var c = CurrentScope;
+            while (c != null)
+            {
+                if (c == other)
+                {
+                    return true;
+                }
+                c = c.CurrentScope;
+            }
+            return false;
         }
 
         protected void CompileInfo(string key)

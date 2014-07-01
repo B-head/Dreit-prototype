@@ -86,7 +86,7 @@
     <output>18</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       <![CDATA[
       class A {

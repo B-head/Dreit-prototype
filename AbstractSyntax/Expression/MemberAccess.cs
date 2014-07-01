@@ -1,26 +1,20 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class MemberAccess : Element, IAccess
+    public class MemberAccess : Element
     {
         public Element Access { get; set; }
-        public IdentifierAccess Member { get; set; }
+        public string Member { get; set; }
         private OverLoad _Reference;
 
         public override IDataType DataType
         {
-            get 
-            {
-                if(_Reference == null)
-                {
-                    RefarenceResolution(CurrentScope);
-                }
-                return Member.DataType; 
-            }
+            get { return CallScope.ReturnType; }
         }
 
         public Scope CallScope
@@ -28,13 +22,14 @@ namespace AbstractSyntax.Expression
             get { return Reference.CallSelect().Call; }
         }
 
-        public OverLoad Reference
+        public override OverLoad Reference
         {
             get
             {
                 if(_Reference == null)
                 {
-                    RefarenceResolution();
+                    var scope = (Scope)Access.DataType;
+                    _Reference = scope.NameResolution(Member);
                 }
                 return _Reference;
             }
@@ -42,7 +37,7 @@ namespace AbstractSyntax.Expression
 
         public override int Count
         {
-            get { return 2; }
+            get { return 1; }
         }
 
         public override IElement this[int index]
@@ -52,43 +47,23 @@ namespace AbstractSyntax.Expression
                 switch (index)
                 {
                     case 0: return Access;
-                    case 1: return Member;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
         }
 
-        public void RefarenceResolution()
+        internal override void CheckSyntax()
         {
-            var p = Parent as IAccess;
-            if (p == null)
+            base.CheckSyntax();
+            if (Reference.IsUndefined)
             {
-                RefarenceResolution(CurrentIScope);
+                CompileError("undefined-identifier");
             }
-            else
+            var s = Reference.CallSelect().Call;
+            if (s.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
             {
-                p.RefarenceResolution();
+                CompileError("not-accessable");
             }
-        }
-
-        public void RefarenceResolution(IScope scope)
-        {
-            var acs = Access as IAccess;
-            if (acs != null)
-            {
-                acs.RefarenceResolution(scope);
-            }
-            Member.RefarenceResolution(Access.DataType);
-            _Reference = Member.Reference;
-        }
-
-        internal override void CheckDataType()
-        {
-            if (_Reference == null)
-            {
-                RefarenceResolution(CurrentScope);
-            }
-            base.CheckDataType();
         }
     }
 }

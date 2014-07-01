@@ -27,15 +27,7 @@ namespace AbstractSyntax.Expression
             {
                 if (_Match == null)
                 {
-                    var access = Access as IAccess;
-                    if (access == null)
-                    {
-                        _Match = TypeMatch.MakeNotCallable(Root.Unknown);
-                    }
-                    else
-                    {
-                        _Match = access.Reference.CallSelect(Arguments.GetDataTypes());
-                    }
+                    _Match = Access.Reference.CallSelect(Arguments.GetDataTypes());
                 }
                 return _Match.Value;
             }

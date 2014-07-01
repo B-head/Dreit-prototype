@@ -23,12 +23,4 @@ namespace AbstractSyntax
         Element Right { get; set; }
         TokenType Operator { get; set; }
     }
-
-    public interface IAccess : IElement
-    {
-        OverLoad Reference { get; }
-        Scope CallScope { get; }
-        void RefarenceResolution();
-        void RefarenceResolution(IScope scope);
-    }
 }

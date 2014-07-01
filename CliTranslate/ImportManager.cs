@@ -181,7 +181,7 @@ namespace CliTranslate
         {
             if (pureFullName.Count > 1)
             {
-                var right = new IdentifierAccess { Value = pureFullName[pureFullName.Count - 1] };
+                var right = pureFullName[pureFullName.Count - 1];
                 pureFullName.RemoveAt(pureFullName.Count - 1);
                 var left = CreateAccess(pureFullName);
                 return new MemberAccess { Access = left, Member = right };
