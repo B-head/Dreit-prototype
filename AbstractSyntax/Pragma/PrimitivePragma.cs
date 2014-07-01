@@ -2,6 +2,7 @@
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace AbstractSyntax.Pragma
@@ -14,6 +15,7 @@ namespace AbstractSyntax.Pragma
         public PrimitivePragma(PrimitivePragmaType type)
         {
             Type = type;
+            _Attribute = new List<IScope>();
         }
     }
 

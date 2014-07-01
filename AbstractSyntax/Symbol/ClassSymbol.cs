@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class ClassSymbol : Scope, IDataType, IAttribute
+    public class ClassSymbol : Scope, IDataType
     {
         protected List<RoutineSymbol> initializer;
         protected List<IScope> _Attribute;
@@ -20,7 +20,7 @@ namespace AbstractSyntax.Symbol
             initializer = new List<RoutineSymbol>();
         }
 
-        public virtual IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<IScope> Attribute
         {
             get { return _Attribute; }
         }

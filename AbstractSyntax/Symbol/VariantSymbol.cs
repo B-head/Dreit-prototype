@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class VariantSymbol : Scope, IAttribute
+    public class VariantSymbol : Scope
     {
         protected List<IScope> _Attribute;
         protected IDataType _DataType;
 
-        public virtual IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<IScope> Attribute
         {
             get { return _Attribute; }
         }

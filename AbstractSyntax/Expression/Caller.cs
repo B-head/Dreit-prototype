@@ -34,7 +34,7 @@ namespace AbstractSyntax.Expression
                     }
                     else
                     {
-                        _Match = access.Reference.TypeSelect(Arguments.GetDataTypes());
+                        _Match = access.Reference.CallSelect(Arguments.GetDataTypes());
                     }
                 }
                 return _Match.Value;

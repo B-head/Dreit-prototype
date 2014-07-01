@@ -46,7 +46,7 @@ namespace AbstractSyntax
             }
             else
             {
-                if (from == to) //todo 応急処置的な。
+                if (from == to)
                 {
                     return Void;
                 }

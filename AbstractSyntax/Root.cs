@@ -14,7 +14,7 @@ namespace AbstractSyntax
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
-        internal UnknownOverLoad UnknownOverLoad { get; private set; }
+        internal OverLoad UndefinedOverLord { get; private set; }
         internal ConversionManager Conversion { get; set; }
         internal Dictionary<TokenType, ConversionManager> OpManager { get; set; }
         public CompileMessageManager MessageManager { get; private set; }
@@ -26,7 +26,7 @@ namespace AbstractSyntax
             Void = new VoidSymbol() { Name = "void" };
             Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
-            UnknownOverLoad = new UnknownOverLoad(Unknown);
+            UndefinedOverLord = new OverLoad(Unknown, true);
             Conversion = new ConversionManager(Void, Error, Unknown);
             MessageManager = new CompileMessageManager();
             CreatePragma();

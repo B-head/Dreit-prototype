@@ -10,69 +10,65 @@ namespace AbstractSyntax
     public class OverLoad : IReadOnlyList<IScope>
     {
         private List<Scope> ScopeList;
-        private bool isHoldAlias;
-        protected UnknownSymbol Unknown;
+        private bool IsHoldAlias;
+        private bool Freeze;
+        private UnknownSymbol Unknown;
 
-        public OverLoad(UnknownSymbol unknown)
+        public OverLoad(UnknownSymbol unknown, bool freeze = false)
         {
             ScopeList = new List<Scope>();
             Unknown = unknown;
+            Freeze = freeze;
         }
 
-        public virtual void Append(Scope scope)
+        public void Append(Scope scope)
         {
+            if(Freeze)
+            {
+                throw new InvalidOperationException();
+            }
             if(scope is AliasDirective)
             {
-                isHoldAlias = true;
+                IsHoldAlias = true;
             }
             ScopeList.Add(scope);
         }
 
-        public virtual void Merge(OverLoad other)
+        public void Merge(OverLoad other)
         {
+            if (Freeze)
+            {
+                throw new InvalidOperationException();
+            }
             foreach(var v in other.ScopeList)
             {
                 Append(v);
             }
         }
 
-        public virtual IDataType GetDataType()
+        public bool IsUndefined
         {
-            if(isHoldAlias)
+            get { return ScopeList.Count == 0; }
+        }
+
+        public IDataType GetDataType()
+        {
+            if(IsHoldAlias)
             {
                 SpreadAlias();
             }
             var find = (IDataType)ScopeList.Find(s => s is IDataType);
-            if(find != null)
-            {
-                return find;
-            }
-            var refer = TypeSelect();//todo 引数なしのDataTypeを返しているのを見直す。
-            if (refer.Result == TypeMatchResult.NotCallable)
-            {
-                return Unknown;
-            }
-            return refer.Call.DataType; 
+            return find == null ? Unknown : find;
         }
 
-        public virtual IScope SelectPlain()
+        public TypeMatch CallSelect()
         {
-            if (isHoldAlias)
-            {
-                SpreadAlias();
-            }
-            var refer = TypeSelect();
-            return refer.Call;
+            return CallSelect(new List<IDataType>());
         }
 
-        public virtual TypeMatch TypeSelect()
+        public TypeMatch CallSelect(IReadOnlyList<IDataType> type)
         {
-            return TypeSelect(new List<IDataType>());
-        }
-
-        public virtual TypeMatch TypeSelect(IReadOnlyList<IDataType> type)
-        {
-            if (isHoldAlias)
+            if (IsHoldAlias)
             {
                 SpreadAlias();
             }
@@ -83,11 +79,7 @@ namespace AbstractSyntax
                 {
                     if (GetMatchPriority(result.Result) < GetMatchPriority(b.Result))
                     {
-                        result = b;
-                    }
-                    else if(result.Call == null)
-                    {
-                        result = b;
+                        result = b; //todo 優先順位が重複した場合の対処が必要。
                     }
                 }
             }

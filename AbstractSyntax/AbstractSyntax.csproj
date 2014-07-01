@@ -102,7 +102,6 @@
     <Compile Include="Symbol\ErrorSymbol.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="TypeMatch.cs" />
-    <Compile Include="UnknownOverLoad.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="Symbol\ThisSymbol.cs" />
     <Compile Include="Token.cs" />

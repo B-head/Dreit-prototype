@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class RoutineSymbol : Scope, IAttribute
+    public class RoutineSymbol : Scope
     {
         public TokenType Operator { get; set; }
         protected List<IScope> _Attribute;
         protected List<IDataType> _ArgumentType;
         protected IDataType _ReturnType;
 
-        public virtual IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<IScope> Attribute
         {
             get { return _Attribute; }
         }

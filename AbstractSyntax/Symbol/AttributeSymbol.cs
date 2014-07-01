@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class AttributeSymbol : Scope
+    public class AttributeSymbol : Scope, IDataType
     {
         public AttributeType Attr { get; private set; }
 

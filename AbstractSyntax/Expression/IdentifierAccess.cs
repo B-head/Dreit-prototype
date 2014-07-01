@@ -2,6 +2,7 @@
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -68,7 +69,7 @@ namespace AbstractSyntax.Expression
 
         public Scope CallScope
         {
-            get { return Reference.TypeSelect().Call; }
+            get { return Reference.CallSelect().Call; }
         }
 
         public OverLoad Reference
@@ -139,20 +140,17 @@ namespace AbstractSyntax.Expression
         internal override void CheckSyntax()
         {
             base.CheckSyntax();
-            var s = Reference.SelectPlain() as IAttribute;
-            if(s != null)
+            var s = Reference.CallSelect().Call;
+            if(s.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(s.CurrentIScope))
             {
-                if(s.Attribute.Any(v => v.Name == "private") && !HasCurrentAccess(s.CurrentIScope))
-                {
-                    CompileError("not-accessable");
-                }
+                CompileError("not-accessable");
             }
         }
 
         internal override void CheckDataType()
         {
             base.CheckDataType();
-            if (Reference is UnknownOverLoad)
+            if (Reference.IsUndefined)
             {
                 if (IsPragmaAccess)
                 {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Directive
 {
     [Serializable]
-    public class AttributeZoneDirective : Element, IAttribute
+    public class AttributeZoneDirective : Element
     {
         private List<Element> Child;
         private List<IScope> _Attribute;
@@ -36,7 +36,7 @@ namespace AbstractSyntax.Directive
                     var acs = v as IAccess;
                     if (acs != null)
                     {
-                        _Attribute.Add(acs.Reference.SelectPlain());
+                        _Attribute.Add(acs.Reference.GetDataType());
                     }
                 }
                 return _Attribute;

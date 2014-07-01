@@ -32,7 +32,7 @@ namespace AbstractSyntax.Daclate
                     var acs = v as IAccess;
                     if (acs != null)
                     {
-                        _Attribute.Add(acs.Reference.SelectPlain());
+                        _Attribute.Add(acs.Reference.GetDataType());
                     }
                 }
                 return _Attribute;

@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,7 +55,7 @@ namespace AbstractSyntax
             }
             if (this is Root)
             {
-                return Root.UnknownOverLoad;
+                return Root.UndefinedOverLord;
             }
             return CurrentScope.NameResolution(name);
         }
@@ -119,9 +120,31 @@ namespace AbstractSyntax
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }
 
+        public bool IsAnyAttribute(AttributeType type)
+        {
+            foreach (var v in Attribute)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                if (a.Attr == type)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public virtual IDataType ReturnType
         {
             get { return Root.Unknown; }
+        }
+
+        public virtual IReadOnlyList<IScope> Attribute
+        {
+            get { return new List<IScope>(); }
         }
     }
 }

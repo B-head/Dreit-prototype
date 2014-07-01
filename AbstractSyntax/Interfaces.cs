@@ -11,11 +11,6 @@ namespace AbstractSyntax
 
     }
 
-    public interface IAttribute : IElement
-    {
-        IReadOnlyList<IScope> Attribute { get; }
-    }
-
     public interface IMonadicExpression : IElement
     {
         Element Child { get; set; }
