@@ -82,7 +82,7 @@ namespace SyntacticAnalysis
             var ret = cp.Begin<MemberAccess>()
                 .Self(s => s.Access = current)
                 .Type(TokenType.Access).Lt()
-                .Transfer((s, e) => s.Ident = e, IdentifierAccess)
+                .Transfer((s, e) => s.Member = e, IdentifierAccess)
                 .End();
             return ret == null ? ParenthesisCallRoutine(current, cp) : Postfix(ret, cp);
         }

@@ -52,14 +52,15 @@ namespace CliTranslate
         public RoutineTranslator CreateConstructor(RoutineSymbol path, IEnumerable<IScope> argumentType)
         {
             var argbld = Root.GetArgumentBuilders(argumentType);
-            var ctor = Class.DefineConstructor(MethodAttributes.Public, CallingConventions.Any, argbld);
+            var attr = MakeMethodAttributes(path.Attribute);
+            var ctor = Class.DefineConstructor(attr, CallingConventions.Any, argbld);
             Root.RegisterBuilder(path, ctor);
             return new RoutineTranslator(path, this, ctor, InitContext);
         }
 
         public RoutineTranslator CreateDestructor(RoutineSymbol path)
         {
-            var builder = Class.DefineMethod("Finalize", MethodAttributes.ReuseSlot | MethodAttributes.Family);
+            var builder = Class.DefineMethod("Finalize", MethodAttributes.Family);
             return new RoutineTranslator(path, this, builder, true);
         }
 
@@ -67,7 +68,8 @@ namespace CliTranslate
         {
             var retbld = Root.GetReturnBuilder(path.ReturnType);
             var argbld = Root.GetArgumentBuilders(path.ArgumentType);
-            var builder = Class.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
+            var attr = MakeMethodAttributes(path.Attribute);
+            var builder = Class.DefineMethod(path.Name, attr, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
@@ -80,13 +82,56 @@ namespace CliTranslate
         public override void CreateVariant(DeclateVariant path)
         {
             var type = Root.GetBuilder(path.DataType);
-            var builder = Class.DefineField(path.Name, type, FieldAttributes.Public);
+            var attr = MakeFieldAttributes(path.Attribute);
+            var builder = Class.DefineField(path.Name, type, attr);
             Root.RegisterBuilder(path, builder);
             var init = Class.DefineField(path.Name + "@@default", type, FieldAttributes.Static | FieldAttributes.SpecialName);
             InitDictonary.Add(path, init);
             InitGenerator.Emit(OpCodes.Ldarg_0);
             InitGenerator.Emit(OpCodes.Ldsfld, init);
             InitGenerator.Emit(OpCodes.Stfld, builder);
+        }
+
+        private MethodAttributes MakeMethodAttributes(IReadOnlyList<IScope> attr)
+        {
+            MethodAttributes ret = 0;
+            foreach(var v in attr)
+            {
+                var a = v as AttributeSymbol;
+                if(a == null)
+                {
+                    continue;
+                }
+                switch(a.Attr)
+                {
+                    case AttributeType.Static: ret |= MethodAttributes.Static; break;
+                    case AttributeType.Public: ret |= MethodAttributes.Public; break;
+                    case AttributeType.Protected: ret |= MethodAttributes.Family; break;
+                    case AttributeType.Private: ret |= MethodAttributes.Private; break;
+                }
+            }
+            return ret;
+        }
+
+        private FieldAttributes MakeFieldAttributes(IReadOnlyList<IScope> attr)
+        {
+            FieldAttributes ret = 0;
+            foreach (var v in attr)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                switch (a.Attr)
+                {
+                    case AttributeType.Static: ret |= FieldAttributes.Static; break;
+                    case AttributeType.Public: ret |= FieldAttributes.Public; break;
+                    case AttributeType.Protected: ret |= FieldAttributes.Family; break;
+                    case AttributeType.Private: ret |= FieldAttributes.Private; break;
+                }
+            }
+            return ret;
         }
 
         public override void GenerateLoad(IScope name, bool address = false)

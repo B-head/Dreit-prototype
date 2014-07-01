@@ -8,7 +8,7 @@ namespace AbstractSyntax.Expression
     public class MemberAccess : Element, IAccess
     {
         public Element Access { get; set; }
-        public IdentifierAccess Ident { get; set; }
+        public IdentifierAccess Member { get; set; }
         private OverLoad _Reference;
 
         public override IDataType DataType
@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
                 {
                     RefarenceResolution(CurrentScope);
                 }
-                return Ident.DataType; 
+                return Member.DataType; 
             }
         }
 
@@ -52,7 +52,7 @@ namespace AbstractSyntax.Expression
                 switch (index)
                 {
                     case 0: return Access;
-                    case 1: return Ident;
+                    case 1: return Member;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -78,8 +78,8 @@ namespace AbstractSyntax.Expression
             {
                 acs.RefarenceResolution(scope);
             }
-            Ident.RefarenceResolution(Access.DataType);
-            _Reference = Ident.Reference;
+            Member.RefarenceResolution(Access.DataType);
+            _Reference = Member.Reference;
         }
 
         internal override void CheckDataType()

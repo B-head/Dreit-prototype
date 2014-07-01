@@ -163,6 +163,26 @@
       <![CDATA[
       class A
       {
+        private var a := 10
+        private var b := 20
+        
+        public routine foo :: a + 30
+        public routine bar :: b + 40
+      }
+
+      A =: var o
+      echo o.foo
+      echo o.bar
+      ]]>
+    </code>
+    <output>40 60</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
         public var a := 10
         private var b := 20
         

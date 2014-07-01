@@ -330,6 +330,7 @@ namespace SyntacticAnalysis
                 case "::": type = TokenType.Separator; break;
                 case "..": type = TokenType.Range; break;
                 case "@@": type = TokenType.Pragma; break;
+                case "##": type = TokenType.Pragma; break;
                 case "??": type = TokenType.Coalesce; break;
                 case "||": type = TokenType.Or; break;
                 case "&&": type = TokenType.And; break;
