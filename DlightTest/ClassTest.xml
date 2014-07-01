@@ -315,10 +315,10 @@
       echo o.bar
       ]]>
     </code>
-    <error key="undefined-identifier"/>
-    <error key="undefined-identifier"/>
-    <error key="undefined-identifier"/>
-    <error key="undefined-identifier"/>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
+    <error key="not-accessable"/>
   </case>
 
   <case>
@@ -340,7 +340,7 @@
       echo A&.bar
       ]]>
     </code>
-    <error key="undefined-identifier"/>
+    <error key="not-accessable"/>
   </case>
 
   <case>

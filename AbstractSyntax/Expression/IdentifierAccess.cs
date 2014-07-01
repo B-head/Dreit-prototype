@@ -114,7 +114,21 @@ namespace AbstractSyntax.Expression
             var current = CurrentScope;
             while(current != null)
             {
-                if(current is DeclateClass)
+                if(current is ClassSymbol)
+                {
+                    break;
+                }
+                current = current.CurrentScope;
+            }
+            return current;
+        }
+
+        private Scope GetParentRoutine()
+        {
+            var current = CurrentScope;
+            while (current != null)
+            {
+                if (current is RoutineSymbol)
                 {
                     break;
                 }
@@ -137,19 +151,19 @@ namespace AbstractSyntax.Expression
             return false;
         }
 
+        private bool IsStaticAccess()
+        {
+            var r = GetParentRoutine();
+            if (r == null)
+            {
+                return false;
+            }
+            return r.IsStaticMember;
+        }
+
         internal override void CheckSyntax()
         {
             base.CheckSyntax();
-            var s = Reference.CallSelect().Call;
-            if(s.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(s.CurrentIScope))
-            {
-                CompileError("not-accessable");
-            }
-        }
-
-        internal override void CheckDataType()
-        {
-            base.CheckDataType();
             if (Reference.IsUndefined)
             {
                 if (IsPragmaAccess)
@@ -160,6 +174,15 @@ namespace AbstractSyntax.Expression
                 {
                     CompileError("undefined-identifier");
                 }
+            }
+            var s = Reference.CallSelect().Call;
+            if(s.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
+            {
+                CompileError("not-accessable");
+            }
+            if(s.IsInstanceMember && IsStaticAccess())
+            {
+                CompileError("not-accessable");
             }
         }
     }

@@ -208,7 +208,7 @@ namespace CliTranslate
         private Element ConvertEvent(EventInfo eve)
         {
             var ident = new IdentifierAccess { Value = eve.Name };
-            var expl = CreateAccess(eve.DeclaringType);
+            var expl = CreateAccess(eve.DeclaringType) as IdentifierAccess;
             DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitType = expl };
             AppendPeir(result, eve);
             return result;
@@ -245,7 +245,7 @@ namespace CliTranslate
         private DeclateArgument ConvertArgument(ParameterInfo arguments)
         {
             var ident = new IdentifierAccess { Value = arguments.Name };
-            var expl = CreateAccess(arguments.ParameterType);
+            var expl = CreateAccess(arguments.ParameterType) as IdentifierAccess;
             DeclateArgument result = new DeclateArgument { Ident = ident, ExplicitType = expl };
             AppendPeir(result, arguments);
             return result;
@@ -254,7 +254,7 @@ namespace CliTranslate
         private DeclateVariant ImportField(FieldInfo field)
         {
             var ident = new IdentifierAccess { Value = field.Name };
-            var expl = CreateAccess(field.FieldType);
+            var expl = CreateAccess(field.FieldType) as IdentifierAccess;
             DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitType = expl };
             AppendPeir(result, field);
             return result;

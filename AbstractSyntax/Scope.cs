@@ -146,5 +146,15 @@ namespace AbstractSyntax
         {
             get { return new List<IScope>(); }
         }
+
+        public bool IsStaticMember
+        {
+            get { return CurrentScope is ClassSymbol && IsAnyAttribute(AttributeType.Static); }
+        }
+
+        public bool IsInstanceMember
+        {
+            get { return CurrentScope is ClassSymbol && !IsAnyAttribute(AttributeType.Static); }
+        }
     }
 }

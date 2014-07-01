@@ -12,7 +12,7 @@ namespace AbstractSyntax.Daclate
     {
         public TupleList AttributeAccess { get; set; }
         public IdentifierAccess Ident { get; set; }
-        public Element ExplicitType { get; set; }
+        public IdentifierAccess ExplicitType { get; set; }
 
         public override IReadOnlyList<IScope> Attribute
         {
@@ -46,7 +46,7 @@ namespace AbstractSyntax.Daclate
                 var caller = Parent as Caller;
                 if (ExplicitType != null)
                 {
-                    _DataType = ExplicitType.DataType;
+                    _DataType = ExplicitType.Reference.GetDataType();
                 }
                 else if(caller != null && caller.HasCallTarget(this))
                 {

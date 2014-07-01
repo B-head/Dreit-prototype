@@ -13,7 +13,7 @@ namespace SyntacticAnalysis
                 .Text("var", "let").Lt()
                 .Transfer((s, e) => s.Ident = e, IdentifierAccess)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Logical)
+                .Than().Transfer((s, e) => s.ExplicitType = e, IdentifierAccess)
                 .EndIf().End();
         }
 
@@ -118,7 +118,7 @@ namespace SyntacticAnalysis
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
                 .Transfer((s, e) => s.Ident = e, IdentifierAccess)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Logical)
+                .Than().Transfer((s, e) => s.ExplicitType = e, IdentifierAccess)
                 .EndIf().End();
         }
     }

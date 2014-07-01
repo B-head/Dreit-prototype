@@ -85,7 +85,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual void CheckDataType()
+        internal virtual void CheckDataType() //todo CheckSyntaxと統合する。
         {
             foreach (Element v in this)
             {
