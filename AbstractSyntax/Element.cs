@@ -11,7 +11,7 @@ namespace AbstractSyntax
     {
         TextPosition Position { get; }
         IScope CurrentIScope { get; }
-        IDataType DataType { get; }
+        IDataType ReturnType { get; }
         OverLoad Reference { get; }
         bool IsVoidReturn { get; }
     }
@@ -30,7 +30,7 @@ namespace AbstractSyntax
             get { return CurrentScope; }
         }
 
-        public virtual IDataType DataType
+        public virtual IDataType ReturnType
         {
             get { return Root.Void; }
         }
@@ -42,7 +42,7 @@ namespace AbstractSyntax
 
         public bool IsVoidReturn
         {
-            get { return DataType is VoidSymbol; }
+            get { return ReturnType is VoidSymbol; }
         }
 
         public virtual int Count

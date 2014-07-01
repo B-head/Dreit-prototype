@@ -17,7 +17,7 @@ namespace AbstractSyntax.Symbol
             Value = value;
         }
 
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
             get
             {
@@ -33,7 +33,7 @@ namespace AbstractSyntax.Symbol
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { });
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { DataType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { ReturnType });
         }
     }
 }

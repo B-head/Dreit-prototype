@@ -66,7 +66,7 @@ namespace CliTranslate
 
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetReturnBuilder(path.ReturnType);
+            var retbld = Root.GetReturnBuilder(path.CallReturnType);
             var argbld = Root.GetArgumentBuilders(path.ArgumentType);
             var attr = MakeMethodAttributes(path.Attribute);
             var builder = Class.DefineMethod(path.Name, attr, retbld, argbld);
@@ -81,7 +81,7 @@ namespace CliTranslate
 
         public override void CreateVariant(DeclateVariant path)
         {
-            var type = Root.GetBuilder(path.DataType);
+            var type = Root.GetBuilder(path.ReturnType);
             var attr = MakeFieldAttributes(path.Attribute);
             var builder = Class.DefineField(path.Name, type, attr);
             Root.RegisterBuilder(path, builder);

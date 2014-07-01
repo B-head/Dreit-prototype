@@ -12,7 +12,7 @@ namespace AbstractSyntax.Literal
         public string Fraction { get; set; }
         private IDataType _DataType;
 
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
             get
             {

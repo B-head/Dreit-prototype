@@ -9,7 +9,7 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class UnknownSymbol : Scope, IDataType
     {
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
             get { return Root.Unknown; }
         }

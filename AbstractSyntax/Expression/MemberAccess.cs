@@ -12,9 +12,9 @@ namespace AbstractSyntax.Expression
         public string Member { get; set; }
         private OverLoad _Reference;
 
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
-            get { return CallScope.ReturnType; }
+            get { return CallScope.CallReturnType; }
         }
 
         public Scope CallScope
@@ -28,7 +28,7 @@ namespace AbstractSyntax.Expression
             {
                 if(_Reference == null)
                 {
-                    var scope = (Scope)Access.DataType;
+                    var scope = (Scope)Access.ReturnType;
                     _Reference = scope.NameResolution(Member);
                 }
                 return _Reference;

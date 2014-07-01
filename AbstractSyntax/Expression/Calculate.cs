@@ -17,15 +17,15 @@ namespace AbstractSyntax.Expression
             {
                 if (_CallScope == null)
                 {
-                    _CallScope = Root.OpManager[Operator].Find(Right.DataType, Left.DataType);
+                    _CallScope = Root.OpManager[Operator].Find(Right.ReturnType, Left.ReturnType);
                 }
                 return _CallScope;
             }
         }
 
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
-            get { return CallScope.ReturnType; }
+            get { return CallScope.CallReturnType; }
         }
 
         internal override void CheckDataType()

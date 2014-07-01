@@ -40,7 +40,7 @@ namespace CliTranslate
 
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetReturnBuilder(path.ReturnType);
+            var retbld = Root.GetReturnBuilder(path.CallReturnType);
             var argbld = Root.GetArgumentBuilders(path.ArgumentType);
             var builder = GlobalField.DefineMethod(path.Name, MethodAttributes.Static, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
@@ -60,7 +60,7 @@ namespace CliTranslate
 
         public override void CreateVariant(DeclateVariant path)
         {
-            var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(path.DataType), FieldAttributes.Static);
+            var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(path.ReturnType), FieldAttributes.Static);
             Root.RegisterBuilder(path, builder);
         }
     }

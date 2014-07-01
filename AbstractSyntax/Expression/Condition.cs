@@ -18,15 +18,15 @@ namespace AbstractSyntax.Expression
             {
                 if (_CallScope == null)
                 {
-                    _CallScope = Root.OpManager[Operator].Find(VirtualRight.DataType, Left.DataType);
+                    _CallScope = Root.OpManager[Operator].Find(VirtualRight.ReturnType, Left.ReturnType);
                 }
                 return _CallScope;
             }
         }
 
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
-            get { return CallScope.DataType; }
+            get { return CallScope.ReturnType; }
         }
 
         public bool IsConnection

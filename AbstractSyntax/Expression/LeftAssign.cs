@@ -87,7 +87,7 @@ namespace AbstractSyntax.Expression
 
         public override IDataType GetCallType()
         {
-            return Right.DataType;
+            return Right.ReturnType;
         }
     }
 }

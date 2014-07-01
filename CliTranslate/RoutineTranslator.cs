@@ -80,7 +80,7 @@ namespace CliTranslate
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
             PrepareLexical();
-            var retbld = Root.GetReturnBuilder(path.ReturnType);
+            var retbld = Root.GetReturnBuilder(path.CallReturnType);
             var argbld = Root.GetArgumentBuilders(path.ArgumentType);
             var builder = Lexical.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
@@ -97,7 +97,7 @@ namespace CliTranslate
         {
             PrepareLexical();
             //var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Public);
-            var builder = Generator.DeclareLocal(Root.GetBuilder(path.DataType));
+            var builder = Generator.DeclareLocal(Root.GetBuilder(path.ReturnType));
             Root.RegisterBuilder(path, builder);
         }
 

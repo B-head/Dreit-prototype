@@ -46,14 +46,14 @@ namespace AbstractSyntax.Daclate
                 _ArgumentType = new List<IDataType>();
                 foreach (var v in DecArguments)
                 {
-                    var temp = v.DataType;
+                    var temp = v.ReturnType;
                     _ArgumentType.Add(temp);
                 }
                 return _ArgumentType;
             }
         }
 
-        public override IDataType ReturnType
+        public override IDataType CallReturnType
         {
             get
             {
@@ -63,18 +63,18 @@ namespace AbstractSyntax.Daclate
                 }
                 if (ExplicitType != null)
                 {
-                    _ReturnType = ExplicitType.DataType;
+                    _ReturnType = ExplicitType.ReturnType;
                 }
                 else if (Block.IsInline)
                 {
                     var ret = Block[0];
                     if (ret is ReturnDirective)
                     {
-                        _ReturnType = ((ReturnDirective)ret).Exp.DataType;
+                        _ReturnType = ((ReturnDirective)ret).Exp.ReturnType;
                     }
                     else
                     {
-                        _ReturnType = ret.DataType;
+                        _ReturnType = ret.ReturnType;
                     }
                 }
                 else
@@ -82,7 +82,7 @@ namespace AbstractSyntax.Daclate
                     var ret = Block.FindElements<ReturnDirective>();
                     if (ret.Count > 0)
                     {
-                        _ReturnType = ret[0].Exp.DataType;
+                        _ReturnType = ret[0].Exp.ReturnType;
                     }
                     else if(CurrentScope is DeclateClass)
                     {
@@ -157,7 +157,7 @@ namespace AbstractSyntax.Daclate
             if (Block.IsInline)
             {
                 var ret = Block[0];
-                if (ReturnType != ret.DataType)
+                if (CallReturnType != ret.ReturnType)
                 {
                     CompileError("disagree-return-type");
                 }
@@ -167,7 +167,7 @@ namespace AbstractSyntax.Daclate
                 var ret = Block.FindElements<ReturnDirective>();
                 foreach (var v in ret)
                 {
-                    if (ReturnType != v.Exp.DataType)
+                    if (CallReturnType != v.Exp.ReturnType)
                     {
                         CompileError("disagree-return-type");
                     }

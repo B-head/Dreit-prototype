@@ -51,7 +51,7 @@ namespace AbstractSyntax
             DataTypes = new List<IDataType>();
             foreach(var v in Child)
             {
-                DataTypes.Add(v.DataType);
+                DataTypes.Add(v.ReturnType);
             }
             return DataTypes;
         }

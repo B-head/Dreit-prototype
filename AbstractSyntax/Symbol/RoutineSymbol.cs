@@ -24,7 +24,7 @@ namespace AbstractSyntax.Symbol
             get { return _ArgumentType; }
         }
 
-        public override IDataType ReturnType
+        public override IDataType CallReturnType
         {
             get { return _ReturnType; }
         }

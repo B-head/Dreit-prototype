@@ -10,9 +10,9 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Logical : DyadicExpression
     {
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
-            get { return Left.DataType; }
+            get { return Left.ReturnType; }
         }
     }
 }

@@ -137,7 +137,7 @@ namespace AbstractSyntax
             return false;
         }
 
-        public virtual IDataType ReturnType
+        public virtual IDataType CallReturnType
         {
             get { return Root.Unknown; }
         }

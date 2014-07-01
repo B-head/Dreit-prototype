@@ -45,7 +45,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
             get
             {
@@ -55,7 +55,7 @@ namespace AbstractSyntax.Expression
                 }
                 else
                 {
-                    return CallScope.ReturnType;
+                    return CallScope.CallReturnType;
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace AbstractSyntax.Expression
                 {
                     if (IsCalculate)
                     {
-                        _CalculateCallScope = Root.OpManager[CalculateOperator].Find(Arguments[0].DataType, Access.DataType);
+                        _CalculateCallScope = Root.OpManager[CalculateOperator].Find(Arguments[0].ReturnType, Access.ReturnType);
                     }
                     else
                     {

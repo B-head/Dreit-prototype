@@ -31,7 +31,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override IDataType DataType
+        public override IDataType ReturnType
         {
             get
             {

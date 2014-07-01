@@ -232,7 +232,7 @@ namespace CliTranslate
 
         protected void GenerateLoad(ThisSymbol name, bool address)
         {
-            var c = name.DataType as DeclateClass;
+            var c = name.ReturnType as DeclateClass;
             var pe = c.GetPrimitiveType();
             Generator.Emit(OpCodes.Ldarg_0);
             return;
@@ -345,7 +345,7 @@ namespace CliTranslate
 
         protected void GenerateStore(ThisSymbol name, bool address)
         {
-            var c = name.DataType as DeclateClass;
+            var c = name.ReturnType as DeclateClass;
             var pe = c.GetPrimitiveType();
             Generator.Emit(OpCodes.Starg_S, 0);
             return;

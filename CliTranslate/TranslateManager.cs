@@ -311,7 +311,7 @@ namespace CliTranslate
         private void Translate(EchoDirective element, Translator trans)
         {
             Translate((dynamic)element.Exp, trans);
-            trans.GenerateEcho(element.Exp.DataType);
+            trans.GenerateEcho(element.Exp.ReturnType);
         }
 
         private void Translate(NumberLiteral element, Translator trans)
@@ -468,7 +468,7 @@ namespace CliTranslate
         private void CallTranslate(CastPragma call, TupleList arguments, Translator trans)
         {
             Translate((dynamic)arguments[1], trans);
-            var cls = arguments[0].DataType as ClassSymbol;
+            var cls = arguments[0].ReturnType as ClassSymbol;
             var prim = cls.GetPrimitiveType();
             switch(prim)
             {
