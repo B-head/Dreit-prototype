@@ -16,13 +16,12 @@ namespace AbstractSyntax.Daclate
         public TupleList DecGeneric { get; set; }
         public TupleList InheritAccess { get; set; }
         public DirectiveList Block { get; set; }
-        public ThisSymbol This { get; private set; }
         public DefaultSymbol Default { get; private set; }
 
         public DeclateClass()
         {
-            This = new ThisSymbol(this);
             Default = new DefaultSymbol(this);
+            IsClass = true;
         }
 
         public override IReadOnlyList<IScope> Attribute

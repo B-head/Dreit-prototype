@@ -16,6 +16,7 @@ namespace AbstractSyntax.Pragma
         {
             Type = type;
             _Attribute = new List<IScope>();
+            _Inherit = new List<ClassSymbol>();
         }
     }
 

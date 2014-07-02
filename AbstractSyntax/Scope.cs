@@ -28,7 +28,7 @@ namespace AbstractSyntax
             _ScopeChild = new List<Scope>();
         }
 
-        private void Merge(Scope other)
+        protected void Merge(Scope other)
         {
             foreach (var v in other.ScopeSymbol)
             {
@@ -48,16 +48,38 @@ namespace AbstractSyntax
 
         internal OverLoad NameResolution(string name)
         {
-            OverLoad temp;
-            if(ScopeSymbol.TryGetValue(name, out temp))
+            var cls = this as ClassSymbol;
+            if (cls != null)
             {
-                return temp;
+                var ol = cls.InheritNameResolution(name);
+                if(!ol.IsUndefined)
+                {
+                    return ol;
+                }
+            }
+            else
+            {
+                var ol = GetOverLoad(name);
+                if (!ol.IsUndefined)
+                {
+                    return ol;
+                }
             }
             if (this is Root)
             {
                 return Root.UndefinedOverLord;
             }
             return CurrentScope.NameResolution(name);
+        }
+
+        protected OverLoad GetOverLoad(string name)
+        {
+            OverLoad temp;
+            if (ScopeSymbol.TryGetValue(name, out temp))
+            {
+                return temp;
+            }
+            return Root.UndefinedOverLord;
         }
 
         public string GetFullName()

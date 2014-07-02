@@ -46,7 +46,7 @@ namespace AbstractSyntax
             }
             else
             {
-                if (from == to)
+                if (ContainSubType(from, to))
                 {
                     return Void;
                 }
@@ -55,6 +55,24 @@ namespace AbstractSyntax
                     return Error;
                 }
             }
+        }
+
+        private bool ContainSubType(IDataType from, IDataType to)
+        {
+            var f = from as ClassSymbol;
+            if(f == null)
+            {
+                return from == to;
+            }
+            while(f != null)
+            {
+                if(f == to)
+                {
+                    return true;
+                }
+                f = f.InheritClass;
+            }
+            return false;
         }
     }
 }

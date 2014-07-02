@@ -24,7 +24,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _IsTacitThis.Value;
                 }
-                if (CallScope == null || CallScope.CurrentScope != GetParentClass() || CallScope.IsStaticMember || CallScope is ThisSymbol)
+                if (!HasThisMember(CallScope))
                 {
                     _IsTacitThis = false;
                 }
@@ -44,7 +44,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                var c = GetParentClass() as DeclateClass;
+                var c = GetParent<ClassSymbol>();
                 return c.This;
             }
         }
@@ -91,42 +91,32 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        private Scope GetParentClass()
-        {
-            var current = CurrentScope;
-            while(current != null)
-            {
-                if(current is ClassSymbol)
-                {
-                    break;
-                }
-                current = current.CurrentScope;
-            }
-            return current;
-        }
-
-        private Scope GetParentRoutine()
-        {
-            var current = CurrentScope;
-            while (current != null)
-            {
-                if (current is RoutineSymbol)
-                {
-                    break;
-                }
-                current = current.CurrentScope;
-            }
-            return current;
-        }
-
         private bool IsStaticAccess()
         {
-            var r = GetParentRoutine();
+            var r = GetParent<RoutineSymbol>();
             if (r == null)
             {
                 return false;
             }
             return r.IsStaticMember;
+        }
+
+        private bool HasThisMember(Scope scope)
+        {
+            if (CallScope.IsStaticMember || CallScope is ThisSymbol)
+            {
+                return false;
+            }
+            var cls = GetParent<ClassSymbol>();
+            while (cls != null)
+            {
+                if (scope.CurrentScope == cls)
+                {
+                    return true;
+                }
+                cls = cls.InheritClass;
+            }
+            return false;
         }
 
         internal override void CheckSyntax()
@@ -143,12 +133,12 @@ namespace AbstractSyntax.Expression
                     CompileError("undefined-identifier");
                 }
             }
-            var s = Reference.CallSelect().Call;
+            var s = CallScope;
             if(s.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
             {
                 CompileError("not-accessable");
             }
-            if(s.IsInstanceMember && IsStaticAccess())
+            if(s.IsInstanceMember && IsStaticAccess() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
             {
                 CompileError("not-accessable");
             }

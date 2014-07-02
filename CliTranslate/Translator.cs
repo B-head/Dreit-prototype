@@ -18,12 +18,12 @@ namespace CliTranslate
         public Translator Parent { get; private set; }
         private List<Translator> _Child;
         public IReadOnlyList<Translator> Child { get { return _Child; } }
-        public IScope Scope { get; private set; }
+        public IScope Path { get; private set; }
         internal ILGenerator Generator;
 
-        protected Translator(IScope scope, Translator parent)
+        protected Translator(IScope path, Translator parent)
         {
-            Scope = scope;
+            Path = path;
             _Child = new List<Translator>();
             if(parent == null)
             {
@@ -52,7 +52,7 @@ namespace CliTranslate
 
         public override string ToString()
         {
-            return this.GetType().Name + ": " + Scope.GetFullName();
+            return this.GetType().Name + ": " + Path.GetFullName();
         }
 
         public virtual bool IsThisArg
@@ -415,10 +415,15 @@ namespace CliTranslate
 
         public virtual void GenerateCall(IScope name)
         {
+            var r = name as RoutineSymbol;
             var temp = Root.GetBuilder(name);
             if (temp is ConstructorInfo)
             {
                 Generator.Emit(OpCodes.Newobj, temp);
+            }
+            else if (r != null && r.IsVirtual)
+            {
+                Generator.Emit(OpCodes.Callvirt, temp);
             }
             else
             {

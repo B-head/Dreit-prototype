@@ -16,13 +16,11 @@ namespace CliTranslate
     public class TranslateManager
     {
         private Dictionary<IScope, Translator> TransDictionary;
-        private LinkedList<IScope> SpreadQueue;
         private RootTranslator Root;
 
         public TranslateManager(string name, string dir = null)
         {
             TransDictionary = new Dictionary<IScope, Translator>();
-            SpreadQueue = new LinkedList<IScope>();
             Root = new RootTranslator(name, dir);
         }
 
@@ -40,23 +38,12 @@ namespace CliTranslate
         {
             manager.TranslateImport(Root);
             TransDictionary.Add(root, Root);
-            SpreadTranslate(root, Root);
-            while (SpreadQueue.Count > 0)
-            {
-                var f = SpreadQueue.First.Value;
-                SpreadQueue.RemoveFirst();
-                Translator t = null;
-                if (TransDictionary.ContainsKey(f.CurrentIScope))
-                {
-                    t = TransDictionary[f.CurrentIScope];
-                }
-                SpreadTranslate((dynamic)f, t);
-            }
+            ChildSpreadTranslate(root);
             Translate(root, Root);
             Root.BuildCode();
         }
 
-        private void ChildSpreadTranslate(IScope scope, Translator trans)
+        private void ChildSpreadTranslate(IScope scope)
         {
             foreach (var v in scope.ScopeChild)
             {
@@ -64,58 +51,56 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                if(v is IDataType)
-                {
-                    SpreadQueue.AddFirst(v);
-                }
-                else
-                {
-                    SpreadQueue.AddLast(v);
-                }
+                RelaySpreadTranslate(v);
+                ChildSpreadTranslate(v);
             }
         }
 
-        private void SpreadTranslate(IScope scope, Translator trans)
-        {
-            ChildSpreadTranslate(scope, trans);
-        }
-
-        private void SpreadTranslate(DeclateModule scope, Translator trans)
-        {
-            if(TransDictionary.ContainsKey(scope))
-            {
-                return;
-            }
-            var temp = trans.CreateModule(scope);
-            TransDictionary.Add(scope, temp);
-            ChildSpreadTranslate(scope, temp);
-        }
-
-        private void SpreadTranslate(DeclateClass scope, Translator trans)
+        private void RelaySpreadTranslate(IScope scope)
         {
             if (TransDictionary.ContainsKey(scope))
             {
                 return;
+            }
+            RelaySpreadTranslate(scope.CurrentIScope);
+            SpreadTranslate((dynamic)scope, TransDictionary[scope.CurrentIScope]);
+        }
+
+        private void SpreadTranslate(IScope scope, Translator trans)
+        {
+            TransDictionary.Add(scope, trans);
+        }
+
+        private void SpreadTranslate(DeclateModule scope, Translator trans)
+        {
+            var temp = trans.CreateModule(scope);
+            TransDictionary.Add(scope, temp);
+        }
+
+        private void SpreadTranslate(DeclateClass scope, Translator trans)
+        {
+            foreach(var v in scope.Inherit)
+            {
+                RelaySpreadTranslate(v);
             }
             if (scope.IsPrimitive)
             {
                 var temp = trans.CreatePrimitive(scope);
                 TransDictionary.Add(scope, temp);
-                ChildSpreadTranslate(scope, temp);
             }
             else
             {
                 var temp = trans.CreateClass(scope);
                 TransDictionary.Add(scope, temp);
-                ChildSpreadTranslate(scope, temp);
             }
         }
 
         private void SpreadTranslate(DeclateRoutine scope, Translator trans)
         {
-            if (TransDictionary.ContainsKey(scope))
+            RelaySpreadTranslate(scope.CallReturnType);
+            foreach(var v in scope.ArgumentType)
             {
-                return;
+                RelaySpreadTranslate(v);
             }
             RoutineTranslator temp;
             if (scope.IsConstructor)
@@ -134,30 +119,25 @@ namespace CliTranslate
             }
             TransDictionary.Add(scope, temp);
             temp.CreateArguments(scope.DecArguments.Cast<IScope>());
-            ChildSpreadTranslate(scope, temp);
         }
 
         private void SpreadTranslate(DeclateVariant scope, Translator trans)
         {
-            if (TransDictionary.ContainsKey(scope))
-            {
-                return;
-            }
+            RelaySpreadTranslate(scope.ReturnType);
             trans.CreateVariant(scope);
+            TransDictionary.Add(scope, trans);
         }
 
         private void SpreadTranslate(IfStatement scope, Translator trans)
         {
             var t = trans.CreateBranch(scope, scope.IsDefinedElse);
             TransDictionary.Add(scope, t);
-            ChildSpreadTranslate(scope, t);
         }
 
         private void SpreadTranslate(LoopStatement scope, Translator trans)
         {
             var t = trans.CreateLoop(scope);
             TransDictionary.Add(scope, t);
-            ChildSpreadTranslate(scope, t);
         }
 
         private void ChildTranslate(IElement element, Translator trans)
@@ -371,15 +351,28 @@ namespace CliTranslate
             }
         }
 
+        private void Translate(Prefix element, Translator trans)
+        {
+            Translate((dynamic)element.Child, trans);
+        }
+
+        private void Translate(Postfix element, Translator trans)
+        {
+            return; //todo 参照や型情報を返すようにする。
+        }
+
         private void Translate(IdentifierAccess element, Translator trans)
         {
-            TranslateAccess((dynamic)element, trans);
+            if (element.IsTacitThis)
+            {
+                trans.GenerateLoad(element.ThisReference);
+            }
             CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
         }
 
         private void Translate(MemberAccess element, Translator trans)
         {
-            TranslateAccess((dynamic)element, trans);
+            Translate((dynamic)element.Access, trans);
             CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
         }
 

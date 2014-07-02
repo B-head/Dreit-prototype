@@ -35,24 +35,24 @@ namespace AbstractSyntax.Daclate
         {
             get
             {
-                if(_DataType != null)
+                if(_ReturnType != null)
                 {
-                    return _DataType;
+                    return _ReturnType;
                 }
                 var caller = Parent as Caller;
                 if (ExplicitType != null)
                 {
-                    _DataType = ExplicitType.Reference.GetDataType();
+                    _ReturnType = ExplicitType.Reference.GetDataType();
                 }
                 else if(caller != null && caller.HasCallTarget(this))
                 {
-                    _DataType = caller.GetCallType();
+                    _ReturnType = caller.GetCallType();
                 }
                 else
                 {
-                    _DataType = Root.Unknown;
+                    _ReturnType = Root.Unknown;
                 }
-                return _DataType;
+                return _ReturnType;
             }
         }
 

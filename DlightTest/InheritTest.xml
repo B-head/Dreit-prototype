@@ -38,7 +38,7 @@
       echo o.bar
       ]]>
     </code>
-    <output>10 35</output>
+    <output>35</output>
   </case>
   
   <case>
@@ -72,7 +72,7 @@
       
       class B : A
       {
-        static routine bar :: foo + 25
+        static routine bar :: A&.foo + 25
       }
       
       echo A&.foo
@@ -92,7 +92,7 @@
       
       class B : A
       {
-        static routine bar :: foo + 25
+        static routine bar :: B&.foo + 25
       }
       
       echo B&.foo
@@ -101,6 +101,7 @@
     </code>
     <error key="undefined-identifier"/>
     <error key="undefined-identifier"/>
+    <error key="undefined-identifier"/>
   </case>
 
   <case>
@@ -116,33 +117,16 @@
         routine foo :: 25
       }
       
-      B =: var o
-      echo o.foo
+      var a:A
+      A =: a
+      echo a.foo
+      B =: a
+      echo a.foo
+      
+      B =: var b
+      echo b.foo
       ]]>
     </code>
-    <output>25</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      class A
-      {
-        routine foo :: 10
-      }
-      
-      class B : A
-      {
-        routine foo :: 25
-      }
-      
-      var o:A
-      A =: o
-      echo o.foo
-      B =: o
-      echo o.foo
-      ]]>
-    </code>
-    <output>10 25</output>
+    <output>10 25 25</output>
   </case>
 </compile-test>

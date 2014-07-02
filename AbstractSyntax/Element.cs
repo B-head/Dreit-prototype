@@ -116,6 +116,20 @@ namespace AbstractSyntax
             return false;
         }
 
+        internal T GetParent<T>() where T : Scope
+        {
+            var current = CurrentScope;
+            while (current != null)
+            {
+                if (current is T)
+                {
+                    break;
+                }
+                current = current.CurrentScope;
+            }
+            return current as T;
+        }
+
         protected void CompileInfo(string key)
         {
             SendCompileInfo(key, CompileMessageType.Info);

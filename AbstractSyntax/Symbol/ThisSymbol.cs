@@ -9,9 +9,9 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class ThisSymbol : Scope
     {
-        private DeclateClass _DataType;
+        private ClassSymbol _DataType;
 
-        public ThisSymbol(DeclateClass dataType)
+        public ThisSymbol(ClassSymbol dataType)
         {
             Name = "this";
             _DataType = dataType;

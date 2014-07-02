@@ -49,7 +49,7 @@ namespace SyntacticAnalysis
         {
             return cp.Begin<DeclateClass>()
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
-                .Text("class").Lt()
+                .Text("class", "trait").Lt()
                 .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .If().Type(TokenType.Peir).Lt()

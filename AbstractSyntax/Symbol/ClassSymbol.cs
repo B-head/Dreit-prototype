@@ -12,6 +12,9 @@ namespace AbstractSyntax.Symbol
     public class ClassSymbol : Scope, IDataType
     {
         public TypeofClassSymbol TypeofSymbol { get; private set; }
+        public ThisSymbol This { get; private set; }
+        public bool IsClass { get; protected set; }
+        public bool IsTrait { get; protected set; }
         protected List<RoutineSymbol> Initializer;
         protected List<IScope> _Attribute;
         protected List<ClassSymbol> _Inherit;
@@ -19,6 +22,7 @@ namespace AbstractSyntax.Symbol
         public ClassSymbol()
         {
             TypeofSymbol = new TypeofClassSymbol(this);
+            This = new ThisSymbol(this);
             Initializer = new List<RoutineSymbol>();
         }
 
@@ -32,6 +36,21 @@ namespace AbstractSyntax.Symbol
             get { return _Inherit; }
         }
 
+        public ClassSymbol InheritClass
+        {
+            get { return _Inherit.Find(v => v.IsClass); }
+        }
+
+        public IReadOnlyList<ClassSymbol> InheritTraits
+        {
+            get { return _Inherit.Where(v => v.IsTrait).ToList(); }
+        }
+
+        public RoutineSymbol DefaultInitializer
+        {
+            get { return Initializer.Find(v => v.ArgumentType.Count == 0); }
+        }
+
         public bool IsPrimitive
         {
             get { return GetPrimitiveType() != PrimitivePragmaType.NotPrimitive; }
@@ -39,7 +58,7 @@ namespace AbstractSyntax.Symbol
 
         public override int Count
         {
-            get { return 1; }
+            get { return 2; }
         }
 
         public override IElement this[int index]
@@ -49,6 +68,7 @@ namespace AbstractSyntax.Symbol
                 switch (index)
                 {
                     case 0: return TypeofSymbol;
+                    case 1: return This;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -63,6 +83,24 @@ namespace AbstractSyntax.Symbol
                     yield return b;
                 }
             }
+        }
+
+        internal OverLoad InheritNameResolution(string name)
+        {
+            var ol = GetOverLoad(name);
+            if(!ol.IsUndefined)
+            {
+                return ol;
+            }
+            foreach(var v in Inherit)
+            {
+                ol = v.InheritNameResolution(name);
+                if (!ol.IsUndefined)
+                {
+                    return ol;
+                }
+            }
+            return Root.UndefinedOverLord;
         }
 
         public PrimitivePragmaType GetPrimitiveType()

@@ -47,8 +47,12 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type GetReturnBuilder(IScope path)
+        internal Type GetTypeBuilder(IScope path)
         {
+            if (path == null)
+            {
+                return null;
+            }
             if (path is VoidSymbol)
             {
                 return typeof(void);
@@ -56,7 +60,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type[] GetArgumentBuilders(IEnumerable<IScope> path)
+        internal Type[] GetTypeBuilders(IEnumerable<IScope> path)
         {
             List<Type> result = new List<Type>();
             foreach(var v in path)
@@ -66,7 +70,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        internal Type[] GetArgumentBuilders(Type prim, IEnumerable<IScope> path)
+        internal Type[] GetTypeBuilders(Type prim, IEnumerable<IScope> path)
         {
             List<Type> result = new List<Type>();
             result.Add(prim);

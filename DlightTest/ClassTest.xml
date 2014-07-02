@@ -150,12 +150,13 @@
     <code>
       <![CDATA[
       class A {
-        routine free { }
+        routine free :: echo 10
       }
       
       var a := A
       ]]>
     </code>
+    <output>10</output>
   </case>
 
   <case>

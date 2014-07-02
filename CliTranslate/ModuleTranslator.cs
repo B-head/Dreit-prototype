@@ -40,15 +40,17 @@ namespace CliTranslate
 
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetReturnBuilder(path.CallReturnType);
-            var argbld = Root.GetArgumentBuilders(path.ArgumentType);
+            var retbld = Root.GetTypeBuilder(path.CallReturnType);
+            var argbld = Root.GetTypeBuilders(path.ArgumentType);
             var builder = GlobalField.DefineMethod(path.Name, MethodAttributes.Static, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
         public override ClassTranslator CreateClass(DeclateClass path)
         {
-            var builder = Module.DefineType(path.GetFullName());
+            var cls = Root.GetTypeBuilder(path.InheritClass) ?? typeof(Object);
+            var trait = Root.GetTypeBuilders(path.InheritTraits);
+            var builder = Module.DefineType(path.GetFullName(), TypeAttributes.Class, cls, trait);
             return new ClassTranslator(path, this, builder);
         }
 

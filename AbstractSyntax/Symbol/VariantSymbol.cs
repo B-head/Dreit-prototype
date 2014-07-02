@@ -10,7 +10,7 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         protected List<IScope> _Attribute;
-        protected IDataType _DataType;
+        protected IDataType _ReturnType;
 
         public override IReadOnlyList<IScope> Attribute
         {
@@ -19,7 +19,7 @@ namespace AbstractSyntax.Symbol
 
         public override IDataType ReturnType
         {
-            get { return _DataType; }
+            get { return _ReturnType; }
         }
 
         public override IDataType CallReturnType

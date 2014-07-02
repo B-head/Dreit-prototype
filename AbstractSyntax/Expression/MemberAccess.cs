@@ -59,18 +59,41 @@ namespace AbstractSyntax.Expression
             {
                 CompileError("undefined-identifier");
             }
-            var s = Reference.CallSelect().Call;
-            if (s.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
+            if (CallScope.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(CallScope.CurrentScope))
             {
                 CompileError("not-accessable");
             }
-            if (s.IsInstanceMember && Access.ReturnType is TypeofClassSymbol)
+            if (CallScope.IsAnyAttribute(AttributeType.Protected) && !HasCurrentAccess(CallScope.CurrentScope))
             {
                 CompileError("not-accessable");
             }
-            if (s.IsStaticMember && !(Access.ReturnType is TypeofClassSymbol))
+            if (CallScope.IsInstanceMember && Access.ReturnType is TypeofClassSymbol)
             {
                 CompileError("not-accessable");
+            }
+            if (CallScope.IsStaticMember && !(Access.ReturnType is TypeofClassSymbol))
+            {
+                CompileError("not-accessable");
+            }
+            if (CallScope.IsStaticMember && !ContainClass(CallScope.GetParent<ClassSymbol>(), Access.ReturnType))
+            {
+                CompileError("undefined-identifier");
+            }
+        }
+
+        private bool ContainClass(ClassSymbol cls, IDataType type)
+        {
+            if(type is ClassSymbol)
+            {
+                return cls == type;
+            }
+            else if(type is TypeofClassSymbol)
+            {
+                return cls.TypeofSymbol == type;
+            }
+            else
+            {
+                return false;
             }
         }
     }

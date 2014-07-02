@@ -30,10 +30,9 @@ namespace CliTranslate
             InitGenerator = InitContext.GetILGenerator();
             Generator = ClassContext.GetILGenerator();
             Root.RegisterBuilder(path, Class);
-            var deccls = path as DeclateClass;
-            if (deccls != null && deccls.IsDefaultConstructor)
+            if (path.IsDefaultConstructor)
             {
-                CreateConstructor(deccls.Default, new IScope[] { });
+                CreateConstructor(path.Default, new IScope[] { });
             }
         }
 
@@ -51,31 +50,37 @@ namespace CliTranslate
 
         public RoutineTranslator CreateConstructor(RoutineSymbol path, IEnumerable<IScope> argumentType)
         {
-            var argbld = Root.GetArgumentBuilders(argumentType);
+            var argbld = Root.GetTypeBuilders(argumentType);
             var attr = MakeMethodAttributes(path.Attribute);
             var ctor = Class.DefineConstructor(attr, CallingConventions.Any, argbld);
             Root.RegisterBuilder(path, ctor);
-            return new RoutineTranslator(path, this, ctor, InitContext);
+            var ret = new RoutineTranslator(path, this, ctor);
+            var iinit = path.GetInheritInitializer();
+            var ictor = iinit != null ? (ConstructorInfo)Root.GetBuilder(iinit) : typeof(object).GetConstructor(Type.EmptyTypes);
+            ret.GenelateConstructorInit(InitContext, ictor);
+            return ret;
         }
 
         public RoutineTranslator CreateDestructor(RoutineSymbol path)
         {
-            var builder = Class.DefineMethod("Finalize", MethodAttributes.Family);
-            return new RoutineTranslator(path, this, builder, true);
+            var builder = Class.DefineMethod("Finalize", MethodAttributes.Family | MethodAttributes.Virtual);
+            return new RoutineTranslator(path, this, builder);
         }
 
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetReturnBuilder(path.CallReturnType);
-            var argbld = Root.GetArgumentBuilders(path.ArgumentType);
-            var attr = MakeMethodAttributes(path.Attribute);
+            var retbld = Root.GetTypeBuilder(path.CallReturnType);
+            var argbld = Root.GetTypeBuilders(path.ArgumentType);
+            var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual);
             var builder = Class.DefineMethod(path.Name, attr, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
         public override ClassTranslator CreateClass(DeclateClass path)
         {
-            var builder = Class.DefineNestedType(path.Name);
+            var cls = Root.GetTypeBuilder(path.InheritClass) ?? typeof(Object);
+            var trait = Root.GetTypeBuilders(path.InheritTraits);
+            var builder = Class.DefineNestedType(path.Name, TypeAttributes.Class, cls, trait);
             return new ClassTranslator(path, this, builder);
         }
 
@@ -92,9 +97,9 @@ namespace CliTranslate
             InitGenerator.Emit(OpCodes.Stfld, builder);
         }
 
-        private MethodAttributes MakeMethodAttributes(IReadOnlyList<IScope> attr)
+        private MethodAttributes MakeMethodAttributes(IReadOnlyList<IScope> attr, bool vtl = false)
         {
-            MethodAttributes ret = 0;
+            MethodAttributes ret = vtl ? MethodAttributes.Virtual | MethodAttributes.Public : 0;
             foreach(var v in attr)
             {
                 var a = v as AttributeSymbol;

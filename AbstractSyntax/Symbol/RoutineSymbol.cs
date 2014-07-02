@@ -29,9 +29,32 @@ namespace AbstractSyntax.Symbol
             get { return _ReturnType; }
         }
 
+        public bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
+        {
+            get
+            { 
+                var cls = GetParent<ClassSymbol>();
+                if(cls == null)
+                {
+                    return false;
+                }
+                return IsInstanceMember && !cls.IsPrimitive; 
+            } 
+        }
+
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);
+        }
+
+        public RoutineSymbol GetInheritInitializer()
+        {
+            var cls = GetParent<ClassSymbol>();
+            if (cls.InheritClass == null)
+            {
+                return null;
+            }
+            return cls.InheritClass.DefaultInitializer;
         }
     }
 }

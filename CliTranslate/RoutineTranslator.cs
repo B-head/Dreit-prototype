@@ -17,34 +17,20 @@ namespace CliTranslate
         private TypeBuilder Lexical;
         private LocalBuilder LexicalInstance;
 
-        public RoutineTranslator(RoutineSymbol path, Translator parent, MethodBuilder method, bool isDestructor = false)
+        public RoutineTranslator(RoutineSymbol path, Translator parent, MethodBuilder method)
             : base(path, parent)
         {
             Method = method;
             Root.RegisterBuilder(path, method);
             Generator = method.GetILGenerator();
-            if(isDestructor)
-            {
-                Generator.Emit(OpCodes.Ldarg_0);
-                Generator.Emit(OpCodes.Call, typeof(object).GetMethod("Finalize", BindingFlags.NonPublic | BindingFlags.Instance));
-                Generator.Emit(OpCodes.Ret);
-            }
         }
 
-        public RoutineTranslator(RoutineSymbol path, Translator parent, ConstructorBuilder method, MethodBuilder init)
+        public RoutineTranslator(RoutineSymbol path, Translator parent, ConstructorBuilder ctor)
             : base(path, parent)
         {
-            Method = method;
-            Root.RegisterBuilder(path, method);
-            Generator = method.GetILGenerator();
-            Generator.Emit(OpCodes.Ldarg_0);
-            Generator.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes));
-            Generator.Emit(OpCodes.Ldarg_0);
-            Generator.Emit(OpCodes.Call, init);
-            if(path is DefaultSymbol)
-            {
-                Generator.Emit(OpCodes.Ret);
-            }
+            Method = ctor;
+            Root.RegisterBuilder(path, ctor);
+            Generator = ctor.GetILGenerator();
         }
 
         public override bool IsThisArg
@@ -80,8 +66,8 @@ namespace CliTranslate
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
             PrepareLexical();
-            var retbld = Root.GetReturnBuilder(path.CallReturnType);
-            var argbld = Root.GetArgumentBuilders(path.ArgumentType);
+            var retbld = Root.GetTypeBuilder(path.CallReturnType);
+            var argbld = Root.GetTypeBuilders(path.ArgumentType);
             var builder = Lexical.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
@@ -118,6 +104,18 @@ namespace CliTranslate
                     var builder = c.DefineParameter(next++, ParameterAttributes.None, v.Name);
                     Root.RegisterBuilder(v, builder);
                 }
+            }
+        }
+
+        public void GenelateConstructorInit(MethodBuilder init, ConstructorInfo ctor)
+        {
+            Generator.Emit(OpCodes.Ldarg_0);
+            Generator.Emit(OpCodes.Call, ctor);
+            Generator.Emit(OpCodes.Ldarg_0);
+            Generator.Emit(OpCodes.Call, init);
+            if (Path is DefaultSymbol)
+            {
+                Generator.Emit(OpCodes.Ret);
             }
         }
 
