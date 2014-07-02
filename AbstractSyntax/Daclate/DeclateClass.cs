@@ -122,9 +122,9 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        internal override void CheckDataType()
+        internal override void CheckSemantic()
         {
-            base.CheckDataType();
+            base.CheckSemantic();
             foreach (var v in InheritAccess)
             {
                 var dt = v.Reference.GetDataType();

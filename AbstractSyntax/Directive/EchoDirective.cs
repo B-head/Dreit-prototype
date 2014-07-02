@@ -27,9 +27,9 @@ namespace AbstractSyntax.Directive
             }
         }
 
-        internal override void CheckDataType()
+        internal override void CheckSemantic()
         {
-            base.CheckDataType();
+            base.CheckSemantic();
             if(Exp != null && Exp.IsVoidReturn)
             {
                 CompileError("invalid-void");

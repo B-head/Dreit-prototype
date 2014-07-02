@@ -16,7 +16,7 @@ namespace AbstractSyntax.Daclate
             ErrorToken = new List<Token>();
         }
 
-        internal override void CheckSyntax()
+        internal override void CheckSemantic()
         {
             foreach (Token v in ErrorToken)
             {
@@ -29,7 +29,7 @@ namespace AbstractSyntax.Daclate
                     CompileError("error-token", v);
                 }
             }
-            base.CheckSyntax();
+            base.CheckSemantic();
         }
 
         private void CompileError(string key, Token token)

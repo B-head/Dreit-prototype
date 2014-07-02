@@ -80,24 +80,13 @@ namespace AbstractSyntax
             }
         }
 
-        internal virtual void CheckSyntax()
+        internal virtual void CheckSemantic()
         {
             foreach (Element v in this)
             {
                 if (v != null)
                 {
-                    v.CheckSyntax();
-                }
-            }
-        }
-
-        internal virtual void CheckDataType() //todo CheckSyntaxと統合する。
-        {
-            foreach (Element v in this)
-            {
-                if (v != null)
-                {
-                    v.CheckDataType();
+                    v.CheckSemantic();
                 }
             }
         }

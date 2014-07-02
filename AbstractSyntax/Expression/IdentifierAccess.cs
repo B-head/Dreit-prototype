@@ -119,9 +119,9 @@ namespace AbstractSyntax.Expression
             return false;
         }
 
-        internal override void CheckSyntax()
+        internal override void CheckSemantic()
         {
-            base.CheckSyntax();
+            base.CheckSemantic();
             if (Reference.IsUndefined)
             {
                 if (IsPragmaAccess)

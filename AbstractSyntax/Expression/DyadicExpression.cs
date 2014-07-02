@@ -34,7 +34,7 @@ namespace AbstractSyntax.Expression
             return Operator.ToString();
         }
 
-        internal override void CheckSyntax()
+        internal override void CheckSemantic()
         {
             foreach (Element v in this)
             {
@@ -44,7 +44,7 @@ namespace AbstractSyntax.Expression
                     continue;
                 }
             }
-            base.CheckSyntax();
+            base.CheckSemantic();
         }
     }
 }

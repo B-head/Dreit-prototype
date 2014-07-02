@@ -52,9 +52,9 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        internal override void CheckSyntax()
+        internal override void CheckSemantic()
         {
-            base.CheckSyntax();
+            base.CheckSemantic();
             if (Reference.IsUndefined)
             {
                 CompileError("undefined-identifier");

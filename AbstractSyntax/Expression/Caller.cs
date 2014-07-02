@@ -84,9 +84,9 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        internal override void CheckDataType()
+        internal override void CheckSemantic()
         {
-            base.CheckDataType();
+            base.CheckSemantic();
             switch (Match.Result)
             {
                 case TypeMatchResult.NotCallable: CompileError("not-callable"); break;

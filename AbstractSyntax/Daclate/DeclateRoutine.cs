@@ -151,9 +151,9 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        internal override void CheckDataType()
+        internal override void CheckSemantic()
         {
-            base.CheckDataType();
+            base.CheckSemantic();
             if (Block.IsInline)
             {
                 var ret = Block[0];

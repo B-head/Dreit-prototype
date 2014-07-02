@@ -33,9 +33,9 @@ namespace AbstractSyntax.Symbol
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { ReturnType });
         }
 
-        internal override void CheckDataType()
+        internal override void CheckSemantic()
         {
-            base.CheckDataType();
+            base.CheckSemantic();
             if (ReturnType is UnknownSymbol)
             {
                 CompileError("require-type");

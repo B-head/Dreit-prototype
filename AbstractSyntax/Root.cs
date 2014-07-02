@@ -55,8 +55,7 @@ namespace AbstractSyntax
         public void SemanticAnalysis()
         {
             SpreadElement(null, null);
-            CheckSyntax();
-            CheckDataType();
+            CheckSemantic();
         }
 
         private void AppendPragma(string name, Scope pragma)

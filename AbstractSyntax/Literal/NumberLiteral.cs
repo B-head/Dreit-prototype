@@ -44,14 +44,14 @@ namespace AbstractSyntax.Literal
             }
         }
 
-        internal override void CheckSyntax()
+        internal override void CheckSemantic()
         {
             Parse(Integral);
             if(Fraction != null)
             {
                 Parse(Fraction);
             }
-            base.CheckSyntax();
+            base.CheckSemantic();
         }
 
         public dynamic Parse()

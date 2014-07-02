@@ -50,9 +50,9 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        internal override void CheckDataType()
+        internal override void CheckSemantic()
         {
-            base.CheckDataType();
+            base.CheckSemantic();
             if (CallScope is ErrorSymbol)
             {
                 CompileError("impossible-calculate");

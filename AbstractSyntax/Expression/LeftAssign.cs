@@ -67,7 +67,7 @@ namespace AbstractSyntax.Expression
             return Operator.ToString();
         }
 
-        internal override void CheckSyntax()
+        internal override void CheckSemantic()
         {
             if(Right != null && Right is RightAssign)
             {
@@ -77,7 +77,7 @@ namespace AbstractSyntax.Expression
             {
                 CompileError("not-collide-assign");
             }
-            base.CheckSyntax();
+            base.CheckSemantic();
         }
 
         public override bool HasCallTarget(IElement element)
