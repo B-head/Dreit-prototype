@@ -65,12 +65,12 @@ namespace AbstractSyntax.Daclate
 
         public bool IsDefaultConstructor
         {
-            get { return initializer.Any(v => v is DefaultSymbol); }
+            get { return Initializer.Any(v => v is DefaultSymbol); }
         }
 
         public override int Count
         {
-            get { return 6; }
+            get { return 7; }
         }
 
         public override IElement this[int index]
@@ -85,6 +85,7 @@ namespace AbstractSyntax.Daclate
                     case 3: return Block;
                     case 4: return This;
                     case 5: return Default;
+                    case 6: return TypeofSymbol;
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
@@ -103,13 +104,13 @@ namespace AbstractSyntax.Daclate
                 }
                 if(r.Name == "new")
                 {
-                    initializer.Add(r);
+                    Initializer.Add(r);
                     newFlag = true;
                 }
                 else if (r.Name == "from")
                 {
                     Root.Conversion.Append(r);
-                    initializer.Add(r);
+                    Initializer.Add(r);
                 }
                 else if (r.Operator != TokenType.Unknoun)
                 {
@@ -118,7 +119,7 @@ namespace AbstractSyntax.Daclate
             }
             if(!newFlag)
             {
-                initializer.Add(Default);
+                Initializer.Add(Default);
             }
         }
 

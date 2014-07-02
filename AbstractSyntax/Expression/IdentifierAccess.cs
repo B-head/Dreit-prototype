@@ -24,12 +24,11 @@ namespace AbstractSyntax.Expression
                 {
                     return _IsTacitThis.Value;
                 }
-                var refer = CallScope;
-                if (refer == null || refer.CurrentScope != GetParentClass() || refer is ThisSymbol)
+                if (CallScope == null || CallScope.CurrentScope != GetParentClass() || CallScope.IsStaticMember || CallScope is ThisSymbol)
                 {
                     _IsTacitThis = false;
                 }
-                else if (!(CurrentScope is DeclateRoutine) || Parent is MemberAccess)
+                else if (!(CurrentScope is DeclateRoutine)) //todo この条件が必要な理由を調べる。（忘れたｗ）
                 {
                     _IsTacitThis = false;
                 }

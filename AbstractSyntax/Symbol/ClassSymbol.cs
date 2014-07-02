@@ -11,13 +11,15 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class ClassSymbol : Scope, IDataType
     {
-        protected List<RoutineSymbol> initializer;
+        public TypeofClassSymbol TypeofSymbol { get; private set; }
+        protected List<RoutineSymbol> Initializer;
         protected List<IScope> _Attribute;
         protected List<ClassSymbol> _Inherit;
 
         public ClassSymbol()
         {
-            initializer = new List<RoutineSymbol>();
+            TypeofSymbol = new TypeofClassSymbol(this);
+            Initializer = new List<RoutineSymbol>();
         }
 
         public override IReadOnlyList<IScope> Attribute
@@ -35,9 +37,26 @@ namespace AbstractSyntax.Symbol
             get { return GetPrimitiveType() != PrimitivePragmaType.NotPrimitive; }
         }
 
+        public override int Count
+        {
+            get { return 1; }
+        }
+
+        public override IElement this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0: return TypeofSymbol;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
-            foreach(var a in initializer)
+            foreach(var a in Initializer)
             {
                 foreach(var b in a.GetTypeMatch(type))
                 {

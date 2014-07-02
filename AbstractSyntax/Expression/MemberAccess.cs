@@ -64,6 +64,14 @@ namespace AbstractSyntax.Expression
             {
                 CompileError("not-accessable");
             }
+            if (s.IsInstanceMember && Access.ReturnType is TypeofClassSymbol)
+            {
+                CompileError("not-accessable");
+            }
+            if (s.IsStaticMember && !(Access.ReturnType is TypeofClassSymbol))
+            {
+                CompileError("not-accessable");
+            }
         }
     }
 }
