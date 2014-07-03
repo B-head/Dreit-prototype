@@ -29,7 +29,7 @@ namespace AbstractSyntax.Daclate
                 _Attribute = new List<IScope>();
                 foreach (var v in AttributeAccess)
                 {
-                    _Attribute.Add(v.Reference.GetDataType());
+                    _Attribute.Add(v.Reference.FindDataType());
                 }
                 return _Attribute;
             }
@@ -67,14 +67,14 @@ namespace AbstractSyntax.Daclate
                 }
                 else if (Block.IsInline)
                 {
-                    var ret = Block[0];
-                    if (ret is ReturnDirective)
+                    var ret = Block[0] as ReturnDirective;
+                    if (ret != null)
                     {
-                        _ReturnType = ((ReturnDirective)ret).Exp.ReturnType;
+                        _ReturnType = ret.Exp.ReturnType;
                     }
                     else
                     {
-                        _ReturnType = ret.ReturnType;
+                        _ReturnType = Block[0].ReturnType;
                     }
                 }
                 else
@@ -146,7 +146,7 @@ namespace AbstractSyntax.Daclate
                     case 2: return DecArguments;
                     case 3: return ExplicitType;
                     case 4: return Block;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }

@@ -36,7 +36,7 @@ namespace SyntacticAnalysis
             return cp.Begin<DeclateRoutine>()
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
                 .Text("operator").Lt()
-                .Token((s, t) => { s.Operator = t.Type; s.Name = t.Text; }).Lt()
+                .Token((s, t) => { s.Operator = t.TokenType; s.Name = t.Text; }).Lt()
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .Transfer((s, e) => s.DecArguments = e, ArgumentList)
                 .If().Type(TokenType.Peir).Lt()

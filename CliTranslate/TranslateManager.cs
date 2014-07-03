@@ -441,19 +441,19 @@ namespace CliTranslate
         private void CallTranslate(CalculatePragma call, TupleList arguments, Translator trans)
         {
             ChildTranslate(arguments, trans);
-            switch (call.Type)
+            switch (call.CalculateType)
             {
                 case CalculatePragmaType.Add: trans.GenerateControl(OpCodes.Add); break;
                 case CalculatePragmaType.Sub: trans.GenerateControl(OpCodes.Sub); break;
                 case CalculatePragmaType.Mul: trans.GenerateControl(OpCodes.Mul); break;
                 case CalculatePragmaType.Div: trans.GenerateControl(OpCodes.Div); break;
                 case CalculatePragmaType.Mod: trans.GenerateControl(OpCodes.Rem); break;
-                case CalculatePragmaType.Eq: trans.GenerateControl(OpCodes.Ceq); break;
-                case CalculatePragmaType.Ne: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
-                case CalculatePragmaType.Lt: trans.GenerateControl(OpCodes.Clt); break;
-                case CalculatePragmaType.Le: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
-                case CalculatePragmaType.Gt: trans.GenerateControl(OpCodes.Cgt); break;
-                case CalculatePragmaType.Ge: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case CalculatePragmaType.EQ: trans.GenerateControl(OpCodes.Ceq); break;
+                case CalculatePragmaType.NE: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case CalculatePragmaType.LT: trans.GenerateControl(OpCodes.Clt); break;
+                case CalculatePragmaType.LE: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case CalculatePragmaType.GT: trans.GenerateControl(OpCodes.Cgt); break;
+                case CalculatePragmaType.GE: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
                 default: throw new ArgumentException();
             }
         }
@@ -462,7 +462,7 @@ namespace CliTranslate
         {
             Translate((dynamic)arguments[1], trans);
             var cls = arguments[0].ReturnType as ClassSymbol;
-            var prim = cls.GetPrimitiveType();
+            var prim = cls.PrimitiveType;
             switch(prim)
             {
                 case PrimitivePragmaType.Integer8: trans.GenerateControl(OpCodes.Conv_I1); break;

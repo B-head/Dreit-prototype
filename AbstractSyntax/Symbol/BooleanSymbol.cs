@@ -25,7 +25,7 @@ namespace AbstractSyntax.Symbol
                 {
                     return _DataType;
                 }
-                _DataType = CurrentScope.NameResolution("Boolean").GetDataType();
+                _DataType = CurrentScope.NameResolution("Boolean").FindDataType();
                 return _DataType;
             }
         }

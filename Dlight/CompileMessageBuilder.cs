@@ -52,7 +52,7 @@ namespace Dlight
         public static string Build(CompileMessage message, bool errorThrow = false)
         {
             var builder = new StringBuilder();
-            builder.Append(message.GetPrefix()).Append(": ");
+            builder.Append(message.StringPrefix).Append(": ");
             builder.Append(message.Position).Append(": ");
             var msg = messageBase[message.Key];
             var current = 0;

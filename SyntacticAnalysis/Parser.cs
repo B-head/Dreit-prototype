@@ -54,7 +54,7 @@ namespace SyntacticAnalysis
         {
             var ret = cp.Begin<R>()
                 .Self(s => s.Left = current)
-                .Type((s, t) => s.Operator = t.Type, type).Lt()
+                .Type((s, t) => s.Operator = t.TokenType, type).Lt()
                 .Transfer((s, e) => s.Right = e, next)
                 .End();
             return ret == null ? current : LeftAssociative<R, T>(ret, cp, next, type);
@@ -67,7 +67,7 @@ namespace SyntacticAnalysis
             Element current = next(cp);
             var ret = cp.Begin<R>()
                 .Self(s => s.Left = current)
-                .Type((s, t) => s.Operator = t.Type, type).Lt()
+                .Type((s, t) => s.Operator = t.TokenType, type).Lt()
                 .Transfer((s, e) => s.Right = e, c => RightAssociative<R, T>(c, next, type))
                 .End();
             return ret ?? current;

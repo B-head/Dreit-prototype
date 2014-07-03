@@ -10,11 +10,11 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class PrimitivePragma : ClassSymbol
     {
-        public PrimitivePragmaType Type { get; private set; }
+        public PrimitivePragmaType BasePrimitiveType { get; private set; }
 
         public PrimitivePragma(PrimitivePragmaType type)
         {
-            Type = type;
+            BasePrimitiveType = type;
             _Attribute = new List<IScope>();
             _Inherit = new List<ClassSymbol>();
         }

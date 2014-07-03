@@ -14,7 +14,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                var c = Child.Reference.GetDataType() as ClassSymbol;
+                var c = Child.Reference.FindDataType() as ClassSymbol;
                 if (c == null)
                 {
                     return Root.Unknown;

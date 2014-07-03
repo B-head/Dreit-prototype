@@ -15,6 +15,10 @@ namespace AbstractSyntax.Visualizer
 
         public SyntaxVisualizerForm(Element target)
         {
+            if(target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
             InitializeComponent();
             root = target.Root;
             this.target = target;
@@ -107,23 +111,23 @@ namespace AbstractSyntax.Visualizer
             return group;
         }
 
-        private ListViewItem AddValue(ListViewGroup group, string name, object value)
+        private ListViewItem AddValue(ListViewGroup group, string itemName, object obj)
         {
-            var texts = new string[] { name, value.ToString() };
+            var texts = new string[] { itemName, obj.ToString() };
             var item = new ListViewItem(texts);
-            item.Tag = value;
+            item.Tag = obj;
             valueList.Items.Add(item);
             group.Items.Add(item);
-            if(value is Element)
+            var list = obj as IReadOnlyList<object>;
+            if(obj is Element)
             {
                 item.BackColor = Color.LightBlue;
             }
-            else if (value is IReadOnlyList<object>)
+            else if (list != null)
             {
-                var list = (IReadOnlyList<object>)value;
                 for(var i = 0; i < list.Count; ++i)
                 {
-                    AddValue(group, name + "[" + i + "]", list[i]);
+                    AddValue(group, itemName + "[" + i + "]", list[i]);
                 }
             }
             return item;

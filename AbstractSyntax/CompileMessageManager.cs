@@ -22,7 +22,7 @@ namespace AbstractSyntax
 
         public void Append(CompileMessage info)
         {
-            switch(info.Type)
+            switch(info.MessageType)
             {
                 case CompileMessageType.Info: ++InfoCount; break;
                 case CompileMessageType.Error: ++ErrorCount; break;
@@ -61,25 +61,28 @@ namespace AbstractSyntax
     [Serializable]
     public struct CompileMessage
     {
-        public CompileMessageType Type { get; set; } 
+        public CompileMessageType MessageType { get; set; } 
         public string Key { get; set; }
         public TextPosition Position { get; set; }
         public object Target { get; set; }
 
-        public string GetPrefix()
+        public string StringPrefix
         {
-            switch (Type)
+            get
             {
-                case CompileMessageType.Info: return "Info";
-                case CompileMessageType.Error: return "Error";
-                case CompileMessageType.Warning: return "Warning";
+                switch (MessageType)
+                {
+                    case CompileMessageType.Info: return "Info";
+                    case CompileMessageType.Error: return "Error";
+                    case CompileMessageType.Warning: return "Warning";
+                }
+                throw new InvalidOperationException();
             }
-            throw new ArgumentException();
         }
 
         public override string ToString()
         {
-            return GetPrefix() + ": " + Key;
+            return StringPrefix + ": " + Key;
         }
     }
 

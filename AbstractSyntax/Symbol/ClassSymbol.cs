@@ -53,7 +53,7 @@ namespace AbstractSyntax.Symbol
 
         public bool IsPrimitive
         {
-            get { return GetPrimitiveType() != PrimitivePragmaType.NotPrimitive; }
+            get { return PrimitiveType != PrimitivePragmaType.NotPrimitive; }
         }
 
         public override int Count
@@ -69,7 +69,7 @@ namespace AbstractSyntax.Symbol
                 {
                     case 0: return TypeofSymbol;
                     case 1: return This;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
@@ -103,20 +103,23 @@ namespace AbstractSyntax.Symbol
             return Root.UndefinedOverLord;
         }
 
-        public PrimitivePragmaType GetPrimitiveType()
+        public PrimitivePragmaType PrimitiveType
         {
-            PrimitivePragma prim = null;
-            if (Inherit.Count == 1)
+            get
             {
-                prim = Inherit[0] as PrimitivePragma;
-            }
-            if (prim == null)
-            {
-                return PrimitivePragmaType.NotPrimitive;
-            }
-            else
-            {
-                return prim.Type;
+                PrimitivePragma prim = null;
+                if (Inherit.Count == 1)
+                {
+                    prim = Inherit[0] as PrimitivePragma;
+                }
+                if (prim == null)
+                {
+                    return PrimitivePragmaType.NotPrimitive;
+                }
+                else
+                {
+                    return prim.BasePrimitiveType;
+                }
             }
         }
     }

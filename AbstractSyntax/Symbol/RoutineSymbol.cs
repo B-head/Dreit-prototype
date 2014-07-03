@@ -47,14 +47,17 @@ namespace AbstractSyntax.Symbol
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);
         }
 
-        public RoutineSymbol GetInheritInitializer()
+        public RoutineSymbol InheritInitializer
         {
-            var cls = GetParent<ClassSymbol>();
-            if (cls.InheritClass == null)
+            get
             {
-                return null;
+                var cls = GetParent<ClassSymbol>();
+                if (cls.InheritClass == null)
+                {
+                    return null;
+                }
+                return cls.InheritClass.DefaultInitializer;
             }
-            return cls.InheritClass.DefaultInitializer;
         }
     }
 }

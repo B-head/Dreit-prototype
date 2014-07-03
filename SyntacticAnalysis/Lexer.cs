@@ -25,7 +25,7 @@ namespace SyntacticAnalysis
             if(temp)
             {
                 tokenList.Add(temp);
-                return temp.Type;
+                return temp.TokenType;
             }
             temp = DisjunctionLexer
                 (
@@ -36,7 +36,7 @@ namespace SyntacticAnalysis
                 );
             if (temp)
             {
-                return temp.Type;
+                return temp.TokenType;
             }
             if (StringLiteral(t, tokenList, errorToken))
             {
@@ -54,7 +54,7 @@ namespace SyntacticAnalysis
             if (temp)
             {
                 tokenList.Add(temp);
-                return temp.Type;
+                return temp.TokenType;
             }
             errorToken.Add(OtherString(t));
             return TokenType.OtherString;

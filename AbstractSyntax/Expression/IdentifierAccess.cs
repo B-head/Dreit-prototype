@@ -49,15 +49,18 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        protected override string GetElementInfo()
+        protected override string ElementInfo
         {
-            if (IsPragmaAccess)
+            get
             {
-                return "@@" + Value;
-            }
-            else
-            {
-                return Value;
+                if (IsPragmaAccess)
+                {
+                    return "@@" + Value;
+                }
+                else
+                {
+                    return Value;
+                }
             }
         }
 
@@ -91,7 +94,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        private bool IsStaticAccess()
+        private bool IsStaticLocation()
         {
             var r = GetParent<RoutineSymbol>();
             if (r == null)
@@ -138,7 +141,7 @@ namespace AbstractSyntax.Expression
             {
                 CompileError("not-accessable");
             }
-            if(s.IsInstanceMember && IsStaticAccess() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
+            if(s.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
             {
                 CompileError("not-accessable");
             }

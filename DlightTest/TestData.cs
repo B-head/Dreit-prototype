@@ -56,7 +56,7 @@ namespace DlightTest
     {
         public override bool Equals(CompileMessage x, CompileMessage y)
         {
-            return x.Key == y.Key && x.Type == y.Type;
+            return x.Key == y.Key && x.MessageType == y.MessageType;
         }
 
         public override int GetHashCode(CompileMessage obj)

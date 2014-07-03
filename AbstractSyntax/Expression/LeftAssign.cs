@@ -57,14 +57,14 @@ namespace AbstractSyntax.Expression
                 {
                     case 0: return Left;
                     case 1: return Right;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
 
-        protected override string GetElementInfo()
+        protected override string ElementInfo
         {
-            return Operator.ToString();
+            get { return Operator.ToString(); }
         }
 
         internal override void CheckSemantic()
@@ -85,9 +85,9 @@ namespace AbstractSyntax.Expression
             return Left == element;
         }
 
-        public override IDataType GetCallType()
+        public override IDataType CallType
         {
-            return Right.ReturnType;
+            get { return Right.ReturnType; }
         }
     }
 }

@@ -21,7 +21,7 @@ namespace CliTranslate
             : base(path, parent)
         {
             Class = builder;
-            Prim = GetPrimitiveType(path.GetPrimitiveType());
+            Prim = GetPrimitiveType(path.PrimitiveType);
             ClassContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName | MethodAttributes.Static);
             parent.GenerateCall(ClassContext);
             Generator = ClassContext.GetILGenerator();

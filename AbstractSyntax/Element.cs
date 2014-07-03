@@ -52,24 +52,30 @@ namespace AbstractSyntax
 
         public virtual IElement this[int index]
         {
-            get { throw new ArgumentOutOfRangeException(); }
+            get { throw new ArgumentOutOfRangeException("index"); }
         }
 
         protected virtual void SpreadElement(Element parent, Scope scope)
         {
             Parent = parent;
             CurrentScope = scope;
-            if (this is Root)
+            var root = this as Root;
+            if (root != null)
             {
-                Root = (Root)this;
+                Root = root;
             }
             else
             {
+                if(parent == null)
+                {
+                    throw new ArgumentException("parent");
+                }
                 Root = parent.Root;
             }
-            if (this is Scope)
+            var s = this as Scope;
+            if (s != null)
             {
-                scope = (Scope)this;
+                scope = s;
             }
             foreach (Element v in this)
             {
@@ -138,7 +144,7 @@ namespace AbstractSyntax
         {
             CompileMessage info = new CompileMessage
             {
-                Type = type,
+                MessageType = type,
                 Key = key,
                 Position = Position,
                 Target = this,
@@ -146,16 +152,16 @@ namespace AbstractSyntax
             Root.MessageManager.Append(info);
         }
 
-        protected virtual string GetElementInfo()
+        protected virtual string ElementInfo
         {
-            return null;
+            get { return null; }
         }
 
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(Position).Append(" ").Append(this.GetType().Name);
-            var add = GetElementInfo();
+            var add = ElementInfo;
             if (add != null)
             {
                 builder.Append(": ").Append(add);

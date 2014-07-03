@@ -22,9 +22,9 @@ namespace AbstractSyntax
             Append(append);
         }
 
-        public void Append(Element append)
+        public void Append(Element value)
         {
-            Child.Add(append);
+            Child.Add(value);
         }
 
         public override int Count
@@ -37,9 +37,9 @@ namespace AbstractSyntax
             get { return Child[index]; }
         }
 
-        protected override string GetElementInfo()
+        protected override string ElementInfo
         {
-            return "Count = " + Child.Count;
+            get { return "Count = " + Child.Count; }
         }
 
         public IReadOnlyList<IDataType> GetDataTypes()

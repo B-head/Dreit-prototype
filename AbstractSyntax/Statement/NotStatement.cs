@@ -23,7 +23,7 @@ namespace AbstractSyntax.Statement
                 switch (index)
                 {
                     case 0: return Exp;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }

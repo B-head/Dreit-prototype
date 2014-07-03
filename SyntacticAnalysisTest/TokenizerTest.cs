@@ -70,7 +70,7 @@ namespace SyntacticAnalysisTest
             else
             {
                 Assert.That(token.Text, Is.EqualTo(eText));
-                Assert.That(token.Type, Is.EqualTo(type));
+                Assert.That(token.TokenType, Is.EqualTo(type));
                 Assert.That(token.Position.File, Is.EqualTo("file"));
                 Assert.That(token.Position.Total, Is.EqualTo(0));
                 Assert.That(token.Position.Row, Is.EqualTo(0));

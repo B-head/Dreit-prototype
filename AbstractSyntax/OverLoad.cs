@@ -40,6 +40,10 @@ namespace AbstractSyntax
             {
                 throw new InvalidOperationException();
             }
+            if(other == null)
+            {
+                throw new ArgumentNullException();
+            }
             foreach(var v in other.ScopeList)
             {
                 Append(v);
@@ -51,7 +55,7 @@ namespace AbstractSyntax
             get { return ScopeList.Count == 0; }
         }
 
-        public IDataType GetDataType()
+        public IDataType FindDataType()
         {
             if(IsHoldAlias)
             {
@@ -86,7 +90,7 @@ namespace AbstractSyntax
             return result;
         }
 
-        private int GetMatchPriority(TypeMatchResult r)
+        private static int GetMatchPriority(TypeMatchResult r)
         {
             switch(r)
             {

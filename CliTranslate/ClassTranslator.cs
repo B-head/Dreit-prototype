@@ -55,7 +55,7 @@ namespace CliTranslate
             var ctor = Class.DefineConstructor(attr, CallingConventions.Any, argbld);
             Root.RegisterBuilder(path, ctor);
             var ret = new RoutineTranslator(path, this, ctor);
-            var iinit = path.GetInheritInitializer();
+            var iinit = path.InheritInitializer;
             var ictor = iinit != null ? (ConstructorInfo)Root.GetBuilder(iinit) : typeof(object).GetConstructor(Type.EmptyTypes);
             ret.GenelateConstructorInit(InitContext, ictor);
             return ret;

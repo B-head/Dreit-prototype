@@ -11,7 +11,7 @@ namespace AbstractSyntax
     {
         string Name { get; }
         IReadOnlyList<IScope> ScopeChild { get; }
-        string GetFullName();
+        string FullName { get; }
     }
 
     [Serializable]
@@ -22,7 +22,7 @@ namespace AbstractSyntax
         private List<Scope> _ScopeChild;
         public IReadOnlyList<IScope> ScopeChild { get { return _ScopeChild; } }
 
-        public Scope()
+        protected Scope()
         {
             ScopeSymbol = new Dictionary<string, OverLoad>();
             _ScopeChild = new List<Scope>();
@@ -30,6 +30,10 @@ namespace AbstractSyntax
 
         protected void Merge(Scope other)
         {
+            if(other == null)
+            {
+                throw new ArgumentNullException("other");
+            }
             foreach (var v in other.ScopeSymbol)
             {
                 OverLoad ol;
@@ -82,11 +86,14 @@ namespace AbstractSyntax
             return Root.UndefinedOverLord;
         }
 
-        public string GetFullName()
+        public string FullName
         {
-            StringBuilder builder = new StringBuilder();
-            BuildFullName(builder);
-            return builder.ToString();
+            get
+            {
+                StringBuilder builder = new StringBuilder();
+                BuildFullName(builder);
+                return builder.ToString();
+            }
         }
 
         private void BuildFullName(StringBuilder builder)
@@ -128,13 +135,17 @@ namespace AbstractSyntax
             base.SpreadElement(parent, scope);
             if (!(this is Root))
             {
+                if(scope == null)
+                {
+                    throw new ArgumentNullException("scope");
+                }
                 scope.AppendChild(this);
             }
         }
 
-        protected override string GetElementInfo()
+        protected override string ElementInfo
         {
-            return Name;
+            get { return Name; }
         }
 
         internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)

@@ -18,9 +18,9 @@ namespace AbstractSyntax.Visualizer
             }
         }
 
-        public static void TestShowVisualizer(object objectToVisualize)
+        public static void TestShowVisualizer(object visualize)
         {
-            VisualizerDevelopmentHost visualizerHost = new VisualizerDevelopmentHost(objectToVisualize, typeof(SyntaxVisualizer));
+            VisualizerDevelopmentHost visualizerHost = new VisualizerDevelopmentHost(visualize, typeof(SyntaxVisualizer));
             visualizerHost.ShowVisualizer();
         }
     }

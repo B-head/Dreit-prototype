@@ -52,7 +52,7 @@ namespace CliTranslate
 
         public override string ToString()
         {
-            return this.GetType().Name + ": " + Path.GetFullName();
+            return this.GetType().Name + ": " + Path.FullName;
         }
 
         public virtual bool IsThisArg
@@ -233,7 +233,7 @@ namespace CliTranslate
         protected void GenerateLoad(ThisSymbol name, bool address)
         {
             var c = name.ReturnType as DeclateClass;
-            var pe = c.GetPrimitiveType();
+            var pe = c.PrimitiveType;
             Generator.Emit(OpCodes.Ldarg_0);
             return;
             /*
@@ -346,7 +346,7 @@ namespace CliTranslate
         protected void GenerateStore(ThisSymbol name, bool address)
         {
             var c = name.ReturnType as DeclateClass;
-            var pe = c.GetPrimitiveType();
+            var pe = c.PrimitiveType;
             Generator.Emit(OpCodes.Starg_S, 0);
             return;
             /*

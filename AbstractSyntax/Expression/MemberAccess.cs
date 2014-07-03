@@ -47,7 +47,7 @@ namespace AbstractSyntax.Expression
                 switch (index)
                 {
                     case 0: return Access;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        private bool ContainClass(ClassSymbol cls, IDataType type)
+        private static bool ContainClass(ClassSymbol cls, IDataType type)
         {
             if(type is ClassSymbol)
             {

@@ -25,7 +25,7 @@ namespace AbstractSyntax.Daclate
                 _Attribute = new List<IScope>();
                 foreach (var v in AttributeAccess)
                 {
-                    _Attribute.Add(v.Reference.GetDataType());
+                    _Attribute.Add(v.Reference.FindDataType());
                 }
                 return _Attribute;
             }
@@ -42,11 +42,11 @@ namespace AbstractSyntax.Daclate
                 var caller = Parent as Caller;
                 if (ExplicitType != null)
                 {
-                    _ReturnType = ExplicitType.Reference.GetDataType();
+                    _ReturnType = ExplicitType.Reference.FindDataType();
                 }
                 else if(caller != null && caller.HasCallTarget(this))
                 {
-                    _ReturnType = caller.GetCallType();
+                    _ReturnType = caller.CallType;
                 }
                 else
                 {
@@ -75,7 +75,7 @@ namespace AbstractSyntax.Daclate
                     case 0: return AttributeAccess;
                     case 1: return Ident;
                     case 2: return ExplicitType;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }

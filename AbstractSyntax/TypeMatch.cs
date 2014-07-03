@@ -32,7 +32,7 @@ namespace AbstractSyntax
             };
             if(formal.Count != actual.Count)
             {
-                result.Result = TypeMatchResult.UnMatchCount;
+                result.Result = TypeMatchResult.UnmatchCount;
                 return result;
             }
             var convs = new List<Scope>();
@@ -51,7 +51,7 @@ namespace AbstractSyntax
                 }
                 else if (v is ErrorSymbol)
                 {
-                    result.Result = TypeMatchResult.UnMatchType;
+                    result.Result = TypeMatchResult.UnmatchType;
                     break;
                 }
                 else if (v is UnknownSymbol)
@@ -78,7 +78,7 @@ namespace AbstractSyntax
         PerfectMatch,
         ConvertMatch,
         NotCallable,
-        UnMatchCount,
-        UnMatchType,
+        UnmatchCount,
+        UnmatchType,
     }
 }

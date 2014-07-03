@@ -42,7 +42,7 @@ namespace AbstractSyntax.Expression
                 {
                     case 0: return CallAccess;
                     case 1: return CallArguments;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
@@ -52,13 +52,16 @@ namespace AbstractSyntax.Expression
             return CallAccess == element;
         }
 
-        public override IDataType GetCallType()
+        public override IDataType CallType
         {
-            if (CallArguments.GetDataTypes().Count != 1)
+            get
             {
-                return Root.Unknown;
+                if (CallArguments.GetDataTypes().Count != 1)
+                {
+                    return Root.Unknown;
+                }
+                return CallArguments.GetDataTypes()[0];
             }
-            return CallArguments.GetDataTypes()[0];
         }
     }
 }

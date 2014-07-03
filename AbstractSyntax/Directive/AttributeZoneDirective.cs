@@ -17,9 +17,9 @@ namespace AbstractSyntax.Directive
             Child = new List<Element>();
         }
 
-        public void Append(Element append)
+        public void Append(Element value)
         {
-            Child.Add(append);
+            Child.Add(value);
         }
 
         public IReadOnlyList<IScope> Attribute
@@ -33,7 +33,7 @@ namespace AbstractSyntax.Directive
                 _Attribute = new List<IScope>();
                 foreach (var v in Child)
                 {
-                    _Attribute.Add(v.Reference.GetDataType());
+                    _Attribute.Add(v.Reference.FindDataType());
                 }
                 return _Attribute;
             }

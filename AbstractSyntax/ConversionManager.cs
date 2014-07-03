@@ -57,7 +57,7 @@ namespace AbstractSyntax
             }
         }
 
-        private bool ContainSubType(IDataType from, IDataType to)
+        private static bool ContainSubType(IDataType from, IDataType to)
         {
             var f = from as ClassSymbol;
             if(f == null)

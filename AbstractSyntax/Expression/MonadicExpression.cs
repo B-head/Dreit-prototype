@@ -22,14 +22,14 @@ namespace AbstractSyntax.Expression
                 switch (index)
                 {
                     case 0: return Child;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
 
-        protected override string GetElementInfo()
+        protected override string ElementInfo
         {
-            return Enum.GetName(typeof(TokenType), Operator);
+            get { return Enum.GetName(typeof(TokenType), Operator); }
         }
 
         internal override void CheckSemantic()

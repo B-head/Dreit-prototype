@@ -5,7 +5,7 @@ namespace AbstractSyntax
     [Serializable]
     public struct Token
     {
-        public TokenType Type { get; set; }
+        public TokenType TokenType { get; set; }
         public TextPosition Position { get; set; }
         public string Text { get; set; }
 
@@ -13,7 +13,7 @@ namespace AbstractSyntax
 
         public override string ToString()
         {
-            return Position + ": " + Enum.GetName(typeof(TokenType), Type) + " => " + Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20');
+            return Position + ": " + Enum.GetName(typeof(TokenType), TokenType) + " => " + Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20');
         }
 
         public static implicit operator bool(Token token)
@@ -25,7 +25,7 @@ namespace AbstractSyntax
     [Flags]
     public enum TokenType
     {
-        Unknoun = 0x0,
+        Unknoun,
         LineTerminator,
         WhiteSpace,
         BlockComment,

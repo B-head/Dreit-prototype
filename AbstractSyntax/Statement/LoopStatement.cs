@@ -45,7 +45,7 @@ namespace AbstractSyntax.Statement
                     case 1: return On;
                     case 2: return By;
                     case 3: return Block;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }

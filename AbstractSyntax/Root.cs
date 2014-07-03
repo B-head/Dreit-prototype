@@ -47,7 +47,7 @@ namespace AbstractSyntax
                 {
                     case 0: return ExpList;
                     case 1: return BuiltInList;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
@@ -72,12 +72,12 @@ namespace AbstractSyntax
             AppendPragma("mul", new CalculatePragma(CalculatePragmaType.Mul));
             AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
             AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
-            AppendPragma("eq", new CalculatePragma(CalculatePragmaType.Eq));
-            AppendPragma("ne", new CalculatePragma(CalculatePragmaType.Ne));
-            AppendPragma("lt", new CalculatePragma(CalculatePragmaType.Lt));
-            AppendPragma("le", new CalculatePragma(CalculatePragmaType.Le));
-            AppendPragma("gt", new CalculatePragma(CalculatePragmaType.Gt));
-            AppendPragma("ge", new CalculatePragma(CalculatePragmaType.Ge));
+            AppendPragma("eq", new CalculatePragma(CalculatePragmaType.EQ));
+            AppendPragma("ne", new CalculatePragma(CalculatePragmaType.NE));
+            AppendPragma("lt", new CalculatePragma(CalculatePragmaType.LT));
+            AppendPragma("le", new CalculatePragma(CalculatePragmaType.LE));
+            AppendPragma("gt", new CalculatePragma(CalculatePragmaType.GT));
+            AppendPragma("ge", new CalculatePragma(CalculatePragmaType.GE));
             AppendPragma("Object", new PrimitivePragma(PrimitivePragmaType.Object));
             AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
             AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));

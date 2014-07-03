@@ -20,7 +20,7 @@ namespace AbstractSyntax.Daclate
         {
             foreach (Token v in ErrorToken)
             {
-                if (v.Type == TokenType.OtherString)
+                if (v.TokenType == TokenType.OtherString)
                 {
                     CompileError("invalid-token", v);
                 }
@@ -36,7 +36,7 @@ namespace AbstractSyntax.Daclate
         {
             CompileMessage info = new CompileMessage
             {
-                Type = CompileMessageType.Error,
+                MessageType = CompileMessageType.Error,
                 Key = key,
                 Position = token.Position,
                 Target = token,

@@ -37,7 +37,7 @@ namespace SyntacticAnalysisTest
             var t = new Tokenizer(text, string.Empty);
             var token = (Token)typeof(Lexer).Invoke("LineTerminator", t);
             Assert.That(token.Text, Is.EqualTo(eText));
-            Assert.That(token.Type, Is.EqualTo(eType));
+            Assert.That(token.TokenType, Is.EqualTo(eType));
         }
 
         [TestCase("   ", "   ", TokenType.WhiteSpace)]
@@ -54,7 +54,7 @@ namespace SyntacticAnalysisTest
             var t = new Tokenizer(text, string.Empty);
             var token = (Token)typeof(Lexer).Invoke("WhiteSpace", t);
             Assert.That(token.Text, Is.EqualTo(eText));
-            Assert.That(token.Type, Is.EqualTo(eType));
+            Assert.That(token.TokenType, Is.EqualTo(eType));
     }
 
         [TestCase("/*abc*/def", "/*abc*/", TokenType.BlockComment)]
@@ -66,7 +66,7 @@ namespace SyntacticAnalysisTest
             var t = new Tokenizer(text, string.Empty);
             var token = (Token)typeof(Lexer).Invoke("BlockComment", t);
             Assert.That(token.Text, Is.EqualTo(eText));
-            Assert.That(token.Type, Is.EqualTo(eType));
+            Assert.That(token.TokenType, Is.EqualTo(eType));
         }
 
         [TestCase("//abc\nedf", "//abc", TokenType.LineCommnet)]
@@ -80,7 +80,7 @@ namespace SyntacticAnalysisTest
             var t = new Tokenizer(text, string.Empty);
             var token = (Token)typeof(Lexer).Invoke("LineCommnet", t);
             Assert.That(token.Text, Is.EqualTo(eText));
-            Assert.That(token.Type, Is.EqualTo(eType));
+            Assert.That(token.TokenType, Is.EqualTo(eType));
         }
 
         [TestCase("'abc'def", new string[] { "'", "abc", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
@@ -103,7 +103,7 @@ namespace SyntacticAnalysisTest
             Assert.That(result, Is.EqualTo(eTexts.Length > 0));
             Assert.That(tokenList, Is.All.Not.Null);
             Assert.That(List.Map(tokenList).Property("Text"), Is.EqualTo(eTexts));
-            Assert.That(List.Map(tokenList).Property("Type"), Is.EqualTo(eTypes));
+            Assert.That(List.Map(tokenList).Property("TokenType"), Is.EqualTo(eTypes));
             Assert.That(errorToken.Count, Is.EqualTo(0));
         }
 
@@ -120,7 +120,7 @@ namespace SyntacticAnalysisTest
             typeof(Lexer).Invoke("BuiltInExpression", t, tokenList, errorToken);
             Assert.That(tokenList, Is.All.Not.Null);
             Assert.That(List.Map(tokenList).Property("Text"), Is.EqualTo(eTexts));
-            Assert.That(List.Map(tokenList).Property("Type"), Is.EqualTo(eTypes));
+            Assert.That(List.Map(tokenList).Property("TokenType"), Is.EqualTo(eTypes));
             Assert.That(errorToken.Count, Is.EqualTo(0));
         }
 
@@ -144,7 +144,7 @@ namespace SyntacticAnalysisTest
             var t = new Tokenizer(text, string.Empty);
             var token = (Token)typeof(Lexer).Invoke("LetterStartString", t);
             Assert.That(token.Text, Is.EqualTo(eText));
-            Assert.That(token.Type, Is.EqualTo(eType));
+            Assert.That(token.TokenType, Is.EqualTo(eType));
         }
 
         [TestCase("123", "123", TokenType.DigitStartString)]
@@ -160,7 +160,7 @@ namespace SyntacticAnalysisTest
             var t = new Tokenizer(text, string.Empty);
             var token = (Token)typeof(Lexer).Invoke("DigitStartString", t);
             Assert.That(token.Text, Is.EqualTo(eText));
-            Assert.That(token.Type, Is.EqualTo(eType));
+            Assert.That(token.TokenType, Is.EqualTo(eType));
         }
 
         [TestCase("あいうえお", "あいうえお", TokenType.OtherString)]
@@ -172,7 +172,7 @@ namespace SyntacticAnalysisTest
             var t = new Tokenizer(text, string.Empty);
             var token = (Token)typeof(Lexer).Invoke("OtherString", t);
             Assert.That(token.Text, Is.EqualTo(eText));
-            Assert.That(token.Type, Is.EqualTo(eType));
+            Assert.That(token.TokenType, Is.EqualTo(eType));
         }
     }
 }

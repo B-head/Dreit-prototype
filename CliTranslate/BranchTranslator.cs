@@ -20,7 +20,5 @@ namespace CliTranslate
             EndLabel = CreateLabel();
             ElseLabel = (definedElse ? CreateLabel() : EndLabel);
         }
-
-
     }
 }

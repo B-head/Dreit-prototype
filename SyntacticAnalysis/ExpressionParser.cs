@@ -56,7 +56,7 @@ namespace SyntacticAnalysis
         private static Element Prefix(ChainParser cp)
         {
             var ret = cp.Begin<Prefix>()
-                   .Type((s, t) => s.Operator = t.Type, TokenType.Add, TokenType.Subtract, TokenType.Not).Lt()
+                   .Type((s, t) => s.Operator = t.TokenType, TokenType.Add, TokenType.Subtract, TokenType.Not).Lt()
                    .Transfer((s, e) => s.Child = e, Prefix)
                    .End();
             return ret ?? Postfix(cp);
@@ -72,7 +72,7 @@ namespace SyntacticAnalysis
         {
             var ret = cp.Begin<Postfix>()
                 .Self(s => s.Child = current)
-                .Type((s, t) => s.Operator = t.Type, TokenType.Refer, TokenType.Typeof).Lt()
+                .Type((s, t) => s.Operator = t.TokenType, TokenType.Refer, TokenType.Typeof).Lt()
                 .End();
             return ret == null ? MemberAccess(current, cp) : Postfix(ret, cp);
         }

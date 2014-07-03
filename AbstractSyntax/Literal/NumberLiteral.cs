@@ -22,25 +22,28 @@ namespace AbstractSyntax.Literal
                 }
                 if(Fraction == null)
                 {
-                    _DataType = CurrentScope.NameResolution("Integer32").GetDataType();
+                    _DataType = CurrentScope.NameResolution("Integer32").FindDataType();
                 }
                 else
                 {
-                    _DataType = CurrentScope.NameResolution("Binary64").GetDataType();
+                    _DataType = CurrentScope.NameResolution("Binary64").FindDataType();
                 }
                 return _DataType;
             }
         }
 
-        protected override string GetElementInfo()
+        protected override string ElementInfo
         {
-            if (Fraction == null)
+            get
             {
-                return Integral;
-            }
-            else
-            {
-                return Integral + "." + Fraction;
+                if (Fraction == null)
+                {
+                    return Integral;
+                }
+                else
+                {
+                    return Integral + "." + Fraction;
+                }
             }
         }
 
@@ -100,7 +103,7 @@ namespace AbstractSyntax.Literal
             return number;
         }
 
-        private int CheckPrefix(ref string text)
+        private static int CheckPrefix(ref string text)
         {
             if(text.Length < 2)
             {
@@ -126,7 +129,7 @@ namespace AbstractSyntax.Literal
             return result;
         }
         
-        private int ToNum(char c)
+        private static int ToNum(char c)
         {
             switch (c)
             {

@@ -50,13 +50,13 @@ namespace CliTranslate
         {
             var cls = Root.GetTypeBuilder(path.InheritClass) ?? typeof(Object);
             var trait = Root.GetTypeBuilders(path.InheritTraits);
-            var builder = Module.DefineType(path.GetFullName(), TypeAttributes.Class, cls, trait);
+            var builder = Module.DefineType(path.FullName, TypeAttributes.Class, cls, trait);
             return new ClassTranslator(path, this, builder);
         }
 
         public override PrimitiveTranslator CreatePrimitive(DeclateClass path)
         {
-            var builder = Module.DefineType(path.GetFullName());
+            var builder = Module.DefineType(path.FullName);
             return new PrimitiveTranslator(path, this, builder);
         }
 

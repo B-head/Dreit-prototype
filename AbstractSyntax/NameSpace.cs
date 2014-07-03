@@ -15,9 +15,9 @@ namespace AbstractSyntax
             ExpList = new DirectiveList();
         }
 
-        public void Append(Element append)
+        public void Append(Element value)
         {
-            ExpList.Append(append);
+            ExpList.Append(value);
         }
 
         public override int Count
@@ -32,7 +32,7 @@ namespace AbstractSyntax
                 switch (index)
                 {
                     case 0: return ExpList;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }

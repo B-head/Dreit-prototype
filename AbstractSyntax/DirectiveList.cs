@@ -28,9 +28,9 @@ namespace AbstractSyntax
             get { return Child[index]; }
         }
 
-        protected override string GetElementInfo()
+        protected override string ElementInfo
         {
-            return "Count = " + Child.Count;
+            get { return "Count = " + Child.Count; }
         }
 
         public bool IsNoReturn
@@ -54,19 +54,19 @@ namespace AbstractSyntax
             }
         }
 
-        public void Append(IElement append)
+        public void Append(IElement value)
         {
-            Child.Add(append);
+            Child.Add(value);
         }
 
-        public IReadOnlyList<E> FindElements<E>() where E : Element
+        public IReadOnlyList<T> FindElements<T>() where T : Element
         {
-            var result = new List<E>();
+            var result = new List<T>();
             foreach(var v in Child)
             {
-                if(v is E)
+                if(v is T)
                 {
-                    result.Add((E)v);
+                    result.Add((T)v);
                 }
             }
             return result;

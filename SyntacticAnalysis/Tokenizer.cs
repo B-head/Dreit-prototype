@@ -63,7 +63,7 @@ namespace SyntacticAnalysis
                 return Token.Empty;
             }
             string text = Read(0, length);
-            Token token = new Token { Text = text, Type = type, Position = _Position.AlterLength(length) };
+            Token token = new Token { Text = text, TokenType = type, Position = _Position.AlterLength(length) };
             _Position.AddCount(length);
             if (type == TokenType.LineTerminator)
             {

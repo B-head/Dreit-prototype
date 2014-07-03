@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
         public abstract TupleList Arguments { get; }
         public abstract TokenType CalculateOperator { get; }
         public abstract bool HasCallTarget(IElement element);
-        public abstract IDataType GetCallType(); //todo Tuple型も返せるようにする。
+        public abstract IDataType CallType { get; } //todo Tuple型も返せるようにする。
 
         public TypeMatch Match
         {
@@ -90,8 +90,8 @@ namespace AbstractSyntax.Expression
             switch (Match.Result)
             {
                 case TypeMatchResult.NotCallable: CompileError("not-callable"); break;
-                case TypeMatchResult.UnMatchCount: CompileError("unmatch-overload-count"); break;
-                case TypeMatchResult.UnMatchType: CompileError("unmatch-overload-type"); break;
+                case TypeMatchResult.UnmatchCount: CompileError("unmatch-overload-count"); break;
+                case TypeMatchResult.UnmatchType: CompileError("unmatch-overload-type"); break;
             }
             if (CalculateCallScope is ErrorSymbol)
             {

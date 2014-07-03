@@ -23,7 +23,7 @@ namespace AbstractSyntax.Daclate
                 switch (index)
                 {
                     case 0: return SpecialTypeAccess;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }

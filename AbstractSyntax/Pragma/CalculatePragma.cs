@@ -10,12 +10,12 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class CalculatePragma : RoutineSymbol
     {
-        public CalculatePragmaType Type { get; private set; }
+        public CalculatePragmaType CalculateType { get; private set; }
         public GenericSymbol GenericType { get; set; }
 
         public CalculatePragma(CalculatePragmaType type)
         {
-            Type = type;
+            CalculateType = type;
             GenericType = new GenericSymbol { Name = "T" };
             _Attribute = new List<IScope>();
         }
@@ -32,7 +32,7 @@ namespace AbstractSyntax.Pragma
                 switch (index)
                 {
                     case 0: return GenericType;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
@@ -50,11 +50,11 @@ namespace AbstractSyntax.Pragma
         Mul,
         Div,
         Mod,
-        Eq,
-        Ne,
-        Lt,
-        Le,
-        Gt,
-        Ge,
+        EQ,
+        NE,
+        LT,
+        LE,
+        GT,
+        GE,
     }
 }

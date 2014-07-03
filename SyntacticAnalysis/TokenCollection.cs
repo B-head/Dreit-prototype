@@ -94,7 +94,7 @@ namespace SyntacticAnalysis
             {
                 if (v == TokenType.LeftAssign || v == TokenType.RightAssign)
                 {
-                    if ((t.Type & v) != 0)
+                    if ((t.TokenType & v) != 0)
                     {
                         match = v;
                         return true;
@@ -102,7 +102,7 @@ namespace SyntacticAnalysis
                 }
                 else
                 {
-                    if (t.Type == v)
+                    if (t.TokenType == v)
                     {
                         match = v;
                         return true;

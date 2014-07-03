@@ -30,7 +30,7 @@ namespace AbstractSyntax.Pragma
                 switch (index)
                 {
                     case 0: return GenericType;
-                    default: throw new ArgumentOutOfRangeException();
+                    default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }

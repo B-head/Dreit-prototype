@@ -17,7 +17,7 @@ namespace AbstractSyntax
 
         public override string ToString()
         {
-            if (File == null || File == string.Empty)
+            if (string.IsNullOrEmpty(File))
             {
                 return "<empty>()";
             }
