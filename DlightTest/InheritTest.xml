@@ -129,4 +129,62 @@
     </code>
     <output>10 25 25</output>
   </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      trait A
+      {
+        routine foo :: 10
+      }
+      
+      class B : A
+      {
+        routine foo :: 25
+      }
+      
+      var a:A
+      B =: a
+      echo a.foo
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      trait A
+      {
+        routine foo
+      }
+      
+      class B : A
+      {
+        routine foo :: 25
+      }
+      
+      var a:A
+      B =: a
+      echo a.foo
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      trait A
+      {
+        routine foo :: 10
+      }
+      
+      var a:A
+      A =: a
+      echo a.foo
+      ]]>
+    </code>
+    <error key="not-instantiatable"/>
+  </case>
 </compile-test>

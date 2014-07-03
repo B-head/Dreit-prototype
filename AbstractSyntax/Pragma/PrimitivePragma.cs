@@ -24,6 +24,7 @@ namespace AbstractSyntax.Pragma
     {
         NotPrimitive,
         Object,
+        String,
         Boolean,
         Integer8,
         Integer16,

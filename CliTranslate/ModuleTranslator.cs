@@ -48,7 +48,7 @@ namespace CliTranslate
 
         public override ClassTranslator CreateClass(DeclateClass path)
         {
-            var cls = Root.GetTypeBuilder(path.InheritClass) ?? typeof(Object);
+            var cls = Root.GetTypeBuilder(path.InheritClass);
             var trait = Root.GetTypeBuilders(path.InheritTraits);
             var builder = Module.DefineType(path.FullName, TypeAttributes.Class, cls, trait);
             return new ClassTranslator(path, this, builder);

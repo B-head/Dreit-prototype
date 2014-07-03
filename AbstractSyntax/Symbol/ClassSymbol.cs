@@ -38,7 +38,14 @@ namespace AbstractSyntax.Symbol
 
         public ClassSymbol InheritClass
         {
-            get { return _Inherit.Find(v => v.IsClass); }
+            get 
+            {
+                if (this == Root.ObjectSymbol)
+                {
+                    return null;
+                }
+                return _Inherit.Find(v => v.IsClass) ?? Root.ObjectSymbol; 
+            }
         }
 
         public IReadOnlyList<ClassSymbol> InheritTraits
@@ -107,11 +114,7 @@ namespace AbstractSyntax.Symbol
         {
             get
             {
-                PrimitivePragma prim = null;
-                if (Inherit.Count == 1)
-                {
-                    prim = Inherit[0] as PrimitivePragma;
-                }
+                var prim = (PrimitivePragma)Inherit.FirstOrDefault(v => v is PrimitivePragma);
                 if (prim == null)
                 {
                     return PrimitivePragmaType.NotPrimitive;

@@ -11,6 +11,7 @@ namespace AbstractSyntax
     public class Root : NameSpace
     {
         private DirectiveList BuiltInList;
+        private Lazy<ClassSymbol> LazyObjectSymbol;
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
@@ -28,6 +29,7 @@ namespace AbstractSyntax
             Unknown = new UnknownSymbol();
             UndefinedOverLord = new OverLoad(Unknown, true);
             Conversion = new ConversionManager(Void, Error, Unknown);
+            LazyObjectSymbol = new Lazy<ClassSymbol>(InitObjectSymbol);
             MessageManager = new CompileMessageManager();
             CreatePragma();
             CreateBuiltInIdentifier();
@@ -58,6 +60,16 @@ namespace AbstractSyntax
             CheckSemantic();
         }
 
+        public ClassSymbol ObjectSymbol
+        {
+            get { return LazyObjectSymbol.Value; }
+        }
+
+        private ClassSymbol InitObjectSymbol()
+        {
+            return (ClassSymbol)NameResolution("Object").FindDataType();
+        }
+
         private void AppendPragma(string name, Scope pragma)
         {
             pragma.Name = "@@" + name;
@@ -79,6 +91,7 @@ namespace AbstractSyntax
             AppendPragma("gt", new CalculatePragma(CalculatePragmaType.GT));
             AppendPragma("ge", new CalculatePragma(CalculatePragmaType.GE));
             AppendPragma("Object", new PrimitivePragma(PrimitivePragmaType.Object));
+            AppendPragma("String", new PrimitivePragma(PrimitivePragmaType.String));
             AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
             AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));
             AppendPragma("Integer16", new PrimitivePragma(PrimitivePragmaType.Integer16));

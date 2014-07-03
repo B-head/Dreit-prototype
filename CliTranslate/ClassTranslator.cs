@@ -56,8 +56,7 @@ namespace CliTranslate
             Root.RegisterBuilder(path, ctor);
             var ret = new RoutineTranslator(path, this, ctor);
             var iinit = path.InheritInitializer;
-            var ictor = iinit != null ? (ConstructorInfo)Root.GetBuilder(iinit) : typeof(object).GetConstructor(Type.EmptyTypes);
-            ret.GenelateConstructorInit(InitContext, ictor);
+            ret.GenelateConstructorInit(InitContext, (ConstructorInfo)Root.GetBuilder(iinit));
             return ret;
         }
 
@@ -78,7 +77,7 @@ namespace CliTranslate
 
         public override ClassTranslator CreateClass(DeclateClass path)
         {
-            var cls = Root.GetTypeBuilder(path.InheritClass) ?? typeof(Object);
+            var cls = Root.GetTypeBuilder(path.InheritClass);
             var trait = Root.GetTypeBuilders(path.InheritTraits);
             var builder = Class.DefineNestedType(path.Name, TypeAttributes.Class, cls, trait);
             return new ClassTranslator(path, this, builder);

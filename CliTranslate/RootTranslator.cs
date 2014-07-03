@@ -49,10 +49,6 @@ namespace CliTranslate
 
         internal Type GetTypeBuilder(IScope path)
         {
-            if (path == null)
-            {
-                return null;
-            }
             if (path is VoidSymbol)
             {
                 return typeof(void);

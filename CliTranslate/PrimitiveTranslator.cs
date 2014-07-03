@@ -26,6 +26,11 @@ namespace CliTranslate
             parent.GenerateCall(ClassContext);
             Generator = ClassContext.GetILGenerator();
             Root.RegisterBuilder(path, Prim);
+            var ctor = Prim.GetConstructor(Type.EmptyTypes);
+            if(ctor != null)
+            {
+                Root.RegisterBuilder(path.DefaultInitializer, ctor);
+            }
         }
 
         internal static Type GetPrimitiveType(PrimitivePragmaType type)
@@ -33,6 +38,7 @@ namespace CliTranslate
             switch(type)
             {
                 case PrimitivePragmaType.Object: return typeof(Object);
+                case PrimitivePragmaType.String: return typeof(String);
                 case PrimitivePragmaType.Boolean: return typeof(Boolean);
                 case PrimitivePragmaType.Integer8: return typeof(SByte);
                 case PrimitivePragmaType.Integer16: return typeof(Int16);

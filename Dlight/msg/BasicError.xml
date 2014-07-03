@@ -4,6 +4,7 @@
   <msg key="invalid-token">文字列 {Text} は有効なトークンではありません。</msg>
   <msg key="error-token">トークン {Text} をこの位置に書くことは出来ません。</msg>
   <msg key="not-datatype-inherit">継承元はクラスである必要があります。</msg>
+  <msg key="not-instantiatable">トレイトをインスタンス化することは出来ません。</msg>
   <msg key="disagree-return-type">返り値の型が合っていません。</msg>
   <msg key="not-callable">呼び出し可能な関数ではありません。</msg>
   <msg key="unmatch-overload-count">引数の数が合うオーバーロードが定義されていません。</msg>
