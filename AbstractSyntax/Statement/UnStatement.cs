@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Statement
 {
     [Serializable]
-    public class NotStatement : Element
+    public class UnStatement : Element
     {
         public IElement Exp { get; set; }
 

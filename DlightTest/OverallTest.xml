@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      <![CDATA[
+      loop i <= 15 on var i := 1 by i += 1 {
+        echo if i % 15 = 0 :: "fizzbuzz"
+        else if i % 3 = 0 :: "fizz"
+        else if i % 5 = 0 :: "buzz"
+        else "{ i }"
+      }
+      ]]>
+    </code>
+    <output>1 2 fizz 4 buzz fizz 7 8 fizz buzz 11 fizz 13 14 fizzbuzz</output>
+  </case>
+</compile-test>

@@ -91,7 +91,7 @@
     <Compile Include="Scope.cs" />
     <Compile Include="Statement\IfStatement.cs" />
     <Compile Include="Statement\LoopStatement.cs" />
-    <Compile Include="Statement\NotStatement.cs" />
+    <Compile Include="Statement\UnStatement.cs" />
     <Compile Include="Symbol\AttributeSymbol.cs" />
     <Compile Include="Symbol\BooleanSymbol.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />

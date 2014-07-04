@@ -55,10 +55,10 @@ namespace SyntacticAnalysis
                 .End();
         }
 
-        private static NotStatement NotStatement(ChainParser cp)
+        private static UnStatement UnStatement(ChainParser cp)
         {
-            return cp.Begin<NotStatement>()
-                .Text("not").Lt().Transfer((s, e) => s.Exp = e, Directive)
+            return cp.Begin<UnStatement>()
+                .Text("un").Lt().Transfer((s, e) => s.Exp = e, Directive)
                 .End();
         }
 

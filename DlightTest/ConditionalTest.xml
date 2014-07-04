@@ -9,7 +9,7 @@
 
   <case>
     <code>
-      if not false than echo 10
+      if un false than echo 10
       echo 20
     </code>
     <output>10 20</output>
@@ -32,10 +32,10 @@
     <output>10 20</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       <![CDATA[
-      routine foo(a:Bool) if a :: 10 else 20
+      routine foo(a:Bool) :: if a :: 10 else 20
       
       echo foo(true)
       echo foo(false)
@@ -44,7 +44,7 @@
     <output>10 20</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       <![CDATA[
       routine foo(a:Bool, b:Bool){
@@ -62,19 +62,19 @@
   <case ignore="true">
     <code>
       <![CDATA[
-      routine foo(a:Int32) if a > 0 :: foo(a - 1) + 5 else 0
+      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
       
       echo foo(10)
       ]]>
     </code>
-    <output>50</output>
+    <output>51</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
         if 2 < 5 :: echo 10
-        if not 2 > 5 :: echo 20
+        if un 2 > 5 :: echo 20
       ]]>
     </code>
     <output>10 20</output>
@@ -84,7 +84,7 @@
     <code>
       <![CDATA[
         if 2 <= 5 <= 8 :: echo 10
-        if not 8 <= 5 <= 2 :: echo 20
+        if un 8 <= 5 <= 2 :: echo 20
       ]]>
     </code>
     <output>10 20</output>
@@ -94,7 +94,7 @@
     <code>
       <![CDATA[
         if 22 > 6 && 33 >= 9 :: echo 10
-        if not 22 < 6 && 33 <= 9 :: echo 20
+        if un 22 < 6 && 33 <= 9 :: echo 20
       ]]>
     </code>
     <output>10 20</output>

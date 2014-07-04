@@ -206,7 +206,7 @@ namespace CliTranslate
             Translate((dynamic)element.Ident, trans);
         }
 
-        private void Translate(NotStatement element, Translator trans)
+        private void Translate(UnStatement element, Translator trans)
         {
             ChildTranslate(element, trans);
             trans.GenerateControl(OpCodes.Not);
@@ -537,7 +537,7 @@ namespace CliTranslate
             }
         }
 
-        private void TranslateBrunch(NotStatement element, Translator trans, Label bfalse, bool isnot)
+        private void TranslateBrunch(UnStatement element, Translator trans, Label bfalse, bool isnot)
         {
             TranslateBrunch((dynamic)element.Exp, trans, bfalse, !isnot);
         }

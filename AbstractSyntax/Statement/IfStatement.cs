@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,11 @@ namespace AbstractSyntax.Statement
         public Element Condition { get; set; }
         public DirectiveList Than { get; set; }
         public DirectiveList Else { get; set; }
+        private Lazy<IDataType> LazyReturnType;
 
-        public bool IsDefinedElse
+        public IfStatement()
         {
-            get { return Else != null; }
+            LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 
         public override int Count
@@ -34,6 +36,46 @@ namespace AbstractSyntax.Statement
                     case 2: return Else;
                     default: throw new ArgumentOutOfRangeException();
                 }
+            }
+        }
+
+        public bool IsDefinedElse
+        {
+            get { return Else != null; }
+        }
+
+        public override IDataType ReturnType
+        {
+            get { return LazyReturnType.Value; }
+        } 
+
+        private IDataType InitReturnType()
+        {
+            var a = BlockReturnType(Than);
+            var b = BlockReturnType(Else);
+            if(a == b)
+            {
+                return a;
+            }
+            else
+            {
+                return Root.Unknown;
+            }
+        }
+
+        private IDataType BlockReturnType(DirectiveList block)
+        {
+            if(block == null)
+            {
+                return Root.Void;
+            }
+            if(block.IsInline)
+            {
+                return block[0].ReturnType;
+            }
+            else
+            {
+                return Root.Void; //todo ifブロックで値を返すための構文が必要。
             }
         }
     }
