@@ -99,10 +99,12 @@
 
   <case>
     <code>
+      <![CDATA[
       echo foo(23, 5)
       routine foo(a:Integer32, b:Integer32) {
-      return a % b
+        return a % b
       }
+      ]]>
     </code>
     <output>3</output>
   </case>

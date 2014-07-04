@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      <![CDATA[
+      routine foo!T(a:T):T {
+        return a * a
+      }
+      echo foo!Int32(6)
+      ]]>
+    </code>
+    <output>36</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      routine foo!(A, B, R)(a:A, b:B):R {
+        return a * b
+      }
+      echo foo!(Int32, Binary64, Binary64)(3, 5.5)
+      ]]>
+    </code>
+    <output>16.5</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      routine foo!T(v:T):void {
+        var a:T := v
+        var b:T := v
+        loop i < 10 on var i := 0 by i += 1 {
+          echo a
+          var c:T := a
+          a += b
+          b := c
+        }
+      }
+      foo!Int32(1)
+      ]]>
+    </code>
+    <output>1 2 3 5 8 13 21 34 55 89</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      routine foo(a) {
+        return a * a
+      }
+      echo foo(6)
+      ]]>
+    </code>
+    <output>36</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      routine foo(a, b) {
+        return a * b
+      }
+      echo foo(3, 5.5)
+      ]]>
+    </code>
+    <output>16.5</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      routine foo(v) {
+        var a := v
+        var b := v
+        loop i < 10 on var i := 0 by i += 1 {
+          echo a
+          var c := a
+          a += b
+          b := c
+        }
+      }
+      foo(1)
+      ]]>
+    </code>
+    <output>1 2 3 5 8 13 21 34 55 89</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class O!T {
+        var v:T
+      
+        routine foo(a:T):T {
+          return a * v
+        }
+      }
+      var o := O!Int32
+      o.v := 3
+      echo o.foo(6)
+      ]]>
+    </code>
+    <output>18</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class O!(T) {
+        var v:T
+        
+        routine new(v:T) {
+          this.v := v
+        }
+      
+        routine foo(a:T):T {
+          return a * v
+        }
+      }
+      var o := O(3)
+      echo o.foo(6)
+      ]]>
+    </code>
+    <output>18</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class O!T {
+        var v:T
+        
+        routine new(v:T) {
+          this.v := v
+        }
+      
+        routine foo!(A, R)(a:A):R {
+          return a * v
+        }
+      }
+      var o := O(3)
+      echo o.foo(5.5)
+      ]]>
+    </code>
+    <output>16.5</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class O!T {
+        var v:T
+        
+        routine new(v:T) {
+          this.v := v
+        }
+      
+        routine foo(a) {
+          return a * v
+        }
+      }
+      var o := O(3)
+      echo o.foo(5.5)
+      ]]>
+    </code>
+    <output>16.5</output>
+  </case>
+</compile-test>
