@@ -12,22 +12,39 @@ namespace SyntacticAnalysis
             return CoalesceParser(cp, primary);
         }
 
-        private static ExpressionGroup Group(ChainParser cp)
+        private static ExpressionGroup ExpressionGroup(ChainParser cp)
         {
             return cp.Begin<ExpressionGroup>()
                 .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer((s, e) => s.Child = e, Directive)
+                .Transfer((s, e) => s.Child = e, Expression)
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
         }
 
-        private static NumberLiteral Number(ChainParser cp)
+        private static NumberLiteral NumberLiteral(ChainParser cp)
         {
             return cp.Begin<NumberLiteral>()
                 .Type((s, t) => s.Integral = t.Text, TokenType.DigitStartString).Lt()
                 .If().Type(TokenType.Access).Lt()
                 .Than().Type((s, t) => s.Fraction = t.Text, TokenType.DigitStartString).Lt() //todo 数字で無かった場合の対応が必要。
                 .EndIf().End();
+        }
+
+        private static StringLiteral StringLiteral(ChainParser cp)
+        {
+            return cp.Begin<StringLiteral>()
+                .Type(TokenType.QuoteSeparator)
+                .Loop().Not().Type(TokenType.QuoteSeparator).Do()
+                .If().Type(TokenType.LeftBrace)
+                .Than().Transfer((s, e) => s.Append(e), Expression).Type(TokenType.RightBrace)
+                .Else().Transfer((s, e) => s.Append(e), PlainText)
+                .EndIf().EndLoop().End();
+        }
+        private static PlainText PlainText(ChainParser cp)
+        {
+            return cp.Begin<PlainText>()
+                .Type((s, t) => s.Value = t.Text, TokenType.PlainText)
+                .End();
         }
 
         private static IdentifierAccess IdentifierAccess(ChainParser cp)

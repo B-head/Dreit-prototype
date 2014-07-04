@@ -58,6 +58,8 @@
     <Compile Include="Expression\Postfix.cs" />
     <Compile Include="Expression\Prefix.cs" />
     <Compile Include="Interfaces.cs" />
+    <Compile Include="Literal\PlainText.cs" />
+    <Compile Include="Literal\StringLiteral.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
     <Compile Include="Expression\CallRoutine.cs" />

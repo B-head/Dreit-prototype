@@ -442,5 +442,20 @@ namespace CliTranslate
             var types = new Type[] { temp };
             Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", types));
         }
+
+        public void GenerateToString(IScope type)
+        {
+            var t = Root.GetBuilder(type) as Type;
+            if(t.IsValueType)
+            {
+                Generator.Emit(OpCodes.Box, t);
+            }
+            Generator.Emit(OpCodes.Callvirt, typeof(object).GetMethod("ToString", Type.EmptyTypes));
+        }
+
+        public void GenerateStringConcat()
+        {
+            Generator.Emit(OpCodes.Call, typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
+        }
     }
 }

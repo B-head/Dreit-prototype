@@ -10,25 +10,27 @@ namespace AbstractSyntax.Literal
     {
         public string Integral { get; set; }
         public string Fraction { get; set; }
-        private IDataType _DataType;
+        private Lazy<IDataType> LazyReturnType;
+
+        public NumberLiteral()
+        {
+            LazyReturnType = new Lazy<IDataType>(InitReturnType);
+        }
 
         public override IDataType ReturnType
         {
-            get
+            get { return LazyReturnType.Value; }
+        }
+
+        private IDataType InitReturnType()
+        {
+            if (Fraction == null)
             {
-                if (_DataType != null)
-                {
-                    return _DataType;
-                }
-                if(Fraction == null)
-                {
-                    _DataType = CurrentScope.NameResolution("Integer32").FindDataType();
-                }
-                else
-                {
-                    _DataType = CurrentScope.NameResolution("Binary64").FindDataType();
-                }
-                return _DataType;
+                return CurrentScope.NameResolution("Integer32").FindDataType();
+            }
+            else
+            {
+                return CurrentScope.NameResolution("Binary64").FindDataType();
             }
         }
 

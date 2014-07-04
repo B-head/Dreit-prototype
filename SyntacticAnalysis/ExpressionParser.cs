@@ -5,6 +5,11 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
+        private static Element Expression(ChainParser cp)
+        {
+            return LeftAssign(cp);
+        }
+
         private static Element LeftAssign(ChainParser cp)
         {
             return RightAssociative<LeftAssign, Element>(cp, RightAssign, TokenType.LeftAssign);
@@ -17,7 +22,7 @@ namespace SyntacticAnalysis
 
         private static Element TupleList(ChainParser cp)
         {
-            var tuple = ParseTuple(cp, Logical);
+            var tuple = ParseTuple(cp, NonTupleExpression);
             if (tuple.Count > 1)
             {
                 return tuple;
@@ -30,6 +35,10 @@ namespace SyntacticAnalysis
             {
                 return null;
             }
+        }
+        private static Element NonTupleExpression(ChainParser cp)
+        {
+            return Logical(cp);
         }
 
         private static Element Logical(ChainParser cp)
@@ -92,7 +101,7 @@ namespace SyntacticAnalysis
             var ret = cp.Begin<CallRoutine>()
                 .Self(s => s.CallAccess = current)
                 .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, Logical))
+                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, NonTupleExpression))
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
             return ret == null ? BracketCallRoutine(current, cp) : Postfix(ret, cp);
@@ -103,7 +112,7 @@ namespace SyntacticAnalysis
             var ret = cp.Begin<CallRoutine>()
                 .Self(s => s.CallAccess = current)
                 .Type(TokenType.LeftBracket).Lt()
-                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, Logical))
+                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, NonTupleExpression))
                 .Type(TokenType.RightBracket).Lt()
                 .End();
             return ret == null ? current : Postfix(ret, cp);

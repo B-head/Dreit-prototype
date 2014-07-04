@@ -8,8 +8,8 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static ParserFunction<Element>[] directive = { AttributeZone, Echo, Alias, Return, Break, Continue, LeftAssign };
-        private static ParserFunction<Element>[] primary = { IfStatement, LoopStatement, NotStatement, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, Group, Number, IdentifierAccess };
+        private static ParserFunction<Element>[] directive = { AttributeZone, Echo, Alias, Return, Break, Continue, Expression };
+        private static ParserFunction<Element>[] primary = { IfStatement, LoopStatement, NotStatement, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, ExpressionGroup, StringLiteral, NumberLiteral, IdentifierAccess };
         private static string[] attribute = { "static", "public", "protected", "private" };
 
         public static DeclateModule Parse(TokenCollection collection)

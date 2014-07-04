@@ -26,7 +26,7 @@ namespace SyntacticAnalysis
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .Transfer((s, e)=> s.DecArguments = e, ArgumentList)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Logical).EndIf()
+                .Than().Transfer((s, e) => s.ExplicitType = e, NonTupleExpression).EndIf()
                 .Transfer((s, e)=> s.Block = e, Block)
                 .End();
         }
@@ -40,7 +40,7 @@ namespace SyntacticAnalysis
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .Transfer((s, e) => s.DecArguments = e, ArgumentList)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.ExplicitType = e, Logical).EndIf()
+                .Than().Transfer((s, e) => s.ExplicitType = e, NonTupleExpression).EndIf()
                 .Transfer((s, e) => s.Block = e, Block)
                 .End();
         }
@@ -94,7 +94,7 @@ namespace SyntacticAnalysis
             return cp.Begin<DeclateGeneric>()
                 .Type((s, t)=> s.Name = t.Text, TokenType.LetterStartString)
                 .If().Type(TokenType.Peir).Lt()
-                .Than().Transfer((s, e) => s.SpecialTypeAccess = e, Logical)
+                .Than().Transfer((s, e) => s.SpecialTypeAccess = e, NonTupleExpression)
                 .EndIf().End();
         }
 

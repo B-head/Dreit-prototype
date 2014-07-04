@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      echo 10
+    </code>
+    <output>10</output>
+  </case>
+  
+  <case>
+    <code>
+      echo { 30 }
+    </code>
+    <error key="error-token"/>
+    <error key="error-token"/>
+  </case>
+  
+  <case>
+    <code>
+      echo 00123
+      echo 4_5_6
+      echo 56.789
+    </code>
+    <output>123 456 56.789</output>
+  </case>
+
+  <case>
+    <code>
+      echo 0b1111;
+      echo 0o77;
+      echo 0d999;
+      echo 0xFF.0xff;
+    </code>
+    <output>15 63 999 255.99609375</output>
+  </case>
+
+  <case>
+    <code>
+      echo "Hello world!"
+    </code>
+    <output>Hello world!</output>
+  </case>
+
+  <case>
+    <code>
+      echo 'Hello world!'
+      echo `Hello world!`
+    </code>
+    <output>Hello world! Hello world!</output>
+  </case>
+  
+  <case>
+    <code>
+      echo "こんにちは"
+    </code>
+    <output>こんにちは</output>
+  </case>
+
+  <case>
+    <code>
+      echo ""
+    </code>
+    <output></output>
+  </case>
+
+  <case>
+    <code>
+      echo "string\"output\""
+    </code>
+    <output>string"output"</output>
+  </case>
+
+  <case>
+    <code>
+      var a := 100
+      echo "{ a }"
+    </code>
+    <output>100</output>
+  </case>
+
+  <case>
+    <code>
+      var a := 100
+      echo "a = { a };"
+    </code>
+    <output>a = 100;</output>
+  </case>
+
+  <case>
+    <code>
+      echo "{ "こんばんは" }"
+    </code>
+    <output>こんばんは</output>
+  </case>
+
+  <case>
+    <code>
+      var a := 100
+      echo "a = { "{ a }" };"
+    </code>
+    <output>a = 100;</output>
+  </case>
+</compile-test>

@@ -300,6 +300,30 @@ namespace CliTranslate
             trans.GeneratePrimitive(number);
         }
 
+        private void Translate(StringLiteral element, Translator trans)
+        {
+            if(element.Texts.Count == 0)
+            {
+                trans.GeneratePrimitive(string.Empty);
+                return;
+            }
+            var c = element.Texts.Count;
+            for(var i = 0; i < c; ++i)
+            {
+                Translate((dynamic)element.Texts[i], trans);
+                trans.GenerateToString(element.Texts[i].ReturnType);
+                if(i > 0)
+                {
+                    trans.GenerateStringConcat();
+                }
+            }
+        }
+
+        private void Translate(PlainText element, Translator trans)
+        {
+            trans.GeneratePrimitive(element.ShowValue);
+        }
+
         private void Translate(Calculate element, Translator trans)
         {
             Translate((dynamic)element.Left, trans);
