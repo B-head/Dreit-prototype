@@ -112,6 +112,8 @@ namespace AbstractSyntax
             BuiltInList.Append(Error);
             BuiltInList.Append(new BooleanSymbol(false) { Name = "false" });
             BuiltInList.Append(new BooleanSymbol(true) { Name = "true" });
+            BuiltInList.Append(new AttributeSymbol(AttributeType.Let) { Name = "let" });
+            BuiltInList.Append(new AttributeSymbol(AttributeType.Function) { Name = "function" });
             BuiltInList.Append(new AttributeSymbol(AttributeType.Static) { Name = "static" });
             BuiltInList.Append(new AttributeSymbol(AttributeType.Public) { Name = "public" });
             BuiltInList.Append(new AttributeSymbol(AttributeType.Protected) { Name = "protected" });

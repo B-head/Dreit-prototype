@@ -25,6 +25,8 @@ namespace AbstractSyntax.Symbol
     public enum AttributeType
     {
         None,
+        Let,
+        Function,
         Static,
         Public,
         Protected,

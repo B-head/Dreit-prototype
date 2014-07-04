@@ -13,6 +13,7 @@ namespace AbstractSyntax.Daclate
         public TupleList AttributeAccess { get; set; }
         public IdentifierAccess Ident { get; set; }
         public IdentifierAccess ExplicitType { get; set; }
+        public bool IsLet { get; set; }
 
         public override IReadOnlyList<IScope> Attribute
         {
@@ -26,6 +27,11 @@ namespace AbstractSyntax.Daclate
                 foreach (var v in AttributeAccess)
                 {
                     _Attribute.Add(v.Reference.FindDataType());
+                }
+                if(IsLet)
+                {
+                    var l = NameResolution("let").FindDataType();
+                    _Attribute.Add(l);
                 }
                 return _Attribute;
             }

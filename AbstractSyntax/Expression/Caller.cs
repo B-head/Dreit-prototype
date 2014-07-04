@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Pragma;
+﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
@@ -92,6 +93,10 @@ namespace AbstractSyntax.Expression
                 case TypeMatchResult.NotCallable: CompileError("not-callable"); break;
                 case TypeMatchResult.UnmatchCount: CompileError("unmatch-overload-count"); break;
                 case TypeMatchResult.UnmatchType: CompileError("unmatch-overload-type"); break;
+            }
+            if(CallScope.IsAnyAttribute(AttributeType.Let) && !(Access is DeclateVariant))
+            {
+                CompileError("not-mutable");
             }
             if (CalculateCallScope is ErrorSymbol)
             {

@@ -10,7 +10,8 @@ namespace SyntacticAnalysis
         {
             return cp.Begin<DeclateVariant>()
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
-                .Text("var", "let").Lt()
+                .Text((s, e) => s.IsLet = false, "var")
+                .Or().Text((s, e) => s.IsLet = true, "let").Lt()
                 .Transfer((s, e) => s.Ident = e, IdentifierAccess)
                 .If().Type(TokenType.Peir).Lt()
                 .Than().Transfer((s, e) => s.ExplicitType = e, IdentifierAccess)

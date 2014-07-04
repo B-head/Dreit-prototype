@@ -96,8 +96,11 @@ namespace AbstractSyntax
             {
                 case TypeMatchResult.Unknown: return 10;
                 case TypeMatchResult.PerfectMatch: return 9;
-                case TypeMatchResult.ConvertMatch: return 5;
-                default: return 0;
+                case TypeMatchResult.ConvertMatch: return 8;
+                case TypeMatchResult.UnmatchType: return 2;
+                case TypeMatchResult.UnmatchCount: return 1;
+                case TypeMatchResult.NotCallable: return 0;
+                default: throw new ArgumentException("r");
             }
         }
 
