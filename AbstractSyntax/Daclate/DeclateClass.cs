@@ -106,7 +106,7 @@ namespace AbstractSyntax.Daclate
                     Initializer.Add(r);
                     newFlag = true;
                 }
-                else if (r.Name == "from")
+                else if (r.Name == "from") //todo 1引数で使える型変換関数の生成が必要。
                 {
                     Root.Conversion.Append(r);
                     Initializer.Add(r);

@@ -6,7 +6,7 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static DeclateVariant DeclareVariant(ChainParser cp)
+        private static DeclateVariant DeclareVariant(ChainParser cp) //todo 関数呼び出しタイプの初期化に対応した構文が必要。
         {
             return cp.Begin<DeclateVariant>()
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
@@ -22,13 +22,14 @@ namespace SyntacticAnalysis
         {
             return cp.Begin<DeclateRoutine>()
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
-                .Text("rout", "routine", "func", "function").Lt()
+                .Text((s, e) => s.IsFunction = false, "rout", "routine")
+                .Or().Text((s, e) => s.IsFunction = true, "func", "function").Lt()
                 .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
-                .Transfer((s, e)=> s.DecArguments = e, ArgumentList)
+                .Transfer((s, e) => s.DecArguments = e, ArgumentList)
                 .If().Type(TokenType.Peir).Lt()
                 .Than().Transfer((s, e) => s.ExplicitType = e, NonTupleExpression).EndIf()
-                .Transfer((s, e)=> s.Block = e, Block)
+                .Transfer((s, e) => s.Block = e, Block)
                 .End();
         }
 

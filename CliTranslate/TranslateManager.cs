@@ -172,12 +172,7 @@ namespace CliTranslate
                     trans.GenerateControl(OpCodes.Pop);
                 }
             }
-            if (element.IsThisReturn)
-            {
-                trans.GenerateControl(OpCodes.Ldarg_0);
-                trans.GenerateControl(OpCodes.Ret);
-            }
-            else if (element.Count <= 0 || !(element[element.Count - 1] is ReturnDirective))
+            if (element.Count <= 0 || !(element[element.Count - 1] is ReturnDirective))
             {
                 trans.GenerateControl(OpCodes.Ret);
             }
@@ -199,6 +194,11 @@ namespace CliTranslate
         {
             var temp = TransDictionary[element];
             Translate((dynamic)element.Block, temp);
+            if (element.IsDefaultThisReturn)
+            {
+                temp.GenerateControl(OpCodes.Ldarg_0);
+                temp.GenerateControl(OpCodes.Ret);
+            }
         }
 
         private void Translate(DeclateVariant element, Translator trans)

@@ -66,6 +66,19 @@ namespace AbstractSyntax.Expression
             get { return CalculateOperator != TokenType.Unknoun; }
         }
 
+        public bool IsFunctionLocation
+        {
+            get 
+            {
+                var f = GetParent<RoutineSymbol>();
+                if(f == null)
+                {
+                    return false;
+                }
+                return f.IsAnyAttribute(AttributeType.Function);
+            }
+        }
+
         public Scope CalculateCallScope
         {
             get
@@ -94,9 +107,13 @@ namespace AbstractSyntax.Expression
                 case TypeMatchResult.UnmatchCount: CompileError("unmatch-overload-count"); break;
                 case TypeMatchResult.UnmatchType: CompileError("unmatch-overload-type"); break;
             }
-            if(CallScope.IsAnyAttribute(AttributeType.Let) && !(Access is DeclateVariant))
+            if (CallScope.IsAnyAttribute(AttributeType.Let) && !(Access is DeclateVariant))
             {
                 CompileError("not-mutable");
+            }
+            if (IsFunctionLocation && CallScope is VariantSymbol)
+            {
+                CompileError("forbit-side-effect");
             }
             if (CalculateCallScope is ErrorSymbol)
             {

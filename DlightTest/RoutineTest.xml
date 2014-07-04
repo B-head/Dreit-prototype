@@ -56,7 +56,7 @@
     <output>30</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       var x := 50
       function foo(a:Int32) :: x += a

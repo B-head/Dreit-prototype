@@ -16,7 +16,8 @@ namespace AbstractSyntax.Daclate
         public TupleList DecArguments { get; set; }
         public Element ExplicitType { get; set; }
         public DirectiveList Block { get; set; }
-        public bool IsThisReturn { get; private set; }
+        public bool IsFunction { get; set; }
+        public bool IsDefaultThisReturn { get; private set; }
 
         public override IReadOnlyList<IScope> Attribute
         {
@@ -30,6 +31,11 @@ namespace AbstractSyntax.Daclate
                 foreach (var v in AttributeAccess)
                 {
                     _Attribute.Add(v.Reference.FindDataType());
+                }
+                if(IsFunction)
+                {
+                    var f = NameResolution("function").FindDataType();
+                    _Attribute.Add(f);
                 }
                 return _Attribute;
             }
@@ -87,7 +93,7 @@ namespace AbstractSyntax.Daclate
                     else if(CurrentScope is DeclateClass)
                     {
                         _ReturnType = (DeclateClass)CurrentScope;
-                        IsThisReturn = true;
+                        IsDefaultThisReturn = true;
                     }
                     else
                     {

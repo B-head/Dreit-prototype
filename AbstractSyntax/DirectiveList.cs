@@ -45,15 +45,6 @@ namespace AbstractSyntax
             }
         }
 
-        public bool IsThisReturn
-        {
-            get
-            {
-                var rout = Parent as DeclateRoutine;
-                return rout != null && rout.IsThisReturn;
-            }
-        }
-
         public void Append(IElement value)
         {
             Child.Add(value);
