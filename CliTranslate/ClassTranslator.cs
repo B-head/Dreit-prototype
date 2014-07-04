@@ -79,7 +79,8 @@ namespace CliTranslate
         {
             var cls = Root.GetTypeBuilder(path.InheritClass);
             var trait = Root.GetTypeBuilders(path.InheritTraits);
-            var builder = Class.DefineNestedType(path.Name, TypeAttributes.Class, cls, trait);
+            var attr = MakeTypeAttributes(path.Attribute, path.IsTrait);
+            var builder = Class.DefineNestedType(path.Name, attr, cls, trait);
             return new ClassTranslator(path, this, builder);
         }
 
@@ -94,48 +95,6 @@ namespace CliTranslate
             InitGenerator.Emit(OpCodes.Ldarg_0);
             InitGenerator.Emit(OpCodes.Ldsfld, init);
             InitGenerator.Emit(OpCodes.Stfld, builder);
-        }
-
-        private MethodAttributes MakeMethodAttributes(IReadOnlyList<IScope> attr, bool vtl = false)
-        {
-            MethodAttributes ret = vtl ? MethodAttributes.Virtual | MethodAttributes.Public : 0;
-            foreach(var v in attr)
-            {
-                var a = v as AttributeSymbol;
-                if(a == null)
-                {
-                    continue;
-                }
-                switch(a.Attr)
-                {
-                    case AttributeType.Static: ret |= MethodAttributes.Static; break;
-                    case AttributeType.Public: ret |= MethodAttributes.Public; break;
-                    case AttributeType.Protected: ret |= MethodAttributes.Family; break;
-                    case AttributeType.Private: ret |= MethodAttributes.Private; break;
-                }
-            }
-            return ret;
-        }
-
-        private FieldAttributes MakeFieldAttributes(IReadOnlyList<IScope> attr)
-        {
-            FieldAttributes ret = 0;
-            foreach (var v in attr)
-            {
-                var a = v as AttributeSymbol;
-                if (a == null)
-                {
-                    continue;
-                }
-                switch (a.Attr)
-                {
-                    case AttributeType.Static: ret |= FieldAttributes.Static; break;
-                    case AttributeType.Public: ret |= FieldAttributes.Public; break;
-                    case AttributeType.Protected: ret |= FieldAttributes.Family; break;
-                    case AttributeType.Private: ret |= FieldAttributes.Private; break;
-                }
-            }
-            return ret;
         }
 
         public override void GenerateLoad(IScope name, bool address = false)

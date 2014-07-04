@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Daclate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,6 +58,54 @@ namespace AbstractSyntax.Symbol
                     return null;
                 }
                 return cls.InheritClass.DefaultInitializer;
+            }
+        }
+
+        public bool IsConstructor
+        {
+            get
+            {
+                if (!(CurrentScope is ClassSymbol))
+                {
+                    return false;
+                }
+                if (Name != "new")
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public bool IsDestructor
+        {
+            get
+            {
+                if (!(CurrentScope is ClassSymbol))
+                {
+                    return false;
+                }
+                if (Name != "free")
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public bool IsConvertor
+        {
+            get
+            {
+                if (!(CurrentScope is ClassSymbol))
+                {
+                    return false;
+                }
+                if (Name == "from" || Name == "to")
+                {
+                    return true;
+                }
+                return false;
             }
         }
     }

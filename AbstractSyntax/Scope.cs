@@ -3,6 +3,7 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace AbstractSyntax
@@ -153,7 +154,7 @@ namespace AbstractSyntax
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }
 
-        internal bool IsAnyAttribute(AttributeType type)
+        internal bool IsAnyAttribute(params AttributeType[] type)
         {
             foreach (var v in Attribute)
             {
@@ -162,7 +163,7 @@ namespace AbstractSyntax
                 {
                     continue;
                 }
-                if (a.Attr == type)
+                if (type.Any(t => t == a.Attr))
                 {
                     return true;
                 }

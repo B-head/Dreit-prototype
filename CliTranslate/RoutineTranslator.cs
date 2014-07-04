@@ -68,21 +68,21 @@ namespace CliTranslate
             PrepareLexical();
             var retbld = Root.GetTypeBuilder(path.CallReturnType);
             var argbld = Root.GetTypeBuilders(path.ArgumentType);
-            var builder = Lexical.DefineMethod(path.Name, MethodAttributes.Public, retbld, argbld);
+            var builder = Lexical.DefineMethod(path.Name, MethodAttributes.PrivateScope | MethodAttributes.Final, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
         public override ClassTranslator CreateClass(DeclateClass path)
         {
             PrepareLexical();
-            var builder = Lexical.DefineNestedType(path.Name);
+            var builder = Lexical.DefineNestedType(path.Name, TypeAttributes.NestedPrivate);
             return new ClassTranslator(path, this, builder);
         }
 
         public override void CreateVariant(DeclateVariant path)
         {
             PrepareLexical();
-            //var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.Public);
+            //var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.PrivateScope);
             var builder = Generator.DeclareLocal(Root.GetBuilder(path.ReturnType));
             Root.RegisterBuilder(path, builder);
         }

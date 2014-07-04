@@ -130,7 +130,7 @@
     <output>10 25 25</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       trait A

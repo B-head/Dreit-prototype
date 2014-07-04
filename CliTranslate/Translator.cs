@@ -60,6 +60,88 @@ namespace CliTranslate
             get { return false; }
         }
 
+        protected TypeAttributes MakeTypeAttributes(IReadOnlyList<IScope> attr, bool isTrait = false)
+        {
+            TypeAttributes ret = isTrait ? TypeAttributes.Interface | TypeAttributes.Abstract : TypeAttributes.Class;
+            foreach (var v in attr)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                switch (a.Attr)
+                {
+                    case AttributeType.Public: ret |= TypeAttributes.NotPublic; break;
+                    case AttributeType.Protected: ret |= TypeAttributes.NotPublic; break;
+                    case AttributeType.Private: ret |= TypeAttributes.NotPublic; break;
+                }
+            }
+            return ret;
+        }
+
+        protected TypeAttributes MakeNestedTypeAttributes(IReadOnlyList<IScope> attr, bool isTrait = false)
+        {
+            TypeAttributes ret = isTrait ? TypeAttributes.Interface | TypeAttributes.Abstract : TypeAttributes.Class;
+            foreach (var v in attr)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                switch (a.Attr)
+                {
+                    case AttributeType.Public: ret |= TypeAttributes.Public | TypeAttributes.NestedAssembly; break;
+                    case AttributeType.Protected: ret |= TypeAttributes.NotPublic | TypeAttributes.NestedFamily; break;
+                    case AttributeType.Private: ret |= TypeAttributes.NotPublic | TypeAttributes.NestedPrivate; break;
+                }
+            }
+            return ret;
+        }
+
+        protected MethodAttributes MakeMethodAttributes(IReadOnlyList<IScope> attr, bool isVirtual = false)
+        {
+            MethodAttributes ret = isVirtual ? MethodAttributes.Virtual | MethodAttributes.ReuseSlot : MethodAttributes.ReuseSlot;
+            foreach (var v in attr)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                switch (a.Attr)
+                {
+                    case AttributeType.Static: ret |= MethodAttributes.Static; break;
+                    case AttributeType.Public: ret |= MethodAttributes.Assembly; break;
+                    case AttributeType.Protected: ret |= MethodAttributes.Family; break;
+                    case AttributeType.Private: ret |= MethodAttributes.Private; break;
+                }
+            }
+            return ret;
+        }
+
+        protected FieldAttributes MakeFieldAttributes(IReadOnlyList<IScope> attr)
+        {
+            FieldAttributes ret = 0;
+            foreach (var v in attr)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                switch (a.Attr)
+                {
+                    case AttributeType.Static: ret |= FieldAttributes.Static; break;
+                    case AttributeType.Public: ret |= FieldAttributes.Assembly; break;
+                    case AttributeType.Protected: ret |= FieldAttributes.Family; break;
+                    case AttributeType.Private: ret |= FieldAttributes.Private; break;
+                }
+            }
+            return ret;
+        }
+
         internal virtual TypeBuilder CreateLexical(string name)
         {
             return Parent.CreateLexical(name);

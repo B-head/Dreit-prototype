@@ -33,6 +33,11 @@ namespace AbstractSyntax.Daclate
                     var l = NameResolution("let").FindDataType();
                     _Attribute.Add(l);
                 }
+                if (!IsAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                {
+                    var p = NameResolution("public").FindDataType();
+                    _Attribute.Add(p);
+                }
                 return _Attribute;
             }
         }

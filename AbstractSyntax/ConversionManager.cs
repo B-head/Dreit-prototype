@@ -64,13 +64,12 @@ namespace AbstractSyntax
             {
                 return from == to;
             }
-            while(f != null)
+            foreach(var v in f.EnumSubType())
             {
-                if(f == to)
+                if(v == to)
                 {
                     return true;
                 }
-                f = f.InheritClass;
             }
             return false;
         }

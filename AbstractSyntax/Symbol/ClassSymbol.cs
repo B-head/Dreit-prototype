@@ -13,8 +13,8 @@ namespace AbstractSyntax.Symbol
     {
         public TypeofClassSymbol TypeofSymbol { get; private set; }
         public ThisSymbol This { get; private set; }
-        public bool IsClass { get; protected set; }
-        public bool IsTrait { get; protected set; }
+        public bool IsClass { get; set; }
+        public bool IsTrait { get; set; }
         protected List<RoutineSymbol> Initializer;
         protected List<IScope> _Attribute;
         protected List<ClassSymbol> _Inherit;
@@ -122,6 +122,18 @@ namespace AbstractSyntax.Symbol
                 else
                 {
                     return prim.BasePrimitiveType;
+                }
+            }
+        }
+
+        public IEnumerable<ClassSymbol> EnumSubType()
+        {
+            yield return this;
+            foreach(var a in Inherit)
+            {
+                foreach(var b in a.EnumSubType())
+                {
+                    yield return b;
                 }
             }
         }

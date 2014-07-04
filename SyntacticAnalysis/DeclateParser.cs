@@ -51,7 +51,8 @@ namespace SyntacticAnalysis
         {
             return cp.Begin<DeclateClass>()
                 .Transfer((s, e) => s.AttributeAccess = e, AttributeList)
-                .Text("class", "trait").Lt()
+                .Text((s, e) => { s.IsClass = true; s.IsTrait = false; }, "class")
+                .Or().Text((s, e) => { s.IsClass = false; s.IsTrait = true; }, "trait").Lt()
                 .Type((s, t) => s.Name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer((s, e) => s.DecGeneric = e, GenericList)
                 .If().Type(TokenType.Peir).Lt()

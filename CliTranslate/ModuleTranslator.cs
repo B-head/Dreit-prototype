@@ -42,7 +42,8 @@ namespace CliTranslate
         {
             var retbld = Root.GetTypeBuilder(path.CallReturnType);
             var argbld = Root.GetTypeBuilders(path.ArgumentType);
-            var builder = GlobalField.DefineMethod(path.Name, MethodAttributes.Static, retbld, argbld);
+            var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual) | MethodAttributes.Static;
+            var builder = GlobalField.DefineMethod(path.Name, attr, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
 
@@ -50,19 +51,22 @@ namespace CliTranslate
         {
             var cls = Root.GetTypeBuilder(path.InheritClass);
             var trait = Root.GetTypeBuilders(path.InheritTraits);
-            var builder = Module.DefineType(path.FullName, TypeAttributes.Class, cls, trait);
+            var attr = MakeTypeAttributes(path.Attribute, path.IsTrait);
+            var builder = Module.DefineType(path.FullName, attr, cls, trait);
             return new ClassTranslator(path, this, builder);
         }
 
         public override PrimitiveTranslator CreatePrimitive(DeclateClass path)
         {
-            var builder = Module.DefineType(path.FullName);
+            var attr = MakeTypeAttributes(path.Attribute, path.IsTrait);
+            var builder = Module.DefineType(path.FullName, attr);
             return new PrimitiveTranslator(path, this, builder);
         }
 
         public override void CreateVariant(DeclateVariant path)
         {
-            var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(path.ReturnType), FieldAttributes.Static);
+            var attr = MakeFieldAttributes(path.Attribute) | FieldAttributes.Static;
+            var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(path.ReturnType), attr);
             Root.RegisterBuilder(path, builder);
         }
     }

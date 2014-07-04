@@ -69,7 +69,8 @@ namespace CliTranslate
         {
             var retbld = Root.GetTypeBuilder(path.CallReturnType);
             var argbld = Root.GetTypeBuilders(Prim, path.ArgumentType);
-            var builder = Class.DefineMethod(path.Name, MethodAttributes.Public | MethodAttributes.Static, retbld, argbld);
+            var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual) | MethodAttributes.Static;
+            var builder = Class.DefineMethod(path.Name, attr, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }
     }

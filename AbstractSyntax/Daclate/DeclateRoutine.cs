@@ -37,6 +37,11 @@ namespace AbstractSyntax.Daclate
                     var f = NameResolution("function").FindDataType();
                     _Attribute.Add(f);
                 }
+                if(!IsAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                {
+                    var p = NameResolution("public").FindDataType();
+                    _Attribute.Add(p);
+                }
                 return _Attribute;
             }
         }
@@ -101,38 +106,6 @@ namespace AbstractSyntax.Daclate
                     }
                 }
                 return _ReturnType;
-            }
-        }
-
-        public bool IsConstructor
-        {
-            get
-            {
-                if(!(CurrentScope is DeclateClass))
-                {
-                    return false;
-                }
-                if(Name != "new")
-                {
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        public bool IsDestructor
-        {
-            get
-            {
-                if (!(CurrentScope is DeclateClass))
-                {
-                    return false;
-                }
-                if (Name != "free")
-                {
-                    return false;
-                }
-                return true;
             }
         }
 

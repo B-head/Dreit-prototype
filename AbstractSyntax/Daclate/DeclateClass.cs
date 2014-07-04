@@ -21,7 +21,6 @@ namespace AbstractSyntax.Daclate
         public DeclateClass()
         {
             Default = new DefaultSymbol(this);
-            IsClass = true;
         }
 
         public override IReadOnlyList<IScope> Attribute
@@ -36,6 +35,11 @@ namespace AbstractSyntax.Daclate
                 foreach (var v in AttributeAccess)
                 {
                     _Attribute.Add(v.Reference.FindDataType());
+                }
+                if (!IsAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                {
+                    var p = NameResolution("public").FindDataType();
+                    _Attribute.Add(p);
                 }
                 return _Attribute;
             }
@@ -101,12 +105,12 @@ namespace AbstractSyntax.Daclate
                 {
                     continue;
                 }
-                if(r.Name == "new")
+                if(r.IsConstructor)
                 {
                     Initializer.Add(r);
                     newFlag = true;
                 }
-                else if (r.Name == "from") //todo 1引数で使える型変換関数の生成が必要。
+                else if (r.IsConvertor) //todo 1引数で使える型変換関数の生成が必要。
                 {
                     Root.Conversion.Append(r);
                     Initializer.Add(r);
