@@ -98,10 +98,10 @@ namespace SyntacticAnalysis
 
         private static Element ParenthesisCallRoutine(Element current, ChainParser cp)
         {
-            var ret = cp.Begin<CallRoutine>()
-                .Self(s => s.CallAccess = current)
+            var ret = cp.Begin<Caller>()
+                .Self(s => s.Access = current)
                 .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, NonTupleExpression))
+                .Transfer((s, e) => s.Arguments = e, c => ParseTuple(c, NonTupleExpression))
                 .Type(TokenType.RightParenthesis).Lt()
                 .End();
             return ret == null ? BracketCallRoutine(current, cp) : Postfix(ret, cp);
@@ -109,10 +109,10 @@ namespace SyntacticAnalysis
 
         private static Element BracketCallRoutine(Element current, ChainParser cp)
         {
-            var ret = cp.Begin<CallRoutine>()
-                .Self(s => s.CallAccess = current)
+            var ret = cp.Begin<Caller>()
+                .Self(s => s.Access = current)
                 .Type(TokenType.LeftBracket).Lt()
-                .Transfer((s, e) => s.CallArguments = e, c => ParseTuple(c, NonTupleExpression))
+                .Transfer((s, e) => s.Arguments = e, c => ParseTuple(c, NonTupleExpression))
                 .Type(TokenType.RightBracket).Lt()
                 .End();
             return ret == null ? current : Postfix(ret, cp);

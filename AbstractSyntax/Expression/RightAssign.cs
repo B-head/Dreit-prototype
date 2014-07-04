@@ -10,32 +10,36 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class RightAssign : Caller, IDyadicExpression
     {
-        public Element Left { get; set; }
-        public Element Right { get; set; }
         public TokenType Operator { get; set; }
-        private TupleList _Arguments;
 
-        public override Element Access
-        {
-            get { return Right; }
-        }
-
-        public override TupleList Arguments
+        public override Element Right
         {
             get
             {
-                if(_Arguments == null)
+                return Access;
+            }
+            set
+            {
+                Access = value;
+            }
+        }
+
+        public override Element Left
+        {
+            get
+            {
+                return (Element)Arguments[0];
+            }
+            set
+            {
+                if (value is TupleList)
                 {
-                    if (Left is TupleList)
-                    {
-                        _Arguments = (TupleList)Left;
-                    }
-                    else
-                    {
-                        _Arguments = new TupleList(Left);
-                    }
+                    Arguments = (TupleList)value;
                 }
-                return _Arguments;
+                else
+                {
+                    Arguments = new TupleList(value);
+                }
             }
         }
 
@@ -44,37 +48,9 @@ namespace AbstractSyntax.Expression
             get { return Operator ^ TokenType.RightAssign; }
         }
 
-        public override int Count
-        {
-            get { return 2; }
-        }
-
-        public override IElement this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Left;
-                    case 1: return Right;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
-        }
-
         protected override string ElementInfo
         {
             get { return Operator.ToString(); }
-        }
-
-        public override bool HasCallTarget(IElement element)
-        {
-            return Right == element;
-        }
-
-        public override IDataType CallType
-        {
-            get { return Left.ReturnType; }
         }
     }
 }

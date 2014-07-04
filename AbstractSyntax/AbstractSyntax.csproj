@@ -62,7 +62,6 @@
     <Compile Include="Literal\StringLiteral.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
-    <Compile Include="Expression\CallRoutine.cs" />
     <Compile Include="Daclate\DeclateArgument.cs" />
     <Compile Include="Daclate\DeclateClass.cs" />
     <Compile Include="Daclate\DeclateEnum.cs" />

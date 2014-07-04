@@ -86,14 +86,6 @@
 
   <case ignore="true">
     <code>
-      var a(10):Int32
-      echo a
-    </code>
-    <output>10</output>
-  </case>
-
-  <case ignore="true">
-    <code>
       var a := a + 10
       echo a
     </code>

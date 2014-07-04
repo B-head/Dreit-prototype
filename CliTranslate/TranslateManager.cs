@@ -409,8 +409,8 @@ namespace CliTranslate
                 {
                     trans.GenerateControl(OpCodes.Dup);
                 }
-                Translate((dynamic)element.Access, trans);
-                Translate((dynamic)element.Arguments[0], trans);
+                Translate((dynamic)element.Left, trans);
+                Translate((dynamic)element.Right, trans);
                 trans.GenerateCall(element.CalculateCallScope);
                 CallTranslate((dynamic)element.CallScope, new TupleList(new TupleList()), trans); //todo CallTlanslateにArgumentsを渡さなくても済むようにする。
             }

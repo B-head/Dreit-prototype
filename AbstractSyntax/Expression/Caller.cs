@@ -10,17 +10,55 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public abstract class Caller : Element
+    public class Caller : Element
     {
+        public Element Access { get; set; }
+        public TupleList Arguments { get; set; }
         private TypeMatch? _Match;
         private Scope _CallScope;
         private Scope _CalculateCallScope;
 
-        public abstract Element Access { get; }
-        public abstract TupleList Arguments { get; }
-        public abstract TokenType CalculateOperator { get; }
-        public abstract bool HasCallTarget(IElement element);
-        public abstract IDataType CallType { get; } //todo Tuple型も返せるようにする。
+        public override int Count
+        {
+            get { return 2; }
+        }
+
+        public override IElement this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0: return Access;
+                    case 1: return Arguments;
+                    default: throw new ArgumentOutOfRangeException("index");
+                }
+            }
+        }
+
+        public virtual Element Left
+        {
+            get
+            {
+                return Access;
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public virtual Element Right
+        {
+            get
+            {
+                return (Element)Arguments[0];
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
 
         public TypeMatch Match
         {
@@ -95,6 +133,28 @@ namespace AbstractSyntax.Expression
                     }
                 }
                 return _CalculateCallScope;
+            }
+        }
+
+        public virtual TokenType CalculateOperator
+        {
+            get { return TokenType.Unknoun; }
+        }
+
+        public bool HasCallTarget(IElement element)
+        {
+            return Access == element;
+        }
+
+        public IDataType CallType //todo Tuple型も返せるようにする。
+        {
+            get
+            {
+                if (Arguments.GetDataTypes().Count != 1)
+                {
+                    return Root.Unknown;
+                }
+                return Arguments.GetDataTypes()[0];
             }
         }
 

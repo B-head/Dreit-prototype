@@ -41,20 +41,20 @@
 
   <case>
     <code>
-      var a := 3
-      a -= 4
+      var a := 5
+      a -= 3
       echo a
     </code>
-    <output>-1</output>
+    <output>2</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
-      var a := 3
-      4 =- a
+      var a := 5
+      3 =- a
       echo a
     </code>
-    <output>1</output>
+    <output>-2</output>
   </case>
 
   <case>
