@@ -401,7 +401,7 @@ namespace CliTranslate
             CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
         }
 
-        private void Translate(Caller element, Translator trans)
+        private void Translate(CallRoutine element, Translator trans)
         {
             if (element.IsCalculate)
             {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class Caller : Element
+    public class CallRoutine : Element
     {
         public Element Access { get; private set; }
         public TupleList Arguments { get; private set; }
@@ -18,14 +18,14 @@ namespace AbstractSyntax.Expression
         private Scope _CallScope;
         private Scope _CalculateCallScope;
 
-        public Caller(TextPosition tp, Element acs, TupleList args)
+        public CallRoutine(TextPosition tp, Element acs, TupleList args)
             : base(tp)
         {
             Access = acs;
             Arguments = args;
         }
 
-        protected Caller(TextPosition tp, Element acs, Element arg)
+        protected CallRoutine(TextPosition tp, Element acs, Element arg)
             :base(tp)
         {
             Access = acs;

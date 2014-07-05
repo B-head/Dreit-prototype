@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class LeftAssign : Caller
+    public class LeftAssign : CallRoutine
     {
         public TokenType Operator { get; set; }
 

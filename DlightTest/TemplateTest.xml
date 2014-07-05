@@ -3,10 +3,10 @@
   <case>
     <code>
       <![CDATA[
-      routine foo!T(a:T):T {
+      routine foo!(T)(a:T):T {
         return a * a
       }
-      echo foo!Int32(6)
+      echo foo!(Int32)(6)
       ]]>
     </code>
     <output>36</output>
@@ -27,7 +27,7 @@
   <case>
     <code>
       <![CDATA[
-      routine foo!T(v:T):void {
+      routine foo!(T)(v:T):void {
         var a:T := v
         var b:T := v
         loop i < 10 on var i := 0 by i += 1 {
@@ -89,7 +89,7 @@
   <case>
     <code>
       <![CDATA[
-      class O!T {
+      class O!(T) {
         var v:T
       
         routine foo(a:T):T {
@@ -128,7 +128,7 @@
   <case>
     <code>
       <![CDATA[
-      class O!T {
+      class O!(T) {
         var v:T
         
         routine new(v:T) {
@@ -149,7 +149,7 @@
   <case>
     <code>
       <![CDATA[
-      class O!T {
+      class O!(T) {
         var v:T
         
         routine new(v:T) {

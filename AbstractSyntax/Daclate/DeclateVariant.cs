@@ -59,7 +59,7 @@ namespace AbstractSyntax.Daclate
                 {
                     return _ReturnType;
                 }
-                var caller = Parent as Caller;
+                var caller = Parent as CallRoutine;
                 if (ExplicitType != null)
                 {
                     _ReturnType = ExplicitType.Reference.FindDataType();

@@ -95,28 +95,48 @@ namespace SyntacticAnalysis
                 .Type(TokenType.Access).Lt()
                 .Take(t => member = t.Text).Lt()
                 .End(tp => new MemberAccess(tp, current, member));
-            return ret == null ? ParenthesisCallRoutine(current, cp) : Postfix(ret, cp);
+            return ret == null ? TemplateInstance(current, cp) : Postfix(ret, cp);
         }
 
-        private static Element ParenthesisCallRoutine(Element current, SlimChainParser cp)
+        private static Element TemplateInstance(Element current, SlimChainParser cp)
         {
             TupleList args = null;
             var ret = cp.Begin
-                .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
-                .Type(TokenType.RightParenthesis).Lt()
-                .End(tp => new Caller(tp, current, args));
-            return ret == null ? BracketCallRoutine(current, cp) : Postfix(ret, cp);
+                .Type(TokenType.Not)
+                .If(icp => icp.Type(TokenType.LeftParenthesis).Lt())
+                .Than(icp =>
+                {
+                    icp.Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
+                    .Type(TokenType.RightParenthesis).Lt();
+                })
+                .ElseIf(icp => icp.Type(TokenType.LeftBracket).Lt())
+                .Than(icp =>
+                {
+                    icp.Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
+                    .Type(TokenType.RightBracket).Lt();
+                })
+                .Else(icp => icp.Transfer(e => args = new TupleList(e), IdentifierAccess))
+                .End(tp => new TemplateInstance(tp, current, args));
+            return ret == null ? CallRoutine(current, cp) : Postfix(ret, cp);
         }
 
-        private static Element BracketCallRoutine(Element current, SlimChainParser cp)
+        private static Element CallRoutine(Element current, SlimChainParser cp)
         {
             TupleList args = null;
             var ret = cp.Begin
-                .Type(TokenType.LeftBracket).Lt()
-                .Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
-                .Type(TokenType.RightBracket).Lt()
-                .End(tp => new Caller(tp, current, args));
+                .If(icp => icp.Type(TokenType.LeftParenthesis).Lt())
+                .Than(icp => 
+                {
+                    icp.Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
+                    .Type(TokenType.RightParenthesis).Lt();
+                })
+                .Else(icp => 
+                {
+                    icp.Type(TokenType.LeftBracket).Lt()
+                    .Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
+                    .Type(TokenType.RightBracket).Lt();
+                })
+                .End(tp => new CallRoutine(tp, current, args));
             return ret == null ? current : Postfix(ret, cp);
         }
     }
