@@ -12,6 +12,12 @@ namespace AbstractSyntax.Symbol
         protected List<IScope> _Attribute;
         protected IDataType _ReturnType;
 
+        protected VariantSymbol(TextPosition tp)
+            : base(tp)
+        {
+
+        }
+
         public override IReadOnlyList<IScope> Attribute
         {
             get { return _Attribute; }

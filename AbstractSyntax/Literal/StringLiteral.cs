@@ -12,13 +12,8 @@ namespace AbstractSyntax.Literal
         private List<Element> _Texts;
         private Lazy<IDataType> LazyReturnType;
 
-        public StringLiteral()
-        {
-            _Texts = new List<Element>();
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
-        }
-
-        public StringLiteral(List<Element> texts)
+        public StringLiteral(TextPosition tp, List<Element> texts)
+            :base(tp)
         {
             _Texts = texts;
             LazyReturnType = new Lazy<IDataType>(InitReturnType);

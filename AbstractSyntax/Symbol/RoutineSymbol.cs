@@ -10,10 +10,24 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class RoutineSymbol : Scope
     {
-        public TokenType Operator { get; set; }
+        public TokenType Operator { get; private set; }
+        public bool IsFunction { get; private set; }
         protected List<IScope> _Attribute;
         protected List<IDataType> _ArgumentType;
         protected IDataType _ReturnType;
+
+        protected RoutineSymbol()
+        {
+
+        }
+
+        protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc)
+            : base(tp)
+        {
+            Name = name;
+            Operator = op;
+            IsFunction = isFunc;
+        }
 
         public override IReadOnlyList<IScope> Attribute
         {

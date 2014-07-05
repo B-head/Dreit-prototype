@@ -10,11 +10,13 @@ namespace AbstractSyntax.Literal
     [Serializable]
     public class PlainText : Element
     {
-        public string Value { get; set; }
+        public string Value { get; private set; }
         private Lazy<IDataType> LazyReturnType;
 
-        public PlainText()
+        public PlainText(TextPosition tp, string value)
+            :base(tp)
         {
+            Value = value;
             LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 

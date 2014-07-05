@@ -9,5 +9,10 @@ namespace AbstractSyntax.Directive
     [Serializable]
     public class BreakDirective : Element
     {
+        public BreakDirective(TextPosition tp)
+            :base(tp)
+        {
+
+        }
     }
 }

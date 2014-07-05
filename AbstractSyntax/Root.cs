@@ -17,7 +17,7 @@ namespace AbstractSyntax
         internal UnknownSymbol Unknown { get; private set; }
         internal OverLoad UndefinedOverLord { get; private set; }
         internal ConversionManager Conversion { get; set; }
-        internal Dictionary<TokenType, ConversionManager> OpManager { get; set; }
+        internal Dictionary<TokenType, ConversionManager> OpManager { get; private set; }
         public CompileMessageManager MessageManager { get; private set; }
 
         public Root()

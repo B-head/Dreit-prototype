@@ -32,7 +32,7 @@ namespace SyntacticAnalysis
                     )
                     .Ignore(TokenType.EndExpression, TokenType.LineTerminator);
                 })
-                .End(tp => new DirectiveList(child) { Position = tp });
+                .End(tp => new DirectiveList(tp, child, false));
             if(result == null)
             {
                 throw new InvalidOperationException();
@@ -54,7 +54,7 @@ namespace SyntacticAnalysis
                     )
                     .Ignore(TokenType.EndExpression, TokenType.LineTerminator);
                 })
-                .End(tp => new DirectiveList(child) { Position = tp });
+                .End(tp => new DirectiveList(tp, child, false));
             if (result == null)
             {
                 result = new DirectiveList();
@@ -76,7 +76,7 @@ namespace SyntacticAnalysis
                     ).Lt();
                 })
                 .Transfer(e => child.Add(e), Directive)
-                .End(tp => new DirectiveList(child) { Position = tp, IsInline = true });
+                .End(tp => new DirectiveList(tp, child, true));
         }
 
         private static DirectiveList Block(SlimChainParser cp, bool separator)
@@ -100,7 +100,7 @@ namespace SyntacticAnalysis
                     .Transfer(e => child.Add(e), IdentifierAccess)
                     .Type(TokenType.List).Lt();
                 })
-                .End(tp => new AttributeZoneDirective(child) { Position = tp });
+                .End(tp => new AttributeZoneDirective(tp, child));
         }
 
         private static EchoDirective Echo(SlimChainParser cp)
@@ -109,7 +109,7 @@ namespace SyntacticAnalysis
             return cp.Begin
                 .Text("echo").Lt()
                 .Opt.Transfer(e => exp = e, Directive)
-                .End(tp => new EchoDirective { Exp = exp, Position = tp });
+                .End(tp => new EchoDirective(tp, exp));
         }
 
         private static ReturnDirective Return(SlimChainParser cp)
@@ -117,8 +117,8 @@ namespace SyntacticAnalysis
             Element exp = null;
             return cp.Begin
                 .Text("return").Lt()
-                .Transfer(e => exp = e, Directive)
-                .End(tp => new ReturnDirective { Exp = exp, Position = tp });
+                .Opt.Transfer(e => exp = e, Directive)
+                .End(tp => new ReturnDirective(tp,exp));
         }
 
         private static AliasDirective Alias(SlimChainParser cp)
@@ -127,23 +127,23 @@ namespace SyntacticAnalysis
             IdentifierAccess to = null;
             return cp.Begin
                 .Text("alias").Lt()
-                .Transfer(e => from = e, IdentifierAccess)
-                .Transfer(e => to = e, IdentifierAccess)
-                .End(tp => new AliasDirective { From = from, To = to, Position = tp });
+                .Opt.Transfer(e => from = e, IdentifierAccess)
+                .Opt.Transfer(e => to = e, IdentifierAccess)
+                .End(tp => new AliasDirective(tp, from, to));
         }
 
         private static BreakDirective Break(SlimChainParser cp)
         {
             return cp.Begin
                 .Text("break").Lt()
-                .End(tp => new BreakDirective { Position = tp });
+                .End(tp => new BreakDirective(tp));
         }
 
         private static ContinueDirective Continue(SlimChainParser cp)
         {
             return cp.Begin
                 .Text("continue").Lt()
-                .End(tp => new ContinueDirective { Position = tp });
+                .End(tp => new ContinueDirective(tp));
         }
     }
 }

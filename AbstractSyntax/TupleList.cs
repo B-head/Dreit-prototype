@@ -22,7 +22,8 @@ namespace AbstractSyntax
             Append(append);
         }
 
-        public TupleList(List<Element> child)
+        public TupleList(TextPosition tp, List<Element> child)
+            :base(tp)
         {
             Child = child;
         }

@@ -136,7 +136,7 @@ namespace CliTranslate
             {
                 exp.Append(ImportType(n));
             }
-            DeclateClass result = new DeclateClass { Name = type.GetPureName(), DecGeneric = generic, InheritAccess = inherit, Block = exp };
+            DeclateClass result = null;//new DeclateClass { Name = type.GetPureName(), DecGeneric = generic, InheritAccess = inherit, Block = exp };
             AppendPeir(result, type);
             foreach (var c in ctor)
             {
@@ -158,7 +158,7 @@ namespace CliTranslate
 
         private DeclateGeneric ConvertGeneric(Type generic)
         {
-            return new DeclateGeneric { Name = generic.GetPureName() };//型制約を扱えるようにする必要あり。
+            return null;//new DeclateGeneric { Name = generic.GetPureName() };//型制約を扱えるようにする必要あり。
         }
 
         private TupleList CreateInheritList(List<Type> inherit)
@@ -184,11 +184,11 @@ namespace CliTranslate
                 var right = pureFullName[pureFullName.Count - 1];
                 pureFullName.RemoveAt(pureFullName.Count - 1);
                 var left = CreateAccess(pureFullName);
-                return new MemberAccess { Access = left, Member = right };
+                return null;//new MemberAccess { Access = left, Member = right };
             }
             else if (pureFullName.Count > 0)
             {
-                return new IdentifierAccess { Value = pureFullName[0] };
+                return null;//new IdentifierAccess { Value = pureFullName[0] };
             }
             else
             {
@@ -200,23 +200,23 @@ namespace CliTranslate
         {
             var arguments = CreateArgumentList(ctor.GetArgumentList());
             var expl = CreateAccess(ctor.DeclaringType);
-            DeclateRoutine result = new DeclateRoutine { Name = ctor.Name, DecArguments = arguments, ExplicitType = expl };
+            DeclateRoutine result = null;//new DeclateRoutine { Name = ctor.Name, DecArguments = arguments, ExplicitType = expl };
             AppendPeir(result, ctor);
             return result;
         }
 
         private Element ConvertEvent(EventInfo eve)
         {
-            var ident = new IdentifierAccess { Value = eve.Name };
+            IdentifierAccess ident = null;// new IdentifierAccess { Value = eve.Name };
             var expl = CreateAccess(eve.DeclaringType) as IdentifierAccess;
-            DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitType = expl };
+            DeclateVariant result = null;//new DeclateVariant { Ident = ident, ExplicitType = expl };
             AppendPeir(result, eve);
             return result;
         }
 
         private DeclateEnum ImportEnum(Type enumType)
         {
-            var result = new DeclateEnum { Name = enumType.GetPureName() }; //todo enum型を扱えるようにする。
+            DeclateEnum result = null;//new DeclateEnum { Name = enumType.GetPureName() }; //todo enum型を扱えるようにする。
             AppendPeir(result, enumType);
             return result;
         }
@@ -226,7 +226,7 @@ namespace CliTranslate
             var generic = CreateGenericList(method.GetGenericList());
             var arguments = CreateArgumentList(method.GetArgumentList());
             var expl = CreateAccess(method.ReturnType);
-            DeclateRoutine result = new DeclateRoutine { Name = method.GetPureName(), DecGeneric = generic, DecArguments = arguments, ExplicitType = expl };
+            DeclateRoutine result = null;//new DeclateRoutine { Name = method.GetPureName(), DecGeneric = generic, DecArguments = arguments, ExplicitType = expl };
             AppendPeir(result, method);
             return result;
         }
@@ -244,18 +244,18 @@ namespace CliTranslate
 
         private DeclateArgument ConvertArgument(ParameterInfo arguments)
         {
-            var ident = new IdentifierAccess { Value = arguments.Name };
+            IdentifierAccess ident = null;// new IdentifierAccess() { Value = arguments.Name };
             var expl = CreateAccess(arguments.ParameterType) as IdentifierAccess;
-            DeclateArgument result = new DeclateArgument { Ident = ident, ExplicitType = expl };
+            DeclateArgument result = null;// new DeclateArgument { Ident = ident, ExplicitType = expl };
             AppendPeir(result, arguments);
             return result;
         }
 
         private DeclateVariant ImportField(FieldInfo field)
         {
-            var ident = new IdentifierAccess { Value = field.Name };
+            IdentifierAccess ident = null;//new IdentifierAccess { Value = field.Name };
             var expl = CreateAccess(field.FieldType) as IdentifierAccess;
-            DeclateVariant result = new DeclateVariant { Ident = ident, ExplicitType = expl };
+            DeclateVariant result = null;//new DeclateVariant { Ident = ident, ExplicitType = expl };
             AppendPeir(result, field);
             return result;
         }
@@ -283,7 +283,7 @@ namespace CliTranslate
                 {
                     return result;
                 }
-                NameSpace temp = new NameSpace { Name = name };
+                NameSpace temp = null;// new NameSpace { Name = name };
                 NameSpace.Append(temp);
                 result = new ImportNameSpace { NameSpace = temp };
                 Child.Add(name, result);

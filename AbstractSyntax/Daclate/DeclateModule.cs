@@ -8,12 +8,15 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateModule : NameSpace
     {
-        public string SourceText { get; set; }
-        public IReadOnlyList<Token> ErrorToken { get; set; }
+        public string SourceText { get; private set; }
+        public IReadOnlyList<Token> ErrorToken { get; private set; }
 
-        public DeclateModule()
+        public DeclateModule(TextPosition tp, DirectiveList exp, string name, string source, IReadOnlyList<Token> error)
+            :base(tp, exp)
         {
-            ErrorToken = new List<Token>();
+            Name = name;
+            SourceText = source;
+            ErrorToken = error;
         }
 
         internal override void CheckSemantic()

@@ -12,6 +12,12 @@ namespace AbstractSyntax.Expression
     {
         private Scope _CallScope;
 
+        public Condition(TextPosition tp, TokenType op, Element left, Element right)
+            :base(tp, op, left, right)
+        {
+
+        }
+
         public Scope CallScope
         {
             get
@@ -26,7 +32,7 @@ namespace AbstractSyntax.Expression
 
         public override IDataType ReturnType
         {
-            get { return CallScope.ReturnType; }
+            get { return CallScope.CallReturnType; }
         }
 
         public bool IsConnection

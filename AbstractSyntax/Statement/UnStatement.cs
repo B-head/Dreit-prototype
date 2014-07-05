@@ -9,7 +9,13 @@ namespace AbstractSyntax.Statement
     [Serializable]
     public class UnStatement : Element
     {
-        public IElement Exp { get; set; }
+        public IElement Exp { get; private set; }
+
+        public UnStatement(TextPosition tp, Element exp)
+            :base(tp)
+        {
+            Exp = exp;
+        }
 
         public override int Count
         {

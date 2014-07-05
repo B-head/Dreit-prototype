@@ -8,11 +8,17 @@ namespace AbstractSyntax
     [Serializable]
     public class NameSpace : Scope
     {
-        public DirectiveList ExpList { get; set; }
+        public DirectiveList ExpList { get; private set; }
 
         public NameSpace()
         {
             ExpList = new DirectiveList();
+        }
+
+        public NameSpace(TextPosition tp, DirectiveList exp)
+            :base(tp)
+        {
+            ExpList = exp;
         }
 
         public void Append(Element value)

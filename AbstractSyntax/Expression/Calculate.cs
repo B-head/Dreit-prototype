@@ -11,6 +11,12 @@ namespace AbstractSyntax.Expression
     {
         private Scope _CallScope;
 
+        public Calculate(TextPosition tp, TokenType op, Element left, Element right)
+            :base(tp, op, left, right)
+        {
+
+        }
+
         public Scope CallScope
         {
             get

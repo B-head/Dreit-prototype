@@ -10,10 +10,19 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateVariant : VariantSymbol
     {
-        public TupleList AttributeAccess { get; set; }
-        public IdentifierAccess Ident { get; set; }
-        public IdentifierAccess ExplicitType { get; set; }
-        public bool IsLet { get; set; }
+        public TupleList AttributeAccess { get; private set; }
+        public IdentifierAccess Ident { get; private set; }
+        public IdentifierAccess ExplicitType { get; private set; }
+        public bool IsLet { get; private set; }
+
+        public DeclateVariant(TextPosition tp, TupleList attr, IdentifierAccess ident, IdentifierAccess expl, bool isLet)
+            :base(tp)
+        {
+            AttributeAccess = attr;
+            Ident = ident;
+            ExplicitType = expl;
+            IsLet = isLet;
+        }
 
         public override IReadOnlyList<IScope> Attribute
         {

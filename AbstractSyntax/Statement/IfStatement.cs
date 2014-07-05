@@ -10,13 +10,17 @@ namespace AbstractSyntax.Statement
     [Serializable]
     public class IfStatement : Scope
     {
-        public Element Condition { get; set; }
-        public DirectiveList Than { get; set; }
-        public DirectiveList Else { get; set; }
+        public Element Condition { get; private set; }
+        public DirectiveList Than { get; private set; }
+        public DirectiveList Else { get; private set; }
         private Lazy<IDataType> LazyReturnType;
 
-        public IfStatement()
+        public IfStatement(TextPosition tp, Element cond, DirectiveList than, DirectiveList els)
+            :base(tp)
         {
+            Condition = cond;
+            Than = than;
+            Else = els;
             LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 

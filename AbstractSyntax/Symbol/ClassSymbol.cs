@@ -12,16 +12,30 @@ namespace AbstractSyntax.Symbol
     public class ClassSymbol : Scope, IDataType
     {
         public TypeofClassSymbol TypeofSymbol { get; private set; }
+        public DefaultSymbol Default { get; private set; }
         public ThisSymbol This { get; private set; }
-        public bool IsClass { get; set; }
-        public bool IsTrait { get; set; }
+        public bool IsClass { get; private set; }
+        public bool IsTrait { get; private set; }
         protected List<RoutineSymbol> Initializer;
         protected List<IScope> _Attribute;
         protected List<ClassSymbol> _Inherit;
 
-        public ClassSymbol()
+        protected ClassSymbol()
         {
             TypeofSymbol = new TypeofClassSymbol(this);
+            Default = new DefaultSymbol(this);
+            This = new ThisSymbol(this);
+            Initializer = new List<RoutineSymbol>();
+        }
+
+        protected ClassSymbol(TextPosition tp, string name, bool isTrait)
+            :base(tp)
+        {
+            Name = name;
+            IsClass = !isTrait;
+            IsTrait = isTrait;
+            TypeofSymbol = new TypeofClassSymbol(this);
+            Default = new DefaultSymbol(this);
             This = new ThisSymbol(this);
             Initializer = new List<RoutineSymbol>();
         }

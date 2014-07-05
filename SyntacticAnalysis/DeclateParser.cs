@@ -30,7 +30,7 @@ namespace SyntacticAnalysis
                 .Transfer(e => ident = e, IdentifierAccess)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, IdentifierAccess))
-                .End(tp => new DeclateVariant { AttributeAccess = attr, IsLet = isLet, Ident = ident, ExplicitType = expl, Position = tp });
+                .End(tp => new DeclateVariant(tp, attr, ident, expl, isLet));
         }
 
         private static DeclateRoutine DeclateRoutine(SlimChainParser cp)
@@ -54,7 +54,7 @@ namespace SyntacticAnalysis
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, NonTupleExpression))
                 .Transfer(e => block = e, icp => Block(icp, true))
-                .End(tp => new DeclateRoutine { AttributeAccess = attr, IsFunction = isFunc, Name = name, DecGeneric = generic, DecArguments = args, ExplicitType = expl, Block = block, Position = tp });
+                .End(tp => new DeclateRoutine(tp, name, TokenType.Unknoun, isFunc, attr, generic, args, expl, block));
         }
 
         private static DeclateRoutine DeclateOperator(SlimChainParser cp)
@@ -75,13 +75,13 @@ namespace SyntacticAnalysis
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, NonTupleExpression))
                 .Transfer(e => block = e, icp => Block(icp, true))
-                .End(tp => new DeclateRoutine { AttributeAccess = attr, Operator = op, Name = name, DecGeneric = generic, DecArguments = args, ExplicitType = expl, Block = block, Position = tp });
+                .End(tp => new DeclateRoutine(tp, name, op, false, attr, generic, args, expl, block));
         }
 
         private static DeclateClass DeclateClass(SlimChainParser cp)
         {
             TupleList attr = null;
-            var isClass = false;
+            var isTrait = false;
             var name = string.Empty;
             TupleList generic = null;
             TupleList inherit = new TupleList();
@@ -89,15 +89,15 @@ namespace SyntacticAnalysis
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Any(
-                    icp => icp.Text(e => isClass = true, "class"),
-                    icp => icp.Text(e => isClass = false, "trait")
+                    icp => icp.Text(e => isTrait = false, "class"),
+                    icp => icp.Text(e => isTrait = true, "trait")
                 ).Lt()
                 .Type(t => name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer(e => generic = e, GenericList)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, IdentifierAccess)))
                 .Transfer(e => block = e, icp => Block(icp, true))
-                .End(tp => new DeclateClass { AttributeAccess = attr, IsClass = isClass, IsTrait = !isClass, Name = name, DecGeneric = generic, InheritAccess = inherit, Block = block, Position = tp });
+                .End(tp => new DeclateClass(tp, name, isTrait, attr, generic, inherit, block));
         }
 
         private static TupleList AttributeList(SlimChainParser cp)
@@ -114,7 +114,7 @@ namespace SyntacticAnalysis
                     .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), IdentifierAccess); })
                     .Else(iicp => { atFlag = false; iicp.Transfer(e => child.Add(e), iiicp => IdentifierAccess(iiicp, attribute)); });
                 })
-                .End(tp => new TupleList(child) { Position =tp });
+                .End(tp => new TupleList(tp, child));
             return ret ?? new TupleList();
         }
 
@@ -131,7 +131,7 @@ namespace SyntacticAnalysis
                     .Type(TokenType.List).Lt();
                 })
                 .Type(TokenType.RightParenthesis).Lt()
-                .End(tp => new TupleList(child) { Position = tp });
+                .End(tp => new TupleList(tp, child));
             return ret ?? new TupleList();
         }
 
@@ -143,7 +143,7 @@ namespace SyntacticAnalysis
                 .Type(t => name = t.Text, TokenType.LetterStartString)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => special = e, NonTupleExpression))
-                .End(tp => new DeclateGeneric { Name = name, SpecialTypeAccess = special, Position = tp });
+                .End(tp => new DeclateGeneric(tp, name, special));
         }
 
         private static TupleList ArgumentList(SlimChainParser cp)
@@ -158,7 +158,7 @@ namespace SyntacticAnalysis
                     .Type(TokenType.List).Lt();
                 })
                 .Type(TokenType.RightParenthesis).Lt()
-                .End(tp => new TupleList(child) { Position = tp });
+                .End(tp => new TupleList(tp, child));
             return ret ?? new TupleList();
         }
 
@@ -173,7 +173,7 @@ namespace SyntacticAnalysis
                 .Transfer(e => ident = e, IdentifierAccess)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, IdentifierAccess))
-                .End(tp => new DeclateArgument { AttributeAccess = attr, Ident = ident, ExplicitType = expl, Position = tp });
+                .End(tp => new DeclateArgument(tp, attr, ident, expl));
         }
     }
 }
