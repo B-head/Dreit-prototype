@@ -11,7 +11,7 @@ namespace AbstractSyntax
     public class Root : NameSpace
     {
         private DirectiveList BuiltInList;
-        private IDataType _ObjectSymbol;
+        private Scope _ObjectSymbol;
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
@@ -24,11 +24,11 @@ namespace AbstractSyntax
         {
             Name = "global";
             BuiltInList = new DirectiveList();
-            Void = new VoidSymbol() { Name = "void" };
+            Void = new VoidSymbol();
             Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
-            UndefinedOverLord = new OverLoad(Unknown, true);
-            Conversion = new ConversionManager(Void, Error, Unknown);
+            UndefinedOverLord = new OverLoad(this, true);
+            Conversion = new ConversionManager(this);
             MessageManager = new CompileMessageManager();
             CreatePragma();
             CreateBuiltInIdentifier();
@@ -40,7 +40,7 @@ namespace AbstractSyntax
             get { return 2; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {
@@ -59,7 +59,7 @@ namespace AbstractSyntax
             CheckSemantic();
         }
 
-        public IDataType ObjectSymbol
+        public Scope ObjectSymbol
         {
             get
             { 
@@ -72,39 +72,33 @@ namespace AbstractSyntax
             }
         }
 
-        private void AppendPragma(string name, Scope pragma)
-        {
-            pragma.Name = "@@" + name;
-            BuiltInList.Append(pragma);
-        }
-
         private void CreatePragma()
         {
-            AppendPragma("cast", new CastPragma());
-            AppendPragma("add", new CalculatePragma(CalculatePragmaType.Add));
-            AppendPragma("sub", new CalculatePragma(CalculatePragmaType.Sub));
-            AppendPragma("mul", new CalculatePragma(CalculatePragmaType.Mul));
-            AppendPragma("div", new CalculatePragma(CalculatePragmaType.Div));
-            AppendPragma("mod", new CalculatePragma(CalculatePragmaType.Mod));
-            AppendPragma("eq", new CalculatePragma(CalculatePragmaType.EQ));
-            AppendPragma("ne", new CalculatePragma(CalculatePragmaType.NE));
-            AppendPragma("lt", new CalculatePragma(CalculatePragmaType.LT));
-            AppendPragma("le", new CalculatePragma(CalculatePragmaType.LE));
-            AppendPragma("gt", new CalculatePragma(CalculatePragmaType.GT));
-            AppendPragma("ge", new CalculatePragma(CalculatePragmaType.GE));
-            AppendPragma("Object", new PrimitivePragma(PrimitivePragmaType.Object));
-            AppendPragma("String", new PrimitivePragma(PrimitivePragmaType.String));
-            AppendPragma("Boolean", new PrimitivePragma(PrimitivePragmaType.Boolean));
-            AppendPragma("Integer8", new PrimitivePragma(PrimitivePragmaType.Integer8));
-            AppendPragma("Integer16", new PrimitivePragma(PrimitivePragmaType.Integer16));
-            AppendPragma("Integer32", new PrimitivePragma(PrimitivePragmaType.Integer32));
-            AppendPragma("Integer64", new PrimitivePragma(PrimitivePragmaType.Integer64));
-            AppendPragma("Natural8", new PrimitivePragma(PrimitivePragmaType.Natural8));
-            AppendPragma("Natural16", new PrimitivePragma(PrimitivePragmaType.Natural16));
-            AppendPragma("Natural32", new PrimitivePragma(PrimitivePragmaType.Natural32));
-            AppendPragma("Natural64", new PrimitivePragma(PrimitivePragmaType.Natural64));
-            AppendPragma("Binary32", new PrimitivePragma(PrimitivePragmaType.Binary32));
-            AppendPragma("Binary64", new PrimitivePragma(PrimitivePragmaType.Binary64));
+            BuiltInList.Append(new CastPragma());
+            BuiltInList.Append(new CalculatePragma("add", CalculatePragmaType.Add));
+            BuiltInList.Append(new CalculatePragma("sub", CalculatePragmaType.Sub));
+            BuiltInList.Append(new CalculatePragma("mul", CalculatePragmaType.Mul));
+            BuiltInList.Append(new CalculatePragma("div", CalculatePragmaType.Div));
+            BuiltInList.Append(new CalculatePragma("mod", CalculatePragmaType.Mod));
+            BuiltInList.Append(new CalculatePragma("eq", CalculatePragmaType.EQ));
+            BuiltInList.Append(new CalculatePragma("ne", CalculatePragmaType.NE));
+            BuiltInList.Append(new CalculatePragma("lt", CalculatePragmaType.LT));
+            BuiltInList.Append(new CalculatePragma("le", CalculatePragmaType.LE));
+            BuiltInList.Append(new CalculatePragma("gt", CalculatePragmaType.GT));
+            BuiltInList.Append(new CalculatePragma("ge", CalculatePragmaType.GE));
+            BuiltInList.Append(new PrimitivePragma("Object", PrimitivePragmaType.Object));
+            BuiltInList.Append(new PrimitivePragma("String", PrimitivePragmaType.String));
+            BuiltInList.Append(new PrimitivePragma("Boolean", PrimitivePragmaType.Boolean));
+            BuiltInList.Append(new PrimitivePragma("Integer8", PrimitivePragmaType.Integer8));
+            BuiltInList.Append(new PrimitivePragma("Integer16", PrimitivePragmaType.Integer16));
+            BuiltInList.Append(new PrimitivePragma("Integer32", PrimitivePragmaType.Integer32));
+            BuiltInList.Append(new PrimitivePragma("Integer64", PrimitivePragmaType.Integer64));
+            BuiltInList.Append(new PrimitivePragma("Natural8", PrimitivePragmaType.Natural8));
+            BuiltInList.Append(new PrimitivePragma("Natural16", PrimitivePragmaType.Natural16));
+            BuiltInList.Append(new PrimitivePragma("Natural32", PrimitivePragmaType.Natural32));
+            BuiltInList.Append(new PrimitivePragma("Natural64", PrimitivePragmaType.Natural64));
+            BuiltInList.Append(new PrimitivePragma("Binary32", PrimitivePragmaType.Binary32));
+            BuiltInList.Append(new PrimitivePragma("Binary64", PrimitivePragmaType.Binary64));
         }
 
         private void CreateBuiltInIdentifier()
@@ -112,31 +106,31 @@ namespace AbstractSyntax
             BuiltInList.Append(Void);
             BuiltInList.Append(Unknown);
             BuiltInList.Append(Error);
-            BuiltInList.Append(new BooleanSymbol(false) { Name = "false" });
-            BuiltInList.Append(new BooleanSymbol(true) { Name = "true" });
-            BuiltInList.Append(new AttributeSymbol(AttributeType.Let) { Name = "let" });
-            BuiltInList.Append(new AttributeSymbol(AttributeType.Function) { Name = "function" });
-            BuiltInList.Append(new AttributeSymbol(AttributeType.Static) { Name = "static" });
-            BuiltInList.Append(new AttributeSymbol(AttributeType.Public) { Name = "public" });
-            BuiltInList.Append(new AttributeSymbol(AttributeType.Protected) { Name = "protected" });
-            BuiltInList.Append(new AttributeSymbol(AttributeType.Private) { Name = "private" });
+            BuiltInList.Append(new BooleanSymbol(false));
+            BuiltInList.Append(new BooleanSymbol(true));
+            BuiltInList.Append(new AttributeSymbol("let", AttributeType.Let));
+            BuiltInList.Append(new AttributeSymbol("function", AttributeType.Function));
+            BuiltInList.Append(new AttributeSymbol("static", AttributeType.Static));
+            BuiltInList.Append(new AttributeSymbol("public", AttributeType.Public));
+            BuiltInList.Append(new AttributeSymbol("protected", AttributeType.Protected));
+            BuiltInList.Append(new AttributeSymbol("private", AttributeType.Private));
         }
 
         private void CreateOperatorManager()
         {
             OpManager = new Dictionary<TokenType, ConversionManager>();
-            OpManager.Add(TokenType.Add, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.Subtract, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.Multiply, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.Divide, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.Modulo, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.Equal, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.NotEqual, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.LessThan, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.LessThanOrEqual, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.GreaterThan, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.GreaterThanOrEqual, new ConversionManager(Void, Error, Unknown));
-            OpManager.Add(TokenType.Incompare, new ConversionManager(Void, Error, Unknown));
+            OpManager.Add(TokenType.Add, new ConversionManager(this));
+            OpManager.Add(TokenType.Subtract, new ConversionManager(this));
+            OpManager.Add(TokenType.Multiply, new ConversionManager(this));
+            OpManager.Add(TokenType.Divide, new ConversionManager(this));
+            OpManager.Add(TokenType.Modulo, new ConversionManager(this));
+            OpManager.Add(TokenType.Equal, new ConversionManager(this));
+            OpManager.Add(TokenType.NotEqual, new ConversionManager(this));
+            OpManager.Add(TokenType.LessThan, new ConversionManager(this));
+            OpManager.Add(TokenType.LessThanOrEqual, new ConversionManager(this));
+            OpManager.Add(TokenType.GreaterThan, new ConversionManager(this));
+            OpManager.Add(TokenType.GreaterThanOrEqual, new ConversionManager(this));
+            OpManager.Add(TokenType.Incompare, new ConversionManager(this));
         }
     }
 }

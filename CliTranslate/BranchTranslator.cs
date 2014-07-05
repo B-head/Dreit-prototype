@@ -13,7 +13,7 @@ namespace CliTranslate
         internal Label EndLabel { get; private set; }
         internal Label ElseLabel { get; private set; }
 
-        public BranchTranslator(IScope path, Translator parent, bool definedElse = false)
+        public BranchTranslator(Scope path, Translator parent, bool definedElse = false)
             : base(path, parent)
         {
             Generator = parent.Generator;

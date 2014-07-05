@@ -87,7 +87,7 @@ namespace CliTranslate
             Root.RegisterBuilder(path, builder);
         }
 
-        public void CreateArguments(IEnumerable<IScope> path)
+        public void CreateArguments(IEnumerable<Scope> path)
         {
             int next = Parent is PrimitiveTranslator ? 2 : 1;
             foreach (var v in path)
@@ -119,7 +119,7 @@ namespace CliTranslate
             }
         }
 
-        public override void GenerateLoad(IScope name, bool address = false)
+        public override void GenerateLoad(Scope name, bool address = false)
         {
             if (name is ThisSymbol)
             {
@@ -135,7 +135,7 @@ namespace CliTranslate
             BuildLoad(temp, address);
         }
 
-        public override void GenerateStore(IScope name, bool address = false)
+        public override void GenerateStore(Scope name, bool address = false)
         {
             if (name is ThisSymbol)
             {

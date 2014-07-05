@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class TemplateInstance : Element
+    public class TemplateInstanceExpression : Element
     {
         public Element Access { get; private set; }
         public TupleList Arguments { get; private set; }
 
-        public TemplateInstance(TextPosition tp, Element acs, TupleList args)
+        public TemplateInstanceExpression(TextPosition tp, Element acs, TupleList args)
             : base(tp)
         {
             Access = acs;
@@ -24,7 +24,7 @@ namespace AbstractSyntax.Expression
             get { return 2; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {

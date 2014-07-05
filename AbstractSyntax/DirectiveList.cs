@@ -30,7 +30,7 @@ namespace AbstractSyntax
             get { return Child.Count; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get { return Child[index]; }
         }

@@ -5,8 +5,17 @@ using System.Diagnostics;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class VoidSymbol : Scope, IDataType
+    public class VoidSymbol : Scope
     {
+        public VoidSymbol()
+        {
+            Name = "void";
+        }
+
+        public override bool IsDataType
+        {
+            get { return true; }
+        }
 
     }
 }

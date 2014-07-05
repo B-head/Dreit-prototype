@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class ErrorSymbol : Scope, IDataType
+    public class ErrorSymbol : Scope
     {
 
     }

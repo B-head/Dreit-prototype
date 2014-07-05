@@ -9,7 +9,7 @@ namespace AbstractSyntax.Statement
     [Serializable]
     public class UnStatement : Element
     {
-        public IElement Exp { get; private set; }
+        public Element Exp { get; private set; }
 
         public UnStatement(TextPosition tp, Element exp)
             :base(tp)
@@ -22,7 +22,7 @@ namespace AbstractSyntax.Statement
             get { return 1; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {

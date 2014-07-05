@@ -24,7 +24,7 @@ namespace AbstractSyntax.Expression
             get { return 2; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {

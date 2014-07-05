@@ -13,11 +13,12 @@ namespace AbstractSyntax.Pragma
         public CalculatePragmaType CalculateType { get; private set; }
         public GenericSymbol GenericType { get; set; }
 
-        public CalculatePragma(CalculatePragmaType type)
+        public CalculatePragma(string name, CalculatePragmaType type)
         {
+            Name = "@@" + name;
             CalculateType = type;
             GenericType = new GenericSymbol(new TextPosition(), "T");
-            _Attribute = new List<IScope>();
+            _Attribute = new List<Scope>();
         }
 
         public override int Count
@@ -25,7 +26,7 @@ namespace AbstractSyntax.Pragma
             get { return 1; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {
@@ -37,9 +38,9 @@ namespace AbstractSyntax.Pragma
             }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
         }
 
         internal bool IsCondition
@@ -60,7 +61,7 @@ namespace AbstractSyntax.Pragma
             }
         }
 
-        internal IDataType BooleanSymbol
+        internal Scope BooleanSymbol
         {
             get { return NameResolution("Boolean").FindDataType(); }
         }

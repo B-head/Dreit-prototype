@@ -11,7 +11,7 @@ namespace AbstractSyntax.Literal
     public class PlainText : Element
     {
         public string Value { get; private set; }
-        private IDataType _ReturnType;
+        private Scope _ReturnType;
 
         public PlainText(TextPosition tp, string value)
             :base(tp)
@@ -19,7 +19,7 @@ namespace AbstractSyntax.Literal
             Value = value;
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get 
             {

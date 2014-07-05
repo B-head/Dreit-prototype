@@ -12,10 +12,11 @@ namespace AbstractSyntax.Pragma
     {
         public PrimitivePragmaType BasePrimitiveType { get; private set; }
 
-        public PrimitivePragma(PrimitivePragmaType type)
+        public PrimitivePragma(string name, PrimitivePragmaType type)
         {
+            Name = "@@" + name;
             BasePrimitiveType = type;
-            _Attribute = new List<IScope>();
+            _Attribute = new List<Scope>();
             _Inherit = new List<ClassSymbol>();
         }
     }

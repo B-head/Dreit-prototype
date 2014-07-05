@@ -18,10 +18,10 @@ namespace CliTranslate
         public Translator Parent { get; private set; }
         private List<Translator> _Child;
         public IReadOnlyList<Translator> Child { get { return _Child; } }
-        public IScope Path { get; private set; }
+        public Scope Path { get; private set; }
         internal ILGenerator Generator;
 
-        protected Translator(IScope path, Translator parent)
+        protected Translator(Scope path, Translator parent)
         {
             Path = path;
             _Child = new List<Translator>();
@@ -60,7 +60,7 @@ namespace CliTranslate
             get { return false; }
         }
 
-        protected TypeAttributes MakeTypeAttributes(IReadOnlyList<IScope> attr, bool isTrait = false)
+        protected TypeAttributes MakeTypeAttributes(IReadOnlyList<Scope> attr, bool isTrait = false)
         {
             TypeAttributes ret = isTrait ? TypeAttributes.Interface | TypeAttributes.Abstract : TypeAttributes.Class;
             foreach (var v in attr)
@@ -80,7 +80,7 @@ namespace CliTranslate
             return ret;
         }
 
-        protected TypeAttributes MakeNestedTypeAttributes(IReadOnlyList<IScope> attr, bool isTrait = false)
+        protected TypeAttributes MakeNestedTypeAttributes(IReadOnlyList<Scope> attr, bool isTrait = false)
         {
             TypeAttributes ret = isTrait ? TypeAttributes.Interface | TypeAttributes.Abstract : TypeAttributes.Class;
             foreach (var v in attr)
@@ -100,7 +100,7 @@ namespace CliTranslate
             return ret;
         }
 
-        protected MethodAttributes MakeMethodAttributes(IReadOnlyList<IScope> attr, bool isVirtual = false)
+        protected MethodAttributes MakeMethodAttributes(IReadOnlyList<Scope> attr, bool isVirtual = false)
         {
             MethodAttributes ret = isVirtual ? MethodAttributes.Virtual | MethodAttributes.ReuseSlot : MethodAttributes.ReuseSlot;
             foreach (var v in attr)
@@ -121,7 +121,7 @@ namespace CliTranslate
             return ret;
         }
 
-        protected FieldAttributes MakeFieldAttributes(IReadOnlyList<IScope> attr)
+        protected FieldAttributes MakeFieldAttributes(IReadOnlyList<Scope> attr)
         {
             FieldAttributes ret = 0;
             foreach (var v in attr)
@@ -177,17 +177,17 @@ namespace CliTranslate
             Parent.CreateVariant(path);
         }
 
-        public BranchTranslator CreateBranch(IScope path, bool definedElse = false)
+        public BranchTranslator CreateBranch(Scope path, bool definedElse = false)
         {
             return new BranchTranslator(path, this, definedElse);
         }
 
-        public LoopTranslator CreateLoop(IScope path)
+        public LoopTranslator CreateLoop(Scope path)
         {
             return new LoopTranslator(path, this);
         }
 
-        public Label CreateLabel(IScope path = null)
+        public Label CreateLabel(Scope path = null)
         {
             var builder = Generator.DefineLabel();
             if (path != null)
@@ -197,7 +197,7 @@ namespace CliTranslate
             return builder;
         }
 
-        public Label GetLabel(IScope path)
+        public Label GetLabel(Scope path)
         {
             if (Root.ContainsBuilder(path))
             {
@@ -301,7 +301,7 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateLoad(IScope name, bool address = false)
+        public virtual void GenerateLoad(Scope name, bool address = false)
         {
             if(name is ThisSymbol)
             {
@@ -414,7 +414,7 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateStore(IScope name, bool address = false)
+        public virtual void GenerateStore(Scope name, bool address = false)
         {
             if (name is ThisSymbol)
             {
@@ -495,7 +495,7 @@ namespace CliTranslate
             }
         }
 
-        public virtual void GenerateCall(IScope name)
+        public virtual void GenerateCall(Scope name)
         {
             var r = name as RoutineSymbol;
             var temp = Root.GetBuilder(name);
@@ -518,14 +518,14 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Call, method);
         }
 
-        public void GenerateEcho(IScope type)
+        public void GenerateEcho(Scope type)
         {
             var temp = Root.GetBuilder(type) as Type;
             var types = new Type[] { temp };
             Generator.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", types));
         }
 
-        public void GenerateToString(IScope type)
+        public void GenerateToString(Scope type)
         {
             var t = Root.GetBuilder(type) as Type;
             if(t.IsValueType)

@@ -44,7 +44,7 @@ namespace AbstractSyntax.Statement
             get { return 4; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {

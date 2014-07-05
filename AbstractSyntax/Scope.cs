@@ -8,20 +8,13 @@ using System.Text;
 
 namespace AbstractSyntax
 {
-    public interface IScope : IElement
-    {
-        string Name { get; }
-        IReadOnlyList<IScope> ScopeChild { get; }
-        string FullName { get; }
-    }
-
     [Serializable]
-    public abstract class Scope : Element, IScope
+    public abstract class Scope : Element
     {
-        public string Name { get; internal set; }
+        public string Name { get; protected set; }
         private Dictionary<string, OverLoad> ScopeSymbol;
         private List<Scope> _ScopeChild;
-        public IReadOnlyList<IScope> ScopeChild { get { return _ScopeChild; } }
+        public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }
 
         protected Scope()
         {
@@ -51,7 +44,7 @@ namespace AbstractSyntax
                 }
                 else
                 {
-                    ol = new OverLoad(Root.Unknown);
+                    ol = new OverLoad(Root);
                     ScopeSymbol[v.Key] = ol;
                 }
                 ol.Merge(v.Value);
@@ -128,7 +121,7 @@ namespace AbstractSyntax
             }
             else
             {
-                ol = new OverLoad(Root.Unknown);
+                ol = new OverLoad(Root);
                 ScopeSymbol[scope.Name] = ol;
             }
             ol.Append(scope);//todo 重複判定を実装する。
@@ -156,7 +149,7 @@ namespace AbstractSyntax
             get { return Name; }
         }
 
-        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
+        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }
@@ -178,14 +171,19 @@ namespace AbstractSyntax
             return false;
         }
 
-        public virtual IDataType CallReturnType
+        public virtual bool IsDataType
+        {
+            get { return false; }
+        }
+
+        public virtual Scope CallReturnType
         {
             get { return Root.Unknown; }
         }
 
-        public virtual IReadOnlyList<IScope> Attribute
+        public virtual IReadOnlyList<Scope> Attribute
         {
-            get { return new List<IScope>(); }
+            get { return new List<Scope>(); }
         }
 
         public bool IsStaticMember

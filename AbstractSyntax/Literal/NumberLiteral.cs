@@ -10,7 +10,7 @@ namespace AbstractSyntax.Literal
     {
         public string Integral { get; private set; }
         public string Fraction { get; private set; }
-        private IDataType _ReturnType;
+        private Scope _ReturnType;
 
         public NumberLiteral(TextPosition tp, string integral, string fraction)
             :base(tp)
@@ -19,7 +19,7 @@ namespace AbstractSyntax.Literal
             Fraction = fraction;
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get
             {

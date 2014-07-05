@@ -16,7 +16,7 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get
             {

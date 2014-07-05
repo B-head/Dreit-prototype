@@ -44,7 +44,7 @@ namespace AbstractSyntax.Expression
             get { return 2; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {
@@ -97,7 +97,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get
             {
@@ -159,12 +159,12 @@ namespace AbstractSyntax.Expression
             get { return TokenType.Unknoun; }
         }
 
-        public bool HasCallTarget(IElement element)
+        public bool HasCallTarget(Element element)
         {
             return Access == element;
         }
 
-        public IDataType CallType //todo Tuple型も返せるようにする。
+        public Scope CallType //todo Tuple型も返せるようにする。
         {
             get
             {

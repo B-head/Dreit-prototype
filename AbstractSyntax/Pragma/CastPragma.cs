@@ -14,8 +14,9 @@ namespace AbstractSyntax.Pragma
 
         public CastPragma()
         {
+            Name = "@@cast";
             GenericType = new GenericSymbol(new TextPosition(), "T");
-            _Attribute = new List<IScope>();
+            _Attribute = new List<Scope>();
         }
 
         public override int Count
@@ -23,7 +24,7 @@ namespace AbstractSyntax.Pragma
             get { return 1; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {
@@ -36,9 +37,9 @@ namespace AbstractSyntax.Pragma
         }
 
         //todo ジェネリクスの構文で型検査をする。
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
         }
     }
 }

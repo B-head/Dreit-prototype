@@ -15,12 +15,12 @@ namespace CliTranslate
 {
     public class TranslateManager
     {
-        private Dictionary<IScope, Translator> TransDictionary;
+        private Dictionary<Scope, Translator> TransDictionary;
         private RootTranslator Root;
 
         public TranslateManager(string name, string dir = null)
         {
-            TransDictionary = new Dictionary<IScope, Translator>();
+            TransDictionary = new Dictionary<Scope, Translator>();
             Root = new RootTranslator(name, dir);
         }
 
@@ -43,7 +43,7 @@ namespace CliTranslate
             Root.BuildCode();
         }
 
-        private void ChildSpreadTranslate(IScope scope)
+        private void ChildSpreadTranslate(Scope scope)
         {
             foreach (var v in scope.ScopeChild)
             {
@@ -56,7 +56,7 @@ namespace CliTranslate
             }
         }
 
-        private void RelaySpreadTranslate(IScope scope)
+        private void RelaySpreadTranslate(Scope scope)
         {
             if (TransDictionary.ContainsKey(scope))
             {
@@ -66,7 +66,7 @@ namespace CliTranslate
             SpreadTranslate((dynamic)scope, TransDictionary[scope.CurrentIScope]);
         }
 
-        private void SpreadTranslate(IScope scope, Translator trans)
+        private void SpreadTranslate(Scope scope, Translator trans)
         {
             TransDictionary.Add(scope, trans);
         }
@@ -118,7 +118,7 @@ namespace CliTranslate
                 temp = trans.CreateRoutine(scope);
             }
             TransDictionary.Add(scope, temp);
-            temp.CreateArguments(scope.DecArguments.Cast<IScope>());
+            temp.CreateArguments(scope.DecArguments.Cast<Scope>());
         }
 
         private void SpreadTranslate(DeclateVariant scope, Translator trans)
@@ -140,7 +140,7 @@ namespace CliTranslate
             TransDictionary.Add(scope, t);
         }
 
-        private void ChildTranslate(IElement element, Translator trans)
+        private void ChildTranslate(Element element, Translator trans)
         {
             foreach(var v in element)
             {
@@ -152,7 +152,7 @@ namespace CliTranslate
             }
         }
 
-        private void Translate(IElement element, Translator trans)
+        private void Translate(Element element, Translator trans)
         {
             ChildTranslate(element, trans);
         }

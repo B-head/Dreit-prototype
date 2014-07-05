@@ -57,8 +57,7 @@
     <Compile Include="Expression\Logical.cs" />
     <Compile Include="Expression\Postfix.cs" />
     <Compile Include="Expression\Prefix.cs" />
-    <Compile Include="Expression\TemplateInstance.cs" />
-    <Compile Include="Interfaces.cs" />
+    <Compile Include="Expression\TemplateInstanceExpression.cs" />
     <Compile Include="Literal\PlainText.cs" />
     <Compile Include="Literal\StringLiteral.cs" />
     <Compile Include="OverLoad.cs" />
@@ -99,11 +98,14 @@
     <Compile Include="Symbol\EnumSymbol.cs" />
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
+    <Compile Include="Symbol\TemplateInstanceSymbol.cs" />
     <Compile Include="Symbol\TypeofClassSymbol.cs" />
+    <Compile Include="Symbol\TypeQualifySymbol.cs" />
     <Compile Include="Symbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="Symbol\ErrorSymbol.cs" />
     <Compile Include="TextPosition.cs" />
+    <Compile Include="TypeManager.cs" />
     <Compile Include="TypeMatch.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="Symbol\ThisSymbol.cs" />

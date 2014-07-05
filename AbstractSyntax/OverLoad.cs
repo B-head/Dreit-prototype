@@ -7,17 +7,17 @@ using System.Linq;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class OverLoad : IReadOnlyList<IScope>
+    public class OverLoad : IReadOnlyList<Scope>
     {
+        private Root Root;
         private List<Scope> ScopeList;
         private bool IsHoldAlias;
         private bool Freeze;
-        private UnknownSymbol Unknown;
 
-        public OverLoad(UnknownSymbol unknown, bool freeze = false)
+        public OverLoad(Root root, bool freeze = false)
         {
+            Root = root;
             ScopeList = new List<Scope>();
-            Unknown = unknown;
             Freeze = freeze;
         }
 
@@ -55,28 +55,28 @@ namespace AbstractSyntax
             get { return ScopeList.Count == 0; }
         }
 
-        public IDataType FindDataType()
+        public Scope FindDataType()
         {
             if(IsHoldAlias)
             {
                 SpreadAlias();
             }
-            var find = (IDataType)ScopeList.Find(s => s is IDataType);
-            return find == null ? Unknown : find;
+            var find = (Scope)ScopeList.Find(s => s.IsDataType);
+            return find == null ? Root.Unknown : find;
         }
 
         public TypeMatch CallSelect()
         {
-            return CallSelect(new List<IDataType>());
+            return CallSelect(new List<Scope>());
         }
 
-        public TypeMatch CallSelect(IReadOnlyList<IDataType> type) //todo アクセス可能性を考慮した検索に対応する。
+        public TypeMatch CallSelect(IReadOnlyList<Scope> type) //todo アクセス可能性を考慮した検索に対応する。
         {
             if (IsHoldAlias)
             {
                 SpreadAlias();
             }
-            TypeMatch result = TypeMatch.MakeNotCallable(Unknown);
+            TypeMatch result = TypeMatch.MakeNotCallable(Root.Unknown);
             foreach(var a in ScopeList)
             {
                 foreach(var b in a.GetTypeMatch(type))
@@ -115,7 +115,7 @@ namespace AbstractSyntax
             }
         }
 
-        public IScope this[int index]
+        public Scope this[int index]
         {
             get { return ScopeList[index]; }
         }
@@ -125,7 +125,7 @@ namespace AbstractSyntax
             get { return ScopeList.Count; }
         }
 
-        public IEnumerator<IScope> GetEnumerator()
+        public IEnumerator<Scope> GetEnumerator()
         {
             return ScopeList.GetEnumerator();
         }

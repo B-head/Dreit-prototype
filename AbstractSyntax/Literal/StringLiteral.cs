@@ -10,7 +10,7 @@ namespace AbstractSyntax.Literal
     public class StringLiteral : Element
     {
         private List<Element> _Texts;
-        private IDataType _ReturnType;
+        private Scope _ReturnType;
 
         public StringLiteral(TextPosition tp, List<Element> texts)
             :base(tp)
@@ -23,7 +23,7 @@ namespace AbstractSyntax.Literal
             get { return _Texts.Count; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get { return _Texts[index]; }
         }
@@ -33,7 +33,7 @@ namespace AbstractSyntax.Literal
             get { return _Texts; }
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get
             {

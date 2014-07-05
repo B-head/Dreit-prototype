@@ -15,7 +15,7 @@ namespace CliTranslate
     {
         private TypeBuilder Class;
         private MethodBuilder ClassContext;
-        private Dictionary<IScope, dynamic> InitDictonary;
+        private Dictionary<Scope, dynamic> InitDictonary;
         private MethodBuilder InitContext;
         private ILGenerator InitGenerator;
 
@@ -25,14 +25,14 @@ namespace CliTranslate
             Class = builder;
             ClassContext = Class.DefineMethod("@@static_init", MethodAttributes.SpecialName | MethodAttributes.Static);
             parent.GenerateCall(ClassContext);
-            InitDictonary = new Dictionary<IScope, dynamic>();
+            InitDictonary = new Dictionary<Scope, dynamic>();
             InitContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName);
             InitGenerator = InitContext.GetILGenerator();
             Generator = ClassContext.GetILGenerator();
             Root.RegisterBuilder(path, Class);
             if (path.IsDefaultConstructor)
             {
-                CreateConstructor(path.Default, new IScope[] { });
+                CreateConstructor(path.Default, new Scope[] { });
             }
         }
 
@@ -48,7 +48,7 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public RoutineTranslator CreateConstructor(RoutineSymbol path, IEnumerable<IScope> argumentType)
+        public RoutineTranslator CreateConstructor(RoutineSymbol path, IEnumerable<Scope> argumentType)
         {
             var argbld = Root.GetTypeBuilders(argumentType);
             var attr = MakeMethodAttributes(path.Attribute);
@@ -97,7 +97,7 @@ namespace CliTranslate
             InitGenerator.Emit(OpCodes.Stfld, builder);
         }
 
-        public override void GenerateLoad(IScope name, bool address = false)
+        public override void GenerateLoad(Scope name, bool address = false)
         {
             if (name is ThisSymbol)
             {
@@ -112,7 +112,7 @@ namespace CliTranslate
             BuildLoad(temp, address);
         }
 
-        public override void GenerateStore(IScope name, bool address = false)
+        public override void GenerateStore(Scope name, bool address = false)
         {
             if (name is ThisSymbol)
             {

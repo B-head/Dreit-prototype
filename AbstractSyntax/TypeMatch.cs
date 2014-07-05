@@ -12,17 +12,17 @@ namespace AbstractSyntax
     {
         public Scope Call { get; private set; }
         public TypeMatchResult Result { get; private set; }
-        public IReadOnlyList<IDataType> Actual { get; private set; }
-        public IReadOnlyList<IDataType> Formal { get; private set; }
-        public IReadOnlyList<IScope> Converters { get; private set; }
+        public IReadOnlyList<Scope> Actual { get; private set; }
+        public IReadOnlyList<Scope> Formal { get; private set; }
+        public IReadOnlyList<Scope> Converters { get; private set; }
 
-        internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call, IReadOnlyList<IDataType> actual, IReadOnlyList<IDataType> formal, IReadOnlyList<GenericSymbol> generic)
+        internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call, IReadOnlyList<Scope> actual, IReadOnlyList<Scope> formal, IReadOnlyList<GenericSymbol> generic)
         {
             return MakeTypeMatch(manager, call, actual, formal);
         }
 
         //todo さらに詳しい順位付けをする。
-        internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call, IReadOnlyList<IDataType> actual, IReadOnlyList<IDataType> formal)
+        internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call, IReadOnlyList<Scope> actual, IReadOnlyList<Scope> formal)
         {
             TypeMatch result = new TypeMatch()
             {

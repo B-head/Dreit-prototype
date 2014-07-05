@@ -10,7 +10,7 @@ namespace AbstractSyntax.Directive
     public class AttributeZoneDirective : Element
     {
         private List<Element> Child;
-        private List<IScope> _Attribute;
+        private List<Scope> _Attribute;
 
         public AttributeZoneDirective(TextPosition tp, List<Element> child)
             :base(tp)
@@ -18,7 +18,7 @@ namespace AbstractSyntax.Directive
             Child = child;
         }
 
-        public IReadOnlyList<IScope> Attribute
+        public IReadOnlyList<Scope> Attribute
         {
             get
             {
@@ -26,7 +26,7 @@ namespace AbstractSyntax.Directive
                 {
                     return _Attribute;
                 }
-                _Attribute = new List<IScope>();
+                _Attribute = new List<Scope>();
                 foreach (var v in Child)
                 {
                     _Attribute.Add(v.Reference.FindDataType());
@@ -40,7 +40,7 @@ namespace AbstractSyntax.Directive
             get { return Child.Count; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get { return Child[index]; }
         }

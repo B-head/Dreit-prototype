@@ -7,18 +7,24 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class AttributeSymbol : Scope, IDataType
+    public class AttributeSymbol : Scope
     {
         public AttributeType Attr { get; private set; }
 
-        public AttributeSymbol(AttributeType attr)
+        public AttributeSymbol(string name, AttributeType attr)
         {
+            Name = name;
             Attr = attr;
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
+        public override bool IsDataType
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { });
+            get { return true; }
+        }
+
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
+        {
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { });
         }
     }
 

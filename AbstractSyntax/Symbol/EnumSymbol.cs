@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class EnumSymbol : Scope, IDataType
+    public class EnumSymbol : Scope
     {
+        public override bool IsDataType
+        {
+            get { return true; }
+        }
 
     }
 }

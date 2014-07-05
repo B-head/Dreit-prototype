@@ -9,7 +9,7 @@ namespace AbstractSyntax
     public class TupleList : Element
     {
         private List<Element> Child;
-        private List<IDataType> DataTypes;
+        private List<Scope> DataTypes;
 
         public TupleList()
         {
@@ -38,7 +38,7 @@ namespace AbstractSyntax
             get { return Child.Count; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get { return Child[index]; }
         }
@@ -48,13 +48,13 @@ namespace AbstractSyntax
             get { return "Count = " + Child.Count; }
         }
 
-        public IReadOnlyList<IDataType> GetDataTypes()
+        public IReadOnlyList<Scope> GetDataTypes()
         {
             if (DataTypes != null)
             {
                 return DataTypes;
             }
-            DataTypes = new List<IDataType>();
+            DataTypes = new List<Scope>();
             foreach(var v in Child)
             {
                 DataTypes.Add(v.ReturnType);

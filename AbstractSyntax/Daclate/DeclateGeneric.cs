@@ -22,7 +22,7 @@ namespace AbstractSyntax.Daclate
             get { return 1; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {

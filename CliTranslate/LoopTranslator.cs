@@ -12,7 +12,7 @@ namespace CliTranslate
     {
         internal Label StartLabel { get; private set; }
 
-        public LoopTranslator(IScope path, Translator parent)
+        public LoopTranslator(Scope path, Translator parent)
             : base(path, parent, false)
         {
             Generator = parent.Generator;

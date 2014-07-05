@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class ClassSymbol : Scope, IDataType
+    public class ClassSymbol : Scope
     {
         public TypeofClassSymbol TypeofSymbol { get; private set; }
         public DefaultSymbol Default { get; private set; }
@@ -17,7 +17,7 @@ namespace AbstractSyntax.Symbol
         public bool IsClass { get; private set; }
         public bool IsTrait { get; private set; }
         protected List<RoutineSymbol> Initializer;
-        protected List<IScope> _Attribute;
+        protected List<Scope> _Attribute;
         protected List<ClassSymbol> _Inherit;
 
         protected ClassSymbol()
@@ -40,7 +40,7 @@ namespace AbstractSyntax.Symbol
             Initializer = new List<RoutineSymbol>();
         }
 
-        public override IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<Scope> Attribute
         {
             get { return _Attribute; }
         }
@@ -82,7 +82,7 @@ namespace AbstractSyntax.Symbol
             get { return 2; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {
@@ -95,7 +95,12 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
+        public override bool IsDataType
+        {
+            get { return true; }
+        }
+
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
             foreach(var a in Initializer)
             {

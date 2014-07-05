@@ -28,7 +28,7 @@ namespace AbstractSyntax.Daclate
             Block = block;
         }
 
-        public override IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<Scope> Attribute
         {
             get
             {
@@ -36,7 +36,7 @@ namespace AbstractSyntax.Daclate
                 {
                     return _Attribute;
                 }
-                _Attribute = new List<IScope>();
+                _Attribute = new List<Scope>();
                 foreach (var v in AttributeAccess)
                 {
                     _Attribute.Add(v.Reference.FindDataType());
@@ -55,7 +55,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override IReadOnlyList<IDataType> ArgumentType
+        public override IReadOnlyList<Scope> ArgumentType
         {
             get
             {
@@ -63,7 +63,7 @@ namespace AbstractSyntax.Daclate
                 {
                     return _ArgumentType;
                 }
-                _ArgumentType = new List<IDataType>();
+                _ArgumentType = new List<Scope>();
                 foreach (var v in DecArguments)
                 {
                     var temp = v.ReturnType;
@@ -73,7 +73,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override IDataType CallReturnType
+        public override Scope CallReturnType
         {
             get
             {
@@ -123,7 +123,7 @@ namespace AbstractSyntax.Daclate
             get { return 5; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {

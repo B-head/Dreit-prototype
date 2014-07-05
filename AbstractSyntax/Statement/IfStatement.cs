@@ -13,7 +13,7 @@ namespace AbstractSyntax.Statement
         public Element Condition { get; private set; }
         public DirectiveList Than { get; private set; }
         public DirectiveList Else { get; private set; }
-        private IDataType _ReturnType;
+        private Scope _ReturnType;
 
         public IfStatement(TextPosition tp, Element cond, DirectiveList than, DirectiveList els)
             :base(tp)
@@ -28,7 +28,7 @@ namespace AbstractSyntax.Statement
             get { return 3; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {
@@ -47,7 +47,7 @@ namespace AbstractSyntax.Statement
             get { return Else != null; }
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get 
             {
@@ -69,7 +69,7 @@ namespace AbstractSyntax.Statement
             }
         } 
 
-        private IDataType BlockReturnType(DirectiveList block)
+        private Scope BlockReturnType(DirectiveList block)
         {
             if(block == null)
             {

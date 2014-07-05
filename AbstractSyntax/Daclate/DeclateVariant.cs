@@ -24,7 +24,7 @@ namespace AbstractSyntax.Daclate
             IsLet = isLet;
         }
 
-        public override IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<Scope> Attribute
         {
             get
             {
@@ -32,7 +32,7 @@ namespace AbstractSyntax.Daclate
                 {
                     return _Attribute;
                 }
-                _Attribute = new List<IScope>();
+                _Attribute = new List<Scope>();
                 foreach (var v in AttributeAccess)
                 {
                     _Attribute.Add(v.Reference.FindDataType());
@@ -51,7 +51,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get
             {
@@ -86,7 +86,7 @@ namespace AbstractSyntax.Daclate
             get { return 3; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {

@@ -4,14 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Symbol
+namespace AbstractSyntax
 {
     [Serializable]
-    public class UnknownSymbol : Scope
+    public class TypeManager
     {
-        public override Scope ReturnType
+        private Root Root;
+
+        public TypeManager(Root root)
         {
-            get { return Root.Unknown; }
+            Root = root;
         }
     }
 }

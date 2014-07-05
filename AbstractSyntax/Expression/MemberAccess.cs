@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
             Member = member;
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get { return CallScope.CallReturnType; }
         }
@@ -47,7 +47,7 @@ namespace AbstractSyntax.Expression
             get { return 1; }
         }
 
-        public override IElement this[int index]
+        public override Element this[int index]
         {
             get
             {
@@ -88,7 +88,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        private static bool ContainClass(ClassSymbol cls, IDataType type)
+        private static bool ContainClass(ClassSymbol cls, Scope type)
         {
             if(type is ClassSymbol)
             {

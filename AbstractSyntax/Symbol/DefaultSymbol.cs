@@ -11,8 +11,8 @@ namespace AbstractSyntax.Symbol
     {
         public DefaultSymbol(ClassSymbol parent)
         {
-            _Attribute = new List<IScope>();
-            _ArgumentType = new List<IDataType>();
+            _Attribute = new List<Scope>();
+            _ArgumentType = new List<Scope>();
             _ReturnType = parent;
         }
     }

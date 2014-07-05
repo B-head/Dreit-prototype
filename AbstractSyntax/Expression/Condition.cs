@@ -30,7 +30,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get { return CallScope.CallReturnType; }
         }
@@ -40,7 +40,7 @@ namespace AbstractSyntax.Expression
             get { return Right is Condition; }
         }
 
-        public IElement VirtualRight
+        public Element VirtualRight
         {
             get
             {

@@ -7,18 +7,9 @@ using System.Text;
 
 namespace AbstractSyntax
 {
-    public interface IElement : IReadOnlyList<IElement>
-    {
-        TextPosition Position { get; }
-        IScope CurrentIScope { get; }
-        IDataType ReturnType { get; }
-        OverLoad Reference { get; }
-        bool IsVoidReturn { get; }
-    }
-
     [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
-    public abstract class Element : IElement
+    public abstract class Element : IReadOnlyList<Element>
     {
         public TextPosition Position { get; private set; }
         internal Element Parent { get; private set; }
@@ -35,12 +26,12 @@ namespace AbstractSyntax
             Position = tp;
         }
 
-        public IScope CurrentIScope 
+        public Scope CurrentIScope 
         {
             get { return CurrentScope; }
         }
 
-        public virtual IDataType ReturnType
+        public virtual Scope ReturnType
         {
             get { return Root.Void; }
         }
@@ -60,7 +51,7 @@ namespace AbstractSyntax
             get { return 0; }
         }
 
-        public virtual IElement this[int index]
+        public virtual Element this[int index]
         {
             get { throw new ArgumentOutOfRangeException("index"); }
         }
@@ -107,7 +98,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal bool HasCurrentAccess(IScope other)
+        internal bool HasCurrentAccess(Scope other)
         {
             var c = CurrentScope;
             while (c != null)
@@ -179,7 +170,7 @@ namespace AbstractSyntax
             return builder.ToString();
         }
 
-        public IEnumerator<IElement> GetEnumerator()
+        public IEnumerator<Element> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
             {

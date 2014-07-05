@@ -10,17 +10,13 @@ namespace AbstractSyntax
     [Serializable]
     class ConversionManager
     {
+        private Root Root;
         private List<RoutineSymbol> ConvList;
-        private VoidSymbol Void;
-        private ErrorSymbol Error;
-        private UnknownSymbol Unknown;
 
-        public ConversionManager(VoidSymbol voidSym, ErrorSymbol error, UnknownSymbol unknown)
+        public ConversionManager(Root root)
         {
+            Root = root;
             ConvList = new List<RoutineSymbol>();
-            Void = voidSym;
-            Error = error;
-            Unknown = unknown;
         }
 
         public void Append(RoutineSymbol symbol)
@@ -28,15 +24,15 @@ namespace AbstractSyntax
             ConvList.Add(symbol);
         }
 
-        public Scope Find(IDataType from, IDataType to)
+        public Scope Find(Scope from, Scope to)
         {
             if (from is GenericSymbol || to is GenericSymbol)
             {
-                return Void;
+                return Root.Void;
             }
             if (from is UnknownSymbol || to is UnknownSymbol)
             {
-                return Unknown;
+                return Root.Unknown;
             }
             var a = ConvList.FindAll(v => v.CurrentScope == to);
             var b = a.FindAll(v => v.ArgumentType[0] == from);
@@ -48,16 +44,16 @@ namespace AbstractSyntax
             {
                 if (ContainSubType(from, to))
                 {
-                    return Void;
+                    return Root.Void;
                 }
                 else
                 {
-                    return Error;
+                    return Root.Error;
                 }
             }
         }
 
-        private static bool ContainSubType(IDataType from, IDataType to)
+        private static bool ContainSubType(Scope from, Scope to)
         {
             var f = from as ClassSymbol;
             if(f == null)

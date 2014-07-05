@@ -13,7 +13,7 @@ namespace CliTranslate
 {
     public class RootTranslator : Translator
     {
-        private Dictionary<IScope, dynamic> BuilderDictonary;
+        private Dictionary<Scope, dynamic> BuilderDictonary;
         private AssemblyBuilder Assembly;
         private ModuleBuilder Module;
         public string Name { get; private set; }
@@ -22,14 +22,14 @@ namespace CliTranslate
         public RootTranslator(string name, string dir = null)
             : base(null, null)
         {
-            BuilderDictonary = new Dictionary<IScope, dynamic>();
+            BuilderDictonary = new Dictionary<Scope, dynamic>();
             Name = name;
             FileName = name + ".exe";
             Assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave, dir);
             Module = Assembly.DefineDynamicModule(Name, FileName);
         }
 
-        internal bool ContainsBuilder(IScope path)
+        internal bool ContainsBuilder(Scope path)
         {
             if (path is VoidSymbol)
             {
@@ -38,7 +38,7 @@ namespace CliTranslate
             return BuilderDictonary.ContainsKey(path);
         }
 
-        internal dynamic GetBuilder(IScope path)
+        internal dynamic GetBuilder(Scope path)
         {
             if (path is VoidSymbol)
             {
@@ -47,7 +47,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type GetTypeBuilder(IScope path)
+        internal Type GetTypeBuilder(Scope path)
         {
             if (path is VoidSymbol)
             {
@@ -56,7 +56,7 @@ namespace CliTranslate
             return BuilderDictonary[path];
         }
 
-        internal Type[] GetTypeBuilders(IEnumerable<IScope> path)
+        internal Type[] GetTypeBuilders(IEnumerable<Scope> path)
         {
             List<Type> result = new List<Type>();
             foreach(var v in path)
@@ -66,7 +66,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        internal Type[] GetTypeBuilders(Type prim, IEnumerable<IScope> path)
+        internal Type[] GetTypeBuilders(Type prim, IEnumerable<Scope> path)
         {
             List<Type> result = new List<Type>();
             result.Add(prim);
@@ -77,7 +77,7 @@ namespace CliTranslate
             return result.ToArray();
         }
 
-        public void RegisterBuilder(IScope path, dynamic builder)
+        public void RegisterBuilder(Scope path, dynamic builder)
         {
             if(path == null || builder == null)
             {

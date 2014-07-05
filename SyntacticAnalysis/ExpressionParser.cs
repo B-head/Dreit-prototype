@@ -116,7 +116,7 @@ namespace SyntacticAnalysis
                     .Type(TokenType.RightBracket).Lt();
                 })
                 .Else(icp => icp.Transfer(e => args = new TupleList(e), IdentifierAccess))
-                .End(tp => new TemplateInstance(tp, current, args));
+                .End(tp => new TemplateInstanceExpression(tp, current, args));
             return ret == null ? CallRoutine(current, cp) : Postfix(ret, cp);
         }
 

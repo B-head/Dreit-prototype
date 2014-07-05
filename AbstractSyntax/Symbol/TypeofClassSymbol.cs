@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class TypeofClassSymbol : Scope, IDataType
+    public class TypeofClassSymbol : Scope
     {
         private ClassSymbol BaseClass;
 
@@ -16,9 +16,14 @@ namespace AbstractSyntax.Symbol
             BaseClass = baseClass;
         }
 
-        public override IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<Scope> Attribute
         {
             get { return BaseClass.Attribute; }
+        }
+
+        public override bool IsDataType
+        {
+            get { return true; }
         }
     }
 }

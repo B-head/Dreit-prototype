@@ -9,8 +9,8 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class VariantSymbol : Scope
     {
-        protected List<IScope> _Attribute;
-        protected IDataType _ReturnType;
+        protected List<Scope> _Attribute;
+        protected Scope _ReturnType;
 
         protected VariantSymbol(TextPosition tp)
             : base(tp)
@@ -18,25 +18,25 @@ namespace AbstractSyntax.Symbol
 
         }
 
-        public override IReadOnlyList<IScope> Attribute
+        public override IReadOnlyList<Scope> Attribute
         {
             get { return _Attribute; }
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get { return _ReturnType; }
         }
 
-        public override IDataType CallReturnType
+        public override Scope CallReturnType
         {
             get { return ReturnType; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { });
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { ReturnType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { ReturnType });
         }
 
         internal override void CheckSemantic()

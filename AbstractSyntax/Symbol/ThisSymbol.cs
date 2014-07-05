@@ -17,20 +17,20 @@ namespace AbstractSyntax.Symbol
             _DataType = dataType;
         }
 
-        public override IDataType ReturnType
+        public override Scope ReturnType
         {
             get { return _DataType; }
         }
 
-        public override IDataType CallReturnType
+        public override Scope CallReturnType
         {
             get { return ReturnType; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { });
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { ReturnType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { ReturnType });
         }
     }
 }
