@@ -11,10 +11,17 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class IdentifierAccess : Element
     {
-        public string Value { get; set; }
-        public bool IsPragmaAccess { get; set; }
+        public string Value { get; private set; }
+        public bool IsPragmaAccess { get; private set; }
         private bool? _IsTacitThis;
         private OverLoad _Reference;
+
+        public IdentifierAccess(TextPosition tp, string value, bool isPragma)
+            :base(tp)
+        {
+            Value = value;
+            IsPragmaAccess = isPragma;
+        }
 
         public bool IsTacitThis
         {

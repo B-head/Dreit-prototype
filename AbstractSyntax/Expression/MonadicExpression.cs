@@ -5,10 +5,17 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public abstract class MonadicExpression : Element, IMonadicExpression
+    public abstract class MonadicExpression : Element
     {
-        public Element Child { get; set; }
-        public TokenType Operator { get; set; }
+        public TokenType Operator { get; private set; }
+        public Element Child { get; private set; }
+
+        protected MonadicExpression(TextPosition tp, TokenType op, Element child)
+            :base(tp)
+        {
+            Operator = op;
+            Child = child;
+        }
 
         public override int Count
         {

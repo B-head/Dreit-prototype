@@ -16,7 +16,7 @@ namespace AbstractSyntax.Pragma
         public CalculatePragma(CalculatePragmaType type)
         {
             CalculateType = type;
-            GenericType = new GenericSymbol { Name = "T" };
+            GenericType = new GenericSymbol(new TextPosition(), "T");
             _Attribute = new List<IScope>();
         }
 
@@ -40,6 +40,29 @@ namespace AbstractSyntax.Pragma
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<IDataType> type)
         {
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new IDataType[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
+        }
+
+        internal bool IsCondition
+        {
+            get
+            {
+                switch(CalculateType)
+                {
+                    case CalculatePragmaType.EQ:
+                    case CalculatePragmaType.NE:
+                    case CalculatePragmaType.LT:
+                    case CalculatePragmaType.LE:
+                    case CalculatePragmaType.GT:
+                    case CalculatePragmaType.GE:
+                        return true;
+                }
+                return false;
+            }
+        }
+
+        internal IDataType BooleanSymbol
+        {
+            get { return NameResolution("Boolean").FindDataType(); }
         }
     }
 

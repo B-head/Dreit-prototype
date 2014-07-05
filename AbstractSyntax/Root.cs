@@ -11,13 +11,13 @@ namespace AbstractSyntax
     public class Root : NameSpace
     {
         private DirectiveList BuiltInList;
-        private Lazy<ClassSymbol> LazyObjectSymbol;
+        private IDataType _ObjectSymbol;
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
         internal OverLoad UndefinedOverLord { get; private set; }
         internal ConversionManager Conversion { get; set; }
-        internal Dictionary<TokenType, ConversionManager> OpManager { get; set; }
+        internal Dictionary<TokenType, ConversionManager> OpManager { get; private set; }
         public CompileMessageManager MessageManager { get; private set; }
 
         public Root()
@@ -29,7 +29,6 @@ namespace AbstractSyntax
             Unknown = new UnknownSymbol();
             UndefinedOverLord = new OverLoad(Unknown, true);
             Conversion = new ConversionManager(Void, Error, Unknown);
-            LazyObjectSymbol = new Lazy<ClassSymbol>(InitObjectSymbol);
             MessageManager = new CompileMessageManager();
             CreatePragma();
             CreateBuiltInIdentifier();
@@ -60,14 +59,17 @@ namespace AbstractSyntax
             CheckSemantic();
         }
 
-        public ClassSymbol ObjectSymbol
+        public IDataType ObjectSymbol
         {
-            get { return LazyObjectSymbol.Value; }
-        }
-
-        private ClassSymbol InitObjectSymbol()
-        {
-            return (ClassSymbol)NameResolution("Object").FindDataType();
+            get
+            { 
+                if(_ObjectSymbol != null)
+                {
+                    return _ObjectSymbol;
+                }
+                _ObjectSymbol = NameResolution("Object").FindDataType();
+                return _ObjectSymbol; 
+            }
         }
 
         private void AppendPragma(string name, Scope pragma)

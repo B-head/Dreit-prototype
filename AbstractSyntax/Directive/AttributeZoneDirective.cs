@@ -12,14 +12,10 @@ namespace AbstractSyntax.Directive
         private List<Element> Child;
         private List<IScope> _Attribute;
 
-        public AttributeZoneDirective()
+        public AttributeZoneDirective(TextPosition tp, List<Element> child)
+            :base(tp)
         {
-            Child = new List<Element>();
-        }
-
-        public void Append(Element value)
-        {
-            Child.Add(value);
+            Child = child;
         }
 
         public IReadOnlyList<IScope> Attribute

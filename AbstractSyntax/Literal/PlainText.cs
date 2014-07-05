@@ -10,22 +10,25 @@ namespace AbstractSyntax.Literal
     [Serializable]
     public class PlainText : Element
     {
-        public string Value { get; set; }
-        private Lazy<IDataType> LazyReturnType;
+        public string Value { get; private set; }
+        private IDataType _ReturnType;
 
-        public PlainText()
+        public PlainText(TextPosition tp, string value)
+            :base(tp)
         {
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
+            Value = value;
         }
 
         public override IDataType ReturnType
         {
-            get { return LazyReturnType.Value; }
-        }
-
-        private IDataType InitReturnType()
-        {
-            return CurrentScope.NameResolution("String").FindDataType();
+            get 
+            {
+                if(_ReturnType == null)
+                {
+                    _ReturnType = CurrentScope.NameResolution("String").FindDataType();
+                }
+                return _ReturnType; 
+            }
         }
 
         public string ShowValue

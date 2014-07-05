@@ -10,6 +10,12 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Postfix : MonadicExpression
     {
+        public Postfix(TextPosition tp, TokenType op, Element child)
+            :base(tp, op, child)
+        {
+
+        }
+
         public override IDataType ReturnType
         {
             get

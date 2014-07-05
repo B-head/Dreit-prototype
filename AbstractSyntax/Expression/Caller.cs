@@ -12,11 +12,32 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Caller : Element
     {
-        public Element Access { get; set; }
-        public TupleList Arguments { get; set; }
+        public Element Access { get; private set; }
+        public TupleList Arguments { get; private set; }
         private TypeMatch? _Match;
         private Scope _CallScope;
         private Scope _CalculateCallScope;
+
+        public Caller(TextPosition tp, Element acs, TupleList args)
+            : base(tp)
+        {
+            Access = acs;
+            Arguments = args;
+        }
+
+        protected Caller(TextPosition tp, Element acs, Element arg)
+            :base(tp)
+        {
+            Access = acs;
+            if (arg is TupleList)
+            {
+                Arguments = (TupleList)arg;
+            }
+            else
+            {
+                Arguments = new TupleList(arg);
+            }
+        }
 
         public override int Count
         {
@@ -42,10 +63,6 @@ namespace AbstractSyntax.Expression
             {
                 return Access;
             }
-            set
-            {
-                throw new NotSupportedException();
-            }
         }
 
         public virtual Element Right
@@ -53,10 +70,6 @@ namespace AbstractSyntax.Expression
             get
             {
                 return (Element)Arguments[0];
-            }
-            set
-            {
-                throw new NotSupportedException();
             }
         }
 
@@ -90,6 +103,11 @@ namespace AbstractSyntax.Expression
             {
                 if (CallScope is CalculatePragma || CallScope is CastPragma)
                 {
+                    var cal = CallScope as CalculatePragma;
+                    if(cal != null && cal.IsCondition)
+                    {
+                        return cal.BooleanSymbol;
+                    }
                     return Arguments.GetDataTypes()[0]; //todo ジェネリクスを使用して型を返すようにする。
                 }
                 else

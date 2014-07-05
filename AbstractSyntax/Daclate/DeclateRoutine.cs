@@ -11,13 +11,22 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateRoutine : RoutineSymbol
     {
-        public TupleList AttributeAccess { get; set; }
-        public TupleList DecGeneric { get; set; }
-        public TupleList DecArguments { get; set; }
-        public Element ExplicitType { get; set; }
-        public DirectiveList Block { get; set; }
-        public bool IsFunction { get; set; }
+        public TupleList AttributeAccess { get; private set; }
+        public TupleList DecGeneric { get; private set; }
+        public TupleList DecArguments { get; private set; }
+        public Element ExplicitType { get; private set; }
+        public DirectiveList Block { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
+
+        public DeclateRoutine(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, DirectiveList block)
+            : base(tp, name, op, isFunc)
+        {
+            AttributeAccess = attr;
+            DecGeneric = generic;
+            DecArguments = args;
+            ExplicitType = expl;
+            Block = block;
+        }
 
         public override IReadOnlyList<IScope> Attribute
         {

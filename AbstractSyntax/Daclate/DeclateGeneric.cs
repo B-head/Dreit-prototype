@@ -11,6 +11,12 @@ namespace AbstractSyntax.Daclate
     {
         public Element SpecialTypeAccess { get; set; }
 
+        public DeclateGeneric(TextPosition tp, string name, Element special)
+            :base(tp, name)
+        {
+            SpecialTypeAccess = special;
+        }
+
         public override int Count
         {
             get { return 1; }

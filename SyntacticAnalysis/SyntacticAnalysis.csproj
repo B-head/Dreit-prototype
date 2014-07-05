@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChainParser.cs" />
     <Compile Include="DeclateParser.cs" />
     <Compile Include="DirectiveParser.cs" />
     <Compile Include="ExpressionParser.cs" />
@@ -50,6 +49,7 @@
     <Compile Include="Parser.cs" />
     <Compile Include="PrimaryParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlimChainParser.cs" />
     <Compile Include="TokenCollection.cs" />
     <Compile Include="Tokenizer.cs" />
   </ItemGroup>

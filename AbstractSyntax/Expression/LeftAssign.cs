@@ -8,19 +8,21 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class LeftAssign : Caller, IDyadicExpression
+    public class LeftAssign : Caller
     {
         public TokenType Operator { get; set; }
+
+        public LeftAssign(TextPosition tp, TokenType op, Element left, Element right)
+            :base(tp, left, right)
+        {
+            Operator = op;
+        }
 
         public override Element Left
         {
             get
             {
                 return Access;
-            }
-            set
-            {
-                Access = value;
             }
         }
 
@@ -29,17 +31,6 @@ namespace AbstractSyntax.Expression
             get
             {
                 return (Element)Arguments[0];
-            }
-            set
-            {
-                if (value is TupleList)
-                {
-                    Arguments = (TupleList)value;
-                }
-                else
-                {
-                    Arguments = new TupleList(value);
-                }
             }
         }
 

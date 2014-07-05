@@ -209,7 +209,8 @@ namespace CliTranslate
         private void Translate(UnStatement element, Translator trans)
         {
             ChildTranslate(element, trans);
-            trans.GenerateControl(OpCodes.Not);
+            trans.GenerateControl(OpCodes.Ldc_I4_1);
+            trans.GenerateControl(OpCodes.Xor);
         }
 
         private void Translate(IfStatement element, Translator trans)

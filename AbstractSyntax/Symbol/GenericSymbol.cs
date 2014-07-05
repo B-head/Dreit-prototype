@@ -8,7 +8,11 @@ namespace AbstractSyntax.Symbol
 {
     [Serializable]
     public class GenericSymbol : Scope, IDataType
-    {
-
+    {   
+        public GenericSymbol(TextPosition tp, string name)
+            :base(tp)
+        {
+            Name = name;
+        }
     }
 }

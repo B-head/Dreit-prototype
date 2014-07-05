@@ -5,11 +5,19 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public abstract class DyadicExpression : Element, IDyadicExpression
+    public abstract class DyadicExpression : Element
     {
-        public Element Left { get; set; }
-        public Element Right { get; set; }
-        public TokenType Operator { get; set; }
+        public TokenType Operator { get; private set; }
+        public Element Left { get; private set; }
+        public Element Right { get; private set; }
+
+        protected DyadicExpression(TextPosition tp, TokenType op, Element left, Element right)
+            :base(tp)
+        {
+            Operator = op;
+            Left = left;
+            Right = right;
+        }
 
         public override int Count
         {

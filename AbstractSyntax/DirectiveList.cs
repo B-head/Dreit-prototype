@@ -10,12 +10,19 @@ namespace AbstractSyntax
     [Serializable]
     public class DirectiveList : Element
     {
-        private List<IElement> Child;
-        public bool IsInline { get; set; }
+        private List<Element> Child;
+        public bool IsInline { get; private set; }
 
         public DirectiveList()
         {
-            Child = new List<IElement>();
+            Child = new List<Element>();
+        }
+
+        public DirectiveList(TextPosition tp, List<Element> child, bool isInline)
+            :base(tp)
+        {
+            Child = child;
+            IsInline = isInline;
         }
 
         public override int Count
@@ -45,7 +52,7 @@ namespace AbstractSyntax
             }
         }
 
-        public void Append(IElement value)
+        public void Append(Element value)
         {
             Child.Add(value);
         }

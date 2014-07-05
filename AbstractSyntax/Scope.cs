@@ -18,12 +18,19 @@ namespace AbstractSyntax
     [Serializable]
     public abstract class Scope : Element, IScope
     {
-        public string Name { get; set; }
+        public string Name { get; internal set; }
         private Dictionary<string, OverLoad> ScopeSymbol;
         private List<Scope> _ScopeChild;
         public IReadOnlyList<IScope> ScopeChild { get { return _ScopeChild; } }
 
         protected Scope()
+        {
+            ScopeSymbol = new Dictionary<string, OverLoad>();
+            _ScopeChild = new List<Scope>();
+        }
+
+        protected Scope(TextPosition tp)
+            : base(tp)
         {
             ScopeSymbol = new Dictionary<string, OverLoad>();
             _ScopeChild = new List<Scope>();

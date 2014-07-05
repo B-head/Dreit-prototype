@@ -8,29 +8,34 @@ namespace AbstractSyntax.Literal
     [Serializable]
     public class NumberLiteral : Element
     {
-        public string Integral { get; set; }
-        public string Fraction { get; set; }
-        private Lazy<IDataType> LazyReturnType;
+        public string Integral { get; private set; }
+        public string Fraction { get; private set; }
+        private IDataType _ReturnType;
 
-        public NumberLiteral()
+        public NumberLiteral(TextPosition tp, string integral, string fraction)
+            :base(tp)
         {
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
+            Integral = integral;
+            Fraction = fraction;
         }
 
         public override IDataType ReturnType
         {
-            get { return LazyReturnType.Value; }
-        }
-
-        private IDataType InitReturnType()
-        {
-            if (Fraction == null)
+            get
             {
-                return CurrentScope.NameResolution("Integer32").FindDataType();
-            }
-            else
-            {
-                return CurrentScope.NameResolution("Binary64").FindDataType();
+                if(_ReturnType != null)
+                {
+                    return _ReturnType;
+                }
+                if (string.IsNullOrEmpty(Fraction))
+                {
+                    _ReturnType = CurrentScope.NameResolution("Integer32").FindDataType();
+                }
+                else
+                {
+                    _ReturnType = CurrentScope.NameResolution("Binary64").FindDataType();
+                }
+                return _ReturnType;
             }
         }
 
@@ -38,7 +43,7 @@ namespace AbstractSyntax.Literal
         {
             get
             {
-                if (Fraction == null)
+                if (string.IsNullOrEmpty(Fraction))
                 {
                     return Integral;
                 }
@@ -52,7 +57,7 @@ namespace AbstractSyntax.Literal
         internal override void CheckSemantic()
         {
             Parse(Integral);
-            if(Fraction != null)
+            if (string.IsNullOrEmpty(Fraction))
             {
                 Parse(Fraction);
             }
@@ -61,7 +66,7 @@ namespace AbstractSyntax.Literal
 
         public dynamic Parse()
         {
-            if (Fraction == null)
+            if (string.IsNullOrEmpty(Fraction))
             {
                 return (int)Parse(Integral);
             }

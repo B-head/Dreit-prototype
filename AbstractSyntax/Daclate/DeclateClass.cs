@@ -16,11 +16,14 @@ namespace AbstractSyntax.Daclate
         public TupleList DecGeneric { get; set; }
         public TupleList InheritAccess { get; set; }
         public DirectiveList Block { get; set; }
-        public DefaultSymbol Default { get; private set; }
 
-        public DeclateClass()
+        public DeclateClass(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, DirectiveList block)
+            :base(tp, name, isTrait)
         {
-            Default = new DefaultSymbol(this);
+            AttributeAccess = attr;
+            DecGeneric = generic;
+            InheritAccess = inherit;
+            Block = block;
         }
 
         public override IReadOnlyList<IScope> Attribute

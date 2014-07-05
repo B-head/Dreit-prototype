@@ -15,6 +15,15 @@ namespace AbstractSyntax.Statement
         public Element By { get; set; }
         public DirectiveList Block { get; set; }
 
+        public LoopStatement(TextPosition tp, Element cond, Element on, Element by, DirectiveList block)
+            :base(tp)
+        {
+            Condition = cond;
+            On = on;
+            By = by;
+            Block = block;
+        }
+
         public bool IsDefinedCondition
         {
             get { return Condition != null; }

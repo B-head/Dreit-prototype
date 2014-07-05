@@ -14,7 +14,7 @@ namespace AbstractSyntax.Pragma
 
         public CastPragma()
         {
-            GenericType = new GenericSymbol { Name = "T" };
+            GenericType = new GenericSymbol(new TextPosition(), "T");
             _Attribute = new List<IScope>();
         }
 

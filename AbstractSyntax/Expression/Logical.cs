@@ -10,6 +10,12 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Logical : DyadicExpression
     {
+        public Logical(TextPosition tp, TokenType op, Element left, Element right)
+            : base(tp, op, left, right)
+        {
+
+        }
+
         public override IDataType ReturnType
         {
             get { return Left.ReturnType; }

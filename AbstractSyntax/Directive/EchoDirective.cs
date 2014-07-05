@@ -8,7 +8,13 @@ namespace AbstractSyntax.Directive
     [Serializable]
     public class EchoDirective : Element
     {
-        public Element Exp { get; set; }
+        public Element Exp { get; private set; }
+
+        public EchoDirective(TextPosition tp, Element exp)
+            :base(tp)
+        {
+            Exp = exp;
+        }
 
         public override int Count
         {

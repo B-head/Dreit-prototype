@@ -10,14 +10,17 @@ namespace AbstractSyntax.Statement
     [Serializable]
     public class IfStatement : Scope
     {
-        public Element Condition { get; set; }
-        public DirectiveList Than { get; set; }
-        public DirectiveList Else { get; set; }
-        private Lazy<IDataType> LazyReturnType;
+        public Element Condition { get; private set; }
+        public DirectiveList Than { get; private set; }
+        public DirectiveList Else { get; private set; }
+        private IDataType _ReturnType;
 
-        public IfStatement()
+        public IfStatement(TextPosition tp, Element cond, DirectiveList than, DirectiveList els)
+            :base(tp)
         {
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
+            Condition = cond;
+            Than = than;
+            Else = els;
         }
 
         public override int Count
@@ -46,22 +49,25 @@ namespace AbstractSyntax.Statement
 
         public override IDataType ReturnType
         {
-            get { return LazyReturnType.Value; }
+            get 
+            {
+                if(_ReturnType != null)
+                {
+                    return _ReturnType;
+                }
+                var a = BlockReturnType(Than);
+                var b = BlockReturnType(Else);
+                if (a == b)
+                {
+                    _ReturnType = a;
+                }
+                else
+                {
+                    _ReturnType = Root.Unknown;
+                }
+                return _ReturnType; 
+            }
         } 
-
-        private IDataType InitReturnType()
-        {
-            var a = BlockReturnType(Than);
-            var b = BlockReturnType(Else);
-            if(a == b)
-            {
-                return a;
-            }
-            else
-            {
-                return Root.Unknown;
-            }
-        }
 
         private IDataType BlockReturnType(DirectiveList block)
         {

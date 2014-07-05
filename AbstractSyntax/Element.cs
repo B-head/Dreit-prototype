@@ -20,10 +20,20 @@ namespace AbstractSyntax
     [Serializable]
     public abstract class Element : IElement
     {
-        public TextPosition Position { get; set; }
+        public TextPosition Position { get; private set; }
         internal Element Parent { get; private set; }
         internal Scope CurrentScope { get; private set; }
         internal Root Root { get; private set; }
+
+        protected Element()
+        {
+
+        }
+
+        protected Element(TextPosition tp)
+        {
+            Position = tp;
+        }
 
         public IScope CurrentIScope 
         {

@@ -8,9 +8,16 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class MemberAccess : Element
     {
-        public Element Access { get; set; }
-        public string Member { get; set; }
+        public Element Access { get; private set; }
+        public string Member { get; private set; }
         private OverLoad _Reference;
+
+        public MemberAccess(TextPosition tp, Element acs, string member)
+            :base(tp)
+        {
+            Access = acs;
+            Member = member;
+        }
 
         public override IDataType ReturnType
         {

@@ -2,83 +2,134 @@
 using AbstractSyntax.Expression;
 using AbstractSyntax.Literal;
 using AbstractSyntax.Statement;
+using System.Collections.Generic;
 
 namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static Element Primary(ChainParser cp)
+        private static TransferParser<Element>[] primary = 
+        { 
+            DeclateClass,
+            DeclateRoutine,
+            DeclateOperator,
+            DeclareVariant,
+            IfStatement,
+            LoopStatement,
+            UnStatement,
+            ExpressionGroup,
+            StringLiteral,
+            NumberLiteral,
+            IdentifierAccess
+        };
+
+        private static Element Primary(SlimChainParser cp)
         {
             return CoalesceParser(cp, primary);
         }
 
-        private static ExpressionGroup ExpressionGroup(ChainParser cp)
+        private static ExpressionGroup ExpressionGroup(SlimChainParser cp)
         {
-            return cp.Begin<ExpressionGroup>()
+            Element exp = null;
+            return cp.Begin
                 .Type(TokenType.LeftParenthesis).Lt()
-                .Transfer((s, e) => s.Child = e, Expression)
+                .Transfer(e => exp = e, Expression)
                 .Type(TokenType.RightParenthesis).Lt()
-                .End();
+                .End(tp => new ExpressionGroup(tp, exp));
         }
 
-        private static NumberLiteral NumberLiteral(ChainParser cp)
+        private static NumberLiteral NumberLiteral(SlimChainParser cp)
         {
-            return cp.Begin<NumberLiteral>()
-                .Type((s, t) => s.Integral = t.Text, TokenType.DigitStartString).Lt()
-                .If().Type(TokenType.Access).Lt()
-                .Than().Type((s, t) => s.Fraction = t.Text, TokenType.DigitStartString).Lt() //todo 数字で無かった場合の対応が必要。
-                .EndIf().End();
+            var integral = string.Empty;
+            var fraction = string.Empty;
+            return cp.Begin
+                .Type(t => integral = t.Text, TokenType.DigitStartString).Lt()
+                .If(icp => icp.Type(TokenType.Access).Lt())
+                .Than(icp => icp.Type(t => fraction = t.Text, TokenType.DigitStartString).Lt())
+                .End(tp => new NumberLiteral(tp, integral, fraction));
         }
 
-        private static StringLiteral StringLiteral(ChainParser cp)
+        private static StringLiteral StringLiteral(SlimChainParser cp)
         {
-            return cp.Begin<StringLiteral>()
+            var texts = new List<Element>();
+            return cp.Begin
                 .Type(TokenType.QuoteSeparator)
-                .Loop().Not().Type(TokenType.QuoteSeparator).Do()
-                .If().Type(TokenType.LeftBrace)
-                .Than().Transfer((s, e) => s.Append(e), Expression).Type(TokenType.RightBrace)
-                .Else().Transfer((s, e) => s.Append(e), PlainText)
-                .EndIf().EndLoop().End();
-        }
-        private static PlainText PlainText(ChainParser cp)
-        {
-            return cp.Begin<PlainText>()
-                .Type((s, t) => s.Value = t.Text, TokenType.PlainText)
-                .End();
+                .Loop(icp => icp.Not.Type(TokenType.QuoteSeparator), icp =>
+                {
+                    icp
+                    .If(iicp => iicp.Type(TokenType.LeftBrace))
+                    .Than(iicp => iicp.Transfer(e => texts.Add(e), Expression).Type(TokenType.RightBrace))
+                    .Else(iicp => iicp.Transfer(e => texts.Add(e), PlainText));
+                })
+                .End(tp => new StringLiteral(tp, texts));
         }
 
-        private static IdentifierAccess IdentifierAccess(ChainParser cp)
+        private static PlainText PlainText(SlimChainParser cp)
         {
-            return cp.Begin<IdentifierAccess>()
-                .Opt().Type((s, t) => s.IsPragmaAccess = true, TokenType.Pragma).Lt()
-                .Type((s, t) => s.Value = t.Text, TokenType.LetterStartString).Lt()
-                .End();
+            var value = string.Empty;
+            return cp.Begin
+                .Type(t => value = t.Text, TokenType.PlainText)
+                .End(tp => new PlainText(tp, value));
         }
 
-        private static UnStatement UnStatement(ChainParser cp)
+        private static IdentifierAccess IdentifierAccess(SlimChainParser cp)
         {
-            return cp.Begin<UnStatement>()
-                .Text("un").Lt().Transfer((s, e) => s.Exp = e, Directive)
-                .End();
+            var isPragma = false;
+            var value = string.Empty;
+            return cp.Begin
+                .Opt.Type(t => isPragma = true, TokenType.Pragma).Lt()
+                .Type(t => value = t.Text, TokenType.LetterStartString).Lt()
+                .End(tp => new IdentifierAccess(tp, value, isPragma));
         }
 
-        private static IfStatement IfStatement(ChainParser cp)
+        private static IdentifierAccess IdentifierAccess(SlimChainParser cp, params string[] match)
         {
-            return cp.Begin<IfStatement>()
-                .Text("if").Lt().Transfer((s, e) => s.Condition = e, Directive)
-                .Transfer((s, e) => s.Than = e, IfInlineDirectiveList, Block)
-                .If().Text("else").Lt().Than().Transfer((s, e) => s.Else = e, PureInlineDirectiveList, Block).EndIf()
-                .End();
+            var isPragma = false;
+            var value = string.Empty;
+            return cp.Begin
+                .Opt.Type(t => isPragma = true, TokenType.Pragma).Lt()
+                .Text(t => value = t.Text, match).Lt()
+                .End(tp => new IdentifierAccess(tp, value, isPragma));
         }
 
-        private static LoopStatement LoopStatement(ChainParser cp)
+        private static UnStatement UnStatement(SlimChainParser cp)
         {
-            return cp.Begin<LoopStatement>()
-                .Text("loop").Lt().Opt().Transfer((s, e) => s.Condition = e, Directive)
-                .If().Text("on").Lt().Than().Transfer((s, e) => s.On = e, Directive).EndIf()
-                .If().Text("by").Lt().Than().Transfer((s, e) => s.By = e, Directive).EndIf()
-                .Transfer((s, e) => s.Block = e, Block)
-                .End();
+            Element exp = null;
+            return cp.Begin
+                .Text("un").Lt()
+                .Transfer(e => exp = e, Directive)
+                .End(tp => new UnStatement(tp, exp));
+        }
+
+        private static IfStatement IfStatement(SlimChainParser cp)
+        {
+            Element cond = null;
+            DirectiveList than = null;
+            DirectiveList els = null;
+            return cp.Begin
+                .Text("if").Lt()
+                .Transfer(e => cond = e, Directive)
+                .Transfer(e => than = e, icp => Block(icp, true))
+                .If(icp => icp.Text("else").Lt())
+                .Than(icp => icp.Transfer(e => els = e, iicp => Block(iicp, false)))
+                .End(tp => new IfStatement(tp, cond, than, els));
+        }
+
+        private static LoopStatement LoopStatement(SlimChainParser cp)
+        {
+            Element cond = null;
+            Element on = null;
+            Element by = null;
+            DirectiveList block = null;
+            return cp.Begin
+                .Text("loop").Lt()
+                .Opt.Transfer(e => cond = e, Directive)
+                .If(icp => icp.Text("on").Lt())
+                .Than(icp => icp.Transfer(e => on = e, Directive))
+                .If(icp => icp.Text("by").Lt())
+                .Than(icp => icp.Transfer(e => by = e, Directive))
+                .Transfer(e => block = e, icp => Block(icp, true))
+                .End(tp => new LoopStatement(tp, cond, on, by, block));
         }
     }
 }

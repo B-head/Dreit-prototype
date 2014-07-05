@@ -22,6 +22,12 @@ namespace AbstractSyntax
             Append(append);
         }
 
+        public TupleList(TextPosition tp, List<Element> child)
+            :base(tp)
+        {
+            Child = child;
+        }
+
         public void Append(Element value)
         {
             Child.Add(value);

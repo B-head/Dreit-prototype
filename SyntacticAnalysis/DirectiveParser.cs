@@ -2,20 +2,37 @@
 using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using System;
+using System.Collections.Generic;
 
 namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static DirectiveList RootDirectiveList(ChainParser cp)
+        private static TransferParser<Element>[] directive = 
+        { 
+            AttributeZone,
+            Echo,
+            Alias,
+            Return,
+            Break,
+            Continue,
+            Expression
+        };
+
+        private static DirectiveList RootDirectiveList(SlimChainParser cp)
         {
-            var result = cp.Begin<DirectiveList>()
+            var child = new List<Element>();
+            var result = cp.Begin
                 .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .Loop().Readble().Do()
-                .Transfer((s, e) => s.Append(e), Directive)
-                .Or().Error()
-                .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .EndLoop().End();
+                .Loop(icp => icp.Readable(), icp =>
+                {
+                    icp.Any(
+                        iicp => iicp.Transfer(e => child.Add(e), Directive),
+                        iicp => iicp.AddError()
+                    )
+                    .Ignore(TokenType.EndExpression, TokenType.LineTerminator);
+                })
+                .End(tp => new DirectiveList(tp, child, false));
             if(result == null)
             {
                 throw new InvalidOperationException();
@@ -23,42 +40,21 @@ namespace SyntacticAnalysis
             return result;
         }
 
-        private static DirectiveList PureInlineDirectiveList(ChainParser cp)
+        private static DirectiveList BlockDirectiveList(SlimChainParser cp)
         {
-            return cp.Begin<DirectiveList>()
-                .Transfer((s, e) => s.Append(e), Directive)
-                .Self(s => s.IsInline = true)
-                .End();
-        }
-
-        private static DirectiveList InlineDirectiveList(ChainParser cp)
-        {
-            return cp.Begin<DirectiveList>()
-                .Type(TokenType.Separator).Or().Text("do").Lt()
-                .Transfer((s, e) => s.Append(e), Directive)
-                .Self(s => s.IsInline = true)
-                .End();
-        }
-
-        private static DirectiveList IfInlineDirectiveList(ChainParser cp)
-        {
-            return cp.Begin<DirectiveList>()
-                .Type(TokenType.Separator).Or().Text("do").Or().Text("than").Lt()
-                .Transfer((s, e) => s.Append(e), Directive)
-                .Self(s => s.IsInline = true)
-                .End();
-        }
-
-        private static DirectiveList BlockDirectiveList(ChainParser cp)
-        {
-            var result = cp.Begin<DirectiveList>()
+            var child = new List<Element>();
+            var result = cp.Begin
                 .Type(TokenType.LeftBrace)
                 .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .Loop().Not().Type(TokenType.RightBrace).Do()
-                .Transfer((s, e) => s.Append(e), Directive)
-                .Or().Error()
-                .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .EndLoop().End();
+                .Loop(icp => icp.Not.Type(TokenType.RightBrace), icp =>
+                {
+                    icp.Any(
+                        iicp => iicp.Transfer(e => child.Add(e), Directive),
+                        iicp => iicp.AddError()
+                    )
+                    .Ignore(TokenType.EndExpression, TokenType.LineTerminator);
+                })
+                .End(tp => new DirectiveList(tp, child, false));
             if (result == null)
             {
                 result = new DirectiveList();
@@ -66,62 +62,88 @@ namespace SyntacticAnalysis
             return result;
         }
 
-        private static DirectiveList Block(ChainParser cp)
+        private static DirectiveList InlineDirectiveList(SlimChainParser cp, bool separator)
         {
-            return CoalesceParser<DirectiveList>(cp, InlineDirectiveList, BlockDirectiveList);
+            var child = new List<Element>();
+            return cp.Begin
+                .If(icp => icp.Is(separator))
+                .Than(icp => 
+                {
+                    icp.Any(
+                        iicp => iicp.Type(TokenType.Separator),
+                        iicp => iicp.Text("do"),
+                        iicp => iicp.Text("than")
+                    ).Lt();
+                })
+                .Transfer(e => child.Add(e), Directive)
+                .End(tp => new DirectiveList(tp, child, true));
         }
 
-        private static Element Directive(ChainParser cp)
+        private static DirectiveList Block(SlimChainParser cp, bool separator)
+        {
+            return CoalesceParser<DirectiveList>(cp, icp => InlineDirectiveList(icp, separator), BlockDirectiveList);
+        }
+
+        private static Element Directive(SlimChainParser cp)
         {
             return CoalesceParser(cp, directive);
         }
 
-        private static AttributeZoneDirective AttributeZone(ChainParser cp)
+        private static AttributeZoneDirective AttributeZone(SlimChainParser cp)
         {
-            return cp.Begin<AttributeZoneDirective>()
-                .Type(TokenType.Zone).Lt().Loop()
-                .Token((s, e) => s.Append(TextToIdentifier(cp, e.Text))).Lt()
-                .Type(TokenType.List).Lt()
-                .Do().EndLoop().End();
+            var child = new List<Element>();
+            return cp.Begin
+                .Type(TokenType.Zone).Lt()
+                .Loop(icp =>
+                {
+                    icp
+                    .Transfer(e => child.Add(e), IdentifierAccess)
+                    .Type(TokenType.List).Lt();
+                })
+                .End(tp => new AttributeZoneDirective(tp, child));
         }
 
-        private static EchoDirective Echo(ChainParser cp)
+        private static EchoDirective Echo(SlimChainParser cp)
         {
-            return cp.Begin<EchoDirective>()
+            Element exp = null;
+            return cp.Begin
                 .Text("echo").Lt()
-                .Opt().Transfer((s, e) => s.Exp = e, Directive)
-                .End();
+                .Opt.Transfer(e => exp = e, Directive)
+                .End(tp => new EchoDirective(tp, exp));
         }
 
-        private static AliasDirective Alias(ChainParser cp)
+        private static ReturnDirective Return(SlimChainParser cp)
         {
-            return cp.Begin<AliasDirective>()
-                .Text("alias").Lt()
-                .Transfer((s, e) => s.From = e, IdentifierAccess)
-                .Transfer((s, e) => s.To = e, IdentifierAccess)
-                .End();
-        }
-
-        private static ReturnDirective Return(ChainParser cp)
-        {
-            return cp.Begin<ReturnDirective>()
+            Element exp = null;
+            return cp.Begin
                 .Text("return").Lt()
-                .Transfer((s, e) => s.Exp = e, Directive)
-                .End();
+                .Opt.Transfer(e => exp = e, Directive)
+                .End(tp => new ReturnDirective(tp,exp));
         }
 
-        private static BreakDirective Break(ChainParser cp)
+        private static AliasDirective Alias(SlimChainParser cp)
         {
-            return cp.Begin<BreakDirective>()
+            IdentifierAccess from = null;
+            IdentifierAccess to = null;
+            return cp.Begin
+                .Text("alias").Lt()
+                .Opt.Transfer(e => from = e, IdentifierAccess)
+                .Opt.Transfer(e => to = e, IdentifierAccess)
+                .End(tp => new AliasDirective(tp, from, to));
+        }
+
+        private static BreakDirective Break(SlimChainParser cp)
+        {
+            return cp.Begin
                 .Text("break").Lt()
-                .End();
+                .End(tp => new BreakDirective(tp));
         }
 
-        private static ContinueDirective Continue(ChainParser cp)
+        private static ContinueDirective Continue(SlimChainParser cp)
         {
-            return cp.Begin<ContinueDirective>()
+            return cp.Begin
                 .Text("continue").Lt()
-                .End();
+                .End(tp => new ContinueDirective(tp));
         }
     }
 }
