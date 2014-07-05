@@ -13,7 +13,7 @@ namespace AbstractSyntax.Statement
         public Element Condition { get; private set; }
         public DirectiveList Than { get; private set; }
         public DirectiveList Else { get; private set; }
-        private Lazy<IDataType> LazyReturnType;
+        private IDataType _ReturnType;
 
         public IfStatement(TextPosition tp, Element cond, DirectiveList than, DirectiveList els)
             :base(tp)
@@ -21,7 +21,6 @@ namespace AbstractSyntax.Statement
             Condition = cond;
             Than = than;
             Else = els;
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 
         public override int Count
@@ -50,22 +49,25 @@ namespace AbstractSyntax.Statement
 
         public override IDataType ReturnType
         {
-            get { return LazyReturnType.Value; }
+            get 
+            {
+                if(_ReturnType != null)
+                {
+                    return _ReturnType;
+                }
+                var a = BlockReturnType(Than);
+                var b = BlockReturnType(Else);
+                if (a == b)
+                {
+                    _ReturnType = a;
+                }
+                else
+                {
+                    _ReturnType = Root.Unknown;
+                }
+                return _ReturnType; 
+            }
         } 
-
-        private IDataType InitReturnType()
-        {
-            var a = BlockReturnType(Than);
-            var b = BlockReturnType(Else);
-            if(a == b)
-            {
-                return a;
-            }
-            else
-            {
-                return Root.Unknown;
-            }
-        }
 
         private IDataType BlockReturnType(DirectiveList block)
         {

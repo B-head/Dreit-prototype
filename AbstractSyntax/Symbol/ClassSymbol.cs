@@ -52,13 +52,13 @@ namespace AbstractSyntax.Symbol
 
         public ClassSymbol InheritClass
         {
-            get 
+            get
             {
                 if (this == Root.ObjectSymbol)
                 {
                     return null;
                 }
-                return _Inherit.Find(v => v.IsClass) ?? Root.ObjectSymbol; 
+                return _Inherit.Find(v => v.IsClass) ?? Root.ObjectSymbol as ClassSymbol; 
             }
         }
 

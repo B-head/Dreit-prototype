@@ -10,30 +10,32 @@ namespace AbstractSyntax.Literal
     {
         public string Integral { get; private set; }
         public string Fraction { get; private set; }
-        private Lazy<IDataType> LazyReturnType;
+        private IDataType _ReturnType;
 
         public NumberLiteral(TextPosition tp, string integral, string fraction)
             :base(tp)
         {
             Integral = integral;
             Fraction = fraction;
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 
         public override IDataType ReturnType
         {
-            get { return LazyReturnType.Value; }
-        }
-
-        private IDataType InitReturnType()
-        {
-            if (string.IsNullOrEmpty(Fraction))
+            get
             {
-                return CurrentScope.NameResolution("Integer32").FindDataType();
-            }
-            else
-            {
-                return CurrentScope.NameResolution("Binary64").FindDataType();
+                if(_ReturnType != null)
+                {
+                    return _ReturnType;
+                }
+                if (string.IsNullOrEmpty(Fraction))
+                {
+                    _ReturnType = CurrentScope.NameResolution("Integer32").FindDataType();
+                }
+                else
+                {
+                    _ReturnType = CurrentScope.NameResolution("Binary64").FindDataType();
+                }
+                return _ReturnType;
             }
         }
 

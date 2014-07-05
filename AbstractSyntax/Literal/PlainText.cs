@@ -11,23 +11,24 @@ namespace AbstractSyntax.Literal
     public class PlainText : Element
     {
         public string Value { get; private set; }
-        private Lazy<IDataType> LazyReturnType;
+        private IDataType _ReturnType;
 
         public PlainText(TextPosition tp, string value)
             :base(tp)
         {
             Value = value;
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 
         public override IDataType ReturnType
         {
-            get { return LazyReturnType.Value; }
-        }
-
-        private IDataType InitReturnType()
-        {
-            return CurrentScope.NameResolution("String").FindDataType();
+            get 
+            {
+                if(_ReturnType == null)
+                {
+                    _ReturnType = CurrentScope.NameResolution("String").FindDataType();
+                }
+                return _ReturnType; 
+            }
         }
 
         public string ShowValue

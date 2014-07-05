@@ -10,13 +10,12 @@ namespace AbstractSyntax.Literal
     public class StringLiteral : Element
     {
         private List<Element> _Texts;
-        private Lazy<IDataType> LazyReturnType;
+        private IDataType _ReturnType;
 
         public StringLiteral(TextPosition tp, List<Element> texts)
             :base(tp)
         {
             _Texts = texts;
-            LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 
         public override int Count
@@ -36,12 +35,14 @@ namespace AbstractSyntax.Literal
 
         public override IDataType ReturnType
         {
-            get { return LazyReturnType.Value; }
-        }
-
-        private IDataType InitReturnType()
-        {
-            return CurrentScope.NameResolution("String").FindDataType();
+            get
+            {
+                if (_ReturnType == null)
+                {
+                    _ReturnType = CurrentScope.NameResolution("String").FindDataType();
+                }
+                return _ReturnType;
+            }
         }
 
         public void Append(Element value)
