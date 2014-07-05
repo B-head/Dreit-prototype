@@ -8,13 +8,9 @@ namespace SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static ParserFunction<Element>[] directive = { AttributeZone, Echo, Alias, Return, Break, Continue, Expression };
-        private static ParserFunction<Element>[] primary = { IfStatement, LoopStatement, UnStatement, DeclateClass, DeclateRoutine, DeclateOperator, DeclareVariant, ExpressionGroup, StringLiteral, NumberLiteral, IdentifierAccess };
-        private static string[] attribute = { "static", "public", "protected", "private" };
-
         public static DeclateModule Parse(TokenCollection collection)
         {
-            var cp = new ChainParser(collection);
+            var cp = new SlimChainParser(collection);
             var exp = RootDirectiveList(cp);
             return new DeclateModule 
             { 
@@ -26,7 +22,7 @@ namespace SyntacticAnalysis
             };
         }
 
-        private static T CoalesceParser<T>(ChainParser cp, params ParserFunction<T>[] func) where T : Element
+        private static T CoalesceParser<T>(SlimChainParser cp, params TransferParser<T>[] func) where T : Element
         {
             T result = null;
             foreach (var f in func)
@@ -40,7 +36,7 @@ namespace SyntacticAnalysis
             return result;
         }
 
-        private static Element LeftAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type)
+        private static Element LeftAssociative<R, T>(SlimChainParser cp, TransferParser<T> next, params TokenType[] type)
             where R : Element, IDyadicExpression, new()
             where T : Element
         {
@@ -48,44 +44,49 @@ namespace SyntacticAnalysis
             return current == null ? null : LeftAssociative<R, T>(current, cp, next, type);
         }
 
-        private static Element LeftAssociative<R, T>(Element current, ChainParser cp, ParserFunction<T> next, params TokenType[] type)
+        private static Element LeftAssociative<R, T>(Element current, SlimChainParser cp, TransferParser<T> next, params TokenType[] type)
             where R : Element, IDyadicExpression, new()
             where T : Element
         {
-            var ret = cp.Begin<R>()
-                .Self(s => s.Left = current)
-                .Type((s, t) => s.Operator = t.TokenType, type).Lt()
-                .Transfer((s, e) => s.Right = e, next)
-                .End();
+            var op = TokenType.Unknoun;
+            Element right = null;
+            var ret = cp.Begin
+                .Type(t => op = t.TokenType, type).Lt()
+                .Transfer(e => right = e, next)
+                .End(tp => new R { Left = current, Right = right, Operator = op, Position = tp});
             return ret == null ? current : LeftAssociative<R, T>(ret, cp, next, type);
         }
 
-        private static Element RightAssociative<R, T>(ChainParser cp, ParserFunction<T> next, params TokenType[] type)
+        private static Element RightAssociative<R, T>(SlimChainParser cp, TransferParser<T> next, params TokenType[] type)
             where R : Element, IDyadicExpression, new()
             where T : Element
         {
+            var op = TokenType.Unknoun;
+            Element right = null;
             Element current = next(cp);
-            var ret = cp.Begin<R>()
-                .Self(s => s.Left = current)
-                .Type((s, t) => s.Operator = t.TokenType, type).Lt()
-                .Transfer((s, e) => s.Right = e, c => RightAssociative<R, T>(c, next, type))
-                .End();
+            var ret = cp.Begin
+                .Type(t => op = t.TokenType, type).Lt()
+                .Transfer(e => right = e, icp => RightAssociative<R, T>(icp, next, type))
+                .End(tp => new R { Left = current, Right = right, Operator = op, Position = tp });
             return ret ?? current;
         }
 
-        private static TupleList ParseTuple<T>(ChainParser cp, ParserFunction<T> next) where T : Element
+        private static TupleList ParseTuple<T>(SlimChainParser cp, TransferParser<T> next) where T : Element
         {
-            return cp.Begin<TupleList>().Loop()
-                .Transfer((s, e) => s.Append(e), next)
-                .Type(TokenType.List).Lt()
-                .Do().EndLoop().End();
-        }
-
-        private static IdentifierAccess TextToIdentifier(ChainParser cp, string text)
-        {
-            return cp.Begin<IdentifierAccess>()
-                .Self(s => s.Value = text)
-                .End();
+            var child = new List<Element>();
+            var result = cp.Begin
+                .Loop(icp =>
+                {
+                    icp
+                    .Transfer(e => child.Add(e), next)
+                    .Type(TokenType.List).Lt();
+                })
+                .End(tp => new TupleList(child) { Position = tp });
+            if (result == null)
+            {
+                result = new TupleList();
+            }
+            return result;
         }
     }
 }

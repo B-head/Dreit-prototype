@@ -76,11 +76,6 @@ namespace AbstractSyntax.Visualizer
             {
                 var type = element.GetType();
                 AddGroup(element, type);
-                //while(type != typeof(object))
-                //{
-                //    AddGroup(element, type);
-                //    type = type.BaseType;
-                //}
             }
             valueList.EndUpdate();
         }
@@ -90,11 +85,11 @@ namespace AbstractSyntax.Visualizer
             var group = new ListViewGroup(type.Name);
             group.Tag = type;
             valueList.Groups.Add(group);
-            foreach (var v in type.GetFields(showMenber))
-            {
-                object obj = v.GetValue(element) ?? "<null>";
-                AddValue(group, v.Name, obj);
-            }
+            //foreach (var v in type.GetFields(showMenber))
+            //{
+            //    object obj = v.GetValue(element) ?? "<null>";
+            //    AddValue(group, v.Name, obj);
+            //}
             foreach (var v in type.GetProperties(showMenber))
             {
                 object obj;

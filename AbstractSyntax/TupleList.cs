@@ -22,6 +22,11 @@ namespace AbstractSyntax
             Append(append);
         }
 
+        public TupleList(List<Element> child)
+        {
+            Child = child;
+        }
+
         public void Append(Element value)
         {
             Child.Add(value);

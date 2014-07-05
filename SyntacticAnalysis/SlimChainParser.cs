@@ -8,37 +8,36 @@ using System.Threading.Tasks;
 namespace SyntacticAnalysis
 {
     delegate T MakeElement<T>(TextPosition tp) where T : Element;
-    delegate SlimChainParser InsideParser(SlimChainParser cp);
+    delegate T TransferParser<T>(SlimChainParser cp) where T : Element;
+    delegate void InsideParser(SlimChainParser cp);
     delegate void TokenAction(Token token);
     delegate void ElementAction<T>(T element) where T : Element;
-    delegate T TransferParser<T>(SlimChainParser cp) where T : Element;
 
-    struct SlimChainParser
+    class SlimChainParser
     {
+        private SlimChainParser parent;
         private TokenCollection collection;
         private int index;
         private TextPosition beginPosition;
         private TextPosition endPosition;
         private bool failure;
         private bool ifResult;
+        private bool ifSkip;
         private bool phaseNot;
         private bool phaseOpt;
 
         public SlimChainParser(TokenCollection collection)
         {
             this.collection = collection;
-            this.index = 0;
-            this.beginPosition = new TextPosition();
-            this.endPosition = new TextPosition();
-            this.failure = false;
-            this.ifResult = false;
-            this.phaseNot = false;
-            this.phaseOpt = false;
         }
 
-        public static implicit operator bool(SlimChainParser cp)
+        private SlimChainParser(SlimChainParser parent, TokenCollection collection, int index, TextPosition position)
         {
-            return cp.failure;
+            this.parent = parent;
+            this.collection = collection;
+            this.index = index;
+            this.beginPosition = position;
+            this.endPosition = position;
         }
 
         public SlimChainParser Begin
@@ -47,20 +46,22 @@ namespace SyntacticAnalysis
             {
                 var tb = collection.GetTextPosition(index);
                 tb.Length = 0;
-                return new SlimChainParser
-                {
-                    collection = collection,
-                    index = index,
-                    beginPosition = tb,
-                    endPosition = tb,
-                };
+                return new SlimChainParser(this, collection, index, tb);
             }
         }
 
         public T End<T>(MakeElement<T> make) where T : Element
         {
             var tp = beginPosition.AlterLength(endPosition);
-            return failure ? null : make(tp); 
+            if (failure)
+            {
+                return null;
+            }
+            else
+            {
+                parent.index = index;
+                return make(tp);
+            }
         }
 
         private bool PostProcess(bool success)
@@ -100,53 +101,53 @@ namespace SyntacticAnalysis
         public SlimChainParser If(InsideParser inside)
         {
             if (failure) return this;
-            var ret = inside(this);
-            if(ret)
+            inside(this);
+            if(failure)
             {
                 ifResult = false;
+                failure = false;
                 return this;
             }
             else
             {
                 ifResult = true;
-                return ret;
+                return this;
             }
         }
 
         public SlimChainParser Than(InsideParser inside)
         {
             if (failure) return this;
-            var ret = this;
-            if (ifResult)
+            if (!ifSkip && ifResult)
             {
-                ret = inside(this);
-                ret.failure = PostProcess(!ret.failure);
+                inside(this);
             }
-            return ret;
+            return this;
         }
 
         public SlimChainParser Else(InsideParser inside)
         {
             if (failure) return this;
-            var ret = this;
-            if (!ifResult)
+            if (!ifSkip && !ifResult)
             {
-                ret = inside(this);
-                ret.failure = PostProcess(!ret.failure);
+                inside(this);
             }
-            return ret;
+            ifSkip = false;
+            return this;
         }
 
         public SlimChainParser ElseIf(InsideParser inside)
         {
             if (failure) return this;
-            var ret = this;
-            if (!ifResult)
+            if (!ifSkip && !ifResult)
             {
-                ret = inside(this);
-                ret.failure = PostProcess(!ret.failure);
+                If(inside);
             }
-            return ret;
+            else
+            {
+                ifSkip = true;
+            }
+            return this;
         }
 
         public SlimChainParser Any(params InsideParser[] insides)
@@ -154,23 +155,33 @@ namespace SyntacticAnalysis
             if (failure) return this;
             foreach(var f in insides)
             {
-                var r = f(this);
-                if(!r)
+                f(this);
+                if(!failure)
                 {
-                    return r;
+                    return this;
                 }
+                failure = false;
             }
+            failure = true;
             return this;
         }
 
         public SlimChainParser Loop(InsideParser cond, InsideParser block = null)
         {
             if (failure) return this;
-            SlimChainParser r;
-            while (r = cond(this))
+            for (cond(this); !failure; cond(this))
             {
-                this = (block == null ? r : block(r));
+                if(block == null)
+                {
+                    continue;
+                }
+                block(this);
+                if(failure)
+                {
+                    return this;
+                }
             }
+            failure = false;
             return this;
         }
 
@@ -232,11 +243,6 @@ namespace SyntacticAnalysis
             return this;
         }
 
-        //public SlimChainParser Transfer<T>(ElementAction<T> action, TransferParser<T> func) where T : Element
-        //{
-        //    return Transfer<T>(action, new ParserFunction<T>[] { func });
-        //}
-
         public SlimChainParser Transfer<T>(ElementAction<T> action, params TransferParser<T>[] func) where T : Element
         {
             if (failure) return this;
@@ -258,15 +264,12 @@ namespace SyntacticAnalysis
             return this;
         }
 
-        public SlimChainParser Readable
+        public SlimChainParser Readable()
         {
-            get
-            {
-                if (failure) return this;
-                var r = collection.IsReadable(index);
-                failure = PostProcess(r);
-                return this;
-            }
+            if (failure) return this;
+            var r = collection.IsReadable(index);
+            failure = PostProcess(r);
+            return this;
         }
 
         public SlimChainParser Is(bool cond)
@@ -285,25 +288,22 @@ namespace SyntacticAnalysis
             return this;
         }
 
-        public SlimChainParser Lt
+        public SlimChainParser Lt()
         {
-            get { return Ignore(TokenType.LineTerminator); }
+            return Ignore(TokenType.LineTerminator);
         }
 
-        public SlimChainParser AddError
+        public SlimChainParser AddError()
         {
-            get
+            if (failure) return this;
+            var s = collection.IsReadable(index);
+            if (s)
             {
-                if (failure) return this;
-                var s = collection.IsReadable(index);
-                if (s)
-                {
-                    collection.AddError(index);
-                    ++index;
-                }
-                failure = PostProcess(s);
-                return this;
+                collection.AddError(index);
+                ++index;
             }
+            failure = PostProcess(s);
+            return this;
         }
     }
 }

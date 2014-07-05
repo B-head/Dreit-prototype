@@ -10,12 +10,17 @@ namespace AbstractSyntax
     [Serializable]
     public class DirectiveList : Element
     {
-        private List<IElement> Child;
+        private List<Element> Child;
         public bool IsInline { get; set; }
 
         public DirectiveList()
         {
-            Child = new List<IElement>();
+            Child = new List<Element>();
+        }
+
+        public DirectiveList(List<Element> child)
+        {
+            Child = child;
         }
 
         public override int Count
@@ -45,7 +50,7 @@ namespace AbstractSyntax
             }
         }
 
-        public void Append(IElement value)
+        public void Append(Element value)
         {
             Child.Add(value);
         }

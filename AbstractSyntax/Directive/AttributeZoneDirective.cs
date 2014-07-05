@@ -17,6 +17,11 @@ namespace AbstractSyntax.Directive
             Child = new List<Element>();
         }
 
+        public AttributeZoneDirective(List<Element> child)
+        {
+            Child = child;
+        }
+
         public void Append(Element value)
         {
             Child.Add(value);

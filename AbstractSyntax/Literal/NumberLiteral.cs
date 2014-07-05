@@ -24,7 +24,7 @@ namespace AbstractSyntax.Literal
 
         private IDataType InitReturnType()
         {
-            if (Fraction == null)
+            if (string.IsNullOrEmpty(Fraction))
             {
                 return CurrentScope.NameResolution("Integer32").FindDataType();
             }
@@ -38,7 +38,7 @@ namespace AbstractSyntax.Literal
         {
             get
             {
-                if (Fraction == null)
+                if (string.IsNullOrEmpty(Fraction))
                 {
                     return Integral;
                 }

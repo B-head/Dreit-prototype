@@ -67,7 +67,12 @@ namespace AbstractSyntax
 
         private ClassSymbol InitObjectSymbol()
         {
-            return (ClassSymbol)NameResolution("Object").FindDataType();
+            var obj = NameResolution("Object");
+            if(obj == null)
+            {
+                return null;
+            }
+            return obj.FindDataType() as ClassSymbol;
         }
 
         private void AppendPragma(string name, Scope pragma)

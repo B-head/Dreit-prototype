@@ -18,6 +18,12 @@ namespace AbstractSyntax.Literal
             LazyReturnType = new Lazy<IDataType>(InitReturnType);
         }
 
+        public StringLiteral(List<Element> texts)
+        {
+            _Texts = texts;
+            LazyReturnType = new Lazy<IDataType>(InitReturnType);
+        }
+
         public override int Count
         {
             get { return _Texts.Count; }
