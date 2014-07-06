@@ -39,6 +39,14 @@ namespace AbstractSyntax.Daclate
                 {
                     _Attribute.Add(v.Reference.FindDataType());
                 }
+                if(IsClass)
+                {
+                    _Attribute.Add(Root.Class);
+                }
+                else if(IsTrait)
+                {
+                    _Attribute.Add(Root.Trait);
+                }
                 if (!IsAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
                     var p = NameResolution("public").FindDataType();
@@ -76,7 +84,7 @@ namespace AbstractSyntax.Daclate
 
         public override int Count
         {
-            get { return 7; }
+            get { return 6; }
         }
 
         public override Element this[int index]
@@ -91,13 +99,12 @@ namespace AbstractSyntax.Daclate
                     case 3: return Block;
                     case 4: return This;
                     case 5: return Default;
-                    case 6: return TypeofSymbol;
                     default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
 
-        protected override void SpreadElement(Element parent, Scope scope)
+        internal override void SpreadElement(Element parent, Scope scope)
         {
             base.SpreadElement(parent, scope);
             var newFlag = false;

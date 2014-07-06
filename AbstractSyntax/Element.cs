@@ -56,7 +56,7 @@ namespace AbstractSyntax
             get { throw new ArgumentOutOfRangeException("index"); }
         }
 
-        protected virtual void SpreadElement(Element parent, Scope scope)
+        internal virtual void SpreadElement(Element parent, Scope scope)
         {
             Parent = parent;
             CurrentScope = scope;

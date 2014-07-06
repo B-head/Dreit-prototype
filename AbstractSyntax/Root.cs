@@ -11,23 +11,29 @@ namespace AbstractSyntax
     public class Root : NameSpace
     {
         private DirectiveList BuiltInList;
-        private Scope _ObjectSymbol;
+        public CompileMessageManager MessageManager { get; private set; }
+        internal TypeManager TypeManager { get; private set; }
+        internal ConversionManager Conversion { get; private set; }
+        internal Dictionary<TokenType, ConversionManager> OpManager { get; private set; }
+        internal OverLoad UndefinedOverLord { get; private set; }
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
-        internal OverLoad UndefinedOverLord { get; private set; }
-        internal ConversionManager Conversion { get; set; }
-        internal Dictionary<TokenType, ConversionManager> OpManager { get; private set; }
-        public CompileMessageManager MessageManager { get; private set; }
+        internal AttributeSymbol Var { get; private set; }
+        internal AttributeSymbol Let { get; private set; }
+        internal AttributeSymbol Routine { get; private set; }
+        internal AttributeSymbol Function { get; private set; }
+        internal AttributeSymbol Class { get; private set; }
+        internal AttributeSymbol Trait { get; private set; }
+        internal AttributeSymbol Refer { get; private set; }
+        internal AttributeSymbol Typeof { get; private set; }
 
         public Root()
         {
             Name = "global";
             BuiltInList = new DirectiveList();
-            Void = new VoidSymbol();
-            Error = new ErrorSymbol();
-            Unknown = new UnknownSymbol();
             UndefinedOverLord = new OverLoad(this, true);
+            TypeManager = new TypeManager(this);
             Conversion = new ConversionManager(this);
             MessageManager = new CompileMessageManager();
             CreatePragma();
@@ -57,19 +63,6 @@ namespace AbstractSyntax
         {
             SpreadElement(null, null);
             CheckSemantic();
-        }
-
-        public Scope ObjectSymbol
-        {
-            get
-            { 
-                if(_ObjectSymbol != null)
-                {
-                    return _ObjectSymbol;
-                }
-                _ObjectSymbol = NameResolution("Object").FindDataType();
-                return _ObjectSymbol; 
-            }
         }
 
         private void CreatePragma()
@@ -103,13 +96,30 @@ namespace AbstractSyntax
 
         private void CreateBuiltInIdentifier()
         {
+            Void = new VoidSymbol();
+            Error = new ErrorSymbol();
+            Unknown = new UnknownSymbol();
+            Var = new AttributeSymbol(AttributeType.Var);
+            Let = new AttributeSymbol(AttributeType.Let);
+            Routine = new AttributeSymbol(AttributeType.Routine);
+            Function = new AttributeSymbol(AttributeType.Function);
+            Class = new AttributeSymbol(AttributeType.Class);
+            Trait = new AttributeSymbol(AttributeType.Trait);
+            Refer = new AttributeSymbol(AttributeType.Refer);
+            Typeof = new AttributeSymbol(AttributeType.Tyoeof);
             BuiltInList.Append(Void);
             BuiltInList.Append(Unknown);
             BuiltInList.Append(Error);
+            BuiltInList.Append(Var);
+            BuiltInList.Append(Let);
+            BuiltInList.Append(Routine);
+            BuiltInList.Append(Function);
+            BuiltInList.Append(Class);
+            BuiltInList.Append(Trait);
+            BuiltInList.Append(Refer);
+            BuiltInList.Append(Typeof);
             BuiltInList.Append(new BooleanSymbol(false));
             BuiltInList.Append(new BooleanSymbol(true));
-            BuiltInList.Append(new AttributeSymbol("let", AttributeType.Let));
-            BuiltInList.Append(new AttributeSymbol("function", AttributeType.Function));
             BuiltInList.Append(new AttributeSymbol("static", AttributeType.Static));
             BuiltInList.Append(new AttributeSymbol("public", AttributeType.Public));
             BuiltInList.Append(new AttributeSymbol("protected", AttributeType.Protected));

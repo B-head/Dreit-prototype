@@ -69,7 +69,7 @@ namespace CliTranslate
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
             var retbld = Root.GetTypeBuilder(path.CallReturnType);
-            var argbld = Root.GetTypeBuilders(path.ArgumentType);
+            var argbld = Root.GetTypeBuilders(path.ArgumentTypes);
             var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual);
             var builder = Class.DefineMethod(path.Name, attr, retbld, argbld);
             return new RoutineTranslator(path, this, builder);

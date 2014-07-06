@@ -10,13 +10,14 @@ namespace AbstractSyntax.Expression
     public class TemplateInstanceExpression : Element
     {
         public Element Access { get; private set; }
-        public TupleList Arguments { get; private set; }
+        public TupleList DecParameters { get; private set; }
+        private IReadOnlyList<Scope> _Parameter;
 
         public TemplateInstanceExpression(TextPosition tp, Element acs, TupleList args)
             : base(tp)
         {
             Access = acs;
-            Arguments = args;
+            DecParameters = args;
         }
 
         public override int Count
@@ -31,10 +32,35 @@ namespace AbstractSyntax.Expression
                 switch (index)
                 {
                     case 0: return Access;
-                    case 1: return Arguments;
+                    case 1: return DecParameters;
                     default: throw new ArgumentOutOfRangeException("index");
                 }
             }
         }
+
+        public override Scope ReturnType
+        {
+            get { return Root.TypeManager.IssueTemplateInstance(Access.ReturnType, Parameter.ToArray()); }
+        }
+
+        public IReadOnlyList<Scope> Parameter
+        {
+            get
+            {
+                if (_Parameter != null)
+                {
+                    return _Parameter;
+                }
+                var pt = new List<Scope>();
+                foreach (var v in DecParameters)
+                {
+                    var temp = v.Reference.FindDataType();
+                    pt.Add(temp);
+                }
+                _Parameter = pt;
+                return _Parameter;
+            }
+        }
+
     }
 }

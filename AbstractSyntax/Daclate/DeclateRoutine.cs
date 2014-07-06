@@ -43,8 +43,11 @@ namespace AbstractSyntax.Daclate
                 }
                 if(IsFunction)
                 {
-                    var f = NameResolution("function").FindDataType();
-                    _Attribute.Add(f);
+                    _Attribute.Add(Root.Function);
+                }
+                else
+                {
+                    _Attribute.Add(Root.Routine);
                 }
                 if(!IsAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
@@ -55,21 +58,21 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override IReadOnlyList<Scope> ArgumentType
+        public override IReadOnlyList<Scope> ArgumentTypes
         {
             get
             {
-                if (_ArgumentType != null)
+                if (_ArgumentTypes != null)
                 {
-                    return _ArgumentType;
+                    return _ArgumentTypes;
                 }
-                _ArgumentType = new List<Scope>();
+                _ArgumentTypes = new List<Scope>();
                 foreach (var v in DecArguments)
                 {
                     var temp = v.ReturnType;
-                    _ArgumentType.Add(temp);
+                    _ArgumentTypes.Add(temp);
                 }
-                return _ArgumentType;
+                return _ArgumentTypes;
             }
         }
 

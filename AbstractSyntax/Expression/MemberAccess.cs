@@ -19,6 +19,11 @@ namespace AbstractSyntax.Expression
             Member = member;
         }
 
+        public string Value
+        {
+            get { return Member; }
+        }
+
         public override Scope ReturnType
         {
             get { return CallScope.CallReturnType; }
@@ -74,11 +79,11 @@ namespace AbstractSyntax.Expression
             {
                 CompileError("not-accessable");
             }
-            if (CallScope.IsInstanceMember && Access.ReturnType is TypeofClassSymbol)
+            if (CallScope.IsInstanceMember && TypeQualifySymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
             {
                 CompileError("not-accessable");
             }
-            if (CallScope.IsStaticMember && !(Access.ReturnType is TypeofClassSymbol))
+            if (CallScope.IsStaticMember && !TypeQualifySymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
             {
                 CompileError("not-accessable");
             }
@@ -94,9 +99,10 @@ namespace AbstractSyntax.Expression
             {
                 return cls == type;
             }
-            else if(type is TypeofClassSymbol)
+            else if(type is TypeQualifySymbol)
             {
-                return cls.TypeofSymbol == type;
+                var tq = (TypeQualifySymbol)type;
+                return cls == tq.BaseType;
             }
             else
             {

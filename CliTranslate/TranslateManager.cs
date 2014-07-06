@@ -98,7 +98,7 @@ namespace CliTranslate
         private void SpreadTranslate(DeclateRoutine scope, Translator trans)
         {
             RelaySpreadTranslate(scope.CallReturnType);
-            foreach(var v in scope.ArgumentType)
+            foreach(var v in scope.ArgumentTypes)
             {
                 RelaySpreadTranslate(v);
             }
@@ -106,7 +106,7 @@ namespace CliTranslate
             if (scope.IsConstructor)
             {
                 var cls = (ClassTranslator)trans;
-                temp = cls.CreateConstructor(scope, scope.ArgumentType);
+                temp = cls.CreateConstructor(scope, scope.ArgumentTypes);
             }
             else if (scope.IsDestructor)
             {

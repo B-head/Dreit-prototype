@@ -20,12 +20,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                var c = Child.Reference.FindDataType() as ClassSymbol;
-                if (c == null)
-                {
-                    return Root.Unknown;
-                }
-                return c.TypeofSymbol;
+                return Root.TypeManager.IssueTypeQualify(Child.ReturnType, Root.Typeof); //todo Refer版にも対応する。
             }
         }
     }

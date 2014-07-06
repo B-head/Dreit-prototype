@@ -67,7 +67,7 @@ namespace CliTranslate
         {
             PrepareLexical();
             var retbld = Root.GetTypeBuilder(path.CallReturnType);
-            var argbld = Root.GetTypeBuilders(path.ArgumentType);
+            var argbld = Root.GetTypeBuilders(path.ArgumentTypes);
             var builder = Lexical.DefineMethod(path.Name, MethodAttributes.PrivateScope | MethodAttributes.Final, retbld, argbld);
             return new RoutineTranslator(path, this, builder);
         }

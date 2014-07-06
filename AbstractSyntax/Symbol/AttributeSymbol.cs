@@ -11,6 +11,11 @@ namespace AbstractSyntax.Symbol
     {
         public AttributeType Attr { get; private set; }
 
+        public AttributeSymbol(AttributeType attr)
+        {
+            Attr = attr;
+        }
+
         public AttributeSymbol(string name, AttributeType attr)
         {
             Name = name;
@@ -31,8 +36,14 @@ namespace AbstractSyntax.Symbol
     public enum AttributeType
     {
         None,
+        Var,
         Let,
+        Routine,
         Function,
+        Class,
+        Trait,
+        Refer,
+        Tyoeof,
         Static,
         Public,
         Protected,

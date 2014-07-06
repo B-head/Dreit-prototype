@@ -22,6 +22,7 @@ namespace AbstractSyntax.Daclate
             Ident = ident;
             ExplicitType = expl;
             IsLet = isLet;
+            Name = Ident == null ? string.Empty : Ident.Value;
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -39,8 +40,11 @@ namespace AbstractSyntax.Daclate
                 }
                 if(IsLet)
                 {
-                    var l = NameResolution("let").FindDataType();
-                    _Attribute.Add(l);
+                    _Attribute.Add(Root.Let);
+                }
+                else
+                {
+                    _Attribute.Add(Root.Var);
                 }
                 if (!IsAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
@@ -98,12 +102,6 @@ namespace AbstractSyntax.Daclate
                     default: throw new ArgumentOutOfRangeException("index");
                 }
             }
-        }
-
-        protected override void SpreadElement(Element parent, Scope scope)
-        {
-            Name = Ident == null ? string.Empty : Ident.Value;
-            base.SpreadElement(parent, scope);
         }
     }
 }

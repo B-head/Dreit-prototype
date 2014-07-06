@@ -11,7 +11,6 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class ClassSymbol : Scope
     {
-        public TypeofClassSymbol TypeofSymbol { get; private set; }
         public DefaultSymbol Default { get; private set; }
         public ThisSymbol This { get; private set; }
         public bool IsClass { get; private set; }
@@ -22,7 +21,6 @@ namespace AbstractSyntax.Symbol
 
         protected ClassSymbol()
         {
-            TypeofSymbol = new TypeofClassSymbol(this);
             Default = new DefaultSymbol(this);
             This = new ThisSymbol(this);
             Initializer = new List<RoutineSymbol>();
@@ -34,7 +32,6 @@ namespace AbstractSyntax.Symbol
             Name = name;
             IsClass = !isTrait;
             IsTrait = isTrait;
-            TypeofSymbol = new TypeofClassSymbol(this);
             Default = new DefaultSymbol(this);
             This = new ThisSymbol(this);
             Initializer = new List<RoutineSymbol>();
@@ -54,11 +51,12 @@ namespace AbstractSyntax.Symbol
         {
             get
             {
-                if (this == Root.ObjectSymbol)
+                var obj = NameResolution("Object").FindDataType() as ClassSymbol;
+                if (this == obj)
                 {
                     return null;
                 }
-                return _Inherit.Find(v => v.IsClass) ?? Root.ObjectSymbol as ClassSymbol; 
+                return _Inherit.Find(v => v.IsClass) ?? obj; 
             }
         }
 
@@ -69,7 +67,7 @@ namespace AbstractSyntax.Symbol
 
         public RoutineSymbol DefaultInitializer
         {
-            get { return Initializer.Find(v => v.ArgumentType.Count == 0); }
+            get { return Initializer.Find(v => v.ArgumentTypes.Count == 0); }
         }
 
         public bool IsPrimitive
@@ -79,7 +77,7 @@ namespace AbstractSyntax.Symbol
 
         public override int Count
         {
-            get { return 2; }
+            get { return 1; }
         }
 
         public override Element this[int index]
@@ -88,8 +86,7 @@ namespace AbstractSyntax.Symbol
             {
                 switch (index)
                 {
-                    case 0: return TypeofSymbol;
-                    case 1: return This;
+                    case 0: return This;
                     default: throw new ArgumentOutOfRangeException("index");
                 }
             }

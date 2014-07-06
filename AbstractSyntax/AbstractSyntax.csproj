@@ -99,7 +99,6 @@
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
     <Compile Include="Symbol\TemplateInstanceSymbol.cs" />
-    <Compile Include="Symbol\TypeofClassSymbol.cs" />
     <Compile Include="Symbol\TypeQualifySymbol.cs" />
     <Compile Include="Symbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />

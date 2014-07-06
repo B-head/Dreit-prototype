@@ -13,7 +13,7 @@ namespace AbstractSyntax.Symbol
         public TokenType Operator { get; private set; }
         public bool IsFunction { get; private set; }
         protected List<Scope> _Attribute;
-        protected List<Scope> _ArgumentType;
+        protected List<Scope> _ArgumentTypes;
         protected Scope _ReturnType;
 
         protected RoutineSymbol()
@@ -34,9 +34,9 @@ namespace AbstractSyntax.Symbol
             get { return _Attribute; }
         }
 
-        public virtual IReadOnlyList<Scope> ArgumentType
+        public virtual IReadOnlyList<Scope> ArgumentTypes
         {
-            get { return _ArgumentType; }
+            get { return _ArgumentTypes; }
         }
 
         public override Scope CallReturnType
@@ -59,7 +59,7 @@ namespace AbstractSyntax.Symbol
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentType);
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentTypes);
         }
 
         public RoutineSymbol InheritInitializer

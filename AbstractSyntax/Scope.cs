@@ -131,7 +131,7 @@ namespace AbstractSyntax
             }
         }
 
-        protected override void SpreadElement(Element parent, Scope scope)
+        internal override void SpreadElement(Element parent, Scope scope)
         {
             base.SpreadElement(parent, scope);
             if (!(this is Root))

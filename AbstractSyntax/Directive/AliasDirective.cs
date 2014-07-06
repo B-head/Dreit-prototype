@@ -16,12 +16,7 @@ namespace AbstractSyntax.Directive
         {
             From = from;
             To = to;
-        }
-
-        protected override void SpreadElement(Element parent, Scope scope)
-        {
             Name = To == null ? string.Empty : To.Value;
-            base.SpreadElement(parent, scope);
         }
 
         internal OverLoad RefarenceResolution()
