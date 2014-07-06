@@ -70,7 +70,7 @@ namespace AbstractSyntax
             return CallSelect(new List<Scope>());
         }
 
-        public TypeMatch CallSelect(IReadOnlyList<Scope> type) //todo アクセス可能性を考慮した検索に対応する。
+        public TypeMatch CallSelect(IReadOnlyList<Scope> type)
         {
             if (IsHoldAlias)
             {

@@ -39,7 +39,7 @@ namespace AbstractSyntax.Pragma
         //todo ジェネリクスの構文で型検査をする。
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType });
         }
     }
 }

@@ -34,7 +34,7 @@ namespace AbstractSyntax
             return ret;
         }
 
-        public TemplateInstanceSymbol IssueTemplateInstance(Scope template, params Scope[] parameter)
+        public TemplateInstanceSymbol IssueTemplateInstance(OverLoad template, params Scope[] parameter)
         {
             var ret = TemplateInstanceList.FirstOrDefault(v => v.Template == template && v.Parameter.SequenceEqual(parameter));
             if (ret != null)
@@ -42,7 +42,7 @@ namespace AbstractSyntax
                 return ret;
             }
             ret = new TemplateInstanceSymbol(template, parameter);
-            ret.SpreadElement(template, template);
+            //ret.SpreadElement(template, template);
             TemplateInstanceList.Add(ret);
             return ret;
         }

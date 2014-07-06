@@ -9,10 +9,10 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class TemplateInstanceSymbol : Scope
     {
-        public Scope Template { get; private set; }
+        public OverLoad Template { get; private set; }
         public IReadOnlyList<Scope> Parameter { get; private set; }
 
-        public TemplateInstanceSymbol(Scope template, IReadOnlyList<Scope> parameter)
+        public TemplateInstanceSymbol(OverLoad template, IReadOnlyList<Scope> parameter)
         {
             Template = template;
             Parameter = parameter;

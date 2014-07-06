@@ -80,24 +80,24 @@ namespace AbstractSyntax.Daclate
         {
             get
             {
-                if (_ReturnType != null)
+                if (_CallReturnType != null)
                 {
-                    return _ReturnType;
+                    return _CallReturnType;
                 }
                 if (ExplicitType != null)
                 {
-                    _ReturnType = ExplicitType.ReturnType;
+                    _CallReturnType = ExplicitType.ReturnType;
                 }
                 else if (Block.IsInline)
                 {
                     var ret = Block[0] as ReturnDirective;
                     if (ret != null)
                     {
-                        _ReturnType = ret.Exp.ReturnType;
+                        _CallReturnType = ret.Exp.ReturnType;
                     }
                     else
                     {
-                        _ReturnType = Block[0].ReturnType;
+                        _CallReturnType = Block[0].ReturnType;
                     }
                 }
                 else
@@ -105,19 +105,19 @@ namespace AbstractSyntax.Daclate
                     var ret = Block.FindElements<ReturnDirective>();
                     if (ret.Count > 0)
                     {
-                        _ReturnType = ret[0].Exp.ReturnType;
+                        _CallReturnType = ret[0].Exp.ReturnType;
                     }
                     else if(CurrentScope is DeclateClass)
                     {
-                        _ReturnType = (DeclateClass)CurrentScope;
+                        _CallReturnType = (DeclateClass)CurrentScope;
                         IsDefaultThisReturn = true;
                     }
                     else
                     {
-                        _ReturnType = Root.Void;
+                        _CallReturnType = Root.Void;
                     }
                 }
-                return _ReturnType;
+                return _CallReturnType;
             }
         }
 

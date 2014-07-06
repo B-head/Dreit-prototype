@@ -40,7 +40,7 @@ namespace AbstractSyntax.Pragma
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType }, new GenericSymbol[] { GenericType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType });
         }
 
         internal bool IsCondition

@@ -40,7 +40,7 @@ namespace AbstractSyntax.Expression
 
         public override Scope ReturnType
         {
-            get { return Root.TypeManager.IssueTemplateInstance(Access.ReturnType, Parameter.ToArray()); }
+            get { return Root.TypeManager.IssueTemplateInstance(Access.Reference, Parameter.ToArray()); }
         }
 
         public IReadOnlyList<Scope> Parameter

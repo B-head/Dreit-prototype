@@ -14,7 +14,7 @@ namespace AbstractSyntax.Symbol
         public bool IsFunction { get; private set; }
         protected List<Scope> _Attribute;
         protected List<Scope> _ArgumentTypes;
-        protected Scope _ReturnType;
+        protected Scope _CallReturnType;
 
         protected RoutineSymbol()
         {
@@ -41,7 +41,7 @@ namespace AbstractSyntax.Symbol
 
         public override Scope CallReturnType
         {
-            get { return _ReturnType; }
+            get { return _CallReturnType; }
         }
 
         public bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。

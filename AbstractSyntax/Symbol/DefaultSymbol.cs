@@ -13,7 +13,7 @@ namespace AbstractSyntax.Symbol
         {
             _Attribute = new List<Scope>();
             _ArgumentTypes = new List<Scope>();
-            _ReturnType = parent;
+            _CallReturnType = parent;
         }
     }
 }
