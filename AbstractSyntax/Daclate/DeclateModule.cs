@@ -1,4 +1,6 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Directive;
+using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,7 +8,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Daclate
 {
     [Serializable]
-    public class DeclateModule : NameSpace
+    public class DeclateModule : NameSpaceSymbol
     {
         private DirectiveList Exp;
         public string SourceText { get; private set; }

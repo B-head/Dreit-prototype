@@ -7,6 +7,7 @@ using System.Reflection;
 using AbstractSyntax;
 using AbstractSyntax.Daclate;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Symbol;
 
 namespace CliTranslate
 {
@@ -79,7 +80,7 @@ namespace CliTranslate
             }
         }
 
-        private NameSpace GetNameSpace(IList<string> fullName)
+        private NameSpaceSymbol GetNameSpace(IList<string> fullName)
         {
             ImportNameSpace current = NameSpace;
             foreach(var v in fullName)
@@ -268,7 +269,7 @@ namespace CliTranslate
 
         private class ImportNameSpace
         {
-            public NameSpace NameSpace { get; set; }
+            public NameSpaceSymbol NameSpace { get; set; }
             private Dictionary<string, ImportNameSpace> Child;
 
             public ImportNameSpace()
@@ -283,7 +284,7 @@ namespace CliTranslate
                 {
                     return result;
                 }
-                NameSpace temp = null;// new NameSpace { Name = name };
+                NameSpaceSymbol temp = null;// new NameSpace { Name = name };
                 //NameSpace.AppendChild(temp);
                 result = new ImportNameSpace { NameSpace = temp };
                 Child.Add(name, result);

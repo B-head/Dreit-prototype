@@ -1,11 +1,12 @@
 ﻿using AbstractSyntax.Daclate;
 using AbstractSyntax.Statement;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Directive
 {
     [Serializable]
     public class DirectiveList : Element
@@ -37,7 +38,7 @@ namespace AbstractSyntax
                 {
                     return true;
                 }
-                return Parent is NameSpace && !(Parent is DeclateModule); 
+                return Parent is NameSpaceSymbol && !(Parent is DeclateModule); 
             }
         }
 

@@ -112,7 +112,7 @@ namespace AbstractSyntax
 
         internal void AppendChildScope(Scope scope)
         {
-            if (scope is NameSpace)
+            if (scope is NameSpaceSymbol)
             {
                 Merge(scope);
             }

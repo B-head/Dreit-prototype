@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Expression
 {
     [Serializable]
     public class TupleList : Element

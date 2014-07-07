@@ -2,6 +2,8 @@
 using NUnit.Framework;
 using SyntacticAnalysis;
 using AbstractSyntax;
+using AbstractSyntax.Directive;
+using AbstractSyntax.Expression;
 
 namespace SyntacticAnalysisTest
 {

@@ -3,23 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax
+namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class NameSpace : Scope
+    public class NameSpaceSymbol : Scope
     {
-        public NameSpace()
+        public NameSpaceSymbol()
         {
 
         }
 
-        public NameSpace(TextPosition tp)
+        public NameSpaceSymbol(TextPosition tp)
             : base(tp)
         {
 
         }
 
-        public NameSpace(TextPosition tp, List<Element> child)
+        public NameSpaceSymbol(TextPosition tp, List<Element> child)
             :base(tp)
         {
             AppendChild(child);

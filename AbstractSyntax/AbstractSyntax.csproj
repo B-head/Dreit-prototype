@@ -77,11 +77,11 @@
     <Compile Include="Directive\EchoDirective.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="Expression\ExpressionGroup.cs" />
-    <Compile Include="DirectiveList.cs" />
+    <Compile Include="Directive\DirectiveList.cs" />
     <Compile Include="Expression\IdentifierAccess.cs" />
     <Compile Include="Expression\LeftAssign.cs" />
     <Compile Include="Expression\MemberAccess.cs" />
-    <Compile Include="NameSpace.cs" />
+    <Compile Include="Symbol\NameSpaceSymbol.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
     <Compile Include="Literal\NumberLiteral.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,7 +109,7 @@
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="Symbol\ThisSymbol.cs" />
     <Compile Include="Token.cs" />
-    <Compile Include="TupleList.cs" />
+    <Compile Include="Expression\TupleList.cs" />
     <Compile Include="Visualizer\SyntaxVisualizerForm.cs">
       <SubType>Form</SubType>
     </Compile>

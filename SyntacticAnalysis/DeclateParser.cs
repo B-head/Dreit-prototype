@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Daclate;
+using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using System.Collections.Generic;
 

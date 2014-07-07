@@ -8,9 +8,9 @@ using System.Diagnostics;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class Root : NameSpace
+    public class Root : NameSpaceSymbol
     {
-        private NameSpace BuiltInList;
+        private NameSpaceSymbol BuiltInList;
         public CompileMessageManager MessageManager { get; private set; }
         internal TypeManager TypeManager { get; private set; }
         internal ConversionManager Conversion { get; private set; }
@@ -31,7 +31,7 @@ namespace AbstractSyntax
         public Root()
         {
             Name = "global";
-            BuiltInList = new NameSpace();
+            BuiltInList = new NameSpaceSymbol();
             UndefinedOverLord = new OverLoad(this, true);
             TypeManager = new TypeManager(this);
             Conversion = new ConversionManager(this);
@@ -42,7 +42,7 @@ namespace AbstractSyntax
             AppendChild(BuiltInList);
         }
 
-        public void AppendModule(NameSpace ns)
+        public void AppendModule(NameSpaceSymbol ns)
         {
             AppendChild(ns);
         }
