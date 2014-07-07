@@ -11,32 +11,34 @@ namespace AbstractSyntax
     [Serializable]
     public abstract class Element : IReadOnlyList<Element>
     {
+        private Root _Root;
+        private Scope _CurrentScope;
+        private List<Element> Child;
+        public Element Parent { get; private set; }
         public TextPosition Position { get; private set; }
-        internal Element Parent { get; private set; }
-        internal Scope CurrentScope { get; private set; }
-        internal Root Root { get; private set; }
 
         protected Element()
         {
-
+            Child = new List<Element>();
+            var root = this as Root;
+            if (root != null)
+            {
+                _Root = root;
+            }
         }
 
         protected Element(TextPosition tp)
         {
+            Child = new List<Element>();
             Position = tp;
         }
-
-        public Scope CurrentIScope 
-        {
-            get { return CurrentScope; }
-        }
-
+        
         public virtual Scope ReturnType
         {
             get { return Root.Void; }
         }
 
-        public virtual OverLoad Reference
+        public virtual OverLoad OverLoad
         {
             get { return Root.UndefinedOverLord; }
         }
@@ -46,45 +48,76 @@ namespace AbstractSyntax
             get { return ReturnType is VoidSymbol; }
         }
 
-        public virtual int Count
+        public Root Root
         {
-            get { return 0; }
+            get
+            {
+                if (_Root == null)
+                {
+                    _Root = Parent.Root;
+                }
+                return _Root;
+            }
         }
 
-        public virtual Element this[int index]
+        public Scope CurrentScope
         {
-            get { throw new ArgumentOutOfRangeException("index"); }
+            get
+            {
+                if(_CurrentScope == null)
+                {
+                    var c = Parent as Scope;
+                    if (c != null)
+                    {
+                        _CurrentScope = c;
+                    }
+                    else if (Parent != null)
+                    {
+                        _CurrentScope = Parent.CurrentScope;
+                    }
+                }
+                return _CurrentScope;
+            }
         }
 
-        internal virtual void SpreadElement(Element parent, Scope scope)
+        internal void AppendChild(IEnumerable<Element> childs)
+        {
+            foreach(var v in childs)
+            {
+                AppendChild(v);
+            }
+        }
+
+        internal void AppendChild(Element child)
+        {
+            if (child == null)
+            {
+                return;
+            }
+            Child.Add(child);
+            child.RegisterParent(this);
+            var s = this as Scope;
+            if(s == null)
+            {
+                return;
+            }
+            s.SpreadChildScope(child);
+        }
+
+        private void RegisterParent(Element parent)
         {
             Parent = parent;
-            CurrentScope = scope;
-            var root = this as Root;
-            if (root != null)
-            {
-                Root = root;
-            }
-            else
-            {
-                if(parent == null)
-                {
-                    throw new ArgumentException("parent");
-                }
-                Root = parent.Root;
-            }
             var s = this as Scope;
-            if (s != null)
+            if(s == null)
             {
-                scope = s;
+                return;
             }
-            foreach (Element v in this)
+            var cs = CurrentScope;
+            if(cs == null)
             {
-                if (v != null)
-                {
-                    v.SpreadElement(this, scope);
-                }
+                return;
             }
+            cs.AppendChildScope(s);
         }
 
         internal virtual void CheckSemantic()
@@ -170,12 +203,19 @@ namespace AbstractSyntax
             return builder.ToString();
         }
 
+        public int Count
+        {
+            get { return Child.Count; }
+        }
+
+        public Element this[int index]
+        {
+            get { return Child[index]; }
+        }
+
         public IEnumerator<Element> GetEnumerator()
         {
-            for (int i = 0; i < Count; i++)
-            {
-                yield return this[i];
-            }
+            return Child.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()

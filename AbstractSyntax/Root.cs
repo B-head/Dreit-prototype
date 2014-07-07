@@ -10,7 +10,7 @@ namespace AbstractSyntax
     [Serializable]
     public class Root : NameSpace
     {
-        private DirectiveList BuiltInList;
+        private NameSpace BuiltInList;
         public CompileMessageManager MessageManager { get; private set; }
         internal TypeManager TypeManager { get; private set; }
         internal ConversionManager Conversion { get; private set; }
@@ -31,7 +31,7 @@ namespace AbstractSyntax
         public Root()
         {
             Name = "global";
-            BuiltInList = new DirectiveList();
+            BuiltInList = new NameSpace();
             UndefinedOverLord = new OverLoad(this, true);
             TypeManager = new TypeManager(this);
             Conversion = new ConversionManager(this);
@@ -39,59 +39,46 @@ namespace AbstractSyntax
             CreatePragma();
             CreateBuiltInIdentifier();
             CreateOperatorManager();
+            AppendChild(BuiltInList);
         }
 
-        public override int Count
+        public void AppendModule(NameSpace ns)
         {
-            get { return 2; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return ExpList;
-                    case 1: return BuiltInList;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(ns);
         }
 
         public void SemanticAnalysis()
         {
-            SpreadElement(null, null);
             CheckSemantic();
         }
 
         private void CreatePragma()
         {
-            BuiltInList.Append(new CastPragma());
-            BuiltInList.Append(new CalculatePragma("add", CalculatePragmaType.Add));
-            BuiltInList.Append(new CalculatePragma("sub", CalculatePragmaType.Sub));
-            BuiltInList.Append(new CalculatePragma("mul", CalculatePragmaType.Mul));
-            BuiltInList.Append(new CalculatePragma("div", CalculatePragmaType.Div));
-            BuiltInList.Append(new CalculatePragma("mod", CalculatePragmaType.Mod));
-            BuiltInList.Append(new CalculatePragma("eq", CalculatePragmaType.EQ));
-            BuiltInList.Append(new CalculatePragma("ne", CalculatePragmaType.NE));
-            BuiltInList.Append(new CalculatePragma("lt", CalculatePragmaType.LT));
-            BuiltInList.Append(new CalculatePragma("le", CalculatePragmaType.LE));
-            BuiltInList.Append(new CalculatePragma("gt", CalculatePragmaType.GT));
-            BuiltInList.Append(new CalculatePragma("ge", CalculatePragmaType.GE));
-            BuiltInList.Append(new PrimitivePragma("Object", PrimitivePragmaType.Object));
-            BuiltInList.Append(new PrimitivePragma("String", PrimitivePragmaType.String));
-            BuiltInList.Append(new PrimitivePragma("Boolean", PrimitivePragmaType.Boolean));
-            BuiltInList.Append(new PrimitivePragma("Integer8", PrimitivePragmaType.Integer8));
-            BuiltInList.Append(new PrimitivePragma("Integer16", PrimitivePragmaType.Integer16));
-            BuiltInList.Append(new PrimitivePragma("Integer32", PrimitivePragmaType.Integer32));
-            BuiltInList.Append(new PrimitivePragma("Integer64", PrimitivePragmaType.Integer64));
-            BuiltInList.Append(new PrimitivePragma("Natural8", PrimitivePragmaType.Natural8));
-            BuiltInList.Append(new PrimitivePragma("Natural16", PrimitivePragmaType.Natural16));
-            BuiltInList.Append(new PrimitivePragma("Natural32", PrimitivePragmaType.Natural32));
-            BuiltInList.Append(new PrimitivePragma("Natural64", PrimitivePragmaType.Natural64));
-            BuiltInList.Append(new PrimitivePragma("Binary32", PrimitivePragmaType.Binary32));
-            BuiltInList.Append(new PrimitivePragma("Binary64", PrimitivePragmaType.Binary64));
+            BuiltInList.AppendChild(new CastPragma());
+            BuiltInList.AppendChild(new CalculatePragma("add", CalculatePragmaType.Add));
+            BuiltInList.AppendChild(new CalculatePragma("sub", CalculatePragmaType.Sub));
+            BuiltInList.AppendChild(new CalculatePragma("mul", CalculatePragmaType.Mul));
+            BuiltInList.AppendChild(new CalculatePragma("div", CalculatePragmaType.Div));
+            BuiltInList.AppendChild(new CalculatePragma("mod", CalculatePragmaType.Mod));
+            BuiltInList.AppendChild(new CalculatePragma("eq", CalculatePragmaType.EQ));
+            BuiltInList.AppendChild(new CalculatePragma("ne", CalculatePragmaType.NE));
+            BuiltInList.AppendChild(new CalculatePragma("lt", CalculatePragmaType.LT));
+            BuiltInList.AppendChild(new CalculatePragma("le", CalculatePragmaType.LE));
+            BuiltInList.AppendChild(new CalculatePragma("gt", CalculatePragmaType.GT));
+            BuiltInList.AppendChild(new CalculatePragma("ge", CalculatePragmaType.GE));
+            BuiltInList.AppendChild(new PrimitivePragma("Object", PrimitivePragmaType.Object));
+            BuiltInList.AppendChild(new PrimitivePragma("String", PrimitivePragmaType.String));
+            BuiltInList.AppendChild(new PrimitivePragma("Boolean", PrimitivePragmaType.Boolean));
+            BuiltInList.AppendChild(new PrimitivePragma("Integer8", PrimitivePragmaType.Integer8));
+            BuiltInList.AppendChild(new PrimitivePragma("Integer16", PrimitivePragmaType.Integer16));
+            BuiltInList.AppendChild(new PrimitivePragma("Integer32", PrimitivePragmaType.Integer32));
+            BuiltInList.AppendChild(new PrimitivePragma("Integer64", PrimitivePragmaType.Integer64));
+            BuiltInList.AppendChild(new PrimitivePragma("Natural8", PrimitivePragmaType.Natural8));
+            BuiltInList.AppendChild(new PrimitivePragma("Natural16", PrimitivePragmaType.Natural16));
+            BuiltInList.AppendChild(new PrimitivePragma("Natural32", PrimitivePragmaType.Natural32));
+            BuiltInList.AppendChild(new PrimitivePragma("Natural64", PrimitivePragmaType.Natural64));
+            BuiltInList.AppendChild(new PrimitivePragma("Binary32", PrimitivePragmaType.Binary32));
+            BuiltInList.AppendChild(new PrimitivePragma("Binary64", PrimitivePragmaType.Binary64));
         }
 
         private void CreateBuiltInIdentifier()
@@ -107,23 +94,23 @@ namespace AbstractSyntax
             Trait = new AttributeSymbol(AttributeType.Trait);
             Refer = new AttributeSymbol(AttributeType.Refer);
             Typeof = new AttributeSymbol(AttributeType.Tyoeof);
-            BuiltInList.Append(Void);
-            BuiltInList.Append(Unknown);
-            BuiltInList.Append(Error);
-            BuiltInList.Append(Var);
-            BuiltInList.Append(Let);
-            BuiltInList.Append(Routine);
-            BuiltInList.Append(Function);
-            BuiltInList.Append(Class);
-            BuiltInList.Append(Trait);
-            BuiltInList.Append(Refer);
-            BuiltInList.Append(Typeof);
-            BuiltInList.Append(new BooleanSymbol(false));
-            BuiltInList.Append(new BooleanSymbol(true));
-            BuiltInList.Append(new AttributeSymbol("static", AttributeType.Static));
-            BuiltInList.Append(new AttributeSymbol("public", AttributeType.Public));
-            BuiltInList.Append(new AttributeSymbol("protected", AttributeType.Protected));
-            BuiltInList.Append(new AttributeSymbol("private", AttributeType.Private));
+            BuiltInList.AppendChild(Void);
+            BuiltInList.AppendChild(Unknown);
+            BuiltInList.AppendChild(Error);
+            BuiltInList.AppendChild(Var);
+            BuiltInList.AppendChild(Let);
+            BuiltInList.AppendChild(Routine);
+            BuiltInList.AppendChild(Function);
+            BuiltInList.AppendChild(Class);
+            BuiltInList.AppendChild(Trait);
+            BuiltInList.AppendChild(Refer);
+            BuiltInList.AppendChild(Typeof);
+            BuiltInList.AppendChild(new BooleanSymbol(false));
+            BuiltInList.AppendChild(new BooleanSymbol(true));
+            BuiltInList.AppendChild(new AttributeSymbol("static", AttributeType.Static));
+            BuiltInList.AppendChild(new AttributeSymbol("public", AttributeType.Public));
+            BuiltInList.AppendChild(new AttributeSymbol("protected", AttributeType.Protected));
+            BuiltInList.AppendChild(new AttributeSymbol("private", AttributeType.Private));
         }
 
         private void CreateOperatorManager()

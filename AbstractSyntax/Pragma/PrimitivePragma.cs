@@ -16,8 +16,6 @@ namespace AbstractSyntax.Pragma
         {
             Name = "@@" + name;
             BasePrimitiveType = type;
-            _Attribute = new List<Scope>();
-            _Inherit = new List<ClassSymbol>();
         }
     }
 

@@ -24,6 +24,10 @@ namespace AbstractSyntax.Daclate
             DecGeneric = generic;
             InheritAccess = inherit;
             Block = block;
+            AppendChild(AttributeAccess);
+            AppendChild(DecGeneric);
+            AppendChild(InheritAccess);
+            AppendChild(Block);
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -37,7 +41,7 @@ namespace AbstractSyntax.Daclate
                 _Attribute = new List<Scope>();
                 foreach (var v in AttributeAccess)
                 {
-                    _Attribute.Add(v.Reference.FindDataType());
+                    _Attribute.Add(v.OverLoad.FindDataType());
                 }
                 if(IsClass)
                 {
@@ -67,7 +71,7 @@ namespace AbstractSyntax.Daclate
                 _Inherit = new List<ClassSymbol>();
                 foreach (var v in InheritAccess)
                 {
-                    var dt = v.Reference.FindDataType() as ClassSymbol;
+                    var dt = v.OverLoad.FindDataType() as ClassSymbol;
                     if (dt != null)
                     {
                         _Inherit.Add(dt);
@@ -81,58 +85,45 @@ namespace AbstractSyntax.Daclate
         {
             get { return Initializer.Any(v => v is DefaultSymbol); }
         }
+        
 
-        public override int Count
-        {
-            get { return 6; }
-        }
-
-        public override Element this[int index]
+        public override IReadOnlyList<RoutineSymbol> Initializer
         {
             get
             {
-                switch (index)
+                if (_Initializer != null)
                 {
-                    case 0: return AttributeAccess;
-                    case 1: return DecGeneric;
-                    case 2: return InheritAccess;
-                    case 3: return Block;
-                    case 4: return This;
-                    case 5: return Default;
-                    default: throw new ArgumentOutOfRangeException("index");
+                    return _Initializer;
                 }
-            }
-        }
-
-        internal override void SpreadElement(Element parent, Scope scope)
-        {
-            base.SpreadElement(parent, scope);
-            var newFlag = false;
-            foreach(var e in Block)
-            {
-                var r = e as RoutineSymbol;
-                if (r == null)
+                _Initializer = new List<RoutineSymbol>();
+                var newFlag = false;
+                foreach (var e in Block)
                 {
-                    continue;
+                    var r = e as RoutineSymbol;
+                    if (r == null)
+                    {
+                        continue;
+                    }
+                    if (r.IsConstructor)
+                    {
+                        _Initializer.Add(r);
+                        newFlag = true;
+                    }
+                    else if (r.IsConvertor) //todo 1引数で使える型変換関数の生成が必要。
+                    {
+                        Root.Conversion.Append(r);
+                        _Initializer.Add(r);
+                    }
+                    else if (r.Operator != TokenType.Unknoun)
+                    {
+                        Root.OpManager[r.Operator].Append(r);
+                    }
                 }
-                if(r.IsConstructor)
+                if (!newFlag)
                 {
-                    Initializer.Add(r);
-                    newFlag = true;
+                    _Initializer.Add(Default);
                 }
-                else if (r.IsConvertor) //todo 1引数で使える型変換関数の生成が必要。
-                {
-                    Root.Conversion.Append(r);
-                    Initializer.Add(r);
-                }
-                else if (r.Operator != TokenType.Unknoun)
-                {
-                    Root.OpManager[r.Operator].Append(r);
-                }
-            }
-            if(!newFlag)
-            {
-                Initializer.Add(Default);
+                return _Initializer;
             }
         }
 
@@ -141,7 +132,7 @@ namespace AbstractSyntax.Daclate
             base.CheckSemantic();
             foreach (var v in InheritAccess)
             {
-                var dt = v.Reference.FindDataType();
+                var dt = v.OverLoad.FindDataType();
                 if (!(dt is ClassSymbol))
                 {
                     CompileError("not-datatype-inherit");

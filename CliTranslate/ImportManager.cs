@@ -52,11 +52,11 @@ namespace CliTranslate
                 var ns = GetNameSpace(t.Namespace.Split('.').ToList());
                 if(t.IsEnum)
                 {
-                    ns.Append(ImportEnum(t));
+                    //ns.AppendChild(ImportEnum(t));
                 }
                 else
                 {
-                    ns.Append(ImportType(t));
+                    //ns.AppendChild(ImportType(t));
                 }
             }
             var method = module.GetMethods();
@@ -66,7 +66,7 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                Root.Append(ImportMethod(m));
+                //Root.AppendChild(ImportMethod(m));
             }
             var field = module.GetFields();
             foreach(var f in field)
@@ -75,7 +75,7 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                Root.Append(ImportField(f));
+                //Root.Append(ImportField(f));
             }
         }
 
@@ -98,7 +98,7 @@ namespace CliTranslate
         {
             var generic = CreateGenericList(type.GetGenericList());
             var inherit = CreateInheritList(type.GetInheritList());
-            var exp = new DirectiveList { };
+            var exp = new List<Element>();
             var ctor = type.GetConstructors();
             foreach(var c in ctor)
             {
@@ -107,34 +107,34 @@ namespace CliTranslate
             var eve = type.GetEvents();
             foreach(var e in eve)
             {
-                exp.Append(ConvertEvent(e));
+                exp.Add(ConvertEvent(e));
             }
             var property = type.GetProperties();
             foreach(var p in property)
             {
                 if (p.GetMethod != null)
                 {
-                    exp.Append(ImportMethod(p.GetMethod));
+                    exp.Add(ImportMethod(p.GetMethod));
                 }
                 if(p.SetMethod != null)
                 {
-                    exp.Append(ImportMethod(p.SetMethod));
+                    exp.Add(ImportMethod(p.SetMethod));
                 }
             }
             var method = type.GetMethods();
             foreach(var m in method)
             {
-                exp.Append(ImportMethod(m));
+                exp.Add(ImportMethod(m));
             }
             var field = type.GetFields();
             foreach(var f in field)
             {
-                exp.Append(ImportField(f));
+                exp.Add(ImportField(f));
             }
             var nested = type.GetNestedTypes();
             foreach(var n in nested)
             {
-                exp.Append(ImportType(n));
+                exp.Add(ImportType(n));
             }
             DeclateClass result = null;//new DeclateClass { Name = type.GetPureName(), DecGeneric = generic, InheritAccess = inherit, Block = exp };
             AppendPeir(result, type);
@@ -151,7 +151,7 @@ namespace CliTranslate
             foreach(var v in generic)
             {
                 var temp = ConvertGeneric(v);
-                tuple.Append(temp);
+                //tuple.Append(temp);
             }
             return tuple;
         }
@@ -167,7 +167,7 @@ namespace CliTranslate
             foreach (var v in inherit)
             {
                 var temp = CreateAccess(v);
-                tuple.Append(temp);
+                //tuple.Append(temp);
             }
             return tuple;
         }
@@ -237,7 +237,7 @@ namespace CliTranslate
             foreach (var v in arguments)
             {
                 var temp = ConvertArgument(v);
-                tuple.Append(temp);
+                //tuple.Append(temp);
             }
             return tuple;
         }
@@ -284,7 +284,7 @@ namespace CliTranslate
                     return result;
                 }
                 NameSpace temp = null;// new NameSpace { Name = name };
-                NameSpace.Append(temp);
+                //NameSpace.AppendChild(temp);
                 result = new ImportNameSpace { NameSpace = temp };
                 Child.Add(name, result);
                 return result;

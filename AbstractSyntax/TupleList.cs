@@ -8,44 +8,27 @@ namespace AbstractSyntax
     [Serializable]
     public class TupleList : Element
     {
-        private List<Element> Child;
         private List<Scope> DataTypes;
 
         public TupleList()
         {
-            Child = new List<Element>();
+
         }
 
         public TupleList(Element append)
         {
-            Child = new List<Element>();
-            Append(append);
+            AppendChild(append);
         }
 
         public TupleList(TextPosition tp, List<Element> child)
             :base(tp)
         {
-            Child = child;
-        }
-
-        public void Append(Element value)
-        {
-            Child.Add(value);
-        }
-
-        public override int Count
-        {
-            get { return Child.Count; }
-        }
-
-        public override Element this[int index]
-        {
-            get { return Child[index]; }
+            AppendChild(child);
         }
 
         protected override string ElementInfo
         {
-            get { return "Count = " + Child.Count; }
+            get { return "Count = " + Count; }
         }
 
         public IReadOnlyList<Scope> GetDataTypes()
@@ -55,7 +38,7 @@ namespace AbstractSyntax
                 return DataTypes;
             }
             DataTypes = new List<Scope>();
-            foreach(var v in Child)
+            foreach(var v in this)
             {
                 DataTypes.Add(v.ReturnType);
             }

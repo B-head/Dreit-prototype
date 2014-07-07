@@ -29,7 +29,7 @@ namespace AbstractSyntax
                 return ret;
             }
             ret = new TypeQualifySymbol(baseType, qualify);
-            ret.SpreadElement(baseType, baseType);
+            baseType.AppendChild(ret); //todo foreachで走査している時に要素を追加できない問題に対処する。
             TypeQualifyList.Add(ret);
             return ret;
         }
@@ -42,7 +42,6 @@ namespace AbstractSyntax
                 return ret;
             }
             ret = new TemplateInstanceSymbol(template, parameter);
-            //ret.SpreadElement(template, template);
             TemplateInstanceList.Add(ret);
             return ret;
         }

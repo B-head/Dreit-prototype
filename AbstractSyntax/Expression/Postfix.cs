@@ -10,8 +10,8 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Postfix : MonadicExpression
     {
-        public Postfix(TextPosition tp, TokenType op, Element child)
-            :base(tp, op, child)
+        public Postfix(TextPosition tp, TokenType op, Element exp)
+            :base(tp, op, exp)
         {
 
         }
@@ -20,7 +20,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                return Root.TypeManager.IssueTypeQualify(Child.ReturnType, Root.Typeof); //todo Refer版にも対応する。
+                return Root.TypeManager.IssueTypeQualify(Exp.ReturnType, Root.Typeof); //todo Refer版にも対応する。
             }
         }
     }

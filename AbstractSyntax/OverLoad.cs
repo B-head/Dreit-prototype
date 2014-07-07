@@ -9,14 +9,14 @@ namespace AbstractSyntax
     [Serializable]
     public class OverLoad : IReadOnlyList<Scope>
     {
-        private Root Root;
+        private Scope CurrentScope;
         private List<Scope> ScopeList;
         private bool IsHoldAlias;
         private bool Freeze;
 
-        public OverLoad(Root root, bool freeze = false)
+        public OverLoad(Scope current, bool freeze = false)
         {
-            Root = root;
+            CurrentScope = current;
             ScopeList = new List<Scope>();
             Freeze = freeze;
         }
@@ -62,7 +62,7 @@ namespace AbstractSyntax
                 SpreadAlias();
             }
             var find = (Scope)ScopeList.Find(s => s.IsDataType);
-            return find == null ? Root.Unknown : find;
+            return find == null ? CurrentScope.Root.Unknown : find;
         }
 
         public TypeMatch CallSelect()
@@ -76,7 +76,7 @@ namespace AbstractSyntax
             {
                 SpreadAlias();
             }
-            TypeMatch result = TypeMatch.MakeNotCallable(Root.Unknown);
+            TypeMatch result = TypeMatch.MakeNotCallable(CurrentScope.Root.Unknown);
             foreach(var a in ScopeList)
             {
                 foreach(var b in a.GetTypeMatch(type))

@@ -8,30 +8,14 @@ namespace AbstractSyntax.Expression
     public abstract class MonadicExpression : Element
     {
         public TokenType Operator { get; private set; }
-        public Element Child { get; private set; }
+        public Element Exp { get; private set; }
 
-        protected MonadicExpression(TextPosition tp, TokenType op, Element child)
+        protected MonadicExpression(TextPosition tp, TokenType op, Element exp)
             :base(tp)
         {
             Operator = op;
-            Child = child;
-        }
-
-        public override int Count
-        {
-            get { return 1; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Child;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            Exp = exp;
+            AppendChild(Exp);
         }
 
         protected override string ElementInfo

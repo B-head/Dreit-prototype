@@ -8,39 +8,21 @@ namespace AbstractSyntax
     [Serializable]
     public class NameSpace : Scope
     {
-        public DirectiveList ExpList { get; private set; }
-
         public NameSpace()
         {
-            ExpList = new DirectiveList();
+
         }
 
-        public NameSpace(TextPosition tp, DirectiveList exp)
+        public NameSpace(TextPosition tp)
+            : base(tp)
+        {
+
+        }
+
+        public NameSpace(TextPosition tp, List<Element> child)
             :base(tp)
         {
-            ExpList = exp;
-        }
-
-        public void Append(Element value)
-        {
-            ExpList.Append(value);
-        }
-
-        public override int Count
-        {
-            get { return 1; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return ExpList;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(child);
         }
     }
 }

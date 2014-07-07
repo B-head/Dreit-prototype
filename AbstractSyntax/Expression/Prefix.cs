@@ -10,8 +10,8 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Prefix : MonadicExpression
     {
-        public Prefix(TextPosition tp, TokenType op, Element child)
-            :base(tp, op, child)
+        public Prefix(TextPosition tp, TokenType op, Element exp)
+            :base(tp, op, exp)
         {
 
         }

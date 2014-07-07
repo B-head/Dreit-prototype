@@ -15,15 +15,19 @@ namespace AbstractSyntax.Symbol
         public ThisSymbol This { get; private set; }
         public bool IsClass { get; private set; }
         public bool IsTrait { get; private set; }
-        protected List<RoutineSymbol> Initializer;
         protected List<Scope> _Attribute;
         protected List<ClassSymbol> _Inherit;
+        protected List<RoutineSymbol> _Initializer;
 
         protected ClassSymbol()
         {
             Default = new DefaultSymbol(this);
             This = new ThisSymbol(this);
-            Initializer = new List<RoutineSymbol>();
+            AppendChild(Default);
+            AppendChild(This);
+            _Attribute = new List<Scope>();
+            _Inherit = new List<ClassSymbol>();
+            _Initializer = new List<RoutineSymbol>();
         }
 
         protected ClassSymbol(TextPosition tp, string name, bool isTrait)
@@ -34,7 +38,8 @@ namespace AbstractSyntax.Symbol
             IsTrait = isTrait;
             Default = new DefaultSymbol(this);
             This = new ThisSymbol(this);
-            Initializer = new List<RoutineSymbol>();
+            AppendChild(Default);
+            AppendChild(This);
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -45,6 +50,11 @@ namespace AbstractSyntax.Symbol
         public virtual IReadOnlyList<ClassSymbol> Inherit
         {
             get { return _Inherit; }
+        }
+
+        public virtual IReadOnlyList<RoutineSymbol> Initializer
+        {
+            get { return _Initializer; }
         }
 
         public ClassSymbol InheritClass
@@ -67,29 +77,12 @@ namespace AbstractSyntax.Symbol
 
         public RoutineSymbol DefaultInitializer
         {
-            get { return Initializer.Find(v => v.ArgumentTypes.Count == 0); }
+            get { return Initializer.FirstOrDefault(v => v.ArgumentTypes.Count == 0); }
         }
 
         public bool IsPrimitive
         {
             get { return PrimitiveType != PrimitivePragmaType.NotPrimitive; }
-        }
-
-        public override int Count
-        {
-            get { return 1; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return This;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
         }
 
         public override bool IsDataType

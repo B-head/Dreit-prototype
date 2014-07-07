@@ -23,6 +23,9 @@ namespace AbstractSyntax.Daclate
             ExplicitType = expl;
             IsLet = isLet;
             Name = Ident == null ? string.Empty : Ident.Value;
+            AppendChild(AttributeAccess);
+            AppendChild(Ident);
+            AppendChild(ExplicitType);
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -36,7 +39,7 @@ namespace AbstractSyntax.Daclate
                 _Attribute = new List<Scope>();
                 foreach (var v in AttributeAccess)
                 {
-                    _Attribute.Add(v.Reference.FindDataType());
+                    _Attribute.Add(v.OverLoad.FindDataType());
                 }
                 if(IsLet)
                 {
@@ -66,7 +69,7 @@ namespace AbstractSyntax.Daclate
                 var caller = Parent as CallRoutine;
                 if (ExplicitType != null)
                 {
-                    _ReturnType = ExplicitType.Reference.FindDataType();
+                    _ReturnType = ExplicitType.OverLoad.FindDataType();
                 }
                 else if(caller != null && caller.HasCallTarget(this))
                 {
@@ -80,28 +83,9 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override OverLoad Reference
+        public override OverLoad OverLoad
         {
-            get { return Ident.Reference; }
-        }
-
-        public override int Count
-        {
-            get { return 3; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return AttributeAccess;
-                    case 1: return Ident;
-                    case 2: return ExplicitType;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            get { return Ident.OverLoad; }
         }
     }
 }

@@ -17,24 +17,8 @@ namespace AbstractSyntax.Expression
             Operator = op;
             Left = left;
             Right = right;
-        }
-
-        public override int Count
-        {
-            get { return 2; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Left;
-                    case 1: return Right;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(Left);
+            AppendChild(Right);
         }
 
         protected override string ElementInfo

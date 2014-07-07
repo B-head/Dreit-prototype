@@ -15,23 +15,7 @@ namespace AbstractSyntax.Daclate
             :base(tp, name)
         {
             SpecialTypeAccess = special;
-        }
-
-        public override int Count
-        {
-            get { return 1; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return SpecialTypeAccess;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(SpecialTypeAccess);
         }
     }
 }

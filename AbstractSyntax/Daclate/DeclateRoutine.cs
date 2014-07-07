@@ -26,6 +26,11 @@ namespace AbstractSyntax.Daclate
             DecArguments = args;
             ExplicitType = expl;
             Block = block;
+            AppendChild(AttributeAccess);
+            AppendChild(DecGeneric);
+            AppendChild(DecArguments);
+            AppendChild(ExplicitType);
+            AppendChild(Block);
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -39,7 +44,7 @@ namespace AbstractSyntax.Daclate
                 _Attribute = new List<Scope>();
                 foreach (var v in AttributeAccess)
                 {
-                    _Attribute.Add(v.Reference.FindDataType());
+                    _Attribute.Add(v.OverLoad.FindDataType());
                 }
                 if(IsFunction)
                 {
@@ -118,27 +123,6 @@ namespace AbstractSyntax.Daclate
                     }
                 }
                 return _CallReturnType;
-            }
-        }
-
-        public override int Count
-        {
-            get { return 5; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return AttributeAccess;
-                    case 1: return DecGeneric;
-                    case 2: return DecArguments;
-                    case 3: return ExplicitType;
-                    case 4: return Block;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
             }
         }
 

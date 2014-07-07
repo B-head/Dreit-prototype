@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax;
+using AbstractSyntax.Daclate;
 using CliTranslate;
 using Dlight;
 using NUnit.Framework;
@@ -31,8 +32,8 @@ namespace DlightTest
         {
             Root root = new Root();
             ImportManager import = new ImportManager(root);
-            root.Append(CompileText("lib/primitive.dl", primitive));
-            root.Append(CompileText(data.Name, data.Code));
+            root.AppendModule(CompileText("lib/primitive.dl", primitive));
+            root.AppendModule(CompileText(data.Name, data.Code));
             root.SemanticAnalysis();
             if (root.MessageManager.MessageCount > 0)
             {
@@ -86,7 +87,7 @@ namespace DlightTest
             }
         }
 
-        private static Element CompileText(string fileName, string text)
+        private static DeclateModule CompileText(string fileName, string text)
         {
             var collection = Lexer.Lex(text, fileName);
             return Parser.Parse(collection);

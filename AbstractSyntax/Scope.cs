@@ -13,20 +13,16 @@ namespace AbstractSyntax
     {
         public string Name { get; protected set; }
         private Dictionary<string, OverLoad> ScopeSymbol;
-        private List<Scope> _ScopeChild;
-        public IReadOnlyList<Scope> ScopeChild { get { return _ScopeChild; } }
 
         protected Scope()
         {
             ScopeSymbol = new Dictionary<string, OverLoad>();
-            _ScopeChild = new List<Scope>();
         }
 
         protected Scope(TextPosition tp)
             : base(tp)
         {
             ScopeSymbol = new Dictionary<string, OverLoad>();
-            _ScopeChild = new List<Scope>();
         }
 
         protected void Merge(Scope other)
@@ -37,17 +33,11 @@ namespace AbstractSyntax
             }
             foreach (var v in other.ScopeSymbol)
             {
-                OverLoad ol;
-                if (ScopeSymbol.ContainsKey(v.Key))
+                if (!ScopeSymbol.ContainsKey(v.Key))
                 {
-                    ol = ScopeSymbol[v.Key];
+                    ScopeSymbol.Add(v.Key, new OverLoad(this));
                 }
-                else
-                {
-                    ol = new OverLoad(Root);
-                    ScopeSymbol[v.Key] = ol;
-                }
-                ol.Merge(v.Value);
+                ScopeSymbol[v.Key].Merge(v.Value);
             }
         }
 
@@ -79,12 +69,11 @@ namespace AbstractSyntax
 
         protected OverLoad GetOverLoad(string name)
         {
-            OverLoad temp;
-            if (ScopeSymbol.TryGetValue(name, out temp))
+            if (!ScopeSymbol.ContainsKey(name))
             {
-                return temp;
+                return Root.UndefinedOverLord;
             }
-            return Root.UndefinedOverLord;
+            return ScopeSymbol[name];
         }
 
         public string FullName
@@ -107,41 +96,35 @@ namespace AbstractSyntax
             builder.Append(Name);
         }
 
-        private void AppendChild(Scope scope)
+        internal void SpreadChildScope(Element child)
         {
-            _ScopeChild.Add(scope);
-            if (string.IsNullOrEmpty(scope.Name))
+            var s = child as Scope;
+            if(s != null)
             {
+                AppendChildScope(s);
                 return;
             }
-            OverLoad ol;
-            if (ScopeSymbol.ContainsKey(scope.Name))
+            foreach(var v in child)
             {
-                ol = ScopeSymbol[scope.Name];
+                SpreadChildScope(v);
             }
-            else
-            {
-                ol = new OverLoad(Root);
-                ScopeSymbol[scope.Name] = ol;
-            }
-            ol.Append(scope);//todo 重複判定を実装する。
+        }
+
+        internal void AppendChildScope(Scope scope)
+        {
             if (scope is NameSpace)
             {
                 Merge(scope);
             }
-        }
-
-        internal override void SpreadElement(Element parent, Scope scope)
-        {
-            base.SpreadElement(parent, scope);
-            if (!(this is Root))
+            if (string.IsNullOrEmpty(scope.Name))
             {
-                if(scope == null)
-                {
-                    throw new ArgumentNullException("scope");
-                }
-                scope.AppendChild(this);
+                return;
             }
+            if (!ScopeSymbol.ContainsKey(scope.Name))
+            {
+                ScopeSymbol.Add(scope.Name, new OverLoad(this));
+            }
+            ScopeSymbol[scope.Name].Append(scope);//todo 重複判定を実装する。
         }
 
         protected override string ElementInfo

@@ -19,23 +19,7 @@ namespace AbstractSyntax.Pragma
             CalculateType = type;
             GenericType = new GenericSymbol(new TextPosition(), "T");
             _Attribute = new List<Scope>();
-        }
-
-        public override int Count
-        {
-            get { return 1; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return GenericType;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(GenericType);
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)

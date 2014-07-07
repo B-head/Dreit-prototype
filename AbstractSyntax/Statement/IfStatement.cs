@@ -21,25 +21,9 @@ namespace AbstractSyntax.Statement
             Condition = cond;
             Than = than;
             Else = els;
-        }
-
-        public override int Count
-        {
-            get { return 3; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Condition;
-                    case 1: return Than;
-                    case 2: return Else;
-                    default: throw new ArgumentOutOfRangeException();
-                }
-            }
+            AppendChild(Condition);
+            AppendChild(Than);
+            AppendChild(Else);
         }
 
         public bool IsDefinedElse

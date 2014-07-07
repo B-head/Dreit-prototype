@@ -18,29 +18,13 @@ namespace AbstractSyntax.Expression
         {
             Access = acs;
             DecParameters = args;
-        }
-
-        public override int Count
-        {
-            get { return 2; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Access;
-                    case 1: return DecParameters;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(Access);
+            AppendChild(DecParameters);
         }
 
         public override Scope ReturnType
         {
-            get { return Root.TypeManager.IssueTemplateInstance(Access.Reference, Parameter.ToArray()); }
+            get { return Root.TypeManager.IssueTemplateInstance(Access.OverLoad, Parameter.ToArray()); }
         }
 
         public IReadOnlyList<Scope> Parameter
@@ -54,7 +38,7 @@ namespace AbstractSyntax.Expression
                 var pt = new List<Scope>();
                 foreach (var v in DecParameters)
                 {
-                    var temp = v.Reference.FindDataType();
+                    var temp = v.OverLoad.FindDataType();
                     pt.Add(temp);
                 }
                 _Parameter = pt;

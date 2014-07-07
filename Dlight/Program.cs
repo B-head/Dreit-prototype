@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax;
+using AbstractSyntax.Daclate;
 using CliTranslate;
 using SyntacticAnalysis;
 using System;
@@ -16,8 +17,8 @@ namespace Dlight
             Root root = new Root();
             ImportManager import = new ImportManager(root);
             //import.ImportAssembly(Assembly.Load("mscorlib"));
-            root.Append(CompileFile("lib/primitive.dl"));
-            root.Append(CompileFile(fileName));
+            root.AppendModule(CompileFile("lib/primitive.dl"));
+            root.AppendModule(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(CompileMessageBuilder.Build(root.MessageManager));
             if (root.MessageManager.ErrorCount > 0)
@@ -29,7 +30,7 @@ namespace Dlight
             trans.Save();
         }
 
-        public static Element CompileFile(string fileName)
+        public static DeclateModule CompileFile(string fileName)
         {
             string text = File.ReadAllText(fileName);
             var collection = Lexer.Lex(text, fileName);

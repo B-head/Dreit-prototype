@@ -9,13 +9,12 @@ namespace AbstractSyntax.Directive
     [Serializable]
     public class AttributeZoneDirective : Element
     {
-        private List<Element> Child;
         private List<Scope> _Attribute;
 
         public AttributeZoneDirective(TextPosition tp, List<Element> child)
             :base(tp)
         {
-            Child = child;
+            AppendChild(child);
         }
 
         public IReadOnlyList<Scope> Attribute
@@ -27,22 +26,12 @@ namespace AbstractSyntax.Directive
                     return _Attribute;
                 }
                 _Attribute = new List<Scope>();
-                foreach (var v in Child)
+                foreach (var v in this)
                 {
-                    _Attribute.Add(v.Reference.FindDataType());
+                    _Attribute.Add(v.OverLoad.FindDataType());
                 }
                 return _Attribute;
             }
-        }
-
-        public override int Count
-        {
-            get { return Child.Count; }
-        }
-
-        public override Element this[int index]
-        {
-            get { return Child[index]; }
         }
     }
 }

@@ -15,23 +15,7 @@ namespace AbstractSyntax.Statement
             :base(tp)
         {
             Exp = exp;
-        }
-
-        public override int Count
-        {
-            get { return 1; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Exp;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(Exp);
         }
     }
 }

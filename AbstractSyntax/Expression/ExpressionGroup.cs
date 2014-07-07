@@ -7,15 +7,15 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class ExpressionGroup : MonadicExpression
     {
-        public ExpressionGroup(TextPosition tp, Element child)
-            :base(tp, TokenType.Unknoun, child)
+        public ExpressionGroup(TextPosition tp, Element exp)
+            :base(tp, TokenType.Unknoun, exp)
         {
 
         }
 
         public override Scope ReturnType
         {
-            get { return Child.ReturnType; }
+            get { return Exp.ReturnType; }
         }
     }
 }

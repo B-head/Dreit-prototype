@@ -23,6 +23,8 @@ namespace AbstractSyntax.Expression
         {
             Access = acs;
             Arguments = args;
+            AppendChild(Access);
+            AppendChild(Arguments);
         }
 
         protected CallRoutine(TextPosition tp, Element acs, Element arg)
@@ -37,24 +39,8 @@ namespace AbstractSyntax.Expression
             {
                 Arguments = new TupleList(arg);
             }
-        }
-
-        public override int Count
-        {
-            get { return 2; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Access;
-                    case 1: return Arguments;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
+            AppendChild(Access);
+            AppendChild(Arguments);
         }
 
         public virtual Element Left
@@ -79,7 +65,7 @@ namespace AbstractSyntax.Expression
             {
                 if (_Match == null)
                 {
-                    _Match = Access.Reference.CallSelect(Arguments.GetDataTypes());
+                    _Match = Access.OverLoad.CallSelect(Arguments.GetDataTypes());
                 }
                 return _Match.Value;
             }

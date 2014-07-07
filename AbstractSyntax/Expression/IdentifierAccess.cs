@@ -78,10 +78,10 @@ namespace AbstractSyntax.Expression
 
         public Scope CallScope
         {
-            get { return Reference.CallSelect().Call; }
+            get { return OverLoad.CallSelect().Call; }
         }
 
-        public override OverLoad Reference
+        public override OverLoad OverLoad
         {
             get
             {
@@ -132,7 +132,7 @@ namespace AbstractSyntax.Expression
         internal override void CheckSemantic()
         {
             base.CheckSemantic();
-            if (Reference.IsUndefined)
+            if (OverLoad.IsUndefined)
             {
                 if (IsPragmaAccess)
                 {

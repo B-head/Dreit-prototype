@@ -10,34 +10,23 @@ namespace AbstractSyntax
     [Serializable]
     public class DirectiveList : Element
     {
-        private List<Element> Child;
         public bool IsInline { get; private set; }
 
         public DirectiveList()
         {
-            Child = new List<Element>();
+
         }
 
         public DirectiveList(TextPosition tp, List<Element> child, bool isInline)
             :base(tp)
         {
-            Child = child;
             IsInline = isInline;
-        }
-
-        public override int Count
-        {
-            get { return Child.Count; }
-        }
-
-        public override Element this[int index]
-        {
-            get { return Child[index]; }
+            AppendChild(child);
         }
 
         protected override string ElementInfo
         {
-            get { return "Count = " + Child.Count; }
+            get { return "Count = " + Count; }
         }
 
         public bool IsNoReturn
@@ -52,15 +41,10 @@ namespace AbstractSyntax
             }
         }
 
-        public void Append(Element value)
-        {
-            Child.Add(value);
-        }
-
         public IReadOnlyList<T> FindElements<T>() where T : Element
         {
             var result = new List<T>();
-            foreach(var v in Child)
+            foreach(var v in this)
             {
                 if(v is T)
                 {

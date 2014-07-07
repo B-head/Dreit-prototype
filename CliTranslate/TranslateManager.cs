@@ -43,15 +43,15 @@ namespace CliTranslate
             Root.BuildCode();
         }
 
-        private void ChildSpreadTranslate(Scope scope)
+        private void ChildSpreadTranslate(Element element)
         {
-            foreach (var v in scope.ScopeChild)
+            foreach (var v in element)
             {
-                if (v == null)
+                var scope = v as Scope;
+                if (scope != null)
                 {
-                    continue;
+                    RelaySpreadTranslate(scope);
                 }
-                RelaySpreadTranslate(v);
                 ChildSpreadTranslate(v);
             }
         }
@@ -62,8 +62,8 @@ namespace CliTranslate
             {
                 return;
             }
-            RelaySpreadTranslate(scope.CurrentIScope);
-            SpreadTranslate((dynamic)scope, TransDictionary[scope.CurrentIScope]);
+            RelaySpreadTranslate(scope.CurrentScope);
+            SpreadTranslate((dynamic)scope, TransDictionary[scope.CurrentScope]);
         }
 
         private void SpreadTranslate(Scope scope, Translator trans)
@@ -79,7 +79,7 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateClass scope, Translator trans)
         {
-            foreach(var v in scope.Inherit)
+            foreach (var v in scope.Inherit)
             {
                 RelaySpreadTranslate(v);
             }
@@ -98,7 +98,7 @@ namespace CliTranslate
         private void SpreadTranslate(DeclateRoutine scope, Translator trans)
         {
             RelaySpreadTranslate(scope.CallReturnType);
-            foreach(var v in scope.ArgumentTypes)
+            foreach (var v in scope.ArgumentTypes)
             {
                 RelaySpreadTranslate(v);
             }
@@ -142,7 +142,7 @@ namespace CliTranslate
 
         private void ChildTranslate(Element element, Translator trans)
         {
-            foreach(var v in element)
+            foreach (var v in element)
             {
                 if (v == null)
                 {
@@ -303,17 +303,17 @@ namespace CliTranslate
 
         private void Translate(StringLiteral element, Translator trans)
         {
-            if(element.Texts.Count == 0)
+            if (element.Texts.Count == 0)
             {
                 trans.GeneratePrimitive(string.Empty);
                 return;
             }
             var c = element.Texts.Count;
-            for(var i = 0; i < c; ++i)
+            for (var i = 0; i < c; ++i)
             {
                 Translate((dynamic)element.Texts[i], trans);
                 trans.GenerateToString(element.Texts[i].ReturnType);
-                if(i > 0)
+                if (i > 0)
                 {
                     trans.GenerateStringConcat();
                 }
@@ -352,7 +352,7 @@ namespace CliTranslate
         private void Translate(Logical element, Translator trans)
         {
             var bend = trans.CreateLabel();
-            if(element.Operator == TokenType.Or)
+            if (element.Operator == TokenType.Or)
             {
                 Translate((dynamic)element.Left, trans);
                 trans.GenerateControl(OpCodes.Dup);
@@ -378,7 +378,7 @@ namespace CliTranslate
 
         private void Translate(Prefix element, Translator trans)
         {
-            Translate((dynamic)element.Child, trans);
+            Translate((dynamic)element.Exp, trans);
         }
 
         private void Translate(Postfix element, Translator trans)
@@ -488,7 +488,7 @@ namespace CliTranslate
             Translate((dynamic)arguments[1], trans);
             var cls = arguments[0].ReturnType as ClassSymbol;
             var prim = cls.PrimitiveType;
-            switch(prim)
+            switch (prim)
             {
                 case PrimitivePragmaType.Integer8: trans.GenerateControl(OpCodes.Conv_I1); break;
                 case PrimitivePragmaType.Integer16: trans.GenerateControl(OpCodes.Conv_I2); break;
@@ -561,7 +561,7 @@ namespace CliTranslate
 
         private void TranslateBrunch(Logical element, Translator trans, Label bfalse, bool isnot)
         {
-            if(element.Operator == TokenType.Or)
+            if (element.Operator == TokenType.Or)
             {
                 var bend = trans.CreateLabel();
                 TranslateBrunch((dynamic)element.Left, trans, bend, !isnot);

@@ -22,6 +22,10 @@ namespace AbstractSyntax.Statement
             On = on;
             By = by;
             Block = block;
+            AppendChild(Condition);
+            AppendChild(On);
+            AppendChild(By);
+            AppendChild(Block);
         }
 
         public bool IsDefinedCondition
@@ -37,26 +41,6 @@ namespace AbstractSyntax.Statement
         public bool IsDefinedBy
         {
             get { return By != null; }
-        }
-
-        public override int Count
-        {
-            get { return 4; }
-        }
-
-        public override Element this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return Condition;
-                    case 1: return On;
-                    case 2: return By;
-                    case 3: return Block;
-                    default: throw new ArgumentOutOfRangeException("index");
-                }
-            }
         }
 
     }
