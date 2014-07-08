@@ -90,11 +90,11 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
             foreach(var a in Initializer)
             {
-                foreach(var b in a.GetTypeMatch(type))
+                foreach (var b in a.GetTypeMatch(pars, args))
                 {
                     yield return b;
                 }

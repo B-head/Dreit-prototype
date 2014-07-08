@@ -32,7 +32,7 @@ namespace CliTranslate
             Root.RegisterBuilder(path, Class);
             if (path.IsDefaultConstructor)
             {
-                CreateConstructor(path.Default, new Scope[] { });
+                CreateConstructor(path.Default);
             }
         }
 
@@ -48,9 +48,9 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public RoutineTranslator CreateConstructor(RoutineSymbol path, IEnumerable<Scope> argumentType)
+        public RoutineTranslator CreateConstructor(RoutineSymbol path)
         {
-            var argbld = Root.GetTypeBuilders(argumentType);
+            var argbld = Root.GetTypeBuilders(path.ArgumentTypes);
             var attr = MakeMethodAttributes(path.Attribute);
             var ctor = Class.DefineConstructor(attr, CallingConventions.Any, argbld);
             Root.RegisterBuilder(path, ctor);
@@ -68,10 +68,8 @@ namespace CliTranslate
 
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetTypeBuilder(path.CallReturnType);
-            var argbld = Root.GetTypeBuilders(path.ArgumentTypes);
             var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual);
-            var builder = Class.DefineMethod(path.Name, attr, retbld, argbld);
+            var builder = Class.DefineMethod(path.Name, attr);
             return new RoutineTranslator(path, this, builder);
         }
 

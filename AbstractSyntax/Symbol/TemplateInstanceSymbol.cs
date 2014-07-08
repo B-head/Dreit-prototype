@@ -22,5 +22,10 @@ namespace AbstractSyntax.Symbol
         {
             get { return true; }
         }
+
+        public override OverLoadReference OverLoad
+        {
+            get { return Template; }
+        }
     }
 }

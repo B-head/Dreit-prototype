@@ -12,7 +12,7 @@ namespace AbstractSyntax.Daclate
     public class DeclateRoutine : RoutineSymbol
     {
         public TupleList AttributeAccess { get; private set; }
-        public TupleList DecGeneric { get; private set; }
+        public TupleList DecGenerics { get; private set; }
         public TupleList DecArguments { get; private set; }
         public Element ExplicitType { get; private set; }
         public DirectiveList Block { get; private set; }
@@ -22,12 +22,12 @@ namespace AbstractSyntax.Daclate
             : base(tp, name, op, isFunc)
         {
             AttributeAccess = attr;
-            DecGeneric = generic;
+            DecGenerics = generic;
             DecArguments = args;
             ExplicitType = expl;
             Block = block;
             AppendChild(AttributeAccess);
-            AppendChild(DecGeneric);
+            AppendChild(DecGenerics);
             AppendChild(DecArguments);
             AppendChild(ExplicitType);
             AppendChild(Block);
@@ -64,6 +64,24 @@ namespace AbstractSyntax.Daclate
             }
         }
 
+        public override IReadOnlyList<GenericSymbol> Generics
+        {
+            get
+            {
+                if (_Generics != null)
+                {
+                    return _Generics;
+                }
+                var pt = new List<GenericSymbol>();
+                foreach (var v in DecGenerics)
+                {
+                    pt.Add((GenericSymbol)v);
+                }
+                _Generics = pt;
+                return _Generics;
+            }
+        }
+
         public override IReadOnlyList<Scope> ArgumentTypes
         {
             get
@@ -93,7 +111,7 @@ namespace AbstractSyntax.Daclate
                 }
                 if (ExplicitType != null)
                 {
-                    _CallReturnType = ExplicitType.ReturnType;
+                    _CallReturnType = ExplicitType.OverLoad.FindDataType();
                 }
                 else if (Block.IsInline)
                 {
@@ -131,6 +149,10 @@ namespace AbstractSyntax.Daclate
         internal override void CheckSemantic()
         {
             base.CheckSemantic();
+            if(CallReturnType is GenericSymbol)
+            {
+                return;
+            }
             if (Block.IsInline)
             {
                 var ret = Block[0];

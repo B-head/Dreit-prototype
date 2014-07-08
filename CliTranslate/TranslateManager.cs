@@ -97,28 +97,36 @@ namespace CliTranslate
 
         private void SpreadTranslate(DeclateRoutine scope, Translator trans)
         {
+            RoutineTranslator temp;
+            if (scope.IsConstructor)
+            {
+                foreach (var v in scope.ArgumentTypes)
+                {
+                    RelaySpreadTranslate(v);
+                }
+                var cls = (ClassTranslator)trans;
+                temp = cls.CreateConstructor(scope);
+                TransDictionary.Add(scope, temp);
+                temp.CreateArguments(scope.DecArguments.Cast<DeclateArgument>());
+                return;
+            }
+            if (scope.IsDestructor)
+            {
+                var cls = (ClassTranslator)trans;
+                temp = cls.CreateDestructor(scope);
+                TransDictionary.Add(scope, temp);
+                return;
+            }
+            temp = trans.CreateRoutine(scope);
+            TransDictionary.Add(scope, temp);
+            temp.CreateGenerics(scope.Generics);
             RelaySpreadTranslate(scope.CallReturnType);
             foreach (var v in scope.ArgumentTypes)
             {
                 RelaySpreadTranslate(v);
             }
-            RoutineTranslator temp;
-            if (scope.IsConstructor)
-            {
-                var cls = (ClassTranslator)trans;
-                temp = cls.CreateConstructor(scope, scope.ArgumentTypes);
-            }
-            else if (scope.IsDestructor)
-            {
-                var cls = (ClassTranslator)trans;
-                temp = cls.CreateDestructor(scope);
-            }
-            else
-            {
-                temp = trans.CreateRoutine(scope);
-            }
-            TransDictionary.Add(scope, temp);
-            temp.CreateArguments(scope.DecArguments.Cast<Scope>());
+            temp.CreateReturn(scope.CallReturnType);
+            temp.CreateArguments(scope.DecArguments.Cast<DeclateArgument>(), scope.ArgumentTypes);
         }
 
         private void SpreadTranslate(DeclateVariant scope, Translator trans)

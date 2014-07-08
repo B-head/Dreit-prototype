@@ -27,10 +27,10 @@ namespace AbstractSyntax.Symbol
             get { return ReturnType; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { });
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { ReturnType });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, pars, new GenericSymbol[] { }, args, new Scope[] { });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, pars, new GenericSymbol[] { }, args, new Scope[] { ReturnType });
         }
     }
 }

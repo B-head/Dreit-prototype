@@ -27,6 +27,11 @@ namespace AbstractSyntax.Expression
             get { return Root.TypeManager.IssueTemplateInstance(Access.OverLoad, Parameter.ToArray()); }
         }
 
+        public override OverLoadReference OverLoad
+        {
+            get { return ReturnType.OverLoad; }
+        }
+
         public IReadOnlyList<Scope> Parameter
         {
             get

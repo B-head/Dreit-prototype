@@ -10,20 +10,14 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class CastPragma : RoutineSymbol
     {
-        public GenericSymbol GenericType { get; set; }
-
         public CastPragma()
         {
             Name = "@@cast";
-            GenericType = new GenericSymbol(new TextPosition(), "T");
-            _Attribute = new List<Scope>();
-            AppendChild(GenericType);
-        }
-
-        //todo ジェネリクスの構文で型検査をする。
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
-        {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType });
+            var r = new GenericSymbol(new TextPosition(), "R");
+            var t = new GenericSymbol(new TextPosition(), "T");
+            _Generics = new GenericSymbol[] { r, t };
+            _ArgumentTypes = new Scope[] { t };
+            _CallReturnType = r;
         }
     }
 }

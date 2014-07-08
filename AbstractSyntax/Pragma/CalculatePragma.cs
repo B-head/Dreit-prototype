@@ -11,20 +11,15 @@ namespace AbstractSyntax.Pragma
     public class CalculatePragma : RoutineSymbol
     {
         public CalculatePragmaType CalculateType { get; private set; }
-        public GenericSymbol GenericType { get; set; }
 
         public CalculatePragma(string name, CalculatePragmaType type)
         {
             Name = "@@" + name;
             CalculateType = type;
-            GenericType = new GenericSymbol(new TextPosition(), "T");
-            _Attribute = new List<Scope>();
-            AppendChild(GenericType);
-        }
-
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
-        {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { GenericType, GenericType });
+            var t = new GenericSymbol(new TextPosition(), "T");
+            _Generics = new GenericSymbol[] { t };
+            _ArgumentTypes = new Scope[] { t, t };
+            _CallReturnType = t;
         }
 
         internal bool IsCondition

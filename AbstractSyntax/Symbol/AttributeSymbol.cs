@@ -27,9 +27,9 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, new Scope[] { });
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, pars, new GenericSymbol[] { }, args, new Scope[] { });
         }
     }
 

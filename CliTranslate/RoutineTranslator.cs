@@ -66,9 +66,7 @@ namespace CliTranslate
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
             PrepareLexical();
-            var retbld = Root.GetTypeBuilder(path.CallReturnType);
-            var argbld = Root.GetTypeBuilders(path.ArgumentTypes);
-            var builder = Lexical.DefineMethod(path.Name, MethodAttributes.PrivateScope | MethodAttributes.Final, retbld, argbld);
+            var builder = Lexical.DefineMethod(path.Name, MethodAttributes.PrivateScope | MethodAttributes.Final);
             return new RoutineTranslator(path, this, builder);
         }
 
@@ -87,20 +85,53 @@ namespace CliTranslate
             Root.RegisterBuilder(path, builder);
         }
 
-        public void CreateArguments(IEnumerable<Scope> path)
+        public void CreateGenerics(IEnumerable<GenericSymbol> pars)
         {
-            int next = Parent is PrimitiveTranslator ? 2 : 1;
-            foreach (var v in path)
+            if(pars.Count() == 0)
             {
-                if (Method is MethodBuilder)
+                return;
+            }
+            var m = (MethodBuilder)Method;
+            List<string> name = new List<string>();
+            foreach(var v in pars)
+            {
+                name.Add(v.Name);
+            }
+            var gp = m.DefineGenericParameters(name.ToArray());
+            var i = 0;
+            foreach(var v in pars)
+            {
+                Root.RegisterBuilder(v, gp[i++]);
+            }
+        }
+
+        public void CreateReturn(Scope ret)
+        {
+            var m = (MethodBuilder)Method;
+            var t = Root.GetTypeBuilder(ret);
+            m.SetReturnType(t);
+        }
+
+        public void CreateArguments(IEnumerable<DeclateArgument> args, IEnumerable<Scope> argst = null)
+        {
+            var next = Parent is PrimitiveTranslator ? 2 : 1;
+            if (Method is MethodBuilder)
+            {
+                var m = (MethodBuilder)Method;
+                var pt = Parent as PrimitiveTranslator;
+                var t = pt == null ? Root.GetTypeBuilders(argst) : Root.GetTypeBuilders(pt.Prim, argst);
+                m.SetParameters(t);
+                foreach (var v in args)
                 {
-                    var m = (MethodBuilder)Method;
                     var builder = m.DefineParameter(next++, ParameterAttributes.None, v.Name);
                     Root.RegisterBuilder(v, builder);
                 }
-                else if (Method is ConstructorBuilder)
+            }
+            else if (Method is ConstructorBuilder)
+            {
+                var c = (ConstructorBuilder)Method;
+                foreach (var v in args)
                 {
-                    var c = (ConstructorBuilder)Method;
                     var builder = c.DefineParameter(next++, ParameterAttributes.None, v.Name);
                     Root.RegisterBuilder(v, builder);
                 }

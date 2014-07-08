@@ -97,7 +97,7 @@ namespace AbstractSyntax
             get { return Name; }
         }
 
-        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
+        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
         }

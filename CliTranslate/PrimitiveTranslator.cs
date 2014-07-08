@@ -14,7 +14,7 @@ namespace CliTranslate
     public class PrimitiveTranslator : Translator
     {
         private TypeBuilder Class;
-        private Type Prim;
+        internal Type Prim { get; private set; }
         private MethodBuilder ClassContext;
 
         public PrimitiveTranslator(DeclateClass path, Translator parent, TypeBuilder builder)
@@ -67,10 +67,8 @@ namespace CliTranslate
 
         public override RoutineTranslator CreateRoutine(DeclateRoutine path)
         {
-            var retbld = Root.GetTypeBuilder(path.CallReturnType);
-            var argbld = Root.GetTypeBuilders(Prim, path.ArgumentTypes);
             var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual) | MethodAttributes.Static;
-            var builder = Class.DefineMethod(path.Name, attr, retbld, argbld);
+            var builder = Class.DefineMethod(path.Name, attr);
             return new RoutineTranslator(path, this, builder);
         }
     }

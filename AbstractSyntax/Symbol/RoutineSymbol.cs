@@ -13,12 +13,15 @@ namespace AbstractSyntax.Symbol
         public TokenType Operator { get; private set; }
         public bool IsFunction { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<Scope> _ArgumentTypes;
         protected Scope _CallReturnType;
 
         protected RoutineSymbol()
         {
-
+            _Attribute = new List<Scope>();
+            _Generics = new List<GenericSymbol>();
+            _ArgumentTypes = new List<Scope>();
         }
 
         protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc)
@@ -32,6 +35,11 @@ namespace AbstractSyntax.Symbol
         public override IReadOnlyList<Scope> Attribute
         {
             get { return _Attribute; }
+        }
+
+        public virtual IReadOnlyList<GenericSymbol> Generics
+        {
+            get { return _Generics; }
         }
 
         public virtual IReadOnlyList<Scope> ArgumentTypes
@@ -57,9 +65,9 @@ namespace AbstractSyntax.Symbol
             } 
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
+        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, type, ArgumentTypes);
+            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, pars, Generics, args, ArgumentTypes);
         }
 
         public RoutineSymbol InheritInitializer

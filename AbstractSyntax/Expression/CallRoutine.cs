@@ -63,10 +63,21 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (_Match == null)
+                if (_Match != null)
                 {
-                    _Match = Access.OverLoad.CallSelect(Arguments.GetDataTypes());
+                    return _Match.Value;
                 }
+                var tie = Access as TemplateInstanceExpression;
+                IReadOnlyList<Scope> pars;
+                if(tie == null)
+                {
+                    pars = new List<Scope>();
+                }
+                else
+                {
+                    pars = tie.Parameter;
+                }
+                _Match = Access.OverLoad.CallSelect(pars, Arguments.GetDataTypes());
                 return _Match.Value;
             }
         }
@@ -168,8 +179,8 @@ namespace AbstractSyntax.Expression
             switch (Match.Result)
             {
                 case TypeMatchResult.NotCallable: CompileError("not-callable"); break;
-                case TypeMatchResult.UnmatchCount: CompileError("unmatch-overload-count"); break;
-                case TypeMatchResult.UnmatchType: CompileError("unmatch-overload-type"); break;
+                case TypeMatchResult.UnmatchArgumentCount: CompileError("unmatch-overload-count"); break;
+                case TypeMatchResult.UnmatchArgumentType: CompileError("unmatch-overload-type"); break;
             }
             if (HasAnyAttribute(CallScope.Attribute, AttributeType.Let) && !(Access is DeclateVariant))
             {

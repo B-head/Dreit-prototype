@@ -43,7 +43,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal IEnumerable<TypeMatch> TraversalCall(IReadOnlyList<Scope> type)
+        internal IEnumerable<TypeMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
             if (IsHoldAlias)
             {
@@ -51,7 +51,7 @@ namespace AbstractSyntax
             }
             foreach (var s in Symbols)
             {
-                foreach (var m in s.GetTypeMatch(type))
+                foreach (var m in s.GetTypeMatch(pars, args))
                 {
                     yield return m;
                 }

@@ -26,11 +26,7 @@ namespace AbstractSyntax
 
         public Scope Find(Scope from, Scope to)
         {
-            if (from is GenericSymbol || to is GenericSymbol)
-            {
-                return Root.Void;
-            }
-            if (from is UnknownSymbol || to is UnknownSymbol)
+            if (from is UnknownSymbol || to is UnknownSymbol || from is GenericSymbol || to is GenericSymbol)
             {
                 return Root.Unknown;
             }
