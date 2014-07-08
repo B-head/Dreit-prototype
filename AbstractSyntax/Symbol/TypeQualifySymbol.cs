@@ -23,6 +23,22 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
+        internal override OverLoadReference NameResolution(string name)
+        {
+            if (ReferenceCache.ContainsKey(name))
+            {
+                return ReferenceCache[name];
+            }
+            var n = BaseType.NameResolution(name);
+            if (ChildSymbols.ContainsKey(name))
+            {
+                var s = ChildSymbols[name];
+                n = new OverLoadReference(Root, n, s);
+            }
+            ReferenceCache.Add(name, n);
+            return n;
+        }
+
         public static bool HasContainQualify(Scope type, AttributeSymbol qualify)
         {
             var t = type as TypeQualifySymbol;

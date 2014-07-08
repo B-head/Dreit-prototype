@@ -8,15 +8,13 @@ using System.Threading.Tasks;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class TypeManager
+    public class TypeManager : Element
     {
-        private Root Root;
         private List<TypeQualifySymbol> TypeQualifyList;
         private List<TemplateInstanceSymbol> TemplateInstanceList;
 
-        public TypeManager(Root root)
+        public TypeManager()
         {
-            Root = root;
             TypeQualifyList = new List<TypeQualifySymbol>();
             TemplateInstanceList = new List<TemplateInstanceSymbol>();
         }
@@ -29,7 +27,7 @@ namespace AbstractSyntax
                 return ret;
             }
             ret = new TypeQualifySymbol(baseType, qualify);
-            baseType.AppendChild(ret); //todo foreachで走査している時に要素を追加できない問題に対処する。
+            AppendChild(ret);
             TypeQualifyList.Add(ret);
             return ret;
         }
@@ -42,6 +40,7 @@ namespace AbstractSyntax
                 return ret;
             }
             ret = new TemplateInstanceSymbol(template, parameter);
+            AppendChild(ret);
             TemplateInstanceList.Add(ret);
             return ret;
         }

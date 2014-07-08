@@ -14,7 +14,7 @@ namespace AbstractSyntax
         private Root Root;
         public OverLoadReference Next { get; private set; }
         private IReadOnlyList<OverLoadReference> _Inherits;
-        private InitInherits InitInherits;
+        [NonSerialized] private InitInherits InitInherits;
         public IReadOnlyList<OverLoadSet> Sets { get; private set; }
 
         internal OverLoadReference(Root root, OverLoadReference next, params OverLoadSet[] sets)
@@ -43,7 +43,7 @@ namespace AbstractSyntax
 
         public bool IsUndefined
         {
-            get { return Next == null; }
+            get { return TraversalSets(true, true).Count() == 0; }
         }
 
         public IReadOnlyList<OverLoadReference> Inherits

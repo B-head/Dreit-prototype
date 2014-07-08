@@ -33,13 +33,14 @@ namespace AbstractSyntax
             Name = "global";
             BuiltInList = new NameSpaceSymbol();
             UndefinedOverLord = new OverLoadReference(this, null);
-            TypeManager = new TypeManager(this);
+            TypeManager = new TypeManager();
             Conversion = new ConversionManager(this);
             MessageManager = new CompileMessageManager();
             CreatePragma();
             CreateBuiltInIdentifier();
             CreateOperatorManager();
             AppendChild(BuiltInList);
+            AppendChild(TypeManager);
         }
 
         public void AppendModule(NameSpaceSymbol ns)
