@@ -15,7 +15,7 @@ namespace AbstractSyntax
         internal TypeManager TypeManager { get; private set; }
         internal ConversionManager Conversion { get; private set; }
         internal Dictionary<TokenType, ConversionManager> OpManager { get; private set; }
-        internal OverLoad UndefinedOverLord { get; private set; }
+        internal OverLoadReference UndefinedOverLord { get; private set; }
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
@@ -32,7 +32,7 @@ namespace AbstractSyntax
         {
             Name = "global";
             BuiltInList = new NameSpaceSymbol();
-            UndefinedOverLord = new OverLoad(this, true);
+            UndefinedOverLord = new OverLoadReference(this, null);
             TypeManager = new TypeManager(this);
             Conversion = new ConversionManager(this);
             MessageManager = new CompileMessageManager();

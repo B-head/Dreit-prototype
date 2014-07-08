@@ -19,9 +19,9 @@ namespace AbstractSyntax.Directive
             Name = To == null ? string.Empty : To.Value;
         }
 
-        internal OverLoad RefarenceResolution()
+        public override OverLoadReference OverLoad
         {
-            return CurrentScope.NameResolution(From.Value);
+            get { return CurrentScope.NameResolution(From.Value); }
         }
     }
 }

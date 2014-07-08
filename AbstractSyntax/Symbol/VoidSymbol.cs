@@ -16,6 +16,5 @@ namespace AbstractSyntax.Symbol
         {
             get { return true; }
         }
-
     }
 }

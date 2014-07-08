@@ -12,8 +12,8 @@ namespace AbstractSyntax.Symbol
     {
         public TokenType Operator { get; private set; }
         public bool IsFunction { get; private set; }
-        protected List<Scope> _Attribute;
-        protected List<Scope> _ArgumentTypes;
+        protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<Scope> _ArgumentTypes;
         protected Scope _CallReturnType;
 
         protected RoutineSymbol()

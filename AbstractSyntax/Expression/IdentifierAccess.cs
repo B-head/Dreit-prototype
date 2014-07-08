@@ -14,7 +14,7 @@ namespace AbstractSyntax.Expression
         public string Value { get; private set; }
         public bool IsPragmaAccess { get; private set; }
         private bool? _IsTacitThis;
-        private OverLoad _Reference;
+        private OverLoadReference _Reference;
 
         public IdentifierAccess(TextPosition tp, string value, bool isPragma)
             :base(tp)
@@ -81,7 +81,7 @@ namespace AbstractSyntax.Expression
             get { return OverLoad.CallSelect().Call; }
         }
 
-        public override OverLoad OverLoad
+        public override OverLoadReference OverLoad
         {
             get
             {
@@ -144,7 +144,7 @@ namespace AbstractSyntax.Expression
                 }
             }
             var s = CallScope;
-            if(s.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
+            if(HasAnyAttribute(s.Attribute, AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
             {
                 CompileError("not-accessable");
             }

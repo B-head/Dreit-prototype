@@ -12,68 +12,64 @@ namespace AbstractSyntax
     public abstract class Scope : Element
     {
         public string Name { get; protected set; }
-        private Dictionary<string, OverLoad> ScopeSymbol;
+        internal Dictionary<string, OverLoadSet> ChildSymbols { get; set; }
+        protected Dictionary<string, OverLoadReference> ReferenceCache { get; set; }
 
         protected Scope()
         {
-            ScopeSymbol = new Dictionary<string, OverLoad>();
+            ChildSymbols = new Dictionary<string, OverLoadSet>();
+            ReferenceCache = new Dictionary<string, OverLoadReference>();
         }
 
         protected Scope(TextPosition tp)
             : base(tp)
         {
-            ScopeSymbol = new Dictionary<string, OverLoad>();
+            ChildSymbols = new Dictionary<string, OverLoadSet>();
+            ReferenceCache = new Dictionary<string, OverLoadReference>();
         }
 
-        protected void Merge(Scope other)
+        internal void SpreadChildScope(Element child)
         {
-            if(other == null)
+            var s = child as Scope;
+            if (s != null)
             {
-                throw new ArgumentNullException("other");
+                AppendChildScope(s);
+                return;
             }
-            foreach (var v in other.ScopeSymbol)
+            foreach (var v in child)
             {
-                if (!ScopeSymbol.ContainsKey(v.Key))
-                {
-                    ScopeSymbol.Add(v.Key, new OverLoad(this));
-                }
-                ScopeSymbol[v.Key].Merge(v.Value);
+                SpreadChildScope(v);
             }
         }
 
-        internal OverLoad NameResolution(string name)
+        internal void AppendChildScope(Scope scope)
         {
-            var cls = this as ClassSymbol;
-            if (cls != null)
+            if (string.IsNullOrEmpty(scope.Name))
             {
-                var ol = cls.InheritNameResolution(name);
-                if(!ol.IsUndefined)
-                {
-                    return ol;
-                }
+                return;
             }
-            else
+            if (!ChildSymbols.ContainsKey(scope.Name))
             {
-                var ol = GetOverLoad(name);
-                if (!ol.IsUndefined)
-                {
-                    return ol;
-                }
+                var ol = new OverLoadSet(CurrentScope);
+                ChildSymbols.Add(scope.Name, ol);
             }
-            if (this is Root)
-            {
-                return Root.UndefinedOverLord;
-            }
-            return CurrentScope.NameResolution(name);
+            ChildSymbols[scope.Name].Append(scope);
         }
 
-        protected OverLoad GetOverLoad(string name)
+        internal virtual OverLoadReference NameResolution(string name)
         {
-            if (!ScopeSymbol.ContainsKey(name))
+            if(ReferenceCache.ContainsKey(name))
             {
-                return Root.UndefinedOverLord;
+                return ReferenceCache[name];
             }
-            return ScopeSymbol[name];
+            var n = CurrentScope.NameResolution(name);
+            if(ChildSymbols.ContainsKey(name))
+            {
+                var s = ChildSymbols[name];
+                n = new OverLoadReference(Root, n, s);
+            }
+            ReferenceCache.Add(name, n);
+            return n;
         }
 
         public string FullName
@@ -96,37 +92,6 @@ namespace AbstractSyntax
             builder.Append(Name);
         }
 
-        internal void SpreadChildScope(Element child)
-        {
-            var s = child as Scope;
-            if(s != null)
-            {
-                AppendChildScope(s);
-                return;
-            }
-            foreach(var v in child)
-            {
-                SpreadChildScope(v);
-            }
-        }
-
-        internal void AppendChildScope(Scope scope)
-        {
-            if (scope is NameSpaceSymbol)
-            {
-                Merge(scope);
-            }
-            if (string.IsNullOrEmpty(scope.Name))
-            {
-                return;
-            }
-            if (!ScopeSymbol.ContainsKey(scope.Name))
-            {
-                ScopeSymbol.Add(scope.Name, new OverLoad(this));
-            }
-            ScopeSymbol[scope.Name].Append(scope);//todo 重複判定を実装する。
-        }
-
         protected override string ElementInfo
         {
             get { return Name; }
@@ -135,23 +100,6 @@ namespace AbstractSyntax
         internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> type)
         {
             yield return TypeMatch.MakeNotCallable(Root.Unknown);
-        }
-
-        internal bool IsAnyAttribute(params AttributeType[] type)
-        {
-            foreach (var v in Attribute)
-            {
-                var a = v as AttributeSymbol;
-                if (a == null)
-                {
-                    continue;
-                }
-                if (type.Any(t => t == a.Attr))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public virtual bool IsDataType
@@ -171,12 +119,12 @@ namespace AbstractSyntax
 
         public bool IsStaticMember
         {
-            get { return CurrentScope is ClassSymbol && IsAnyAttribute(AttributeType.Static); }
+            get { return CurrentScope is ClassSymbol && HasAnyAttribute(Attribute, AttributeType.Static); }
         }
 
         public bool IsInstanceMember
         {
-            get { return CurrentScope is ClassSymbol && !IsAnyAttribute(AttributeType.Static); }
+            get { return CurrentScope is ClassSymbol && !HasAnyAttribute(Attribute, AttributeType.Static); }
         }
     }
 }

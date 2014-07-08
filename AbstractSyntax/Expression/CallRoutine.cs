@@ -117,7 +117,7 @@ namespace AbstractSyntax.Expression
                 {
                     return false;
                 }
-                return f.IsAnyAttribute(AttributeType.Function);
+                return HasAnyAttribute(f.Attribute, AttributeType.Function);
             }
         }
 
@@ -171,7 +171,7 @@ namespace AbstractSyntax.Expression
                 case TypeMatchResult.UnmatchCount: CompileError("unmatch-overload-count"); break;
                 case TypeMatchResult.UnmatchType: CompileError("unmatch-overload-type"); break;
             }
-            if (CallScope.IsAnyAttribute(AttributeType.Let) && !(Access is DeclateVariant))
+            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Let) && !(Access is DeclateVariant))
             {
                 CompileError("not-mutable");
             }

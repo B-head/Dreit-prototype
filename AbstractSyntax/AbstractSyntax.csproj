@@ -60,7 +60,8 @@
     <Compile Include="Expression\TemplateInstanceExpression.cs" />
     <Compile Include="Literal\PlainText.cs" />
     <Compile Include="Literal\StringLiteral.cs" />
-    <Compile Include="OverLoad.cs" />
+    <Compile Include="OverLoadReference.cs" />
+    <Compile Include="OverLoadSet.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />
     <Compile Include="Daclate\DeclateArgument.cs" />
     <Compile Include="Daclate\DeclateClass.cs" />

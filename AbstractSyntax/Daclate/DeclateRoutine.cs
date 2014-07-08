@@ -41,24 +41,25 @@ namespace AbstractSyntax.Daclate
                 {
                     return _Attribute;
                 }
-                _Attribute = new List<Scope>();
+                var a = new List<Scope>();
                 foreach (var v in AttributeAccess)
                 {
-                    _Attribute.Add(v.OverLoad.FindDataType());
+                    a.Add(v.OverLoad.FindDataType());
                 }
                 if(IsFunction)
                 {
-                    _Attribute.Add(Root.Function);
+                    a.Add(Root.Function);
                 }
                 else
                 {
-                    _Attribute.Add(Root.Routine);
+                    a.Add(Root.Routine);
                 }
-                if(!IsAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                if(!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
                     var p = NameResolution("public").FindDataType();
-                    _Attribute.Add(p);
+                    a.Add(p);
                 }
+                _Attribute = a;
                 return _Attribute;
             }
         }
@@ -71,12 +72,13 @@ namespace AbstractSyntax.Daclate
                 {
                     return _ArgumentTypes;
                 }
-                _ArgumentTypes = new List<Scope>();
+                var a = new List<Scope>();
                 foreach (var v in DecArguments)
                 {
                     var temp = v.ReturnType;
-                    _ArgumentTypes.Add(temp);
+                    a.Add(temp);
                 }
+                _ArgumentTypes = a;
                 return _ArgumentTypes;
             }
         }

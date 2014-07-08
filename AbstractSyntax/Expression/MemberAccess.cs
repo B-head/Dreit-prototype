@@ -10,7 +10,7 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public string Member { get; private set; }
-        private OverLoad _Reference;
+        private OverLoadReference _Reference;
 
         public MemberAccess(TextPosition tp, Element acs, string member)
             :base(tp)
@@ -35,7 +35,7 @@ namespace AbstractSyntax.Expression
             get { return OverLoad.CallSelect().Call; }
         }
 
-        public override OverLoad OverLoad
+        public override OverLoadReference OverLoad
         {
             get
             {
@@ -55,11 +55,11 @@ namespace AbstractSyntax.Expression
             {
                 CompileError("undefined-identifier");
             }
-            if (CallScope.IsAnyAttribute(AttributeType.Private) && !HasCurrentAccess(CallScope.CurrentScope))
+            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.CurrentScope))
             {
                 CompileError("not-accessable");
             }
-            if (CallScope.IsAnyAttribute(AttributeType.Protected) && !HasCurrentAccess(CallScope.CurrentScope))
+            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Protected) && !HasCurrentAccess(CallScope.CurrentScope))
             {
                 CompileError("not-accessable");
             }

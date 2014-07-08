@@ -34,7 +34,7 @@ namespace AbstractSyntax
             return ret;
         }
 
-        public TemplateInstanceSymbol IssueTemplateInstance(OverLoad template, params Scope[] parameter)
+        public TemplateInstanceSymbol IssueTemplateInstance(OverLoadReference template, params Scope[] parameter)
         {
             var ret = TemplateInstanceList.FirstOrDefault(v => v.Template == template && v.Parameter.SequenceEqual(parameter));
             if (ret != null)

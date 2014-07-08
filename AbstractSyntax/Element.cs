@@ -3,6 +3,7 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace AbstractSyntax
@@ -38,7 +39,7 @@ namespace AbstractSyntax
             get { return Root.Void; }
         }
 
-        public virtual OverLoad OverLoad
+        public virtual OverLoadReference OverLoad
         {
             get { return Root.UndefinedOverLord; }
         }
@@ -141,6 +142,23 @@ namespace AbstractSyntax
                     return true;
                 }
                 c = c.CurrentScope;
+            }
+            return false;
+        }
+
+        internal static bool HasAnyAttribute(IReadOnlyList<Scope> attribute, params AttributeType[] type)
+        {
+            foreach (var v in attribute)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                if (type.Any(t => t == a.Attr))
+                {
+                    return true;
+                }
             }
             return false;
         }

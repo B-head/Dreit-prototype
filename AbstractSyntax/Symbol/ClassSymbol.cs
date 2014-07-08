@@ -15,9 +15,9 @@ namespace AbstractSyntax.Symbol
         public ThisSymbol This { get; private set; }
         public bool IsClass { get; private set; }
         public bool IsTrait { get; private set; }
-        protected List<Scope> _Attribute;
-        protected List<ClassSymbol> _Inherit;
-        protected List<RoutineSymbol> _Initializer;
+        protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<ClassSymbol> _Inherit;
+        protected IReadOnlyList<RoutineSymbol> _Initializer;
 
         protected ClassSymbol()
         {
@@ -66,7 +66,7 @@ namespace AbstractSyntax.Symbol
                 {
                     return null;
                 }
-                return _Inherit.Find(v => v.IsClass) ?? obj; 
+                return _Inherit.FirstOrDefault(v => v.IsClass) ?? obj; 
             }
         }
 
@@ -101,22 +101,39 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        internal OverLoad InheritNameResolution(string name)
+        internal override OverLoadReference NameResolution(string name)
         {
-            var ol = GetOverLoad(name);
-            if(!ol.IsUndefined)
+            if (ReferenceCache.ContainsKey(name))
             {
-                return ol;
+                return ReferenceCache[name];
             }
+            var n = CurrentScope.NameResolution(name);
+            InitInherits i = () => InheritNameResolution(name);
+            if (ChildSymbols.ContainsKey(name))
+            {
+                var s = ChildSymbols[name];
+                n = new OverLoadReference(Root, n, i, s);
+            }
+            else
+            {
+                n = new OverLoadReference(Root, n, i);
+            }
+            ReferenceCache.Add(name, n);
+            return n;
+        }
+
+        private IReadOnlyList<OverLoadReference> InheritNameResolution(string name)
+        {
+            var ret = new List<OverLoadReference>();
             foreach(var v in Inherit)
             {
-                ol = v.InheritNameResolution(name);
-                if (!ol.IsUndefined)
+                var ol = v.NameResolution(name);
+                if(ol != null)
                 {
-                    return ol;
+                    ret.Add(ol);
                 }
             }
-            return Root.UndefinedOverLord;
+            return ret;
         }
 
         public PrimitivePragmaType PrimitiveType
