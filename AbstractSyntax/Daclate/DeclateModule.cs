@@ -24,32 +24,19 @@ namespace AbstractSyntax.Daclate
             AppendChild(Exp);
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
             foreach (Token v in ErrorToken)
             {
                 if (v.TokenType == TokenType.OtherString)
                 {
-                    CompileError("invalid-token", v);
+                    cmm.CompileError("invalid-token", v);
                 }
                 else
                 {
-                    CompileError("error-token", v);
+                    cmm.CompileError("error-token", v);
                 }
             }
-            base.CheckSemantic();
-        }
-
-        private void CompileError(string key, Token token)
-        {
-            CompileMessage info = new CompileMessage
-            {
-                MessageType = CompileMessageType.Error,
-                Key = key,
-                Position = token.Position,
-                Target = token,
-            };
-            Root.MessageManager.Append(info);
         }
     }
 }

@@ -44,17 +44,17 @@ namespace AbstractSyntax.Expression
             get { return Operator.ToString(); }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
             if(Right != null && Right is RightAssign)
             {
-                CompileError("not-collide-assign");
+                cmm.CompileError("not-collide-assign", this);
             }
             if (Left != null && Left is RightAssign)
             {
-                CompileError("not-collide-assign");
+                cmm.CompileError("not-collide-assign", this);
             }
-            base.CheckSemantic();
+            base.CheckSemantic(cmm);
         }
     }
 }

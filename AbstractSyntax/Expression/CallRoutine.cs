@@ -173,26 +173,25 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             switch (Match.Result)
             {
-                case TypeMatchResult.NotCallable: CompileError("not-callable"); break;
-                case TypeMatchResult.UnmatchArgumentCount: CompileError("unmatch-overload-count"); break;
-                case TypeMatchResult.UnmatchArgumentType: CompileError("unmatch-overload-type"); break;
+                case TypeMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
+                case TypeMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
+                case TypeMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
             }
             if (HasAnyAttribute(CallScope.Attribute, AttributeType.Let) && !(Access is DeclateVariant))
             {
-                CompileError("not-mutable");
+                cmm.CompileError("not-mutable", this);
             }
             if (IsFunctionLocation && CallScope is VariantSymbol)
             {
-                CompileError("forbit-side-effect");
+                cmm.CompileError("forbit-side-effect", this);
             }
             if (CalculateCallScope is ErrorSymbol)
             {
-                CompileError("impossible-calculate");
+                cmm.CompileError("impossible-calculate", this);
             }
         }
     }

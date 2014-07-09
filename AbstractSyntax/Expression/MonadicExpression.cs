@@ -23,17 +23,16 @@ namespace AbstractSyntax.Expression
             get { return Enum.GetName(typeof(TokenType), Operator); }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
             foreach (Element v in this)
             {
                 if (v == null)
                 {
-                    CompileError("require-expression");
+                    cmm.CompileError("require-expression", this);
                     continue;
                 }
             }
-            base.CheckSemantic();
         }
     }
 }

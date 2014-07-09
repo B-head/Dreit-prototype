@@ -76,7 +76,7 @@ namespace AbstractSyntax
                 var k = FindIndex(fp, ia[i]);
                 if(ip[k] is GenericSymbol)
                 {
-                    ip[k] = aa[i];
+                    ip[k] = aa[i]; //todo 処理の順序で結果が変わるバグに対処する。
                 }
                 ia[i] = ip[k];
             }

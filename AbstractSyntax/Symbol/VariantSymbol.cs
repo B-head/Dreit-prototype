@@ -39,12 +39,11 @@ namespace AbstractSyntax.Symbol
             yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, pars, new GenericSymbol[] { }, args, new Scope[] { ReturnType });
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             if (ReturnType is UnknownSymbol)
             {
-                CompileError("require-type");
+                cmm.CompileError("require-type", this);
             }
         }
     }

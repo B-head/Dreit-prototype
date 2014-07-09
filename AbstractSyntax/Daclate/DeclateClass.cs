@@ -131,15 +131,14 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             foreach (var v in InheritAccess)
             {
                 var dt = v.OverLoad.FindDataType();
                 if (!(dt is ClassSymbol))
                 {
-                    CompileError("not-datatype-inherit");
+                    cmm.CompileError("not-datatype-inherit", this);
                 }
             }
         }

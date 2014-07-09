@@ -50,7 +50,16 @@ namespace AbstractSyntax
 
         public void SemanticAnalysis()
         {
-            CheckSemantic();
+            TraversalCheckSemantic(this);
+        }
+
+        private void TraversalCheckSemantic(Element element)
+        {
+            element.CheckSemantic(MessageManager);
+            foreach(var v in element)
+            {
+                TraversalCheckSemantic(v);
+            }
         }
 
         private void CreatePragma()

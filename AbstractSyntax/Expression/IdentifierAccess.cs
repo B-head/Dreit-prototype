@@ -129,28 +129,27 @@ namespace AbstractSyntax.Expression
             return false;
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             if (OverLoad.IsUndefined)
             {
                 if (IsPragmaAccess)
                 {
-                    CompileError("undefined-pragma");
+                    cmm.CompileError("undefined-pragma", this);
                 }
                 else
                 {
-                    CompileError("undefined-identifier");
+                    cmm.CompileError("undefined-identifier", this);
                 }
             }
             var s = CallScope;
             if(HasAnyAttribute(s.Attribute, AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
             {
-                CompileError("not-accessable");
+                cmm.CompileError("not-accessable", this);
             }
             if(s.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
             {
-                CompileError("not-accessable");
+                cmm.CompileError("not-accessable", this);
             }
         }
     }

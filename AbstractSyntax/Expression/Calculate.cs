@@ -34,12 +34,11 @@ namespace AbstractSyntax.Expression
             get { return CallScope.CallReturnType; }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             if (CallScope is ErrorSymbol)
             {
-                CompileError("impossible-calculate");
+                cmm.CompileError("impossible-calculate", this);
             }
         }
     }

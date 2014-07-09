@@ -54,14 +54,13 @@ namespace AbstractSyntax.Literal
             }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            Parse(Integral);
+            Parse(Integral, cmm);
             if (string.IsNullOrEmpty(Fraction))
             {
-                Parse(Fraction);
+                Parse(Fraction, cmm);
             }
-            base.CheckSemantic();
         }
 
         public dynamic Parse()
@@ -77,13 +76,13 @@ namespace AbstractSyntax.Literal
             }
         }
 
-        private BigInteger Parse(string text)
+        private BigInteger Parse(string text, CompileMessageManager cmm = null)
         {
             int count, b;
-            return Parse(text, out count, out b);
+            return Parse(text, out count, out b, cmm);
         }
 
-        private BigInteger Parse(string text, out int count, out int b)
+        private BigInteger Parse(string text, out int count, out int b, CompileMessageManager cmm = null)
         {
             b = CheckPrefix(ref text);
             count = 0;
@@ -100,7 +99,10 @@ namespace AbstractSyntax.Literal
                     int temp = ToNum(v);
                     if (temp >= b)
                     {
-                        CompileError("number-parse-error");
+                        if (cmm != null)
+                        {
+                            cmm.CompileError("number-parse-error", this);
+                        }
                         return 0;
                     }
                     number += temp;

@@ -20,15 +20,48 @@ namespace AbstractSyntax
             List = new List<CompileMessage>();
         }
 
-        public void Append(CompileMessage info)
+        public void CompileInfo(string key, object target)
         {
-            switch(info.MessageType)
+            Append(key, target, CompileMessageType.Info);
+        }
+
+        public void CompileError(string key, object target)
+        {
+            Append(key, target, CompileMessageType.Error);
+        }
+
+        public void CompileWarning(string key, object target)
+        {
+            Append(key, target, CompileMessageType.Warning);
+        }
+
+        private void Append(string key, object target, CompileMessageType type)
+        {
+            ++MessageCount;
+            switch (type)
             {
                 case CompileMessageType.Info: ++InfoCount; break;
                 case CompileMessageType.Error: ++ErrorCount; break;
                 case CompileMessageType.Warning: ++WarningCount; break;
             }
-            ++MessageCount;
+            var pos = new TextPosition();
+            var t = target as Token?;
+            if(t != null)
+            {
+                pos = t.Value.Position;
+            }
+            var e = target as Element;
+            if(e != null)
+            {
+                pos = e.Position;
+            }
+            CompileMessage info = new CompileMessage
+            {
+                MessageType = type,
+                Key = key,
+                Position = pos,
+                Target = target,
+            };
             List.Add(info);
         }
 

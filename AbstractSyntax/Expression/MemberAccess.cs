@@ -48,32 +48,31 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             if (OverLoad.IsUndefined)
             {
-                CompileError("undefined-identifier");
+                cmm.CompileError("undefined-identifier", this);
             }
             if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.CurrentScope))
             {
-                CompileError("not-accessable");
+                cmm.CompileError("not-accessable", this);
             }
             if (HasAnyAttribute(CallScope.Attribute, AttributeType.Protected) && !HasCurrentAccess(CallScope.CurrentScope))
             {
-                CompileError("not-accessable");
+                cmm.CompileError("not-accessable", this);
             }
             if (CallScope.IsInstanceMember && TypeQualifySymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
             {
-                CompileError("not-accessable");
+                cmm.CompileError("not-accessable", this);
             }
             if (CallScope.IsStaticMember && !TypeQualifySymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
             {
-                CompileError("not-accessable");
+                cmm.CompileError("not-accessable", this);
             }
             if (CallScope.IsStaticMember && !ContainClass(CallScope.GetParent<ClassSymbol>(), Access.ReturnType))
             {
-                CompileError("undefined-identifier");
+                cmm.CompileError("undefined-identifier", this);
             }
         }
 

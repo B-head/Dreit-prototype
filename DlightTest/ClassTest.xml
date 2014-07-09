@@ -366,7 +366,7 @@
     <output>10 20 50 60</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class A {
@@ -391,7 +391,7 @@
     <output>22 44</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class A

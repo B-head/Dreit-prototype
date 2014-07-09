@@ -17,12 +17,11 @@ namespace AbstractSyntax.Directive
             AppendChild(Exp);
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             if(Exp != null && Exp.IsVoidReturn)
             {
-                CompileError("invalid-void");
+                cmm.CompileError("invalid-void", this);
             }
         }
     }

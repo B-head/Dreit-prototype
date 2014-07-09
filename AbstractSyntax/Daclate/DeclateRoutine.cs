@@ -146,9 +146,8 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        internal override void CheckSemantic()
+        internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            base.CheckSemantic();
             if(CallReturnType is GenericSymbol)
             {
                 return;
@@ -158,7 +157,7 @@ namespace AbstractSyntax.Daclate
                 var ret = Block[0];
                 if (CallReturnType != ret.ReturnType)
                 {
-                    CompileError("disagree-return-type");
+                    cmm.CompileError("disagree-return-type", this);
                 }
             }
             else
@@ -168,7 +167,7 @@ namespace AbstractSyntax.Daclate
                 {
                     if (CallReturnType != v.Exp.ReturnType)
                     {
-                        CompileError("disagree-return-type");
+                        cmm.CompileError("disagree-return-type", this);
                     }
                 }
             }

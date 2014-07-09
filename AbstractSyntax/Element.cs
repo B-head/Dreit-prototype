@@ -121,15 +121,9 @@ namespace AbstractSyntax
             cs.AppendChildScope(s);
         }
 
-        internal virtual void CheckSemantic()
+        internal virtual void CheckSemantic(CompileMessageManager cmm)
         {
-            foreach (Element v in this)
-            {
-                if (v != null)
-                {
-                    v.CheckSemantic();
-                }
-            }
+            return;
         }
 
         internal bool HasCurrentAccess(Scope other)
@@ -175,33 +169,6 @@ namespace AbstractSyntax
                 current = current.CurrentScope;
             }
             return current as T;
-        }
-
-        protected void CompileInfo(string key)
-        {
-            SendCompileInfo(key, CompileMessageType.Info);
-        }
-
-        protected void CompileError(string key)
-        {
-            SendCompileInfo(key, CompileMessageType.Error);
-        }
-
-        protected void CompileWarning(string key)
-        {
-            SendCompileInfo(key, CompileMessageType.Warning);
-        }
-
-        private void SendCompileInfo(string key, CompileMessageType type)
-        {
-            CompileMessage info = new CompileMessage
-            {
-                MessageType = type,
-                Key = key,
-                Position = Position,
-                Target = this,
-            };
-            Root.MessageManager.Append(info);
         }
 
         protected virtual string ElementInfo
