@@ -67,7 +67,7 @@ namespace AbstractSyntax.Symbol
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, pars, Generics, args, ArgumentTypes);
+            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, Generics, args, ArgumentTypes);
         }
 
         public RoutineSymbol InheritInitializer

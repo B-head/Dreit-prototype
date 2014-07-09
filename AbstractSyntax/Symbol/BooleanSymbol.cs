@@ -40,7 +40,7 @@ namespace AbstractSyntax.Symbol
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.Conversion, this, pars, new GenericSymbol[] { }, args, new Scope[] { });
+            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, new GenericSymbol[] { }, args, new Scope[] { });
         }
     }
 }

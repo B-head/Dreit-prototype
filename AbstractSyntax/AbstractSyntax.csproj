@@ -60,6 +60,7 @@
     <Compile Include="Expression\TemplateInstanceExpression.cs" />
     <Compile Include="Literal\PlainText.cs" />
     <Compile Include="Literal\StringLiteral.cs" />
+    <Compile Include="OperationManager.cs" />
     <Compile Include="OverLoadReference.cs" />
     <Compile Include="OverLoadSet.cs" />
     <Compile Include="Pragma\CalculatePragma.cs" />

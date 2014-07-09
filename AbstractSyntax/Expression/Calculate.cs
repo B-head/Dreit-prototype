@@ -23,7 +23,7 @@ namespace AbstractSyntax.Expression
             {
                 if (_CallScope == null)
                 {
-                    _CallScope = Root.OpManager[Operator].Find(Right.ReturnType, Left.ReturnType);
+                    _CallScope = Root.OpManager.Find(Operator, Right.ReturnType, Left.ReturnType);
                 }
                 return _CallScope;
             }

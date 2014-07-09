@@ -114,12 +114,12 @@ namespace AbstractSyntax.Daclate
                     }
                     else if (r.IsConvertor) //todo 1引数で使える型変換関数の生成が必要。
                     {
-                        Root.Conversion.Append(r);
+                        Root.ConvManager.Append(r);
                         i.Add(r);
                     }
                     else if (r.Operator != TokenType.Unknoun)
                     {
-                        Root.OpManager[r.Operator].Append(r);
+                        Root.OpManager.Append(r);
                     }
                 }
                 if (!newFlag)

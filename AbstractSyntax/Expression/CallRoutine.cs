@@ -140,7 +140,7 @@ namespace AbstractSyntax.Expression
                 {
                     if (IsCalculate)
                     {
-                        _CalculateCallScope = Root.OpManager[CalculateOperator].Find(Arguments[0].ReturnType, Access.ReturnType);
+                        _CalculateCallScope = Root.OpManager.Find(CalculateOperator, Arguments[0].ReturnType, Access.ReturnType);
                     }
                     else
                     {

@@ -30,11 +30,14 @@ namespace AbstractSyntax
             {
                 return Root.Unknown;
             }
-            var a = ConvList.FindAll(v => v.CurrentScope == to);
-            var b = a.FindAll(v => v.ArgumentTypes[0] == from);
-            if(b.Count > 0)
+            var s = ConvList.FindAll(v => v.CurrentScope == to && v.ArgumentTypes[0] == from);
+            if(s.Count == 1)
             {
-                return b[0];
+                return s[0];
+            }
+            else if(s.Count > 1)
+            {
+                return Root.Error;
             }
             else
             {

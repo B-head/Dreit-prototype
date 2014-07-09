@@ -24,7 +24,7 @@ namespace AbstractSyntax.Expression
             {
                 if (_CallScope == null)
                 {
-                    _CallScope = Root.OpManager[Operator].Find(VirtualRight.ReturnType, Left.ReturnType);
+                    _CallScope = Root.OpManager.Find(Operator, VirtualRight.ReturnType, Left.ReturnType);
                 }
                 return _CallScope;
             }

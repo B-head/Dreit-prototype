@@ -13,8 +13,8 @@ namespace AbstractSyntax
         private NameSpaceSymbol BuiltInList;
         public CompileMessageManager MessageManager { get; private set; }
         internal TypeManager TypeManager { get; private set; }
-        internal ConversionManager Conversion { get; private set; }
-        internal Dictionary<TokenType, ConversionManager> OpManager { get; private set; }
+        internal ConversionManager ConvManager { get; private set; }
+        internal OperationManager OpManager { get; private set; }
         internal OverLoadReference UndefinedOverLord { get; private set; }
         internal VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
@@ -34,11 +34,11 @@ namespace AbstractSyntax
             BuiltInList = new NameSpaceSymbol();
             UndefinedOverLord = new OverLoadReference(this, null);
             TypeManager = new TypeManager();
-            Conversion = new ConversionManager(this);
+            ConvManager = new ConversionManager(this);
+            OpManager = new OperationManager(this);
             MessageManager = new CompileMessageManager();
             CreatePragma();
             CreateBuiltInIdentifier();
-            CreateOperatorManager();
             AppendChild(BuiltInList);
             AppendChild(TypeManager);
         }
@@ -121,23 +121,6 @@ namespace AbstractSyntax
             BuiltInList.AppendChild(new AttributeSymbol("public", AttributeType.Public));
             BuiltInList.AppendChild(new AttributeSymbol("protected", AttributeType.Protected));
             BuiltInList.AppendChild(new AttributeSymbol("private", AttributeType.Private));
-        }
-
-        private void CreateOperatorManager()
-        {
-            OpManager = new Dictionary<TokenType, ConversionManager>();
-            OpManager.Add(TokenType.Add, new ConversionManager(this));
-            OpManager.Add(TokenType.Subtract, new ConversionManager(this));
-            OpManager.Add(TokenType.Multiply, new ConversionManager(this));
-            OpManager.Add(TokenType.Divide, new ConversionManager(this));
-            OpManager.Add(TokenType.Modulo, new ConversionManager(this));
-            OpManager.Add(TokenType.Equal, new ConversionManager(this));
-            OpManager.Add(TokenType.NotEqual, new ConversionManager(this));
-            OpManager.Add(TokenType.LessThan, new ConversionManager(this));
-            OpManager.Add(TokenType.LessThanOrEqual, new ConversionManager(this));
-            OpManager.Add(TokenType.GreaterThan, new ConversionManager(this));
-            OpManager.Add(TokenType.GreaterThanOrEqual, new ConversionManager(this));
-            OpManager.Add(TokenType.Incompare, new ConversionManager(this));
         }
     }
 }
