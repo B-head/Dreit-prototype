@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Directive;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,10 @@ namespace AbstractSyntax.Symbol
         public bool IsFunction { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
+        protected IReadOnlyList<ArgumentSymbol> _Arguments;
         protected IReadOnlyList<Scope> _ArgumentTypes;
         protected Scope _CallReturnType;
+        public DirectiveList Block { get; protected set; }
 
         protected RoutineSymbol()
         {
@@ -42,6 +45,11 @@ namespace AbstractSyntax.Symbol
             get { return _Generics; }
         }
 
+        public virtual IReadOnlyList<ArgumentSymbol> Arguments
+        {
+            get { return _Arguments; }
+        }
+
         public virtual IReadOnlyList<Scope> ArgumentTypes
         {
             get { return _ArgumentTypes; }
@@ -63,6 +71,11 @@ namespace AbstractSyntax.Symbol
                 }
                 return IsInstanceMember && !cls.IsPrimitive; 
             } 
+        }
+
+        public bool IsAbstract
+        {
+            get { return Block == null; }
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)

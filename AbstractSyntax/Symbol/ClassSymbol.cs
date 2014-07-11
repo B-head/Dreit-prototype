@@ -16,6 +16,7 @@ namespace AbstractSyntax.Symbol
         public bool IsClass { get; private set; }
         public bool IsTrait { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<ClassSymbol> _Inherit;
         protected IReadOnlyList<RoutineSymbol> _Initializer;
 
@@ -26,6 +27,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(Default);
             AppendChild(This);
             _Attribute = new List<Scope>();
+            _Generics = new List<GenericSymbol>();
             _Inherit = new List<ClassSymbol>();
             _Initializer = new List<RoutineSymbol>();
         }
@@ -45,6 +47,11 @@ namespace AbstractSyntax.Symbol
         public override IReadOnlyList<Scope> Attribute
         {
             get { return _Attribute; }
+        }
+
+        public virtual IReadOnlyList<GenericSymbol> Generics
+        {
+            get { return _Generics; }
         }
 
         public virtual IReadOnlyList<ClassSymbol> Inherit

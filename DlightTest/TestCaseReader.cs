@@ -18,7 +18,7 @@ namespace DlightTest
             testData = new List<TestData>();
             foreach (var file in Directory.EnumerateFiles(@"./", "*.xml"))
             {
-                var element = XElement.Load(file, LoadOptions.SetLineInfo);
+                var element = XElement.Load(file, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
                 if (element.Name != ns + "compile-test")
                 {
                     continue;

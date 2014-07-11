@@ -9,6 +9,6 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateEnum : EnumSymbol
     {
-
+        //todo Enum型を実装する。
     }
 }

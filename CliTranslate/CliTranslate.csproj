@@ -42,17 +42,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CilStructure.cs" />
     <Compile Include="ClassTranslator.cs" />
     <Compile Include="BranchTranslator.cs" />
+    <Compile Include="ConstructorStructure.cs" />
+    <Compile Include="ContainerStructure.cs" />
+    <Compile Include="EnumStructure.cs" />
+    <Compile Include="EventStructure.cs" />
+    <Compile Include="FieldStructure.cs" />
+    <Compile Include="GenericTypeParameterStructure.cs" />
+    <Compile Include="GlobalContextStructure.cs" />
     <Compile Include="ImportManager.cs" />
+    <Compile Include="LabelStructure.cs" />
+    <Compile Include="LocalStructure.cs" />
     <Compile Include="LoopTranslator.cs" />
+    <Compile Include="MethodBaseStructure.cs" />
+    <Compile Include="MethodStructure.cs" />
     <Compile Include="ModuleTranslator.cs" />
+    <Compile Include="ParameterStructure.cs" />
     <Compile Include="PrimitiveTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyStructure.cs" />
+    <Compile Include="RootStructure.cs" />
     <Compile Include="RootTranslator.cs" />
     <Compile Include="RoutineTranslator.cs" />
+    <Compile Include="SyntaxTranslator.cs" />
     <Compile Include="TranslateManager.cs" />
+    <Compile Include="TranslateUtility.cs" />
     <Compile Include="Translator.cs" />
+    <Compile Include="TypeStructure.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbstractSyntax\AbstractSyntax.csproj">

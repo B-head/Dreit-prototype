@@ -14,7 +14,7 @@ namespace AbstractSyntax.Daclate
     public class DeclateClass : ClassSymbol
     {
         public TupleList AttributeAccess { get; set; }
-        public TupleList DecGeneric { get; set; }
+        public TupleList DecGenerics { get; set; }
         public TupleList InheritAccess { get; set; }
         public DirectiveList Block { get; set; }
 
@@ -22,11 +22,11 @@ namespace AbstractSyntax.Daclate
             :base(tp, name, isTrait)
         {
             AttributeAccess = attr;
-            DecGeneric = generic;
+            DecGenerics = generic;
             InheritAccess = inherit;
             Block = block;
             AppendChild(AttributeAccess);
-            AppendChild(DecGeneric);
+            AppendChild(DecGenerics);
             AppendChild(InheritAccess);
             AppendChild(Block);
         }
@@ -59,6 +59,24 @@ namespace AbstractSyntax.Daclate
                 }
                 _Attribute = a;
                 return _Attribute;
+            }
+        }
+
+        public override IReadOnlyList<GenericSymbol> Generics
+        {
+            get
+            {
+                if (_Generics != null)
+                {
+                    return _Generics;
+                }
+                var pt = new List<GenericSymbol>();
+                foreach (var v in DecGenerics)
+                {
+                    pt.Add((GenericSymbol)v);
+                }
+                _Generics = pt;
+                return _Generics;
             }
         }
 

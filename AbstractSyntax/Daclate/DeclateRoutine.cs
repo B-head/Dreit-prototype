@@ -15,7 +15,6 @@ namespace AbstractSyntax.Daclate
         public TupleList DecGenerics { get; private set; }
         public TupleList DecArguments { get; private set; }
         public Element ExplicitType { get; private set; }
-        public DirectiveList Block { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
 
         public DeclateRoutine(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, DirectiveList block)
@@ -79,6 +78,24 @@ namespace AbstractSyntax.Daclate
                 }
                 _Generics = pt;
                 return _Generics;
+            }
+        }
+
+        public override IReadOnlyList<ArgumentSymbol> Arguments
+        {
+            get
+            {
+                if (_ArgumentTypes != null)
+                {
+                    return _Arguments;
+                }
+                var a = new List<ArgumentSymbol>();
+                foreach (var v in DecArguments)
+                {
+                    a.Add((ArgumentSymbol)v);
+                }
+                _Arguments = a;
+                return _Arguments;
             }
         }
 

@@ -1,15 +1,15 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Daclate;
+using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Pragma;
+using AbstractSyntax.Statement;
 using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
 using System.Linq;
-using AbstractSyntax.Statement;
-using AbstractSyntax.Literal;
-using AbstractSyntax.Directive;
+using System.Reflection.Emit;
 
 namespace CliTranslate
 {
