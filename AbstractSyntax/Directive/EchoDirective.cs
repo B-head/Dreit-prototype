@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Directive
 {
     [Serializable]
-    public class EchoDirective : Element
+    public class EchoDirective : Element //todo echoディレクティブではなく、標準の関数を使用するように置き換える。
     {
         public Element Exp { get; private set; }
 

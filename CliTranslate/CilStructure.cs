@@ -32,6 +32,11 @@ namespace CliTranslate
             Parent = parent;
         }
 
+        internal virtual void BuildCode()
+        {
+
+        }
+
         public int Count
         {
             get { return Child.Count; }

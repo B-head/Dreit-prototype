@@ -35,7 +35,12 @@ namespace AbstractSyntax.Expression
             get { return CallScope.CallReturnType; }
         }
 
-        public bool IsConnection
+        public bool IsLeftConnection
+        {
+            get { return Parent is Condition; }
+        }
+
+        public bool IsRightConnection
         {
             get { return Right is Condition; }
         }
@@ -44,7 +49,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (IsConnection)
+                if (IsRightConnection)
                 {
                     var c = (Condition)Right;
                     return c.Left;

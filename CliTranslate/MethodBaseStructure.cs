@@ -15,6 +15,7 @@ namespace CliTranslate
         public IReadOnlyList<GenericTypeParameterStructure> Generics { get; private set; }
         public IReadOnlyList<ParameterStructure> Arguments { get; private set; }
         public TypeStructure ReturnType { get; private set; }
+        public TypeStructure Lexical { get; private set; }
 
         protected MethodBaseStructure(MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret)
         {

@@ -343,7 +343,7 @@ namespace CliTranslate
         private void Translate(Condition element, Translator trans)
         {
             Translate((dynamic)element.Left, trans);
-            if (element.IsConnection)
+            if (element.IsRightConnection)
             {
                 Translate((dynamic)element.VirtualRight, trans);
                 trans.GenerateCall(element.CallScope);
@@ -554,7 +554,7 @@ namespace CliTranslate
         private void TranslateBrunch(Condition element, Translator trans, Label bfalse, bool isnot)
         {
             Translate((dynamic)element.Left, trans);
-            if (element.IsConnection)
+            if (element.IsRightConnection)
             {
                 Translate((dynamic)element.VirtualRight, trans);
                 TranslateBrunchCall(element.CallScope, trans, bfalse, isnot);

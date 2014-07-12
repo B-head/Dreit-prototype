@@ -10,18 +10,18 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateModule : NameSpaceSymbol
     {
-        private DirectiveList Exp;
+        public DirectiveList Directives { get; private set; }
         public string SourceText { get; private set; }
         public IReadOnlyList<Token> ErrorToken { get; private set; }
 
-        public DeclateModule(TextPosition tp, DirectiveList exp, string name, string source, IReadOnlyList<Token> error)
+        public DeclateModule(TextPosition tp, DirectiveList drcs, string name, string source, IReadOnlyList<Token> error)
             :base(tp)
         {
-            Exp = exp;
+            Directives = drcs;
             Name = name;
             SourceText = source;
             ErrorToken = error;
-            AppendChild(Exp);
+            AppendChild(Directives);
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

@@ -42,6 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccessStructure.cs" />
+    <Compile Include="BlockStructure.cs" />
+    <Compile Include="BranchStructure.cs" />
+    <Compile Include="CacheStructure.cs" />
+    <Compile Include="CallStructure.cs" />
     <Compile Include="CilStructure.cs" />
     <Compile Include="ClassTranslator.cs" />
     <Compile Include="BranchTranslator.cs" />
@@ -52,6 +57,7 @@
     <Compile Include="FieldStructure.cs" />
     <Compile Include="GenericTypeParameterStructure.cs" />
     <Compile Include="GlobalContextStructure.cs" />
+    <Compile Include="GotoStructure.cs" />
     <Compile Include="ImportManager.cs" />
     <Compile Include="LabelStructure.cs" />
     <Compile Include="LocalStructure.cs" />
@@ -59,14 +65,19 @@
     <Compile Include="MethodBaseStructure.cs" />
     <Compile Include="MethodStructure.cs" />
     <Compile Include="ModuleTranslator.cs" />
+    <Compile Include="MonadicOperationStructure.cs" />
+    <Compile Include="NumberStructure.cs" />
+    <Compile Include="DyadicOperationStructure.cs" />
     <Compile Include="ParameterStructure.cs" />
     <Compile Include="PrimitiveTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyStructure.cs" />
+    <Compile Include="ReturnStructure.cs" />
     <Compile Include="RootStructure.cs" />
     <Compile Include="RootTranslator.cs" />
     <Compile Include="RoutineTranslator.cs" />
     <Compile Include="SyntaxTranslator.cs" />
+    <Compile Include="TextStructure.cs" />
     <Compile Include="TranslateManager.cs" />
     <Compile Include="TranslateUtility.cs" />
     <Compile Include="Translator.cs" />
