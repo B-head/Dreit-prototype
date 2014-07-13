@@ -9,11 +9,11 @@ namespace AbstractSyntax.Visualizer
 {
     public partial class SyntaxVisualizerForm : Form
     {
-        private Root root;
-        private Element target;
+        private dynamic root;
+        private dynamic target;
         private const BindingFlags showMenber = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-        public SyntaxVisualizerForm(Element target)
+        public SyntaxVisualizerForm(dynamic target)
         {
             if(target == null)
             {
@@ -34,68 +34,58 @@ namespace AbstractSyntax.Visualizer
         {
             var node = syntaxTree.SelectedNode;
             Text = node.Text;
-            ShowValueList((Element)node.Tag);
+            ShowValueList(node.Tag);
         }
 
         private void ItemActivateHandler(object sender, EventArgs e)
         {
             var item = valueList.SelectedItems[0];
-            var element = item.Tag as Element;
-            if(element == null)
-            {
-                return;
-            }
-            SelectElement(element);
+            SelectElement(item.Tag);
         }
 
-        private void AddTree(TreeNodeCollection nodes, Element element)
+        private void AddTree(TreeNodeCollection nodes, dynamic data)
         {
-            if (element == null)
+            if (data == null)
             {
                 var node = new TreeNode("<null>");
                 nodes.Add(node);
             }
             else
             {
-                var node = new TreeNode(element.ToString());
-                node.Tag = element;
+                var node = new TreeNode(data.ToString());
+                node.Tag = data;
                 nodes.Add(node);
-                foreach (var v in element)
+                foreach (var v in data)
                 {
-                    AddTree(node.Nodes, (Element)v);
+                    AddTree(node.Nodes, v);
                 }
             }
         }
 
-        private void ShowValueList(Element element)
+        private void ShowValueList(dynamic data)
         {
             valueList.BeginUpdate();
             valueList.Groups.Clear();
             valueList.Items.Clear();
-            if (element != null)
+            if (data != null)
             {
-                var type = element.GetType();
-                AddGroup(element, type);
+                var type = data.GetType();
+                AddGroup(data, type);
             }
             valueList.EndUpdate();
         }
 
-        private ListViewGroup AddGroup(Element element, Type type)
+        private ListViewGroup AddGroup(dynamic data, Type type)
         {
             var group = new ListViewGroup(type.Name);
             group.Tag = type;
             valueList.Groups.Add(group);
-            //foreach (var v in type.GetFields(showMenber))
-            //{
-            //    object obj = v.GetValue(element) ?? "<null>";
-            //    AddValue(group, v.Name, obj);
-            //}
             foreach (var v in type.GetProperties(showMenber))
             {
                 object obj;
                 try
                 {
-                    obj = v.GetValue(element) ?? "<null>";
+                    obj = v.GetValue(data) ?? "<null>";
                 }
                 catch (Exception e)
                 {
@@ -114,7 +104,7 @@ namespace AbstractSyntax.Visualizer
             valueList.Items.Add(item);
             group.Items.Add(item);
             var list = obj as IReadOnlyList<object>;
-            if(obj is Element)
+            if (obj.GetType().GetInterface("IReadOnlyTree`1") != null)
             {
                 item.BackColor = Color.LightBlue;
             }
@@ -128,9 +118,9 @@ namespace AbstractSyntax.Visualizer
             return item;
         }
 
-        private void SelectElement(Element element)
+        private void SelectElement(dynamic data)
         {
-            var node = GetTreeNode(element);
+            var node = GetTreeNode(data);
             if(node == null)
             {
                 MessageBox.Show(this, "指定されたElementはツリー内にありませんでした。", "探索結果");
@@ -141,20 +131,20 @@ namespace AbstractSyntax.Visualizer
             syntaxTree.SelectedNode = node;
         }
 
-        private TreeNode GetTreeNode(Element element)
+        private TreeNode GetTreeNode(dynamic data)
         {
             TreeNodeCollection nodes;
-            if (element == null)
+            if (data == null)
             {
                 return null;
             }
-            else if (element is Root)
+            else if (data.Equals(root))
             {
                 nodes = syntaxTree.Nodes;
             }
             else
             {
-                var node = GetTreeNode(element.Parent);
+                var node = GetTreeNode(data.Parent);
                 if(node == null)
                 {
                     return null;
@@ -163,7 +153,7 @@ namespace AbstractSyntax.Visualizer
             }
             foreach(TreeNode v in nodes)
             {
-                if(v.Tag == element)
+                if(v.Tag.Equals(data))
                 {
                     return v;
                 }

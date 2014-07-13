@@ -11,7 +11,8 @@ namespace CliTranslate
     [Serializable]
     public class ConstructorStructure : MethodBaseStructure
     {
-        public ConstructorBuilder Builder { get; private set; }
+        [NonSerialized]
+        private ConstructorBuilder Builder;
 
         public ConstructorStructure(MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, ConstructorBuilder bld = null)
             :base(attr, gnr, arg, ret)

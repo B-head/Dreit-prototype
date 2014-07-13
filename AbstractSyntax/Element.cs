@@ -10,7 +10,7 @@ namespace AbstractSyntax
 {
     [DebuggerVisualizer(typeof(SyntaxVisualizer))]
     [Serializable]
-    public abstract class Element : IReadOnlyList<Element>
+    public abstract class Element : IReadOnlyTree<Element>
     {
         private Root _Root;
         private Scope _CurrentScope;
@@ -206,6 +206,11 @@ namespace AbstractSyntax
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        Element IReadOnlyTree<Element>.Root
+        {
+            get { return Root; }
         }
     }
 }

@@ -1,9 +1,16 @@
 ﻿using Microsoft.VisualStudio.DebuggerVisualizers;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace AbstractSyntax.Visualizer
 {
+    public interface IReadOnlyTree<out T> : IReadOnlyList<T> where T : IReadOnlyTree<T>
+    {
+        T Root { get; }
+        T Parent { get; }
+    }
+
     public class SyntaxVisualizer : DialogDebuggerVisualizer
     {
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
@@ -11,7 +18,7 @@ namespace AbstractSyntax.Visualizer
             if (windowService == null) throw new ArgumentNullException("windowService");
             if (objectProvider == null) throw new ArgumentNullException("objectProvider");
 
-            Element data = (Element)objectProvider.GetObject();
+            var data = objectProvider.GetObject();
             using (var displayForm = new SyntaxVisualizerForm(data))
             {
                 windowService.ShowDialog(displayForm);
@@ -20,7 +27,7 @@ namespace AbstractSyntax.Visualizer
 
         public static void TestShowVisualizer(object visualize)
         {
-            VisualizerDevelopmentHost visualizerHost = new VisualizerDevelopmentHost(visualize, typeof(SyntaxVisualizer));
+            var visualizerHost = new VisualizerDevelopmentHost(visualize, typeof(SyntaxVisualizer));
             visualizerHost.ShowVisualizer();
         }
     }

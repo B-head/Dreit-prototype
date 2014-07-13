@@ -11,8 +11,10 @@ namespace CliTranslate
     [Serializable]
     public class RootStructure : ContainerStructure
     {
-        public AssemblyBuilder Assembly { get; private set; }
-        public ModuleBuilder Module { get; private set; }
+        [NonSerialized]
+        private AssemblyBuilder Assembly;
+        [NonSerialized]
+        private ModuleBuilder Module;
         public string Name { get; private set; }
         public string FileName { get; private set; }
 

@@ -14,8 +14,8 @@ namespace Dlight
         public static void Main(string[] args)
         {
             string fileName = args[0];
-            Root root = new Root();
-            ImportManager import = new ImportManager(root);
+            var root = new Root();
+            var import = new ImportManager(root);
             //import.ImportAssembly(Assembly.Load("mscorlib"));
             root.AppendModule(CompileFile("lib/primitive.dl"));
             root.AppendModule(CompileFile(fileName));
@@ -25,8 +25,7 @@ namespace Dlight
             {
                 return;
             }
-            TranslateManager trans = new TranslateManager(fileName.Replace(".dl", ""));
-            trans.TranslateTo(root, import);
+            var trans = SyntaxTranslator.ToStructure(root, fileName.Replace(".dl", ""));
             trans.Save();
         }
 

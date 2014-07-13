@@ -45,6 +45,10 @@ namespace CliTranslate
 
         private dynamic RelayTranslate(Element element)
         {
+            if(element == null)
+            {
+                return null;
+            }
             if (TransDictionary.ContainsKey(element))
             {
                 return TransDictionary[element];
@@ -66,6 +70,10 @@ namespace CliTranslate
         private IReadOnlyList<T> CollectList<T>(IReadOnlyList<Element> elements) where T : CilStructure
         {
             var ret = new List<T>();
+            if(elements == null)
+            {
+                return ret;
+            }
             foreach (var v in elements)
             {
                 var child = (T)RelayTranslate(v);
@@ -109,7 +117,7 @@ namespace CliTranslate
             var gnr = CollectList<GenericTypeParameterStructure>(element.Generics);
             var bt = RelayTranslate(element.InheritClass);
             var imp = CollectList<TypeStructure>(element.InheritTraits);
-            var ret = new TypeStructure(attr, gnr, bt, imp);
+            var ret = new TypeStructure(element.FullName, attr, gnr, bt, imp);
             CollectChild(ret, element.Block);
             return ret;
         }
@@ -127,7 +135,7 @@ namespace CliTranslate
             }
             else
             {
-                ret = new MethodStructure(attr, gnr, arg, rt);
+                ret = new MethodStructure(element.Name, attr, gnr, arg, rt);
             }
             CollectChild(ret, element.Block);
             return ret;
@@ -176,8 +184,7 @@ namespace CliTranslate
 
         private CallStructure Translate(EchoDirective element)
         {
-            var ret = new CallStructure(); //todo Console.WhiteLine関数を呼び出す。
-            return ret;
+            return null; //todo Console.WhiteLine関数を呼び出す。
         }
 
         private ReturnStructure Translate(ReturnDirective element)
