@@ -59,28 +59,28 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override Scope ReturnType
+        public override Scope CallReturnType
         {
             get
             {
-                if(_ReturnType != null)
+                if(_DataType != null)
                 {
-                    return _ReturnType;
+                    return _DataType;
                 }
                 var caller = Parent as CallRoutine;
                 if (ExplicitType != null)
                 {
-                    _ReturnType = ExplicitType.OverLoad.FindDataType();
+                    _DataType = ExplicitType.OverLoad.FindDataType();
                 }
                 else if(caller != null && caller.HasCallTarget(this))
                 {
-                    _ReturnType = caller.CallType;
+                    _DataType = caller.CallType;
                 }
                 else
                 {
-                    _ReturnType = Root.Unknown;
+                    _DataType = Root.Unknown;
                 }
-                return _ReturnType;
+                return _DataType;
             }
         }
 

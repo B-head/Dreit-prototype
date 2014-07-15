@@ -14,6 +14,7 @@ namespace CliTranslate
         public ReturnStructure(CilStructure exp)
         {
             Expression = exp;
+            AppendChild(Expression);
         }
     }
 }

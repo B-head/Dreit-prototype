@@ -18,6 +18,9 @@ namespace CliTranslate
             Call = call;
             Pre = pre;
             Arguments = args;
+            AppendChild(Call);
+            AppendChild(Pre);
+            AppendChild(Arguments);
         }
     }
 }

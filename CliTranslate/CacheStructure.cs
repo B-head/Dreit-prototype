@@ -15,7 +15,9 @@ namespace CliTranslate
         public CacheStructure(CilStructure exp)
         {
             Expression = exp;
-            Cache = new LocalStructure();
+            Cache = new LocalStructure(null); //todo データタイプの指定が必要。
+            AppendChild(Expression);
+            AppendChild(Cache);
         }
     }
 }

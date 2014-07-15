@@ -36,6 +36,14 @@ namespace CliTranslate
             child.RegisterParent(this);
         }
 
+        internal void AppendChild(IEnumerable<CilStructure> childs)
+        {
+            foreach(var v in childs)
+            {
+                AppendChild(v);
+            }
+        }
+
         private void RegisterParent(CilStructure parent)
         {
             Parent = parent;

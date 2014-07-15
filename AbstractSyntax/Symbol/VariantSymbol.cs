@@ -10,7 +10,7 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         protected List<Scope> _Attribute;
-        protected Scope _ReturnType;
+        protected Scope _DataType;
 
         protected VariantSymbol(TextPosition tp)
             : base(tp)
@@ -25,12 +25,27 @@ namespace AbstractSyntax.Symbol
 
         public override Scope ReturnType
         {
-            get { return _ReturnType; }
+            get { return CallReturnType; }
         }
 
         public override Scope CallReturnType
         {
-            get { return ReturnType; }
+            get { return _DataType; }
+        }
+
+        public bool IsField
+        {
+            get { return CurrentScope is ClassSymbol; }
+        }
+
+        public bool IsLocal
+        {
+            get { return CurrentScope is RoutineSymbol; }
+        }
+
+        public bool IsGlobal
+        {
+            get { return CurrentScope is NameSpaceSymbol; }
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)

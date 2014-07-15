@@ -23,6 +23,9 @@ namespace CliTranslate
             Generics = gnr;
             Arguments = arg;
             ReturnType = ret;
+            AppendChild(Generics);
+            AppendChild(Arguments);
+            AppendChild(ReturnType);
         }
     }
 }

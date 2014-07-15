@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class BlockStructure : CilStructure
+    public class StringStructure : CilStructure
     {
         public IReadOnlyList<CilStructure> Expressions { get; private set; }
 
-        public BlockStructure(IReadOnlyList<CilStructure> exps)
+        public StringStructure(IReadOnlyList<CilStructure> exps)
         {
             Expressions = exps;
             AppendChild(Expressions);

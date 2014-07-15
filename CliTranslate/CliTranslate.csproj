@@ -77,12 +77,14 @@
     <Compile Include="RootStructure.cs" />
     <Compile Include="RootTranslator.cs" />
     <Compile Include="RoutineTranslator.cs" />
+    <Compile Include="StringStructure.cs" />
     <Compile Include="SyntaxTranslator.cs" />
     <Compile Include="TextStructure.cs" />
     <Compile Include="TranslateManager.cs" />
     <Compile Include="TranslateUtility.cs" />
     <Compile Include="Translator.cs" />
     <Compile Include="TypeStructure.cs" />
+    <Compile Include="WriteLineStructure.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbstractSyntax\AbstractSyntax.csproj">

@@ -16,7 +16,7 @@ namespace AbstractSyntax
         internal ConversionManager ConvManager { get; private set; }
         internal OperationManager OpManager { get; private set; }
         internal OverLoadReference UndefinedOverLord { get; private set; }
-        internal VoidSymbol Void { get; private set; }
+        public VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
         internal AttributeSymbol Var { get; private set; }

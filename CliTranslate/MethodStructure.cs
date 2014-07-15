@@ -14,12 +14,14 @@ namespace CliTranslate
         public string Name { get; private set; } 
         [NonSerialized]
         private MethodBuilder Builder;
+        [NonSerialized]
+        private MethodInfo Info;
 
-        public MethodStructure(string name, MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, MethodBuilder bld = null)
+        public MethodStructure(string name, MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, MethodInfo info = null)
             :base(attr, gnr, arg, ret)
         {
             Name = name;
-            Builder = bld;
+            Info = info;
         }
     }
 }

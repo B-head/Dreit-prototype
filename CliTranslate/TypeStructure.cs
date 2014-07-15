@@ -18,15 +18,20 @@ namespace CliTranslate
         public IReadOnlyList<TypeStructure> Implements { get; private set; }
         [NonSerialized]
         private TypeBuilder Builder;
+        [NonSerialized]
+        private Type Info;
 
-        public TypeStructure(string name, TypeAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, TypeStructure bt, IReadOnlyList<TypeStructure> imp, TypeBuilder bld = null)
+        public TypeStructure(string name, TypeAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, TypeStructure bt, IReadOnlyList<TypeStructure> imp, Type info = null)
         {
             Name = name;
             Attributes = attr;
             Generics = gnr;
             BaseType = bt;
             Implements = imp;
-            Builder = bld;
+            Info = info;
+            AppendChild(Generics);
+            AppendChild(BaseType);
+            AppendChild(Implements);
         }
     }
 }

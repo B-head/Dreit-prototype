@@ -13,11 +13,13 @@ namespace CliTranslate
     {
         [NonSerialized]
         private ConstructorBuilder Builder;
+        [NonSerialized]
+        private ConstructorInfo Info;
 
-        public ConstructorStructure(MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, ConstructorBuilder bld = null)
+        public ConstructorStructure(MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, ConstructorInfo info = null)
             :base(attr, gnr, arg, ret)
         {
-            Builder = bld;
+            Info = info;
         }
     }
 }

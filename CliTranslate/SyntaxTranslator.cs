@@ -101,7 +101,11 @@ namespace CliTranslate
 
         private CilStructure Translate(VoidSymbol element)
         {
-            return null; //todo void型のTypeStructureを生成する。
+            var gnr = new List<GenericTypeParameterStructure>();
+            var imp = new List<TypeStructure>();
+            var ti = typeof(void);
+            var ret = new TypeStructure(ti.Name, ti.Attributes, gnr, null, imp, ti);
+            return null;
         }
 
         private GlobalContextStructure Translate(DeclateModule element)
@@ -149,8 +153,19 @@ namespace CliTranslate
 
         private CilStructure Translate(DeclateVariant element)
         {
-            var ret = new FieldStructure();
-            return ret;
+            if (element.IsField || element.IsGlobal)
+            {
+                var attr = element.Attribute.MakeFieldAttributes();
+                var dt = RelayTranslate(element.CallReturnType);
+                var ret = new FieldStructure(element.Name, attr, dt);
+                return ret;
+            }
+            else
+            {
+                var dt = RelayTranslate(element.CallReturnType);
+                var ret = new LocalStructure(element.Name, dt);
+                return ret;
+            }
         }
 
         private ParameterStructure Translate(DeclateArgument element)
@@ -182,9 +197,18 @@ namespace CliTranslate
             return ret;
         }
 
-        private CallStructure Translate(EchoDirective element)
+        private BlockStructure Translate(DirectiveList element)
         {
-            return null; //todo Console.WhiteLine関数を呼び出す。
+            var exps = CollectList<CilStructure>(element);
+            var ret = new BlockStructure(exps);
+            return ret;
+        }
+
+        private WriteLineStructure Translate(EchoDirective element)
+        {
+            var exp = RelayTranslate(element.Exp);
+            var ret = new WriteLineStructure(exp);
+            return ret;
         }
 
         private ReturnStructure Translate(ReturnDirective element)
@@ -207,6 +231,7 @@ namespace CliTranslate
         {
             var call = RelayTranslate(element.CallScope);
             var access = RelayTranslate(element.Access) as AccessStructure;
+            var pre = access == null ? null : access.Pre;
             CallStructure ret;
             if (element.IsCalculate)
             {
@@ -216,12 +241,12 @@ namespace CliTranslate
                 var cal = new DyadicOperationStructure(left, right, calcall);
                 var args = new List<CilStructure>();
                 args.Add(cal);
-                ret = new CallStructure(call, access.Pre, args);
+                ret = new CallStructure(call, pre, args);
             }
             else
             {
                 var args = CollectList<CilStructure>(element.Arguments);
-                ret = new CallStructure(call, access.Pre, args);
+                ret = new CallStructure(call, pre, args);
             }
             return ret;
         }
@@ -293,24 +318,62 @@ namespace CliTranslate
             return ret;
         }
 
-        private CilStructure Translate(StringLiteral element)
+        private StringStructure Translate(StringLiteral element)
         {
-            return null; //todo 文字列の生成をする。
+            var exps = CollectList<CilStructure>(element.Texts);
+            var ret = new StringStructure(exps);
+            return ret;
         }
 
-        private CilStructure Translate(IfStatement element)
+        private BlockStructure Translate(IfStatement element)
         {
-            return null;
+            var cond = RelayTranslate(element.Condition);
+            var than = RelayTranslate(element.Than);
+            var els = RelayTranslate(element.Else);
+            var elsl = new LabelStructure();
+            var endl = new LabelStructure();
+            var branch = new BranchStructure(cond, elsl);
+            var goend = new GotoStructure(endl);
+            var exps = new List<CilStructure>();
+            exps.Add(branch);
+            exps.Add(than);
+            exps.Add(goend);
+            exps.Add(elsl);
+            exps.Add(els);
+            exps.Add(endl);
+            var ret = new BlockStructure(exps);
+            return ret;
         }
 
-        private CilStructure Translate(LoopStatement element)
+        private BlockStructure Translate(LoopStatement element)
         {
-            return null;
+            var cond = RelayTranslate(element.Condition);
+            var on = RelayTranslate(element.On);
+            var by = RelayTranslate(element.By);
+            var block = RelayTranslate(element.Block);
+            var byl = new LabelStructure();
+            var condl = new LabelStructure();
+            var endl = new LabelStructure();
+            var branch = new BranchStructure(cond, endl);
+            var gocond = new GotoStructure(condl);
+            var goby = new GotoStructure(byl);
+            var exps = new List<CilStructure>();
+            exps.Add(on);
+            exps.Add(gocond);
+            exps.Add(byl);
+            exps.Add(by);
+            exps.Add(condl);
+            exps.Add(branch);
+            exps.Add(block);
+            exps.Add(goby);
+            exps.Add(endl);
+            var ret = new BlockStructure(exps);
+            return ret;
         }
 
-        private CilStructure Translate(UnStatement element)
+        private MonadicOperationStructure Translate(UnStatement element)
         {
-            return null;
+            return null; //todo 論理否定の関数を用意する。
         }
     }
 }
