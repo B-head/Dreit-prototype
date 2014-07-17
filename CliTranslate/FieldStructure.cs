@@ -25,7 +25,17 @@ namespace CliTranslate
             Attributes = attr;
             DataType = dt;
             Info = info;
-            AppendChild(DataType);
+        }
+
+        protected override void BuildCode()
+        {
+            if (Info != null)
+            {
+                return;
+            }
+            var cont = (ContainerStructure)Parent;
+            Builder = cont.CreateField(Name, DataType.GainType(), Attributes);
+            Info = Builder;
         }
     }
 }

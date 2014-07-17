@@ -14,7 +14,6 @@ namespace CliTranslate
         public GotoStructure(LabelStructure label)
         {
             Label = label;
-            AppendChild(Label);
         }
     }
 }

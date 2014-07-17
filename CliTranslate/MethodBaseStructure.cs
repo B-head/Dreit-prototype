@@ -12,20 +12,14 @@ namespace CliTranslate
     public abstract class MethodBaseStructure : ContainerStructure
     {
         public MethodAttributes Attributes { get; private set; }
-        public IReadOnlyList<GenericTypeParameterStructure> Generics { get; private set; }
         public IReadOnlyList<ParameterStructure> Arguments { get; private set; }
-        public TypeStructure ReturnType { get; private set; }
         public TypeStructure Lexical { get; private set; }
 
-        protected MethodBaseStructure(MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret)
+        protected MethodBaseStructure(MethodAttributes attr, IReadOnlyList<ParameterStructure> arg)
         {
             Attributes = attr;
-            Generics = gnr;
             Arguments = arg;
-            ReturnType = ret;
-            AppendChild(Generics);
             AppendChild(Arguments);
-            AppendChild(ReturnType);
         }
     }
 }

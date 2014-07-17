@@ -56,7 +56,7 @@
     <Compile Include="EnumStructure.cs" />
     <Compile Include="EventStructure.cs" />
     <Compile Include="FieldStructure.cs" />
-    <Compile Include="GenericTypeParameterStructure.cs" />
+    <Compile Include="GenericParameterStructure.cs" />
     <Compile Include="GlobalContextStructure.cs" />
     <Compile Include="GotoStructure.cs" />
     <Compile Include="ImportManager.cs" />

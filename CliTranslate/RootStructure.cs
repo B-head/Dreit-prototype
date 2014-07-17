@@ -26,6 +26,20 @@ namespace CliTranslate
             Module = Assembly.DefineDynamicModule(Name, FileName);
         }
 
+        internal void TraversalBuildCode()
+        {
+            TraversalBuildCode(this);
+        }
+
+        private void TraversalBuildCode(CilStructure stru)
+        {
+            RelayBuildCode();
+            foreach(var v in stru)
+            {
+                TraversalBuildCode(v);
+            }
+        }
+
         public void Save()
         {
             Assembly.Save(FileName);
@@ -37,6 +51,11 @@ namespace CliTranslate
             var type = Assembly.GetType(entry.DeclaringType.FullName);
             entry = type.GetMethod(entry.Name, BindingFlags.NonPublic | BindingFlags.Static);
             entry.Invoke(null, null);
+        }
+
+        internal override TypeBuilder CreateType(string name, TypeAttributes attr)
+        {
+            return Module.DefineType(name, attr);
         }
     }
 }

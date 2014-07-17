@@ -17,7 +17,6 @@ namespace CliTranslate
             Expression = exp;
             Call = call;
             AppendChild(Expression);
-            AppendChild(Call);
         }
     }
 }

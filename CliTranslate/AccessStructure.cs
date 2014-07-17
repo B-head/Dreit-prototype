@@ -16,7 +16,6 @@ namespace CliTranslate
         {
             Call = call;
             Pre = pre;
-            AppendChild(Call);
             AppendChild(Pre);
         }
     }

@@ -16,10 +16,22 @@ namespace CliTranslate
         [NonSerialized]
         private ConstructorInfo Info;
 
-        public ConstructorStructure(MethodAttributes attr, IReadOnlyList<GenericTypeParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, ConstructorInfo info = null)
-            :base(attr, gnr, arg, ret)
+        public ConstructorStructure(MethodAttributes attr, IReadOnlyList<ParameterStructure> arg, ConstructorInfo info = null)
+            :base(attr, arg)
         {
             Info = info;
+        }
+
+        protected override void BuildCode()
+        {
+            if (Info != null)
+            {
+                return;
+            }
+            var cont = (ContainerStructure)Parent;
+            Builder = cont.CreateConstructor(Attributes, Arguments.ToTypes());
+            Info = Builder;
+            Arguments.RegisterBuilders(Builder);
         }
     }
 }

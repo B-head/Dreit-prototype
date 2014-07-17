@@ -17,7 +17,6 @@ namespace CliTranslate
             Condition = cond;
             Jump = jump;
             AppendChild(Condition);
-            AppendChild(Jump);
         }
     }
 }

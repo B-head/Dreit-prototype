@@ -40,7 +40,7 @@ namespace DlightTest
                 var data = new TestData
                 {
                     Category = category,
-                    Name = category + "-" + ((string)e.Attribute("name") ?? count.ToString()),
+                    Name = category + "-" + ((string)e.Attribute("name") ?? count.ToString().PadLeft(2, '0')),
                     Line = ((IXmlLineInfo)e).LineNumber,
                     TimeOut = (int?)e.Attribute("timeout"),
                     Ignore = (bool?)e.Attribute("ignore") ?? false,

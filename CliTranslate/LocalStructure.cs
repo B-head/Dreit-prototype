@@ -26,7 +26,6 @@ namespace CliTranslate
         {
             Name = name;
             DataType = dt;
-            AppendChild(DataType);
         }
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -91,6 +92,62 @@ namespace CliTranslate
                 }
             }
             return ret;
+        }
+
+        public static void AddImplements(this TypeBuilder builder, IReadOnlyList<TypeStructure> imp)
+        {
+            foreach (var v in imp)
+            {
+                builder.AddInterfaceImplementation(v.GainType());
+            }
+        }
+
+        public static string[] ToNames(this IReadOnlyList<GenericParameterStructure> gnr)
+        {
+            var ret = new string[gnr.Count];
+            for (var i = 0; i < gnr.Count; ++i)
+            {
+                ret[i] = gnr[i].Name;
+            }
+            return ret;
+        }
+
+        public static void RegisterBuilders(this IReadOnlyList<GenericParameterStructure> gnr, GenericTypeParameterBuilder[] builders)
+        {
+            for (var i = 0; i < gnr.Count; ++i)
+            {
+                gnr[i].RegisterBuilder(builders[i]);
+            }
+        }
+
+        public static Type[] ToTypes(this IReadOnlyList<ParameterStructure> prm)
+        {
+            var ret = new Type[prm.Count];
+            for (var i = 0; i < prm.Count; ++i)
+            {
+                ret[i] = prm[i].ParamType.GainType();
+            }
+            return ret;
+        }
+
+        public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, MethodBuilder builder)
+        {
+            for (var i = 0; i < prm.Count; ++i)
+            {
+                var p = prm[i];
+                var pb = builder.DefineParameter(i + 1, p.Attributes, p.Name);
+                p.RegisterBuilder(pb);
+            }
+        }
+
+        public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, ConstructorBuilder builder)
+        {
+            for (var i = 0; i < prm.Count; ++i)
+            {
+                var p = prm[i];
+                var pb = builder.DefineParameter(i + 1, p.Attributes, p.Name);
+                p.RegisterBuilder(pb);
+            }
         }
     }
 }

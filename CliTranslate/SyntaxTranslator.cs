@@ -9,6 +9,7 @@ using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,8 +30,8 @@ namespace CliTranslate
         {
             var trans = new SyntaxTranslator();
             var ret = new RootStructure(name, dir);
-            trans.CollectChild(ret, root);
-            ret.BuildCode();
+            trans.CollectChild(root, ret, root);
+            ret.TraversalBuildCode();
             return ret;
         }
 
@@ -54,16 +55,20 @@ namespace CliTranslate
                 return TransDictionary[element];
             }
             var ret = Translate((dynamic)element);
-            TransDictionary.Add(element, ret);
+            if (!TransDictionary.ContainsKey(element))
+            {
+                TransDictionary.Add(element, ret);
+            }
             return ret;
         }
 
-        private void CollectChild(CilStructure parent, Element element)
+        private void CollectChild(Element parent, CilStructure structure, Element element)
         {
+            TransDictionary.Add(parent, structure);
             foreach (var v in element)
             {
                 var child = RelayTranslate(v);
-                parent.AppendChild(child);
+                structure.AppendChild(child);
             }
         }
 
@@ -101,7 +106,7 @@ namespace CliTranslate
 
         private CilStructure Translate(VoidSymbol element)
         {
-            var gnr = new List<GenericTypeParameterStructure>();
+            var gnr = new List<GenericParameterStructure>();
             var imp = new List<TypeStructure>();
             var ti = typeof(void);
             var ret = new TypeStructure(ti.Name, ti.Attributes, gnr, null, imp, ti);
@@ -111,37 +116,37 @@ namespace CliTranslate
         private GlobalContextStructure Translate(DeclateModule element)
         {
             var ret = new GlobalContextStructure(element.FullName);
-            CollectChild(ret, element.Directives);
+            CollectChild(element, ret, element.Directives);
             return ret;
         }
 
         private TypeStructure Translate(DeclateClass element)
         {
             var attr = element.Attribute.MakeTypeAttributes(element.IsTrait);
-            var gnr = CollectList<GenericTypeParameterStructure>(element.Generics);
+            var gnr = CollectList<GenericParameterStructure>(element.Generics);
             var bt = RelayTranslate(element.InheritClass);
             var imp = CollectList<TypeStructure>(element.InheritTraits);
             var ret = new TypeStructure(element.FullName, attr, gnr, bt, imp);
-            CollectChild(ret, element.Block);
+            CollectChild(element, ret, element.Block);
             return ret;
         }
 
         private MethodBaseStructure Translate(DeclateRoutine element)
         {
             var attr = element.Attribute.MakeMethodAttributes(element.IsVirtual, element.IsAbstract);
-            var gnr = CollectList<GenericTypeParameterStructure>(element.Generics);
+            var gnr = CollectList<GenericParameterStructure>(element.Generics);
             var arg = CollectList<ParameterStructure>(element.Arguments);
             var rt = RelayTranslate(element.ReturnType);
             MethodBaseStructure ret;
             if (element.IsConstructor)
             {
-                ret = new ConstructorStructure(attr, gnr, arg, rt);
+                ret = new ConstructorStructure(attr, arg);
             }
             else
             {
                 ret = new MethodStructure(element.Name, attr, gnr, arg, rt);
             }
-            CollectChild(ret, element.Block);
+            CollectChild(element, ret, element.Block);
             return ret;
         }
 
@@ -170,13 +175,16 @@ namespace CliTranslate
 
         private ParameterStructure Translate(DeclateArgument element)
         {
-            var ret = new ParameterStructure();
+            var attr = ParameterAttributes.None;
+            var pt = RelayTranslate(element.CallReturnType);
+            var ret = new ParameterStructure(element.Name, attr, pt, null);
             return ret;
         }
 
-        private GenericTypeParameterStructure Translate(DeclateGeneric element)
+        private GenericParameterStructure Translate(DeclateGeneric element)
         {
-            var ret = new GenericTypeParameterStructure();
+            var attr = GenericParameterAttributes.None;
+            var ret = new GenericParameterStructure(element.Name, attr, null);
             return ret;
         }
 

@@ -15,6 +15,7 @@ namespace CliTranslate
         private RootStructure _Root;
         private List<CilStructure> Child;
         public CilStructure Parent { get; private set; }
+        private bool IsBuilded;
 
         protected CilStructure()
         {
@@ -46,12 +47,26 @@ namespace CliTranslate
 
         private void RegisterParent(CilStructure parent)
         {
+            if(Parent != null)
+            {
+                throw new InvalidOperationException();
+            }
             Parent = parent;
         }
 
-        internal virtual void BuildCode()
+        internal void RelayBuildCode()
         {
+            if(IsBuilded)
+            {
+                return;
+            }
+            IsBuilded = true;
+            BuildCode();
+        }
 
+        protected virtual void BuildCode()
+        {
+            return;
         }
 
         public RootStructure Root
