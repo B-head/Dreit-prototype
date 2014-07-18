@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class GenericParameterStructure : CilStructure
+    public class GenericParameterStructure : BuilderStructure
     {
         public string Name { get; private set; }
         public GenericParameterAttributes Attributes { get; private set; }

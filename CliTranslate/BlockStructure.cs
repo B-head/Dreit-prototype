@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class BlockStructure : CilStructure
+    public class BlockStructure : ExpressionStructure
     {
-        public IReadOnlyList<CilStructure> Expressions { get; private set; }
-
-        public BlockStructure(IReadOnlyList<CilStructure> exps)
+        public BlockStructure(TypeStructure rt, IReadOnlyList<ExpressionStructure> exps)
+            :base(rt)
         {
-            Expressions = exps;
-            AppendChild(Expressions);
+            AppendChild(exps);
         }
     }
 }

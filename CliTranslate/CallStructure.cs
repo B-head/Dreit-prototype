@@ -7,19 +7,33 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class CallStructure : CilStructure
+    public class CallStructure : ExpressionStructure
     {
-        public CilStructure Call { get; private set; }
-        public CilStructure Pre { get; private set; }
-        public IReadOnlyList<CilStructure> Arguments { get; private set; }
+        public BuilderStructure Call { get; private set; }
+        public ExpressionStructure Pre { get; private set; }
+        public IReadOnlyList<ExpressionStructure> Arguments { get; private set; }
 
-        public CallStructure(CilStructure call, CilStructure pre, IReadOnlyList<CilStructure> args)
+        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, IReadOnlyList<ExpressionStructure> args)
+            :base(rt)
         {
             Call = call;
             Pre = pre;
             Arguments = args;
             AppendChild(Pre);
             AppendChild(Arguments);
+        }
+
+        internal override void BuildCode()
+        {
+            if (Pre != null)
+            {
+                Pre.BuildCode();
+            }
+            foreach (var v in Arguments)
+            {
+                v.BuildCode();
+            }
+            Call.BuildCall();
         }
     }
 }

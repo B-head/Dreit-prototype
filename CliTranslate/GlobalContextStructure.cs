@@ -21,17 +21,22 @@ namespace CliTranslate
             var tattr = TypeAttributes.Class | TypeAttributes.NotPublic | TypeAttributes.Sealed | TypeAttributes.SpecialName;
             var gnr = new List<GenericParameterStructure>();
             var imp = new List<TypeStructure>();
-            GlobalField =  new TypeStructure("@@Global", tattr, gnr, null, imp);
+            GlobalField =  new TypeStructure(Name + ".@@Global", tattr, gnr, null, imp);
             AppendChild(GlobalField);
             var mattr = MethodAttributes.PrivateScope | MethodAttributes.SpecialName | MethodAttributes.Static;
             var arg = new List<ParameterStructure>();
-            GlobalContext = new MethodStructure("@@Global", mattr, gnr, arg, null);
+            GlobalContext = new MethodStructure("@@global", mattr, gnr, arg, null);
             GlobalField.AppendChild(GlobalContext);
+        }
+
+        internal override CodeGenerator GainGenerator()
+        {
+            return GlobalContext.GainGenerator();
         }
 
         internal override TypeBuilder CreateType(string name, System.Reflection.TypeAttributes attr)
         {
-            var cont = (ContainerStructure)Parent;
+            var cont = CurrentContainer;
             return cont.CreateType(name, attr);
         }
 

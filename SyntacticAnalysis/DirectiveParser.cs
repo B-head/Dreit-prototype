@@ -72,7 +72,7 @@ namespace SyntacticAnalysis
                     icp.Any(
                         iicp => iicp.Type(TokenType.Separator),
                         iicp => iicp.Text("do"),
-                        iicp => iicp.Text("than")
+                        iicp => iicp.Text("then")
                     ).Lt();
                 })
                 .Transfer(e => child.Add(e), Directive)

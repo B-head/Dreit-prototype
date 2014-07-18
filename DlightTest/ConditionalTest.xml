@@ -9,7 +9,7 @@
 
   <case>
     <code>
-      if un false than echo 10
+      if un false then echo 10
       echo 20
     </code>
     <output>10 20</output>
@@ -48,7 +48,7 @@
     <code>
       <![CDATA[
       routine foo(a:Bool, b:Bool){
-        return if a than if b than 10 else 40 else if b than 20 else 30
+        return if a :: if b :: 10 else 40 else if b :: 20 else 30
       }
       echo foo(true, true)
       echo foo(true, false)

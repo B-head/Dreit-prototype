@@ -15,7 +15,6 @@ namespace CliTranslate
         private RootStructure _Root;
         private List<CilStructure> Child;
         public CilStructure Parent { get; private set; }
-        private bool IsBuilded;
 
         protected CilStructure()
         {
@@ -54,19 +53,17 @@ namespace CliTranslate
             Parent = parent;
         }
 
-        internal void RelayBuildCode()
+        internal void ChildBuildCode(CilStructure stru)
         {
-            if(IsBuilded)
+            foreach (var v in stru)
             {
-                return;
+                v.BuildCode();
             }
-            IsBuilded = true;
-            BuildCode();
         }
 
-        protected virtual void BuildCode()
+        internal virtual void BuildCode()
         {
-            return;
+            ChildBuildCode(this);
         }
 
         public RootStructure Root
@@ -78,6 +75,26 @@ namespace CliTranslate
                     _Root = Parent.Root;
                 }
                 return _Root;
+            }
+        }
+
+        public ContainerStructure CurrentContainer
+        {
+            get
+            {
+                var c = Parent as ContainerStructure;
+                if (c != null)
+                {
+                    return c;
+                }
+                else if (Parent != null)
+                {
+                    return Parent.CurrentContainer;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

@@ -7,14 +7,21 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class WriteLineStructure : CilStructure
+    public class WriteLineStructure : ExpressionStructure
     {
-        public CilStructure Expression { get; private set; }
+        public ExpressionStructure Expression { get; private set; }
 
-        public WriteLineStructure(CilStructure exp)
+        public WriteLineStructure(TypeStructure rt, ExpressionStructure exp)
+            :base(rt)
         {
             Expression = exp;
             AppendChild(Expression);
+        }
+
+        internal override void BuildCode()
+        {
+            var cg = CurrentContainer.GainGenerator();
+            cg.GenerateWriteLine(Expression);
         }
     }
 }

@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class CacheStructure : CilStructure
+    public class CacheStructure : ExpressionStructure
     {
-        public CilStructure Expression { get; private set; }
+        public ExpressionStructure Expression { get; private set; }
         public LocalStructure Cache { get; private set; }
 
-        public CacheStructure(CilStructure exp)
+        public CacheStructure(TypeStructure rt, ExpressionStructure exp)
+            :base(rt)
         {
             Expression = exp;
-            Cache = new LocalStructure(null); //todo データタイプの指定が必要。
+            Cache = new LocalStructure(Expression.ResultType);
             AppendChild(Expression);
             AppendChild(Cache);
         }

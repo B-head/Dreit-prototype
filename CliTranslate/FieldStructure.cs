@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class FieldStructure : CilStructure
+    public class FieldStructure : BuilderStructure
     {
         public string Name { get; private set; }
         public FieldAttributes Attributes { get; private set; }
@@ -27,15 +27,26 @@ namespace CliTranslate
             Info = info;
         }
 
-        protected override void BuildCode()
+        protected override void PreBuild()
         {
             if (Info != null)
             {
                 return;
             }
-            var cont = (ContainerStructure)Parent;
+            var cont = CurrentContainer;
             Builder = cont.CreateField(Name, DataType.GainType(), Attributes);
             Info = Builder;
+        }
+
+        internal override void BuildCall()
+        {
+            var cg = CurrentContainer.GainGenerator();
+            cg.GenerateLoad(this); //todo ストアどうしようか。
+        }
+
+        internal FieldInfo GainField()
+        {
+            return Info;
         }
     }
 }

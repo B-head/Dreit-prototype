@@ -22,16 +22,38 @@ namespace CliTranslate
             Info = info;
         }
 
-        protected override void BuildCode()
+        protected override void PreBuild()
         {
             if (Info != null)
             {
                 return;
             }
-            var cont = (ContainerStructure)Parent;
+            var cont = CurrentContainer;
             Builder = cont.CreateConstructor(Attributes, Arguments.ToTypes());
             Info = Builder;
             Arguments.RegisterBuilders(Builder);
+            SpreadGenerator();
+        }
+
+        internal override void PostBuild()
+        {
+            Generator.GenerateControl(OpCodes.Ret);
+        }
+
+        internal override void BuildCall()
+        {
+            var cg = CurrentContainer.GainGenerator();
+            cg.GenerateNew(this);
+        }
+
+        protected override ILGenerator GainILGenerator()
+        {
+            return Builder.GetILGenerator();
+        }
+
+        internal ConstructorInfo GainConstructor()
+        {
+            return Info;
         }
     }
 }

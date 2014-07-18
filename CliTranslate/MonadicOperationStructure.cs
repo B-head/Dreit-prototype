@@ -7,16 +7,23 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class MonadicOperationStructure : CilStructure
+    public class MonadicOperationStructure : ExpressionStructure
     {
-        public CilStructure Expression { get; private set; }
-        public CilStructure Call { get; private set; }
+        public ExpressionStructure Expression { get; private set; }
+        public BuilderStructure Call { get; private set; }
 
-        public MonadicOperationStructure(CilStructure exp, CilStructure call)
+        public MonadicOperationStructure(TypeStructure rt, ExpressionStructure exp, BuilderStructure call)
+            :base(rt)
         {
             Expression = exp;
             Call = call;
             AppendChild(Expression);
+        }
+
+        internal override void BuildCode()
+        {
+            Expression.BuildCode();
+            Call.BuildCall();
         }
     }
 }

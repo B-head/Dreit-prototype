@@ -9,8 +9,13 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public abstract class ContainerStructure : CilStructure
+    public abstract class ContainerStructure : BuilderStructure
     {
+        internal virtual CodeGenerator GainGenerator()
+        {
+            throw new NotSupportedException();
+        }
+
         internal virtual TypeBuilder CreateType(string name, TypeAttributes attr)
         {
             throw new NotSupportedException();

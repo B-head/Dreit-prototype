@@ -34,23 +34,38 @@ namespace CliTranslate
 
         internal Type GainType()
         {
-            RelayBuildCode();
+            RelayPreBuild();
             return Info;
         }
 
-        protected override void BuildCode()
+        protected override void PreBuild()
         {
             if(Info != null)
             {
                 return;
             }
-            var cont = (ContainerStructure)Parent;
+            var cont = CurrentContainer;
             Builder = cont.CreateType(Name, Attributes);
             Info = Builder;
-            var gb = Builder.DefineGenericParameters(Generics.ToNames());
-            Generics.RegisterBuilders(gb);
-            Builder.SetParent(BaseType.GainType()); //todo ジェネリクスに対応したTypeを生成する。
+            if (Generics.Count > 0)
+            {
+                var gb = Builder.DefineGenericParameters(Generics.ToNames());
+                Generics.RegisterBuilders(gb);
+            }
+            if (BaseType != null)
+            {
+                Builder.SetParent(BaseType.GainType()); //todo ジェネリクスに対応したTypeを生成する。
+            }
             Builder.AddImplements(Implements);
+        }
+
+        internal override void PostBuild()
+        {
+            if(Builder == null)
+            {
+                return;
+            }
+            Builder.CreateType();
         }
 
         internal override TypeBuilder CreateType(string name, TypeAttributes attr)

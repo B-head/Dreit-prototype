@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class EventStructure
+    public class EventStructure : BuilderStructure
     {
     }
 }

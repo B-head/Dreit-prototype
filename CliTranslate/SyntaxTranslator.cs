@@ -94,7 +94,8 @@ namespace CliTranslate
                 return CacheDictionary[element];
             }
             var s = RelayTranslate(element);
-            var c = new CacheStructure(s);
+            var rt = RelayTranslate(element.ReturnType);
+            var c = new CacheStructure(rt, s);
             CacheDictionary.Add(element, c);
             return c;
         }
@@ -104,13 +105,18 @@ namespace CliTranslate
             return null;
         }
 
-        private CilStructure Translate(VoidSymbol element)
+        private TypeStructure Translate(VoidSymbol element)
         {
             var gnr = new List<GenericParameterStructure>();
             var imp = new List<TypeStructure>();
             var ti = typeof(void);
             var ret = new TypeStructure(ti.Name, ti.Attributes, gnr, null, imp, ti);
-            return null;
+            return ret;
+        }
+
+        private ParameterStructure Translate(ThisSymbol element)
+        {
+            return null; //todo 対応するParameterStructureを返す。
         }
 
         private GlobalContextStructure Translate(DeclateModule element)
@@ -195,34 +201,41 @@ namespace CliTranslate
 
         private GotoStructure Translate(BreakDirective element)
         {
-            var ret = new GotoStructure(null); //todo ループ出口のラベルを渡す。
+            var loop = (LoopStructure)RelayTranslate(element.CurrentLoop());
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new GotoStructure(rt, loop.BreakLabel);
             return ret;
         }
 
         private GotoStructure Translate(ContinueDirective element)
         {
-            var ret = new GotoStructure(null); //todo ループ入口のラベルを渡す。
+            var loop = (LoopStructure)RelayTranslate(element.CurrentLoop());
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new GotoStructure(rt, loop.ContinueLabel);
             return ret;
         }
 
         private BlockStructure Translate(DirectiveList element)
         {
-            var exps = CollectList<CilStructure>(element);
-            var ret = new BlockStructure(exps);
+            var exps = CollectList<ExpressionStructure>(element);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new BlockStructure(rt, exps);
             return ret;
         }
 
         private WriteLineStructure Translate(EchoDirective element)
         {
             var exp = RelayTranslate(element.Exp);
-            var ret = new WriteLineStructure(exp);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new WriteLineStructure(rt, exp);
             return ret;
         }
 
         private ReturnStructure Translate(ReturnDirective element)
         {
             var exp = RelayTranslate(element.Exp);
-            var ret = new ReturnStructure(exp);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new ReturnStructure(rt, exp);
             return ret;
         }
 
@@ -231,7 +244,8 @@ namespace CliTranslate
             var left = RelayTranslate(element.Left);
             var right = RelayTranslate(element.Right);
             var call = RelayTranslate(element.CallScope);
-            var ret = new DyadicOperationStructure(left, right, call);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new DyadicOperationStructure(rt, left, right, call);
             return ret;
         }
 
@@ -246,22 +260,25 @@ namespace CliTranslate
                 var left = RelayTranslate(element.Left);
                 var right = RelayTranslate(element.Right);
                 var calcall = RelayTranslate(element.CalculateCallScope);
-                var cal = new DyadicOperationStructure(left, right, calcall);
-                var args = new List<CilStructure>();
+                var crt = RelayTranslate(element.CalculateCallScope.CallReturnType);
+                var cal = new DyadicOperationStructure(crt, left, right, calcall);
+                var args = new List<ExpressionStructure>();
                 args.Add(cal);
-                ret = new CallStructure(call, pre, args);
+                var rt = RelayTranslate(element.ReturnType);
+                ret = new CallStructure(rt, call, pre, args);
             }
             else
             {
-                var args = CollectList<CilStructure>(element.Arguments);
-                ret = new CallStructure(call, pre, args);
+                var args = CollectList<ExpressionStructure>(element.Arguments);
+                var rt = RelayTranslate(element.ReturnType);
+                ret = new CallStructure(rt, call, pre, args);
             }
             return ret;
         }
 
         private DyadicOperationStructure Translate(Condition element)
         {
-            CilStructure left;
+            ExpressionStructure left;
             if(element.IsLeftConnection)
             {
                 left = GainCacheStructure(element.Left);
@@ -270,7 +287,7 @@ namespace CliTranslate
             {
                 left = RelayTranslate(element.Left);
             }
-            CilStructure right;
+            ExpressionStructure right;
             if(element.IsRightConnection)
             {
                 right = GainCacheStructure(element.VirtualRight);
@@ -280,14 +297,16 @@ namespace CliTranslate
                 right = RelayTranslate(element.VirtualRight);
             }
             var call = RelayTranslate(element.CallScope);
-            var ret = new DyadicOperationStructure(left, right, call);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new DyadicOperationStructure(rt, left, right, call);
             return ret;
         }
 
         private AccessStructure Translate(IdentifierAccess element)
         {
             var call = RelayTranslate(element.CallScope);
-            var ret = new AccessStructure(call);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new AccessStructure(rt, call);
             return ret;
         }
 
@@ -314,68 +333,46 @@ namespace CliTranslate
             return null;
         }
 
-        private NumberStructure Translate(NumberLiteral element)
+        private ValueStructure Translate(NumberLiteral element)
         {
-            var ret = new NumberStructure(element.Parse());
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new ValueStructure(rt, element.Parse());
             return ret;
         }
 
-        private TextStructure Translate(PlainText element)
+        private ValueStructure Translate(PlainText element)
         {
-            var ret = new TextStructure(element.Value);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new ValueStructure(rt, element.Value);
             return ret;
         }
 
         private StringStructure Translate(StringLiteral element)
         {
-            var exps = CollectList<CilStructure>(element.Texts);
-            var ret = new StringStructure(exps);
+            var exps = CollectList<ExpressionStructure>(element.Texts);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new StringStructure(rt, exps);
             return ret;
         }
 
-        private BlockStructure Translate(IfStatement element)
+        private BranchStructure Translate(IfStatement element)
         {
             var cond = RelayTranslate(element.Condition);
-            var than = RelayTranslate(element.Than);
+            var then = RelayTranslate(element.Then);
             var els = RelayTranslate(element.Else);
-            var elsl = new LabelStructure();
-            var endl = new LabelStructure();
-            var branch = new BranchStructure(cond, elsl);
-            var goend = new GotoStructure(endl);
-            var exps = new List<CilStructure>();
-            exps.Add(branch);
-            exps.Add(than);
-            exps.Add(goend);
-            exps.Add(elsl);
-            exps.Add(els);
-            exps.Add(endl);
-            var ret = new BlockStructure(exps);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new BranchStructure(rt, cond, then, els);
             return ret;
         }
 
-        private BlockStructure Translate(LoopStatement element)
+        private LoopStructure Translate(LoopStatement element)
         {
             var cond = RelayTranslate(element.Condition);
             var on = RelayTranslate(element.On);
             var by = RelayTranslate(element.By);
             var block = RelayTranslate(element.Block);
-            var byl = new LabelStructure();
-            var condl = new LabelStructure();
-            var endl = new LabelStructure();
-            var branch = new BranchStructure(cond, endl);
-            var gocond = new GotoStructure(condl);
-            var goby = new GotoStructure(byl);
-            var exps = new List<CilStructure>();
-            exps.Add(on);
-            exps.Add(gocond);
-            exps.Add(byl);
-            exps.Add(by);
-            exps.Add(condl);
-            exps.Add(branch);
-            exps.Add(block);
-            exps.Add(goby);
-            exps.Add(endl);
-            var ret = new BlockStructure(exps);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new LoopStructure(rt, cond, on, by, block);
             return ret;
         }
 

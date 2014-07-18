@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class PropertyStructure : CilStructure
+    public class PropertyStructure : BuilderStructure
     {
     }
 }

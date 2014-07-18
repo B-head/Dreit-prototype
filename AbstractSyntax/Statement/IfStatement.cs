@@ -12,7 +12,7 @@ namespace AbstractSyntax.Statement
     public class IfStatement : Scope
     {
         public Element Condition { get; private set; }
-        public DirectiveList Than { get; private set; }
+        public DirectiveList Then { get; private set; }
         public DirectiveList Else { get; private set; }
         private Scope _ReturnType;
 
@@ -20,10 +20,10 @@ namespace AbstractSyntax.Statement
             :base(tp)
         {
             Condition = cond;
-            Than = than;
+            Then = than;
             Else = els;
             AppendChild(Condition);
-            AppendChild(Than);
+            AppendChild(Then);
             AppendChild(Else);
         }
 
@@ -40,7 +40,7 @@ namespace AbstractSyntax.Statement
                 {
                     return _ReturnType;
                 }
-                var a = BlockReturnType(Than);
+                var a = BlockReturnType(Then);
                 var b = BlockReturnType(Else);
                 if (a == b)
                 {

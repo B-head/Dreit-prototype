@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class ParameterStructure : CilStructure
+    public class ParameterStructure : BuilderStructure
     {
         public string Name { get; private set; }
         public ParameterAttributes Attributes { get; private set; }
@@ -34,6 +34,17 @@ namespace CliTranslate
                 throw new InvalidOperationException();
             }
             Builder = builder;
+        }
+
+        internal override void BuildCall()
+        {
+            var cg = CurrentContainer.GainGenerator();
+            cg.GenerateLoad(this); //todo ストアどうしようか。
+        }
+
+        internal int GainPosition()
+        {
+            return Builder.Position;
         }
     }
 }

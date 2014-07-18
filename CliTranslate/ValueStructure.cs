@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CliTranslate
 {
     [Serializable]
-    public class GotoStructure : ExpressionStructure
+    public class ValueStructure : ExpressionStructure
     {
-        public LabelStructure Label { get; private set; }
+        public dynamic Value { get; private set; }
 
-        public GotoStructure(TypeStructure rt, LabelStructure label)
+        public ValueStructure(TypeStructure rt, dynamic value)
             :base(rt)
         {
-            Label = label;
+            Value = value;
         }
 
         internal override void BuildCode()
         {
             var cg = CurrentContainer.GainGenerator();
-            cg.GenerateJump(OpCodes.Br, Label);
+            cg.GeneratePrimitive(Value);
         }
     }
 }

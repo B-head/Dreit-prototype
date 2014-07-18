@@ -29,20 +29,44 @@ namespace CliTranslate
             Info = info;
         }
 
-        protected override void BuildCode()
+        protected override void PreBuild()
         {
             if (Info != null)
             {
                 return;
             }
-            var cont = (ContainerStructure)Parent;
+            var cont = CurrentContainer;
             Builder = cont.CreateMethod(Name, Attributes);
             Info = Builder;
-            var gb = Builder.DefineGenericParameters(Generics.ToNames());
-            Generics.RegisterBuilders(gb);
-            Builder.SetReturnType(ReturnType.GainType()); //todo ジェネリクスに対応したTypeを生成する。
+            if (Generics.Count > 0)
+            {
+                var gb = Builder.DefineGenericParameters(Generics.ToNames());
+                Generics.RegisterBuilders(gb);
+            }
+            if (ReturnType != null)
+            {
+                Builder.SetReturnType(ReturnType.GainType()); //todo ジェネリクスに対応したTypeを生成する。
+            }
             Builder.SetParameters(Arguments.ToTypes());
             Arguments.RegisterBuilders(Builder);
+            SpreadGenerator();
+            Generator.GenerateControl(OpCodes.Nop);
+        }
+
+        internal override void BuildCall()
+        {
+            var cg = CurrentContainer.GainGenerator();
+            cg.GenerateCall(this);
+        }
+
+        protected override ILGenerator GainILGenerator()
+        {
+            return Builder.GetILGenerator();
+        }
+
+        internal MethodInfo GainMethod()
+        {
+            return Info;
         }
     }
 }

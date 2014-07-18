@@ -229,7 +229,7 @@ namespace CliTranslate
             {
                 trans.GenerateJump(OpCodes.Brfalse, bt.ElseLabel);
                 trans.BeginScope();
-                Translate(element.Than, bt);
+                Translate(element.Then, bt);
                 trans.EndScope();
                 trans.GenerateJump(OpCodes.Br, bt.EndLabel);
                 trans.MarkLabel(bt.ElseLabel);
@@ -242,7 +242,7 @@ namespace CliTranslate
             {
                 trans.GenerateJump(OpCodes.Brfalse, bt.ElseLabel);
                 trans.BeginScope();
-                Translate(element.Than, bt);
+                Translate(element.Then, bt);
                 trans.EndScope();
                 trans.MarkLabel(bt.ElseLabel);
             }
