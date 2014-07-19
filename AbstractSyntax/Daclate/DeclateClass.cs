@@ -44,14 +44,6 @@ namespace AbstractSyntax.Daclate
                 {
                     a.Add(v.OverLoad.FindDataType());
                 }
-                if(IsClass)
-                {
-                    a.Add(Root.Class);
-                }
-                else if(IsTrait)
-                {
-                    a.Add(Root.Trait);
-                }
                 if (!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
                     var p = NameResolution("public").FindDataType();
@@ -130,15 +122,15 @@ namespace AbstractSyntax.Daclate
                         i.Add(r);
                         newFlag = true;
                     }
-                    else if (r.IsConvertor) //todo 1引数で使える型変換関数の生成が必要。
-                    {
-                        Root.ConvManager.Append(r);
-                        i.Add(r);
-                    }
-                    else if (r.Operator != TokenType.Unknoun)
-                    {
-                        Root.OpManager.Append(r);
-                    }
+                    //else if (r.IsConvertor)
+                    //{
+                    //    Root.ConvManager.Append(r);
+                    //    i.Add(r);
+                    //}
+                    //else if (r.Operator != TokenType.Unknoun)
+                    //{
+                    //    Root.OpManager.Append(r);
+                    //}
                 }
                 if (!newFlag)
                 {

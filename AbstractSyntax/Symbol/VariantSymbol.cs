@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Pragma;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,13 +10,28 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class VariantSymbol : Scope
     {
+        public bool IsLet { get; private set; }
         protected List<Scope> _Attribute;
         protected Scope _DataType;
+        private PropertyPragma Getter;
+        private PropertyPragma Setter;
 
-        protected VariantSymbol(TextPosition tp)
+        protected VariantSymbol()
+        {
+            Getter = new PropertyPragma(this, false);
+            Setter = new PropertyPragma(this, true);
+            AppendChild(Getter);
+            AppendChild(Setter);
+        }
+
+        protected VariantSymbol(TextPosition tp, bool isLet)
             : base(tp)
         {
-
+            IsLet = isLet;
+            Getter = new PropertyPragma(this, false);
+            Setter = new PropertyPragma(this, true);
+            AppendChild(Getter);
+            AppendChild(Setter);
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -50,8 +66,14 @@ namespace AbstractSyntax.Symbol
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, new GenericSymbol[] { }, args, new Scope[] { });
-            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, new GenericSymbol[] { }, args, new Scope[] { ReturnType });
+            foreach (var v in Getter.GetTypeMatch(pars, args))
+            {
+                yield return v;
+            }
+            foreach (var v in Setter.GetTypeMatch(pars, args))
+            {
+                yield return v;
+            }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

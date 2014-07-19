@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Symbol;
+﻿using AbstractSyntax.Pragma;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Collections.Generic;
@@ -119,12 +120,25 @@ namespace AbstractSyntax
 
         public bool IsStaticMember
         {
-            get { return CurrentScope is ClassSymbol && HasAnyAttribute(Attribute, AttributeType.Static); }
+            get { return GetParent<ClassSymbol>() != null && HasAnyAttribute(Attribute, AttributeType.Static); }
         }
 
         public bool IsInstanceMember
         {
-            get { return CurrentScope is ClassSymbol && !HasAnyAttribute(Attribute, AttributeType.Static); }
+            get { return GetParent<ClassSymbol>() != null && !HasAnyAttribute(Attribute, AttributeType.Static); }
+        }
+
+        public bool IsThisCall
+        {
+            get 
+            {
+                var pp = this as PropertyPragma;
+                if(pp == null)
+                {
+                    return false;
+                }
+                return pp.Variant is ThisSymbol; 
+            }
         }
     }
 }

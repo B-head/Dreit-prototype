@@ -113,14 +113,14 @@ namespace AbstractSyntax.Expression
 
         private bool HasThisMember(Scope scope)
         {
-            if (CallScope.IsStaticMember || CallScope is ThisSymbol)
+            if (scope.IsStaticMember || scope.IsThisCall)
             {
                 return false;
             }
             var cls = GetParent<ClassSymbol>();
             while (cls != null)
             {
-                if (scope.CurrentScope == cls)
+                if (scope.GetParent<ClassSymbol>() == cls)
                 {
                     return true;
                 }
@@ -142,12 +142,11 @@ namespace AbstractSyntax.Expression
                     cmm.CompileError("undefined-identifier", this);
                 }
             }
-            var s = CallScope;
-            if(HasAnyAttribute(s.Attribute, AttributeType.Private) && !HasCurrentAccess(s.CurrentScope))
+            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);
             }
-            if(s.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
+            if (CallScope.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
             {
                 cmm.CompileError("not-accessable", this);
             }

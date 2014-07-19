@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <compile-test xmlns="CompileTestSchema.xsd">
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo!(T)(a:T):T {
@@ -11,8 +11,8 @@
     </code>
     <output>36</output>
   </case>
-  
-  <case>
+
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo!(A, B, R)(a:A, b:B):R {
@@ -23,8 +23,8 @@
     </code>
     <output>16.5</output>
   </case>
-  
-  <case>
+
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo!(T)(v:T):void {
@@ -42,8 +42,8 @@
     </code>
     <output>1 2 3 5 8 13 21 34 55 89</output>
   </case>
-  
-  <case>
+
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo(a) {
@@ -55,7 +55,7 @@
     <output>36</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo(a, b) {
@@ -67,7 +67,7 @@
     <output>16.5</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo(v) {
@@ -86,7 +86,7 @@
     <output>1 2 3 5 8 13 21 34 55 89</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class O!(T) {
@@ -104,7 +104,7 @@
     <output>18</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class O!(T) {
@@ -125,7 +125,7 @@
     <output>18</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class O!(T) {
@@ -146,7 +146,7 @@
     <output>16.5</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class O!(T) {

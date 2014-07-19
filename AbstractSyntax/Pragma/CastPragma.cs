@@ -10,14 +10,32 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class CastPragma : RoutineSymbol
     {
-        public CastPragma()
+        public PrimitivePragmaType PrimitiveType { get; private set; }
+
+        public CastPragma(PrimitivePragmaType type, ClassSymbol from, ClassSymbol to)
         {
-            Name = "@@cast";
-            var r = new GenericSymbol(new TextPosition(), "R");
-            var t = new GenericSymbol(new TextPosition(), "T");
-            _Generics = new GenericSymbol[] { r, t };
-            _ArgumentTypes = new Scope[] { t };
-            _CallReturnType = r;
+            Name = to.Name;
+            PrimitiveType = type;
+            _ArgumentTypes = new Scope[] { from };
+            _CallReturnType = to;
         }
+    }
+
+    public enum PrimitivePragmaType
+    {
+        NotPrimitive = 0,
+        Object = -1,
+        String = -2,
+        Boolean = -3,
+        Integer8 = 1,
+        Integer16 = 3,
+        Integer32 = 5,
+        Integer64 = 7,
+        Natural8 = 2,
+        Natural16 = 4,
+        Natural32 = 6,
+        Natural64 = 8,
+        Binary32 = 9,
+        Binary64 = 10,
     }
 }

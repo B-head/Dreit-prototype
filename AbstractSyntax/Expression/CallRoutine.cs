@@ -98,19 +98,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (CallScope is CalculatePragma || CallScope is CastPragma)
-                {
-                    var cal = CallScope as CalculatePragma;
-                    if(cal != null && cal.IsCondition)
-                    {
-                        return cal.BooleanSymbol;
-                    }
-                    return Arguments.GetDataTypes()[0]; //todo ジェネリクスを使用して型を返すようにする。
-                }
-                else
-                {
-                    return CallScope.CallReturnType;
-                }
+                return CallScope.CallReturnType;
             }
         }
 
@@ -128,7 +116,20 @@ namespace AbstractSyntax.Expression
                 {
                     return false;
                 }
-                return HasAnyAttribute(f.Attribute, AttributeType.Function);
+                return f.IsFunction;
+            }
+        }
+
+        public bool IsImmutableCall
+        {
+            get
+            {
+                var v = CallScope as PropertyPragma;
+                if(v == null)
+                {
+                    return false;
+                }
+                return v.Variant.IsLet;
             }
         }
 
@@ -140,7 +141,7 @@ namespace AbstractSyntax.Expression
                 {
                     if (IsCalculate)
                     {
-                        _CalculateCallScope = Root.OpManager.Find(CalculateOperator, Arguments[0].ReturnType, Access.ReturnType);
+                        _CalculateCallScope = Root.OpManager.FindDyadic(CalculateOperator, Left.ReturnType, Right.ReturnType);
                     }
                     else
                     {
@@ -181,11 +182,11 @@ namespace AbstractSyntax.Expression
                 case TypeMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
                 case TypeMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
             }
-            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Let) && !(Access is DeclateVariant))
+            if (IsImmutableCall && !(Access is DeclateVariant))
             {
                 cmm.CompileError("not-mutable", this);
             }
-            if (IsFunctionLocation && CallScope is VariantSymbol)
+            if (IsFunctionLocation && CallScope is PropertyPragma)
             {
                 cmm.CompileError("forbit-side-effect", this);
             }

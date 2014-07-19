@@ -123,7 +123,7 @@ namespace SyntacticAnalysis
         {
             var child = new List<Element>();
             var ret = cp.Begin
-                .Type(TokenType.Not).Lt()
+                .Type(TokenType.Template).Lt()
                 .Type(TokenType.LeftParenthesis).Lt()
                 .Loop(icp =>
                 {

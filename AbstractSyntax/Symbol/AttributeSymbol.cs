@@ -36,12 +36,6 @@ namespace AbstractSyntax.Symbol
     public enum AttributeType
     {
         None,
-        Var,
-        Let,
-        Routine,
-        Function,
-        Class,
-        Trait,
         Refer,
         Tyoeof,
         Static,

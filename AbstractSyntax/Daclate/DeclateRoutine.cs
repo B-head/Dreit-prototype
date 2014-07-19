@@ -45,14 +45,6 @@ namespace AbstractSyntax.Daclate
                 {
                     a.Add(v.OverLoad.FindDataType());
                 }
-                if(IsFunction)
-                {
-                    a.Add(Root.Function);
-                }
-                else
-                {
-                    a.Add(Root.Routine);
-                }
                 if(!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
                     var p = NameResolution("public").FindDataType();

@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <compile-message xmlns="CompileMessageSchema.xsd">
-  <msg key="null-scope-name">スコープID:{Id} の識別子は空です。</msg>
   <msg key="invalid-token">文字列 {Text} は有効なトークンではありません。</msg>
   <msg key="error-token">トークン {Text} をこの位置に書くことは出来ません。</msg>
   <msg key="not-datatype-inherit">継承元はクラスである必要があります。</msg>
@@ -9,7 +8,7 @@
   <msg key="not-callable">呼び出し可能な関数ではありません。</msg>
   <msg key="unmatch-overload-count">引数の数が合うオーバーロードが定義されていません。</msg>
   <msg key="unmatch-overload-type">引数の型が合うオーバーロードが定義されていません。</msg>
-  <msg key="impossible-calculate">{Left.DataType.Name} 型と {Right.DataType.Name} 型を演算することは出来ません。</msg>
+  <msg key="impossible-calculate">{Left.ReturnType.Name} 型と {Right.ReturnType.Name} 型を演算することは出来ません。</msg>
   <msg key="require-expression">式が必要です。</msg>
   <msg key="require-type">型指定が必要です。</msg>
   <msg key="undefined-pragma">プラグマ @@{Value} は定義されていません。</msg>
@@ -21,6 +20,6 @@
   <msg key="forbit-side-effect">関数内で外部に副作用のある処理は含むことができません。</msg>
   <msg key="number-parse-error">数値リテラルに使用できない文字が含まれています。</msg>
   <msg key="invalid-void">値を返す式である必要があります。</msg>
-  <msg key="not-convertable-right">{Left.DataType.Name} 型から {Right.DataType.Name} 型へ変換することは出来ません。</msg>
-  <msg key="not-convertable-left">{Right.DataType.Name} 型から {Left.DataType.Name} 型へ変換することは出来ません。</msg>
+  <msg key="not-convertable-right">{Left.ReturnType.Name} 型から {Right.ReturnType.Name} 型へ変換することは出来ません。</msg>
+  <msg key="not-convertable-left">{Right.ReturnType.Name} 型から {Left.ReturnType.Name} 型へ変換することは出来ません。</msg>
 </compile-message>

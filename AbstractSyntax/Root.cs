@@ -19,12 +19,6 @@ namespace AbstractSyntax
         public VoidSymbol Void { get; private set; }
         internal ErrorSymbol Error { get; private set; }
         internal UnknownSymbol Unknown { get; private set; }
-        internal AttributeSymbol Var { get; private set; }
-        internal AttributeSymbol Let { get; private set; }
-        internal AttributeSymbol Routine { get; private set; }
-        internal AttributeSymbol Function { get; private set; }
-        internal AttributeSymbol Class { get; private set; }
-        internal AttributeSymbol Trait { get; private set; }
         internal AttributeSymbol Refer { get; private set; }
         internal AttributeSymbol Typeof { get; private set; }
 
@@ -50,6 +44,7 @@ namespace AbstractSyntax
 
         public void SemanticAnalysis()
         {
+            CreateBuildInOperator();
             TraversalCheckSemantic(this);
         }
 
@@ -64,18 +59,6 @@ namespace AbstractSyntax
 
         private void CreatePragma()
         {
-            BuiltInList.AppendChild(new CastPragma());
-            BuiltInList.AppendChild(new CalculatePragma("add", CalculatePragmaType.Add));
-            BuiltInList.AppendChild(new CalculatePragma("sub", CalculatePragmaType.Sub));
-            BuiltInList.AppendChild(new CalculatePragma("mul", CalculatePragmaType.Mul));
-            BuiltInList.AppendChild(new CalculatePragma("div", CalculatePragmaType.Div));
-            BuiltInList.AppendChild(new CalculatePragma("mod", CalculatePragmaType.Mod));
-            BuiltInList.AppendChild(new CalculatePragma("eq", CalculatePragmaType.EQ));
-            BuiltInList.AppendChild(new CalculatePragma("ne", CalculatePragmaType.NE));
-            BuiltInList.AppendChild(new CalculatePragma("lt", CalculatePragmaType.LT));
-            BuiltInList.AppendChild(new CalculatePragma("le", CalculatePragmaType.LE));
-            BuiltInList.AppendChild(new CalculatePragma("gt", CalculatePragmaType.GT));
-            BuiltInList.AppendChild(new CalculatePragma("ge", CalculatePragmaType.GE));
             BuiltInList.AppendChild(new PrimitivePragma("Object", PrimitivePragmaType.Object));
             BuiltInList.AppendChild(new PrimitivePragma("String", PrimitivePragmaType.String));
             BuiltInList.AppendChild(new PrimitivePragma("Boolean", PrimitivePragmaType.Boolean));
@@ -96,23 +79,11 @@ namespace AbstractSyntax
             Void = new VoidSymbol();
             Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
-            Var = new AttributeSymbol(AttributeType.Var);
-            Let = new AttributeSymbol(AttributeType.Let);
-            Routine = new AttributeSymbol(AttributeType.Routine);
-            Function = new AttributeSymbol(AttributeType.Function);
-            Class = new AttributeSymbol(AttributeType.Class);
-            Trait = new AttributeSymbol(AttributeType.Trait);
             Refer = new AttributeSymbol(AttributeType.Refer);
             Typeof = new AttributeSymbol(AttributeType.Tyoeof);
             BuiltInList.AppendChild(Void);
             BuiltInList.AppendChild(Unknown);
             BuiltInList.AppendChild(Error);
-            BuiltInList.AppendChild(Var);
-            BuiltInList.AppendChild(Let);
-            BuiltInList.AppendChild(Routine);
-            BuiltInList.AppendChild(Function);
-            BuiltInList.AppendChild(Class);
-            BuiltInList.AppendChild(Trait);
             BuiltInList.AppendChild(Refer);
             BuiltInList.AppendChild(Typeof);
             BuiltInList.AppendChild(new BooleanSymbol(false));
@@ -121,6 +92,98 @@ namespace AbstractSyntax
             BuiltInList.AppendChild(new AttributeSymbol("public", AttributeType.Public));
             BuiltInList.AppendChild(new AttributeSymbol("protected", AttributeType.Protected));
             BuiltInList.AppendChild(new AttributeSymbol("private", AttributeType.Private));
+        }
+
+        private void CreateBuildInOperator()
+        {
+            var nt = GetBuildInNumberType();
+            CreateBuiltInCast(nt);
+            CreateBuiltInMonadicOperator(nt);
+            CreateBuiltInDyadicOperator(nt);
+        }
+
+        private void CreateBuiltInCast(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
+        {
+            foreach(var a in nt.Keys)
+            {
+                foreach(var b in nt.Keys)
+                {
+                    if(a == b)
+                    {
+                        continue;
+                    }
+                    var p = new CastPragma(nt[b], a, b);
+                    BuiltInList.AppendChild(p);
+                    ConvManager.Append(p);
+                }
+            }
+        }
+
+        private void CreateBuiltInMonadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
+        {
+            var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
+            foreach (var a in nt.Keys)
+            {
+                foreach (MonadicOperatorPragmaType t in Enum.GetValues(typeof(MonadicOperatorPragmaType)))
+                {
+                    MonadicOperatorPragma p;
+                    if (MonadicOperatorPragma.HasCondition(t))
+                    {
+                        p = new MonadicOperatorPragma(t, a, bl);
+                    }
+                    else
+                    {
+                        p = new MonadicOperatorPragma(t, a, a);
+                    }
+                    BuiltInList.AppendChild(p);
+                    OpManager.Append(p);
+                }
+            }
+        }
+
+        private void CreateBuiltInDyadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
+        {
+            var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
+            foreach (var a in nt.Keys)
+            {
+                foreach (var b in nt.Keys)
+                {
+                    foreach (DyadicOperatorPragmaType t in Enum.GetValues(typeof(DyadicOperatorPragmaType)))
+                    {
+                        DyadicOperatorPragma p;
+                        if (DyadicOperatorPragma.HasCondition(t))
+                        {
+                            p = new DyadicOperatorPragma(t, a, b, bl);
+                        }
+                        else if (nt[a] >= nt[b])
+                        {
+                            p = new DyadicOperatorPragma(t, a, b, a);
+                        }
+                        else
+                        {
+                            p = new DyadicOperatorPragma(t, a, b, b);
+                        }
+                        BuiltInList.AppendChild(p);
+                        OpManager.Append(p);
+                    }
+                }
+            }
+        }
+
+        private IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> GetBuildInNumberType()
+        {
+            var ret = new Dictionary<ClassSymbol, PrimitivePragmaType>();
+            ret.Add((ClassSymbol)NameResolution("SByte").FindDataType(), PrimitivePragmaType.Integer8);
+            ret.Add((ClassSymbol)NameResolution("Int16").FindDataType(), PrimitivePragmaType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("Int32").FindDataType(), PrimitivePragmaType.Integer32);
+            ret.Add((ClassSymbol)NameResolution("Int64").FindDataType(), PrimitivePragmaType.Integer64);
+            ret.Add((ClassSymbol)NameResolution("Byte").FindDataType(), PrimitivePragmaType.Natural8);
+            ret.Add((ClassSymbol)NameResolution("UInt16").FindDataType(), PrimitivePragmaType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("UInt32").FindDataType(), PrimitivePragmaType.Natural32);
+            ret.Add((ClassSymbol)NameResolution("UInt64").FindDataType(), PrimitivePragmaType.Natural64);
+            ret.Add((ClassSymbol)NameResolution("Single").FindDataType(), PrimitivePragmaType.Binary32);
+            ret.Add((ClassSymbol)NameResolution("Double").FindDataType(), PrimitivePragmaType.Binary64);
+            return ret;
         }
     }
 }

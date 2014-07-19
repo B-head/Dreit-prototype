@@ -337,7 +337,7 @@ namespace CliTranslate
         {
             Translate((dynamic)element.Left, trans);
             Translate((dynamic)element.Right, trans);
-            trans.GenerateCall(element.CallScope);
+            CallTranslate((dynamic)element.CallScope, trans);
         }
 
         private void Translate(Condition element, Translator trans)
@@ -346,14 +346,14 @@ namespace CliTranslate
             if (element.IsRightConnection)
             {
                 Translate((dynamic)element.VirtualRight, trans);
-                trans.GenerateCall(element.CallScope);
+                CallTranslate((dynamic)element.CallScope, trans);
                 Translate((dynamic)element.Right, trans);
                 trans.GenerateControl(OpCodes.And);
             }
             else
             {
                 Translate((dynamic)element.Right, trans);
-                trans.GenerateCall(element.CallScope);
+                CallTranslate((dynamic)element.CallScope, trans);
             }
         }
 
@@ -400,13 +400,13 @@ namespace CliTranslate
             {
                 trans.GenerateLoad(element.ThisReference);
             }
-            CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
+            CallTranslate((dynamic)element.CallScope, trans);
         }
 
         private void Translate(MemberAccess element, Translator trans)
         {
             Translate((dynamic)element.Access, trans);
-            CallTranslate((dynamic)element.CallScope, new TupleList(), trans);
+            CallTranslate((dynamic)element.CallScope, trans);
         }
 
         private void Translate(CallRoutine element, Translator trans)
@@ -414,88 +414,68 @@ namespace CliTranslate
             if (element.IsCalculate)
             {
                 var acs = TranslateAccess((dynamic)element.Access, trans);
-                if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
+                if (acs && element.CallScope is PropertyPragma && element.Arguments.Count > 0)
                 {
                     trans.GenerateControl(OpCodes.Dup);
                 }
                 Translate((dynamic)element.Left, trans);
                 Translate((dynamic)element.Right, trans);
-                trans.GenerateCall(element.CalculateCallScope);
-                CallTranslate((dynamic)element.CallScope, new TupleList(new TupleList()), trans); //todo CallTlanslateにArgumentsを渡さなくても済むようにする。
+                CallTranslate((dynamic)element.CalculateCallScope, trans);
+                CallTranslate((dynamic)element.CallScope, trans);
             }
             else
             {
                 var acs = TranslateAccess((dynamic)element.Access, trans);
-                if (acs && element.CallScope is VariantSymbol && element.Arguments.Count > 0)
+                if (acs && element.CallScope is PropertyPragma && element.Arguments.Count > 0)
                 {
                     trans.GenerateControl(OpCodes.Dup);
                 }
-                CallTranslate((dynamic)element.CallScope, element.Arguments, trans);
+                Translate((dynamic)element.Arguments, trans);
+                CallTranslate((dynamic)element.CallScope, trans);
             }
         }
 
-        private void CallTranslate(RoutineSymbol call, TupleList arguments, Translator trans)
+        private void CallTranslate(RoutineSymbol call, Translator trans)
         {
-            Translate((dynamic)arguments, trans);
             trans.GenerateCall(call);
         }
 
-        private void CallTranslate(ClassSymbol call, TupleList arguments, Translator trans)
-        {
-            Translate((dynamic)arguments, trans);
-            trans.GenerateCall(call);
-        }
-
-        private void CallTranslate(VariantSymbol call, TupleList arguments, Translator trans)
-        {
-            Translate((dynamic)arguments, trans);
-            if (arguments.Count > 0)
-            {
-                trans.GenerateStore(call);
-            }
-            trans.GenerateLoad(call);
-        }
-
-        private void CallTranslate(ThisSymbol call, TupleList arguments, Translator trans)
-        {
-            Translate((dynamic)arguments, trans);
-            if (arguments.Count > 0)
-            {
-                trans.GenerateStore(call);
-            }
-            trans.GenerateLoad(call);
-        }
-
-        private void CallTranslate(BooleanSymbol call, TupleList arguments, Translator trans)
+        private void CallTranslate(BooleanSymbol call, Translator trans)
         {
             trans.GeneratePrimitive(call.Value);
         }
 
-        private void CallTranslate(CalculatePragma call, TupleList arguments, Translator trans)
+        private void CallTranslate(PropertyPragma call, Translator trans)
         {
-            ChildTranslate(arguments, trans);
+            if(call.IsSet)
+            {
+                trans.GenerateStore(call.Variant);
+            }
+            trans.GenerateLoad(call.Variant);
+        }
+
+        private void CallTranslate(DyadicOperatorPragma call, Translator trans)
+        {
             switch (call.CalculateType)
             {
-                case CalculatePragmaType.Add: trans.GenerateControl(OpCodes.Add); break;
-                case CalculatePragmaType.Sub: trans.GenerateControl(OpCodes.Sub); break;
-                case CalculatePragmaType.Mul: trans.GenerateControl(OpCodes.Mul); break;
-                case CalculatePragmaType.Div: trans.GenerateControl(OpCodes.Div); break;
-                case CalculatePragmaType.Mod: trans.GenerateControl(OpCodes.Rem); break;
-                case CalculatePragmaType.EQ: trans.GenerateControl(OpCodes.Ceq); break;
-                case CalculatePragmaType.NE: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
-                case CalculatePragmaType.LT: trans.GenerateControl(OpCodes.Clt); break;
-                case CalculatePragmaType.LE: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
-                case CalculatePragmaType.GT: trans.GenerateControl(OpCodes.Cgt); break;
-                case CalculatePragmaType.GE: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case DyadicOperatorPragmaType.Add: trans.GenerateControl(OpCodes.Add); break;
+                case DyadicOperatorPragmaType.Sub: trans.GenerateControl(OpCodes.Sub); break;
+                case DyadicOperatorPragmaType.Mul: trans.GenerateControl(OpCodes.Mul); break;
+                case DyadicOperatorPragmaType.Div: trans.GenerateControl(OpCodes.Div); break;
+                case DyadicOperatorPragmaType.Mod: trans.GenerateControl(OpCodes.Rem); break;
+                case DyadicOperatorPragmaType.EQ: trans.GenerateControl(OpCodes.Ceq); break;
+                case DyadicOperatorPragmaType.NE: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case DyadicOperatorPragmaType.LT: trans.GenerateControl(OpCodes.Clt); break;
+                case DyadicOperatorPragmaType.LE: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case DyadicOperatorPragmaType.GT: trans.GenerateControl(OpCodes.Cgt); break;
+                case DyadicOperatorPragmaType.GE: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
                 default: throw new ArgumentException();
             }
         }
 
-        private void CallTranslate(CastPragma call, TupleList arguments, Translator trans)
+        private void CallTranslate(CastPragma call, Translator trans)
         {
-            Translate((dynamic)arguments[1], trans);
-            var cls = arguments[0].ReturnType as ClassSymbol;
-            var prim = cls.PrimitiveType;
+            var prim = call.PrimitiveType;
             switch (prim)
             {
                 case PrimitivePragmaType.Integer8: trans.GenerateControl(OpCodes.Conv_I1); break;

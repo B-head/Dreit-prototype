@@ -34,6 +34,9 @@ namespace AbstractSyntax
             OpList.Add(TokenType.GreaterThan, new List<RoutineSymbol>());
             OpList.Add(TokenType.GreaterThanOrEqual, new List<RoutineSymbol>());
             OpList.Add(TokenType.Incompare, new List<RoutineSymbol>());
+            OpList.Add(TokenType.Plus, new List<RoutineSymbol>());
+            OpList.Add(TokenType.Minus, new List<RoutineSymbol>());
+            OpList.Add(TokenType.Not, new List<RoutineSymbol>());
         }
 
         public void Append(RoutineSymbol symbol)
@@ -41,13 +44,30 @@ namespace AbstractSyntax
             OpList[symbol.Operator].Add(symbol);
         }
 
-        public Scope Find(TokenType op, Scope left, Scope right)
+        public Scope FindMonadic(TokenType op, Scope expt)
+        {
+            if (expt is UnknownSymbol || expt is GenericSymbol)
+            {
+                return Root.Unknown;
+            }
+            var s = OpList[op].FindAll(v => v.ArgumentTypes[0] == expt);
+            if (s.Count == 1)
+            {
+                return s[0];
+            }
+            else
+            {
+                return Root.Error;
+            }
+        }
+
+        public Scope FindDyadic(TokenType op, Scope left, Scope right)
         {
             if (left is UnknownSymbol || right is UnknownSymbol || left is GenericSymbol || right is GenericSymbol)
             {
                 return Root.Unknown;
             }
-            var s = OpList[op].FindAll(v => v.CurrentScope == right && v.ArgumentTypes[0] == left);
+            var s = OpList[op].FindAll(v => v.ArgumentTypes[0] == left && v.ArgumentTypes[1] == right);
             if (s.Count == 1)
             {
                 return s[0];

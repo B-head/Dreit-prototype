@@ -1,230 +1,73 @@
-﻿class Object : ##Object
+﻿class Object : @@Object
 {
 
 }
 
-class String : Object, ##String
+class String : Object, @@String
 {
 
 }
 
 alias Boolean Bool
-class Boolean : Object, ##Boolean
+class Boolean : Object, @@Boolean
 {
 
 }
 
 alias Integer8 Int8
-class Integer8 : Object, ##Integer8
+alias Integer8 SByte
+class Integer8 : Object, @@Integer8
 {
-	operator +(other:Integer8) :: ##add(this, other)
-	operator -(other:Integer8) :: ##sub(this, other)
-	operator *(other:Integer8) :: ##mul(this, other)
-	operator /(other:Integer8) :: ##div(this, other)
-	operator %(other:Integer8) :: ##mod(this, other)
-
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Integer16 Int16
-class Integer16 : Object, ##Integer16
+class Integer16 : Object, @@Integer16
 {
-	operator +(other:Integer16) :: ##add(this, other)
-	operator -(other:Integer16) :: ##sub(this, other)
-	operator *(other:Integer16) :: ##mul(this, other)
-	operator /(other:Integer16) :: ##div(this, other)
-	operator %(other:Integer16) :: ##mod(this, other)
-	
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Integer32 Int32
-class Integer32 : Object, ##Integer32
+class Integer32 : Object, @@Integer32
 {
-	operator +(other:Integer32) :: ##add(this, other)
-	operator +(other:Binary64) :: ##add(##cast(other, this), other)
-	operator -(other:Integer32) :: ##sub(this, other)
-	operator *(other:Integer32) :: ##mul(this, other)
-	operator /(other:Integer32) :: ##div(this, other)
-	operator %(other:Integer32) :: ##mod(this, other)
-	operator %(other:Binary64) :: ##mod(##cast(other, this), other)
-	operator =(other:Integer32) :: ##eq(this, other)
-	operator <>(other:Integer32) :: ##ne(this, other)
-	operator <(other:Integer32) :: ##lt(this, other)
-	operator <=(other:Integer32) :: ##le(this, other)
-	operator >(other:Integer32) :: ##gt(this, other)
-	operator >=(other:Integer32) :: ##ge(this, other)
-
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Integer64 Int64
-class Integer64 : Object, ##Integer64
+class Integer64 : Object, @@Integer64
 {
-	operator +(other:Integer64) :: ##add(this, other)
-	operator -(other:Integer64) :: ##sub(this, other)
-	operator *(other:Integer64) :: ##mul(this, other)
-	operator /(other:Integer64) :: ##div(this, other)
-	operator %(other:Integer64) :: ##mod(this, other)
-
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Natural8 UInt8
 alias Natural8 Nat8
 alias Natural8 Byte
-class Natural8 : Object, ##Natural8
+class Natural8 : Object, @@Natural8
 {
-	operator +(other:Natural8) :: ##add(this, other)
-	operator -(other:Natural8) :: ##sub(this, other)
-	operator *(other:Natural8) :: ##mul(this, other)
-	operator /(other:Natural8) :: ##div(this, other)
-	operator %(other:Natural8) :: ##mod(this, other)
-	
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Natural16 UInt16
 alias Natural16 Nat16
-class Natural16 : Object, ##Natural16
+class Natural16 : Object, @@Natural16
 {
-	operator +(other:Natural16) :: ##add(this, other)
-	operator -(other:Natural16) :: ##sub(this, other)
-	operator *(other:Natural16) :: ##mul(this, other)
-	operator /(other:Natural16) :: ##div(this, other)
-	operator %(other:Natural16) :: ##mod(this, other)
-	
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Natural32 UInt32
 alias Natural32 Nat32
-class Natural32 : Object, ##Natural32
+class Natural32 : Object, @@Natural32
 {
-	operator +(other:Natural32) :: ##add(this, other)
-	operator -(other:Natural32) :: ##sub(this, other)
-	operator *(other:Natural32) :: ##mul(this, other)
-	operator /(other:Natural32) :: ##div(this, other)
-	operator %(other:Natural32) :: ##mod(this, other)
-	
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Natural64 UInt64
 alias Natural64 Nat64
-class Natural64 : Object, ##Natural64
+class Natural64 : Object, @@Natural64
 {
-	operator +(other:Natural64) :: ##add(this, other)
-	operator -(other:Natural64) :: ##sub(this, other)
-	operator *(other:Natural64) :: ##mul(this, other)
-	operator /(other:Natural64) :: ##div(this, other)
-	operator %(other:Natural64) :: ##mod(this, other)
-	
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Binary32 Bin32
-class Binary32 : Object, ##Binary32
+alias Binary32 Single
+class Binary32 : Object, @@Binary32
 {
-	operator +(other:Binary32) :: ##add(this, other)
-	operator -(other:Binary32) :: ##sub(this, other)
-	operator *(other:Binary32) :: ##mul(this, other)
-	operator /(other:Binary32) :: ##div(this, other)
-	operator %(other:Binary32) :: ##mod(this, other)
-	
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary64) :: ##cast(this, other)
 }
 
 alias Binary64 Bin64
-class Binary64 : Object, ##Binary64
+alias Binary64 Double
+class Binary64 : Object, @@Binary64
 {
-	operator +(other:Binary64) :: ##add(this, other)
-	operator +(other:Integer32) :: ##add(this, ##cast(this, other))
-	operator -(other:Binary64) :: ##sub(this, other)
-	operator *(other:Binary64) :: ##mul(this, other)
-	operator /(other:Binary64) :: ##div(this, other)
-	operator %(other:Binary64) :: ##mod(this, other)
-	operator %(other:Integer32) :: ##mod(this, ##cast(this, other))
-	
-	routine from(other:Integer8) :: ##cast(this, other)
-	routine from(other:Integer16) :: ##cast(this, other)
-	routine from(other:Integer32) :: ##cast(this, other)
-	routine from(other:Integer64) :: ##cast(this, other)
-	routine from(other:Natural8) :: ##cast(this, other)
-	routine from(other:Natural16) :: ##cast(this, other)
-	routine from(other:Natural32) :: ##cast(this, other)
-	routine from(other:Natural64) :: ##cast(this, other)
-	routine from(other:Binary32) :: ##cast(this, other)
 }

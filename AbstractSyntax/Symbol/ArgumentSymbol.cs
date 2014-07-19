@@ -10,7 +10,7 @@ namespace AbstractSyntax.Symbol
     public class ArgumentSymbol : VariantSymbol
     {
         protected ArgumentSymbol(TextPosition tp)
-            : base(tp)
+            : base(tp, false)
         {
 
         }

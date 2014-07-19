@@ -17,7 +17,7 @@ namespace Dlight
         static CompileMessageBuilder()
         {
             messageBase = new Dictionary<string, string>();
-            foreach(var file in Directory.EnumerateFiles(@"./msg/", "*.xml"))
+            foreach(var file in Directory.EnumerateFiles(@"./", "*.xml"))
             {
                 var element = XElement.Load(file);
                 if(element.Name != ns + "compile-message")
@@ -38,18 +38,18 @@ namespace Dlight
             }
         }
 
-        public static string Build(CompileMessageManager manager, bool errorThrow = false)
+        public static string Build(CompileMessageManager manager)
         {
             var builder = new StringBuilder();
             foreach(var v in manager)
             {
-                builder.AppendLine(Build(v, errorThrow));
+                builder.AppendLine(Build(v));
             }
             builder.Append(manager);
             return builder.ToString();
         }
 
-        public static string Build(CompileMessage message, bool errorThrow = false)
+        public static string Build(CompileMessage message)
         {
             var builder = new StringBuilder();
             builder.Append(message.StringPrefix).Append(": ");
@@ -61,18 +61,7 @@ namespace Dlight
             {
                 builder.Append(msg.Substring(current, match.Index - current));
                 current = match.Index + match.Length;
-                try
-                {
-                    builder.Append(GetValue(match.Value.Trim('{', '}').Trim(), message.Target));
-                }
-                catch(CompileMessageBuildExcepsion e)
-                {
-                    if(errorThrow)
-                    {
-                        throw;
-                    }
-                    builder.Append("<").Append(e).Append(">");
-                }
+                builder.Append(GetValue(match.Value.Trim('{', '}').Trim(), message.Target));
                 match = match.NextMatch();
             }
             builder.Append(msg.Substring(current, msg.Length - current));

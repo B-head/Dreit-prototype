@@ -83,6 +83,10 @@ namespace AbstractSyntax
 
         internal void AppendChild(IEnumerable<Element> childs)
         {
+            if(childs == null)
+            {
+                return;
+            }
             foreach(var v in childs)
             {
                 AppendChild(v);

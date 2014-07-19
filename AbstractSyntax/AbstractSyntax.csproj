@@ -63,7 +63,7 @@
     <Compile Include="OperationManager.cs" />
     <Compile Include="OverLoadReference.cs" />
     <Compile Include="OverLoadSet.cs" />
-    <Compile Include="Pragma\CalculatePragma.cs" />
+    <Compile Include="Pragma\DyadicOperatorPragma.cs" />
     <Compile Include="Daclate\DeclateArgument.cs" />
     <Compile Include="Daclate\DeclateClass.cs" />
     <Compile Include="Daclate\DeclateEnum.cs" />
@@ -74,6 +74,7 @@
     <Compile Include="Expression\Calculate.cs" />
     <Compile Include="Expression\DyadicExpression.cs" />
     <Compile Include="Pragma\CastPragma.cs" />
+    <Compile Include="Pragma\MonadicOperatorPragma.cs" />
     <Compile Include="Pragma\PrimitivePragma.cs" />
     <Compile Include="Directive\ReturnDirective.cs" />
     <Compile Include="Directive\EchoDirective.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Expression\IdentifierAccess.cs" />
     <Compile Include="Expression\LeftAssign.cs" />
     <Compile Include="Expression\MemberAccess.cs" />
+    <Compile Include="Pragma\PropertyPragma.cs" />
     <Compile Include="Symbol\ArgumentSymbol.cs" />
     <Compile Include="Symbol\NameSpaceSymbol.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />

@@ -54,7 +54,7 @@ namespace SyntacticAnalysis
 
         private static Element Addtive(SlimChainParser cp)
         {
-            return LeftAssociative(cp, (tp, op, l, r) => new Calculate(tp, op, l, r), Multiplicative, TokenType.Add, TokenType.Subtract);
+            return LeftAssociative(cp, (tp, op, l, r) => new Calculate(tp, op, l, r), Multiplicative, TokenType.Combine, TokenType.Add, TokenType.Subtract);
         }
 
         private static Element Multiplicative(SlimChainParser cp)
@@ -67,7 +67,7 @@ namespace SyntacticAnalysis
             var op = TokenType.Unknoun;
             Element child = null;
             var ret = cp.Begin
-                   .Type(t => op = t.TokenType, TokenType.Add, TokenType.Subtract, TokenType.Not).Lt()
+                   .Type(t => op = t.TokenType, TokenType.Plus, TokenType.Minus, TokenType.Not).Lt()
                    .Transfer(e => child = e, Prefix)
                    .End(tp => new Prefix(tp, op, child));
             return ret ?? Postfix(cp);
@@ -102,7 +102,7 @@ namespace SyntacticAnalysis
         {
             TupleList args = null;
             var ret = cp.Begin
-                .Type(TokenType.Not)
+                .Type(TokenType.Template)
                 .If(icp => icp.Type(TokenType.LeftParenthesis).Lt())
                 .Than(icp =>
                 {

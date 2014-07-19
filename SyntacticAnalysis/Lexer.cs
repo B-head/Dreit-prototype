@@ -299,12 +299,13 @@ namespace SyntacticAnalysis
                 case "@": type = TokenType.Attribute; break;
                 case "$": type = TokenType.Lambda; break;
                 case "?": type = TokenType.Conditional; break;
-                case "!": type = TokenType.Not; break;
+                case "!": type = TokenType.Template; break;
                 case "|": type = TokenType.Typeof; break;
                 case "&": type = TokenType.Refer; break;
                 case "=": type = TokenType.Equal; break;
                 case "<": type = TokenType.LessThan; break;
                 case ">": type = TokenType.GreaterThan; break;
+                case "~": type = TokenType.Combine; break;
                 case "+": type = TokenType.Add; break;
                 case "-": type = TokenType.Subtract; break;
                 case "*": type = TokenType.Multiply; break;
@@ -330,10 +331,13 @@ namespace SyntacticAnalysis
                 case "::": type = TokenType.Separator; break;
                 case "..": type = TokenType.Range; break;
                 case "@@": type = TokenType.Pragma; break;
-                case "##": type = TokenType.Pragma; break;
-                case "??": type = TokenType.Coalesce; break;
+                case "##": type = TokenType.Macro; break;
                 case "||": type = TokenType.Or; break;
                 case "&&": type = TokenType.And; break;
+                case "??": type = TokenType.Coalesce; break;
+                case "!!": type = TokenType.Not; break;
+                case "++": type = TokenType.Plus; break;
+                case "--": type = TokenType.Minus; break;
                 case "==": type = TokenType.Equal; break;
                 case "<>": type = TokenType.NotEqual; break;
                 case "><": type = TokenType.NotEqual; break;
@@ -341,8 +345,8 @@ namespace SyntacticAnalysis
                 case "=<": type = TokenType.LessThanOrEqual; break;
                 case ">=": type = TokenType.GreaterThanOrEqual; break;
                 case "=>": type = TokenType.GreaterThanOrEqual; break;
-                case "<<": type = TokenType.LeftCombine; break;
-                case ">>": type = TokenType.RightCombine; break;
+                case "<<": type = TokenType.LeftCompose; break;
+                case ">>": type = TokenType.RightCompose; break;
                 case ":=": type = TokenType.LeftAssign; break;
                 case "=:": type = TokenType.RightAssign; break;
                 case "+=": type = TokenType.Add | TokenType.LeftAssign; break;
@@ -372,10 +376,10 @@ namespace SyntacticAnalysis
                 case ">=<": type = TokenType.Incompare; break;
                 case "<>=": type = TokenType.Incompare; break;
                 case "><=": type = TokenType.Incompare; break;
-                case "<<=": type = TokenType.LeftCombine | TokenType.LeftAssign; break;
-                case "=<<": type = TokenType.LeftCombine | TokenType.RightAssign; break;
-                case ">>=": type = TokenType.RightCombine | TokenType.LeftAssign; break;
-                case "=>>": type = TokenType.RightCombine | TokenType.RightAssign; break;
+                case "<<=": type = TokenType.LeftCompose | TokenType.LeftAssign; break;
+                case "=<<": type = TokenType.LeftCompose | TokenType.RightAssign; break;
+                case ">>=": type = TokenType.RightCompose | TokenType.LeftAssign; break;
+                case "=>>": type = TokenType.RightCompose | TokenType.RightAssign; break;
                 default: return Token.Empty;
             }
             return t.TakeToken(3, type);

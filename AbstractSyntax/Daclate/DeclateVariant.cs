@@ -13,15 +13,13 @@ namespace AbstractSyntax.Daclate
         public TupleList AttributeAccess { get; private set; }
         public IdentifierAccess Ident { get; private set; }
         public IdentifierAccess ExplicitType { get; private set; }
-        public bool IsLet { get; private set; }
 
         public DeclateVariant(TextPosition tp, TupleList attr, IdentifierAccess ident, IdentifierAccess expl, bool isLet)
-            :base(tp)
+            :base(tp, isLet)
         {
             AttributeAccess = attr;
             Ident = ident;
             ExplicitType = expl;
-            IsLet = isLet;
             Name = Ident == null ? string.Empty : Ident.Value;
             AppendChild(AttributeAccess);
             AppendChild(Ident);
@@ -40,14 +38,6 @@ namespace AbstractSyntax.Daclate
                 foreach (var v in AttributeAccess)
                 {
                     a.Add(v.OverLoad.FindDataType());
-                }
-                if(IsLet)
-                {
-                    a.Add(Root.Let);
-                }
-                else
-                {
-                    a.Add(Root.Var);
                 }
                 if (!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {

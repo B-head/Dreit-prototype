@@ -20,8 +20,9 @@ namespace AbstractSyntax.Symbol
         protected Scope _CallReturnType;
         public DirectiveList Block { get; protected set; }
 
-        protected RoutineSymbol()
+        protected RoutineSymbol(TokenType op = TokenType.Unknoun)
         {
+            Operator = op;
             _Attribute = new List<Scope>();
             _Generics = new List<GenericSymbol>();
             _ArgumentTypes = new List<Scope>();
@@ -125,22 +126,6 @@ namespace AbstractSyntax.Symbol
                     return false;
                 }
                 return true;
-            }
-        }
-
-        public bool IsConvertor
-        {
-            get
-            {
-                if (!(CurrentScope is ClassSymbol))
-                {
-                    return false;
-                }
-                if (Name == "from" || Name == "to")
-                {
-                    return true;
-                }
-                return false;
             }
         }
     }

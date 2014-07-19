@@ -54,11 +54,11 @@ namespace AbstractSyntax.Expression
             {
                 cmm.CompileError("undefined-identifier", this);
             }
-            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.CurrentScope))
+            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);
             }
-            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Protected) && !HasCurrentAccess(CallScope.CurrentScope))
+            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Protected) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);
             }

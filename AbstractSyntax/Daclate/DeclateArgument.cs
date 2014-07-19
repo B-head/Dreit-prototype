@@ -44,7 +44,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override Scope ReturnType
+        public override Scope CallReturnType
         {
             get
             {
