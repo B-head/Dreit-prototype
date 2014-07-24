@@ -13,22 +13,19 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateClass : ClassSymbol
     {
-        public TupleList AttributeAccess { get; set; }
-        public TupleList DecGenerics { get; set; }
-        public TupleList InheritAccess { get; set; }
-        public DirectiveList Block { get; set; }
+        public TupleList AttributeAccess { get; private set; }
+        public TupleList DecGenerics { get; private set; }
+        public TupleList InheritAccess { get; private set; }
 
         public DeclateClass(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, DirectiveList block)
-            :base(tp, name, isTrait)
+            :base(tp, name, isTrait, block)
         {
             AttributeAccess = attr;
             DecGenerics = generic;
             InheritAccess = inherit;
-            Block = block;
             AppendChild(AttributeAccess);
             AppendChild(DecGenerics);
             AppendChild(InheritAccess);
-            AppendChild(Block);
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -72,7 +69,7 @@ namespace AbstractSyntax.Daclate
             }
         }
 
-        public override IReadOnlyList<ClassSymbol> Inherit 
+        public override IReadOnlyList<Scope> Inherit 
         {
             get
             {
@@ -80,14 +77,11 @@ namespace AbstractSyntax.Daclate
                 {
                     return _Inherit;
                 }
-                var i = new List<ClassSymbol>();
+                var i = new List<Scope>();
                 foreach (var v in InheritAccess)
                 {
-                    var dt = v.OverLoad.FindDataType() as ClassSymbol;
-                    if (dt != null)
-                    {
-                        i.Add(dt);
-                    }
+                    var dt = v.OverLoad.FindDataType();
+                    i.Add(dt);
                 }
                 _Inherit = i;
                 return _Inherit;
@@ -97,48 +91,6 @@ namespace AbstractSyntax.Daclate
         public bool IsDefaultConstructor
         {
             get { return Initializer.Any(v => v is DefaultSymbol); }
-        }
-        
-
-        public override IReadOnlyList<RoutineSymbol> Initializer
-        {
-            get
-            {
-                if (_Initializer != null)
-                {
-                    return _Initializer;
-                }
-                var i = new List<RoutineSymbol>();
-                var newFlag = false;
-                foreach (var e in Block)
-                {
-                    var r = e as RoutineSymbol;
-                    if (r == null)
-                    {
-                        continue;
-                    }
-                    if (r.IsConstructor)
-                    {
-                        i.Add(r);
-                        newFlag = true;
-                    }
-                    //else if (r.IsConvertor)
-                    //{
-                    //    Root.ConvManager.Append(r);
-                    //    i.Add(r);
-                    //}
-                    //else if (r.Operator != TokenType.Unknoun)
-                    //{
-                    //    Root.OpManager.Append(r);
-                    //}
-                }
-                if (!newFlag)
-                {
-                    i.Add(Default);
-                }
-                _Initializer = i;
-                return _Initializer;
-            }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

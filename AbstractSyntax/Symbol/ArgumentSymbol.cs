@@ -14,5 +14,11 @@ namespace AbstractSyntax.Symbol
         {
 
         }
+
+        public ArgumentSymbol(string name, IReadOnlyList<Scope> attr, Scope dt)
+            :base(name, false, attr, dt)
+        {
+
+        }
     }
 }

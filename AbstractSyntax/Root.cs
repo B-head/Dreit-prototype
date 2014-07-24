@@ -17,10 +17,24 @@ namespace AbstractSyntax
         internal OperationManager OpManager { get; private set; }
         internal OverLoadReference UndefinedOverLord { get; private set; }
         public VoidSymbol Void { get; private set; }
-        internal ErrorSymbol Error { get; private set; }
-        internal UnknownSymbol Unknown { get; private set; }
-        internal AttributeSymbol Refer { get; private set; }
-        internal AttributeSymbol Typeof { get; private set; }
+        public ErrorSymbol Error { get; private set; }
+        public UnknownSymbol Unknown { get; private set; }
+        public AttributeSymbol Refer { get; private set; }
+        public AttributeSymbol Typeof { get; private set; }
+        public AttributeSymbol Contravariant { get; private set; }
+        public AttributeSymbol Covariant { get; private set; }
+        public AttributeSymbol ConstructorConstraint { get; private set; }
+        public AttributeSymbol ValueConstraint { get; private set; }
+        public AttributeSymbol ReferenceConstraint { get; private set; }
+        public AttributeSymbol Optional { get; private set; }
+        public AttributeSymbol Abstract { get; private set; }
+        public AttributeSymbol Virtual { get; private set; }
+        public AttributeSymbol Final { get; private set; }
+        public AttributeSymbol Static { get; private set; }
+        public AttributeSymbol Public { get; private set; }
+        public AttributeSymbol Internal { get; private set; }
+        public AttributeSymbol Protected { get; private set; }
+        public AttributeSymbol Private { get; private set; }
 
         public Root()
         {
@@ -35,11 +49,6 @@ namespace AbstractSyntax
             CreateBuiltInIdentifier();
             AppendChild(BuiltInList);
             AppendChild(TypeManager);
-        }
-
-        public void AppendModule(NameSpaceSymbol ns)
-        {
-            AppendChild(ns);
         }
 
         public void SemanticAnalysis()
@@ -81,17 +90,34 @@ namespace AbstractSyntax
             Unknown = new UnknownSymbol();
             Refer = new AttributeSymbol(AttributeType.Refer);
             Typeof = new AttributeSymbol(AttributeType.Tyoeof);
+            Contravariant = new AttributeSymbol(AttributeType.Contravariant);
+            Covariant = new AttributeSymbol(AttributeType.Covariant);
+            ConstructorConstraint = new AttributeSymbol(AttributeType.ConstructorConstraint);
+            ValueConstraint = new AttributeSymbol(AttributeType.ValueConstraint);
+            ReferenceConstraint = new AttributeSymbol(AttributeType.ReferenceConstraint);
+            Optional = new AttributeSymbol(AttributeType.Optional);
+            Abstract = new AttributeSymbol(AttributeType.Abstract);
+            Virtual = new AttributeSymbol(AttributeType.Virtual);
+            Final = new AttributeSymbol("final", AttributeType.Final);
+            Static = new AttributeSymbol("static", AttributeType.Static);
+            Public = new AttributeSymbol("public", AttributeType.Public);
+            Internal = new AttributeSymbol("internal", AttributeType.Internal);
+            Protected = new AttributeSymbol("protected", AttributeType.Protected);
+            Private = new AttributeSymbol("private", AttributeType.Private);
             BuiltInList.AppendChild(Void);
             BuiltInList.AppendChild(Unknown);
             BuiltInList.AppendChild(Error);
             BuiltInList.AppendChild(Refer);
             BuiltInList.AppendChild(Typeof);
+            BuiltInList.AppendChild(Abstract);
+            BuiltInList.AppendChild(Final);
+            BuiltInList.AppendChild(Static);
+            BuiltInList.AppendChild(Public);
+            BuiltInList.AppendChild(Internal);
+            BuiltInList.AppendChild(Protected);
+            BuiltInList.AppendChild(Private);
             BuiltInList.AppendChild(new BooleanSymbol(false));
             BuiltInList.AppendChild(new BooleanSymbol(true));
-            BuiltInList.AppendChild(new AttributeSymbol("static", AttributeType.Static));
-            BuiltInList.AppendChild(new AttributeSymbol("public", AttributeType.Public));
-            BuiltInList.AppendChild(new AttributeSymbol("protected", AttributeType.Protected));
-            BuiltInList.AppendChild(new AttributeSymbol("private", AttributeType.Private));
         }
 
         private void CreateBuildInOperator()

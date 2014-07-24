@@ -15,6 +15,7 @@ namespace AbstractSyntax.Daclate
         public TupleList DecGenerics { get; private set; }
         public TupleList DecArguments { get; private set; }
         public Element ExplicitType { get; private set; }
+        public DirectiveList Block { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
 
         public DeclateRoutine(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, DirectiveList block)
@@ -153,6 +154,24 @@ namespace AbstractSyntax.Daclate
                 }
                 return _CallReturnType;
             }
+        }
+
+        public override bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
+        {
+            get
+            {
+                var cls = GetParent<ClassSymbol>();
+                if (cls == null)
+                {
+                    return false;
+                }
+                return IsInstanceMember && !cls.IsPrimitive;
+            }
+        }
+
+        public override bool IsAbstract
+        {
+            get { return Block == null; }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

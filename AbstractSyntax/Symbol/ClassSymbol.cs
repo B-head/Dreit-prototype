@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Daclate;
+using AbstractSyntax.Directive;
 using AbstractSyntax.Pragma;
 using System;
 using System.Collections.Generic;
@@ -13,35 +14,52 @@ namespace AbstractSyntax.Symbol
     {
         public DefaultSymbol Default { get; private set; }
         public ThisSymbol This { get; private set; }
-        public bool IsClass { get; private set; }
         public bool IsTrait { get; private set; }
+        public DirectiveList Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
-        protected IReadOnlyList<ClassSymbol> _Inherit;
-        protected IReadOnlyList<RoutineSymbol> _Initializer;
+        protected IReadOnlyList<Scope> _Inherit;
+        private IReadOnlyList<RoutineSymbol> _Initializer;
 
         protected ClassSymbol()
         {
+            Block = new DirectiveList();
             Default = new DefaultSymbol(this);
             This = new ThisSymbol(this);
+            AppendChild(Block);
             AppendChild(Default);
             AppendChild(This);
             _Attribute = new List<Scope>();
             _Generics = new List<GenericSymbol>();
-            _Inherit = new List<ClassSymbol>();
-            _Initializer = new List<RoutineSymbol>();
+            _Inherit = new List<Scope>();
         }
 
-        protected ClassSymbol(TextPosition tp, string name, bool isTrait)
+        protected ClassSymbol(TextPosition tp, string name, bool isTrait, DirectiveList block)
             :base(tp)
         {
             Name = name;
-            IsClass = !isTrait;
             IsTrait = isTrait;
+            Block = block;
             Default = new DefaultSymbol(this);
             This = new ThisSymbol(this);
+            AppendChild(Block);
             AppendChild(Default);
             AppendChild(This);
+        }
+
+        public ClassSymbol(string name, bool isTrait, DirectiveList block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
+        {
+            Name = name;
+            IsTrait = isTrait;
+            Block = block;
+            Default = new DefaultSymbol(this);
+            This = new ThisSymbol(this);
+            AppendChild(Block);
+            AppendChild(Default);
+            AppendChild(This);
+            _Attribute = attr;
+            _Generics = gnr;
+            _Inherit = inherit;
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -54,17 +72,53 @@ namespace AbstractSyntax.Symbol
             get { return _Generics; }
         }
 
-        public virtual IReadOnlyList<ClassSymbol> Inherit
+        public virtual IReadOnlyList<Scope> Inherit
         {
             get { return _Inherit; }
         }
 
-        public virtual IReadOnlyList<RoutineSymbol> Initializer
+        public IReadOnlyList<RoutineSymbol> Initializer
         {
-            get { return _Initializer; }
+            get
+            {
+                if (_Initializer != null)
+                {
+                    return _Initializer;
+                }
+                var i = new List<RoutineSymbol>();
+                var newFlag = false;
+                foreach (var e in Block)
+                {
+                    var r = e as RoutineSymbol;
+                    if (r == null)
+                    {
+                        continue;
+                    }
+                    if (r.IsConstructor)
+                    {
+                        i.Add(r);
+                        newFlag = true;
+                    }
+                    //else if (r.IsConvertor)
+                    //{
+                    //    Root.ConvManager.Append(r);
+                    //    i.Add(r);
+                    //}
+                    //else if (r.Operator != TokenType.Unknoun)
+                    //{
+                    //    Root.OpManager.Append(r);
+                    //}
+                }
+                if (!newFlag)
+                {
+                    i.Add(Default);
+                }
+                _Initializer = i;
+                return _Initializer;
+            }
         }
 
-        public ClassSymbol InheritClass
+        public Scope InheritClass
         {
             get
             {
@@ -73,13 +127,23 @@ namespace AbstractSyntax.Symbol
                 {
                     return null;
                 }
-                return _Inherit.FirstOrDefault(v => v.IsClass) ?? obj; 
+                return _Inherit.FirstOrDefault(v => !HasTrait(v)) ?? obj; 
             }
         }
 
-        public IReadOnlyList<ClassSymbol> InheritTraits
+        public IReadOnlyList<Scope> InheritTraits
         {
-            get { return _Inherit.Where(v => v.IsTrait).ToList(); }
+            get { return _Inherit.Where(v => HasTrait(v)).ToList(); }
+        }
+
+        private bool HasTrait(Scope scope)
+        {
+            var c = scope as ClassSymbol;
+            if(c != null)
+            {
+                return c.IsTrait;
+            }
+            return false;
         }
 
         public RoutineSymbol DefaultInitializer
@@ -159,12 +223,13 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        public IEnumerable<ClassSymbol> EnumSubType()
+        public IEnumerable<Scope> EnumSubType()
         {
             yield return this;
             foreach(var a in Inherit)
             {
-                foreach(var b in a.EnumSubType())
+                ClassSymbol c = a as ClassSymbol;
+                foreach(var b in c.EnumSubType())
                 {
                     yield return b;
                 }

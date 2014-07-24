@@ -17,8 +17,8 @@ namespace Dlight
             var root = new Root();
             var import = new ImportManager(root);
             //import.ImportAssembly(Assembly.Load("mscorlib"));
-            root.AppendModule(CompileFile("lib/primitive.dl"));
-            root.AppendModule(CompileFile(fileName));
+            root.Append(CompileFile("lib/primitive.dl"));
+            root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(CompileMessageBuilder.Build(root.MessageManager));
             if (root.MessageManager.ErrorCount > 0)

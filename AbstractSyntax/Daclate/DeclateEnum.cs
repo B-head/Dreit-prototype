@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Expression;
+﻿using AbstractSyntax.Directive;
+using AbstractSyntax.Expression;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -9,6 +10,10 @@ namespace AbstractSyntax.Daclate
     [Serializable]
     public class DeclateEnum : EnumSymbol
     {
-        //todo Enum型を実装する。
+        public DeclateEnum(TextPosition tp, string name, DirectiveList block)
+            :base(tp, name, block)
+        {
+
+        }
     }
 }

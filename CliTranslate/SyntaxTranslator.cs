@@ -19,14 +19,16 @@ namespace CliTranslate
     {
         private Dictionary<Element, CilStructure> TransDictionary;
         private Dictionary<Element, CacheStructure> CacheDictionary;
+        private Dictionary<Element, object> ImportDictionary;
 
         private SyntaxTranslator()
         {
             TransDictionary = new Dictionary<Element, CilStructure>();
             CacheDictionary = new Dictionary<Element, CacheStructure>();
+            ImportDictionary = new Dictionary<Element, object>();
         }
 
-        public static RootStructure ToStructure(Root root, string name, string dir = null)
+        public static RootStructure ToStructure(Root root, CilImport manager, string name, string dir = null)
         {
             var trans = new SyntaxTranslator();
             var ret = new RootStructure(name, dir);

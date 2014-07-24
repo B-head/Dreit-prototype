@@ -93,6 +93,23 @@ namespace AbstractSyntax
             builder.Append(Name);
         }
 
+        public Scope FindName(string name)
+        {
+            foreach(var v in this)
+            {
+                var s = v as Scope;
+                if(s == null)
+                {
+                    continue;
+                }
+                if(s.Name == name)
+                {
+                    return s;
+                }
+            }
+            return null;
+        }
+
         protected override string ElementInfo
         {
             get { return Name; }

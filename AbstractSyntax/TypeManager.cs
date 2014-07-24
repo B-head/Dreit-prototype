@@ -10,23 +10,23 @@ namespace AbstractSyntax
     [Serializable]
     public class TypeManager : Element
     {
-        private List<TypeQualifySymbol> TypeQualifyList;
+        private List<QualifyTypeSymbol> TypeQualifyList;
         private List<TemplateInstanceSymbol> TemplateInstanceList;
 
         public TypeManager()
         {
-            TypeQualifyList = new List<TypeQualifySymbol>();
+            TypeQualifyList = new List<QualifyTypeSymbol>();
             TemplateInstanceList = new List<TemplateInstanceSymbol>();
         }
 
-        public TypeQualifySymbol IssueTypeQualify(Scope baseType, params AttributeSymbol[] qualify)
+        public QualifyTypeSymbol IssueTypeQualify(Scope baseType, params AttributeSymbol[] qualify)
         {
             var ret = TypeQualifyList.FirstOrDefault(v => v.BaseType == baseType && v.Qualify.SequenceEqual(qualify));
             if(ret != null)
             {
                 return ret;
             }
-            ret = new TypeQualifySymbol(baseType, qualify);
+            ret = new QualifyTypeSymbol(baseType, qualify);
             AppendChild(ret);
             TypeQualifyList.Add(ret);
             return ret;
@@ -34,7 +34,7 @@ namespace AbstractSyntax
 
         public TemplateInstanceSymbol IssueTemplateInstance(OverLoadReference template, params Scope[] parameter)
         {
-            var ret = TemplateInstanceList.FirstOrDefault(v => v.Template == template && v.Parameter.SequenceEqual(parameter));
+            var ret = TemplateInstanceList.FirstOrDefault(v => v.BaseType == template && v.Parameter.SequenceEqual(parameter));
             if (ret != null)
             {
                 return ret;

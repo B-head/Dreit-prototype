@@ -32,8 +32,8 @@ namespace DlightTest
         {
             Root root = new Root();
             ImportManager import = new ImportManager(root);
-            root.AppendModule(CompileText("lib/primitive.dl", primitive));
-            root.AppendModule(CompileText(data.Name, data.Code));
+            root.Append(CompileText("lib/primitive.dl", primitive));
+            root.Append(CompileText(data.Name, data.Code));
             root.SemanticAnalysis();
             if (root.MessageManager.MessageCount > 0)
             {

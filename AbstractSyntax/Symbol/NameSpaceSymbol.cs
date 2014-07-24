@@ -26,6 +26,16 @@ namespace AbstractSyntax.Symbol
             AppendChild(child);
         }
 
+        public NameSpaceSymbol(string name)
+        {
+            Name = name;
+        }
+
+        public void Append(Element element)
+        {
+            AppendChild(element);
+        }
+
         internal override OverLoadReference NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))

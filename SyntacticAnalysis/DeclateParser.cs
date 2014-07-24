@@ -10,8 +10,10 @@ namespace SyntacticAnalysis
     {
         private static string[] attribute = 
         { 
+            "final",
             "static",
             "public",
+            "internal",
             "protected",
             "private",
         };

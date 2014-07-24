@@ -124,7 +124,7 @@ namespace AbstractSyntax.Expression
                 {
                     return true;
                 }
-                cls = cls.InheritClass;
+                cls = cls.InheritClass as ClassSymbol;
             }
             return false;
         }

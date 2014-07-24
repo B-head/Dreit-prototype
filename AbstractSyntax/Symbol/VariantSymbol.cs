@@ -11,7 +11,7 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public bool IsLet { get; private set; }
-        protected List<Scope> _Attribute;
+        protected IReadOnlyList<Scope> _Attribute;
         protected Scope _DataType;
         private PropertyPragma Getter;
         private PropertyPragma Setter;
@@ -28,6 +28,18 @@ namespace AbstractSyntax.Symbol
             : base(tp)
         {
             IsLet = isLet;
+            Getter = new PropertyPragma(this, false);
+            Setter = new PropertyPragma(this, true);
+            AppendChild(Getter);
+            AppendChild(Setter);
+        }
+
+        public VariantSymbol(string name, bool isLet, IReadOnlyList<Scope> attr, Scope dt)
+        {
+            Name = name;
+            IsLet = isLet;
+            _Attribute = attr;
+            _DataType = dt;
             Getter = new PropertyPragma(this, false);
             Setter = new PropertyPragma(this, true);
             AppendChild(Getter);

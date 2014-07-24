@@ -49,6 +49,7 @@
     <Compile Include="BuilderStructure.cs" />
     <Compile Include="CacheStructure.cs" />
     <Compile Include="CallStructure.cs" />
+    <Compile Include="CilImport.cs" />
     <Compile Include="CilStructure.cs" />
     <Compile Include="ClassTranslator.cs" />
     <Compile Include="BranchTranslator.cs" />

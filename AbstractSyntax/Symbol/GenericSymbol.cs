@@ -8,11 +8,21 @@ namespace AbstractSyntax.Symbol
 {
     [Serializable]
     public class GenericSymbol : Scope
-    {   
-        public GenericSymbol(TextPosition tp, string name)
+    {
+        protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<Scope> _Constraint;
+
+        protected GenericSymbol(TextPosition tp, string name)
             :base(tp)
         {
             Name = name;
+        }
+
+        public GenericSymbol(string name, IReadOnlyList<Scope> attr, IReadOnlyList<Scope> constraint)
+        {
+            Name = name;
+            _Attribute = attr;
+            _Constraint = constraint;
         }
 
         public override bool IsDataType

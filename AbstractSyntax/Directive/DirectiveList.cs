@@ -18,6 +18,11 @@ namespace AbstractSyntax.Directive
 
         }
 
+        public DirectiveList(List<Element> child)
+        {
+            AppendChild(child);
+        }
+
         public DirectiveList(TextPosition tp, List<Element> child, bool isInline)
             :base(tp)
         {

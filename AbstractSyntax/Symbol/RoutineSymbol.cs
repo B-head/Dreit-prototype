@@ -18,13 +18,15 @@ namespace AbstractSyntax.Symbol
         protected IReadOnlyList<ArgumentSymbol> _Arguments;
         protected IReadOnlyList<Scope> _ArgumentTypes;
         protected Scope _CallReturnType;
-        public DirectiveList Block { get; protected set; }
+        public const string ConstructorIdentifier = "new";
+        public const string DestructorIdentifier = "free";
 
         protected RoutineSymbol(TokenType op = TokenType.Unknoun)
         {
             Operator = op;
             _Attribute = new List<Scope>();
             _Generics = new List<GenericSymbol>();
+            _Arguments = new List<ArgumentSymbol>();
             _ArgumentTypes = new List<Scope>();
         }
 
@@ -34,6 +36,16 @@ namespace AbstractSyntax.Symbol
             Name = name;
             Operator = op;
             IsFunction = isFunc;
+        }
+
+        public RoutineSymbol(string name, TokenType op, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ArgumentSymbol> arg, Scope rt)
+        {
+            Name = name;
+            Operator = op;
+            _Attribute = attr;
+            _Generics = gnr;
+            _Arguments = arg;
+            _CallReturnType = rt;
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -61,22 +73,14 @@ namespace AbstractSyntax.Symbol
             get { return _CallReturnType; }
         }
 
-        public bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
+        public virtual bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
         {
-            get
-            { 
-                var cls = GetParent<ClassSymbol>();
-                if(cls == null)
-                {
-                    return false;
-                }
-                return IsInstanceMember && !cls.IsPrimitive; 
-            } 
+            get { return HasAnyAttribute(Attribute, AttributeType.Virtual); }
         }
 
-        public bool IsAbstract
+        public virtual bool IsAbstract
         {
-            get { return Block == null; }
+            get { return HasAnyAttribute(Attribute, AttributeType.Abstract); }
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
@@ -93,7 +97,8 @@ namespace AbstractSyntax.Symbol
                 {
                     return null;
                 }
-                return cls.InheritClass.DefaultInitializer;
+                var i = cls.InheritClass as ClassSymbol;
+                return i.DefaultInitializer;
             }
         }
 
@@ -105,7 +110,7 @@ namespace AbstractSyntax.Symbol
                 {
                     return false;
                 }
-                if (Name != "new")
+                if (Name != ConstructorIdentifier)
                 {
                     return false;
                 }
@@ -121,7 +126,7 @@ namespace AbstractSyntax.Symbol
                 {
                     return false;
                 }
-                if (Name != "free")
+                if (Name != DestructorIdentifier)
                 {
                     return false;
                 }
