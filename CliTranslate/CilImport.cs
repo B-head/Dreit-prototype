@@ -13,19 +13,13 @@ namespace CliTranslate
     public class CilImport
     {
         private Root Root;
-        public Dictionary<object, Element> ImportDictionary { get; private set; }
+        public Dictionary<object, Scope> ImportDictionary { get; private set; }
+        private const BindingFlags Binding = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
 
-        private CilImport(Root root)
+        public CilImport(Root root)
         {
             Root = root;
-            ImportDictionary = new Dictionary<object, Element>();
-        }
-
-        public static CilImport Import(Root root, Assembly assembly)
-        {
-            var ret = new CilImport(root);
-            ret.ImportAssembly(assembly);
-            return ret;
+            ImportDictionary = new Dictionary<object, Scope>();
         }
 
         private NameSpaceSymbol GetNameSpace(string name)
@@ -45,7 +39,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private void ImportAssembly(Assembly assembly)
+        public void ImportAssembly(Assembly assembly)
         {
             var module = assembly.GetModules();
             foreach (var m in module)
@@ -64,14 +58,7 @@ namespace CliTranslate
                     continue;
                 }
                 var ns = GetNameSpace(t.Namespace);
-                if (t.IsEnum)
-                {
-                    ns.Append(ImportEnum(t));
-                }
-                else
-                {
-                    ns.Append(ImportType(t));
-                }
+                ns.Append(ImportType(t));
             }
         }
 
@@ -81,15 +68,19 @@ namespace CliTranslate
             {
                 return ImportEnum(type);
             }
-            if (type.IsGenericType)
+            if (type.IsGenericParameter)
             {
                 return ImportGenericType(type);
             }
-            if (type.IsGenericTypeDefinition || !(type.IsArray || type.IsByRef || type.IsPointer))
+            if (type.IsArray || type.IsByRef || type.IsPointer)
             {
-                return ImportPureType(type);
+                return ImportQualifyType(type);
             }
-            return ImportQualifyType(type);
+            if (type.IsGenericType && !type.IsGenericTypeDefinition)
+            {
+                return ImportQualifyType(type);
+            }
+            return ImportPureType(type);
         }
 
         private ClassSymbol ImportPureType(Type type)
@@ -98,48 +89,73 @@ namespace CliTranslate
             var attribute = CreateAttributeList(type.Attributes, out isTrait);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
-            var exps = new List<Element>();
-            var ctor = type.GetConstructors();
+            var block = new DirectiveList();
+            var elem = new ClassSymbol(TrimTypeNameMangling(type.Name), isTrait, block, attribute, generic, inherit);
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (ClassSymbol)ImportDictionary[type];
+            }
+            ImportDictionary.Add(type, elem);
+            var ctor = type.GetConstructors(Binding);
             foreach (var c in ctor)
             {
-                exps.Add(ImportConstructor(c));
+                if(c.IsAssembly || c.IsFamilyAndAssembly || c.IsPrivate)
+                {
+                    continue;
+                }
+                block.Append(ImportConstructor(c));
             }
             //todo Eventのインポートに対応する。
             //var eve = type.GetEvents();
             //foreach (var e in eve)
             //{
-            //    exp.Add(ImportEvent(e));
+            //    block.Append(ImportEvent(e));
             //}
-            var property = type.GetProperties();
+            var property = type.GetProperties(Binding);
             foreach (var p in property)
             {
-                if (p.GetMethod != null)
+                var g = p.GetMethod;
+                if (g != null && !g.IsAssembly && !g.IsFamilyAndAssembly && !g.IsPrivate)
                 {
-                    exps.Add(ImportProperty(p.GetMethod, p.Name));
+                    block.Append(ImportProperty(p.GetMethod, p.Name));
                 }
-                if (p.SetMethod != null)
+                var s = p.SetMethod;
+                if (s != null && !s.IsAssembly && !s.IsFamilyAndAssembly && !s.IsPrivate)
                 {
-                    exps.Add(ImportProperty(p.SetMethod, p.Name));
+                    block.Append(ImportProperty(p.SetMethod, p.Name));
                 }
             }
-            var method = type.GetMethods();
+            var method = type.GetMethods(Binding);
             foreach (var m in method)
             {
-                exps.Add(ImportMethod(m));
+                if (m.IsAssembly || m.IsFamilyAndAssembly || m.IsPrivate)
+                {
+                    continue;
+                }
+                if(ImportDictionary.ContainsKey(m))
+                {
+                    continue;
+                }
+                block.Append(ImportMethod(m));
             }
-            var field = type.GetFields();
+            var field = type.GetFields(Binding);
             foreach (var f in field)
             {
-                exps.Add(ImportField(f));
+                if (f.IsAssembly || f.IsFamilyAndAssembly || f.IsPrivate)
+                {
+                    continue;
+                }
+                block.Append(ImportField(f));
             }
-            var nested = type.GetNestedTypes();
+            var nested = type.GetNestedTypes(Binding);
             foreach (var n in nested)
             {
-                exps.Add(ImportType(n));
+                if (n.IsNestedAssembly || n.IsNestedFamANDAssem || n.IsNestedPrivate)
+                {
+                    continue;
+                }
+                block.Append(ImportType(n));
             }
-            var block = new DirectiveList(exps);
-            var elem = new ClassSymbol(type.Name, isTrait, block, attribute, generic, inherit);
-            ImportDictionary.Add(type, elem);
             return elem;
         }
 
@@ -153,6 +169,10 @@ namespace CliTranslate
             var attribute = CreateAttributeList(type.GenericParameterAttributes);
             var constraint = CreateConstraintList(type.GetGenericParameterConstraints());
             var elem = new GenericSymbol(type.Name, attribute, constraint);
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (GenericSymbol)ImportDictionary[type];
+            }
             ImportDictionary.Add(type, elem);
             return elem;
         }
@@ -162,21 +182,27 @@ namespace CliTranslate
             bool isTrait;
             var attribute = CreateAttributeList(type.Attributes, out isTrait);
             var dt = ImportType(type.GetEnumUnderlyingType());
-            var exps = new List<Element>();
+            var block = new DirectiveList();
+            var elem = new EnumSymbol(type.Name, block, attribute, dt);
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (EnumSymbol)ImportDictionary[type];
+            }
+            ImportDictionary.Add(type, elem);
             foreach(var v in type.GetEnumNames())
             {
                 var f = new VariantSymbol(v, true, new List<Scope>(), dt);
-                exps.Add(f);
+                block.Append(f);
             }
-            var block = new DirectiveList(exps);
-            var elem = new EnumSymbol(type.Name, block, attribute, dt);
-            ImportDictionary.Add(type, elem);
             return elem;
-
         }
 
         private RoutineSymbol ImportMethod(MethodInfo method)
         {
+            if (ImportDictionary.ContainsKey(method))
+            {
+                return (RoutineSymbol)ImportDictionary[method];
+            }
             var attribute = CreateAttributeList(method.Attributes);
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
@@ -188,6 +214,10 @@ namespace CliTranslate
 
         private RoutineSymbol ImportProperty(MethodInfo prop, string name)
         {
+            if (ImportDictionary.ContainsKey(prop))
+            {
+                return (RoutineSymbol)ImportDictionary[prop];
+            }
             var attribute = CreateAttributeList(prop.Attributes);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(prop);
@@ -199,6 +229,10 @@ namespace CliTranslate
 
         private RoutineSymbol ImportConstructor(ConstructorInfo ctor)
         {
+            if (ImportDictionary.ContainsKey(ctor))
+            {
+                return (RoutineSymbol)ImportDictionary[ctor];
+            }
             var attribute = CreateAttributeList(ctor.Attributes);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(ctor);
@@ -210,6 +244,10 @@ namespace CliTranslate
 
         private ArgumentSymbol ImportArgument(ParameterInfo prm)
         {
+            if (ImportDictionary.ContainsKey(prm))
+            {
+                return (ArgumentSymbol)ImportDictionary[prm];
+            }
             var attribute = CreateAttributeList(prm.Attributes);
             var dt = ImportType(prm.ParameterType);
             var elem = new ArgumentSymbol(prm.Name, attribute, dt);
@@ -219,12 +257,26 @@ namespace CliTranslate
 
         private VariantSymbol ImportField(FieldInfo field)
         {
+            if (ImportDictionary.ContainsKey(field))
+            {
+                return (VariantSymbol)ImportDictionary[field];
+            }
             bool isLet = false;
             var attribute = CreateAttributeList(field.Attributes, out isLet);
             var dt = ImportType(field.FieldType);
             var elem = new VariantSymbol(field.Name, isLet, attribute, dt);
             ImportDictionary.Add(field, elem);
             return elem;
+        }
+
+        private string TrimTypeNameMangling(string name)
+        {
+            var i = name.IndexOf('`');
+            if(i < 0)
+            {
+                return name;
+            }
+            return name.Substring(0, i);
         }
 
         private IReadOnlyList<Scope> CreateAttributeList(TypeAttributes attr, out bool isTrait)
@@ -298,7 +350,10 @@ namespace CliTranslate
         private IReadOnlyList<Scope> CreateInheritList(Type type)
         {
             var ret = new List<Scope>();
-            ret.Add(ImportType(type.BaseType));
+            if (type.BaseType != null)
+            {
+                ret.Add(ImportType(type.BaseType));
+            }
             foreach(var v in type.GetInterfaces())
             {
                 ret.Add(ImportType(v));

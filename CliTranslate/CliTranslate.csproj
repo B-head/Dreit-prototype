@@ -72,6 +72,7 @@
     <Compile Include="MethodStructure.cs" />
     <Compile Include="ModuleTranslator.cs" />
     <Compile Include="MonadicOperationStructure.cs" />
+    <Compile Include="TypeStructure.cs" />
     <Compile Include="ValueStructure.cs" />
     <Compile Include="DyadicOperationStructure.cs" />
     <Compile Include="ParameterStructure.cs" />
@@ -87,7 +88,7 @@
     <Compile Include="TranslateManager.cs" />
     <Compile Include="TranslateUtility.cs" />
     <Compile Include="Translator.cs" />
-    <Compile Include="TypeStructure.cs" />
+    <Compile Include="PureTypeStructure.cs" />
     <Compile Include="WriteLineStructure.cs" />
   </ItemGroup>
   <ItemGroup>

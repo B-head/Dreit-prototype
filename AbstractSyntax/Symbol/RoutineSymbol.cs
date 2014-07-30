@@ -13,6 +13,7 @@ namespace AbstractSyntax.Symbol
     {
         public TokenType Operator { get; private set; }
         public bool IsFunction { get; private set; }
+        public DirectiveList Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<ArgumentSymbol> _Arguments;
@@ -24,28 +25,34 @@ namespace AbstractSyntax.Symbol
         protected RoutineSymbol(TokenType op = TokenType.Unknoun)
         {
             Operator = op;
+            Block = new DirectiveList();
             _Attribute = new List<Scope>();
             _Generics = new List<GenericSymbol>();
             _Arguments = new List<ArgumentSymbol>();
             _ArgumentTypes = new List<Scope>();
+            AppendChild(Block);
         }
 
-        protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc)
+        protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc, DirectiveList block)
             : base(tp)
         {
             Name = name;
             Operator = op;
             IsFunction = isFunc;
+            Block = block;
+            AppendChild(Block);
         }
 
         public RoutineSymbol(string name, TokenType op, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ArgumentSymbol> arg, Scope rt)
         {
             Name = name;
             Operator = op;
+            Block = new DirectiveList();
             _Attribute = attr;
             _Generics = gnr;
             _Arguments = arg;
             _CallReturnType = rt;
+            AppendChild(Block);
         }
 
         public override IReadOnlyList<Scope> Attribute

@@ -15,22 +15,19 @@ namespace AbstractSyntax.Daclate
         public TupleList DecGenerics { get; private set; }
         public TupleList DecArguments { get; private set; }
         public Element ExplicitType { get; private set; }
-        public DirectiveList Block { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
 
         public DeclateRoutine(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, DirectiveList block)
-            : base(tp, name, op, isFunc)
+            : base(tp, name, op, isFunc, block)
         {
             AttributeAccess = attr;
             DecGenerics = generic;
             DecArguments = args;
             ExplicitType = expl;
-            Block = block;
             AppendChild(AttributeAccess);
             AppendChild(DecGenerics);
             AppendChild(DecArguments);
             AppendChild(ExplicitType);
-            AppendChild(Block);
         }
 
         public override IReadOnlyList<Scope> Attribute

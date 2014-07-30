@@ -18,7 +18,7 @@ namespace CliTranslate
                 return;
             }
             IsPreBuilded = true;
-            BuildCode();
+            PreBuild();
         }
 
         protected virtual void PreBuild()

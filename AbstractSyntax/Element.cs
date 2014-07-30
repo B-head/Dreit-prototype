@@ -8,9 +8,9 @@ using System.Text;
 
 namespace AbstractSyntax
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [DebuggerVisualizer(typeof(SyntaxVisualizer), typeof(SyntaxVisualizerSource))]
     [Serializable]
-    public abstract class Element : IReadOnlyTree<Element>
+    public abstract class Element : MarshalByRefObject, IReadOnlyTree<Element>
     {
         private Root _Root;
         private Scope _CurrentScope;

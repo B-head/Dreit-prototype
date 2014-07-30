@@ -21,7 +21,7 @@ namespace CliTranslate
             var tattr = TypeAttributes.Class | TypeAttributes.NotPublic | TypeAttributes.Sealed | TypeAttributes.SpecialName;
             var gnr = new List<GenericParameterStructure>();
             var imp = new List<TypeStructure>();
-            GlobalField =  new TypeStructure(Name + ".@@Global", tattr, gnr, null, imp);
+            GlobalField =  new PureTypeStructure(Name + ".@@Global", tattr, gnr, null, imp);
             AppendChild(GlobalField);
             var mattr = MethodAttributes.PrivateScope | MethodAttributes.SpecialName | MethodAttributes.Static;
             var arg = new List<ParameterStructure>();

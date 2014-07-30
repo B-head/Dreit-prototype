@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CliTranslate
 {
-    [DebuggerVisualizer(typeof(SyntaxVisualizer))]
+    [DebuggerVisualizer(typeof(SyntaxVisualizer), typeof(SyntaxVisualizerSource))]
     [Serializable]
-    public abstract class CilStructure : IReadOnlyTree<CilStructure>
+    public abstract class CilStructure : MarshalByRefObject, IReadOnlyTree<CilStructure>
     {
         private RootStructure _Root;
         private List<CilStructure> Child;

@@ -1,11 +1,13 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Daclate;
+using AbstractSyntax.Visualizer;
 using CliTranslate;
 using SyntacticAnalysis;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Dlight
 {
@@ -15,9 +17,8 @@ namespace Dlight
         {
             string fileName = args[0];
             var root = new Root();
-            var import = new ImportManager(root);
-            //import.ImportAssembly(Assembly.Load("mscorlib"));
-            root.Append(CompileFile("lib/primitive.dl"));
+            var import = new CilImport(root);
+            import.ImportAssembly(Assembly.Load("mscorlib"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(CompileMessageBuilder.Build(root.MessageManager));
@@ -25,7 +26,8 @@ namespace Dlight
             {
                 return;
             }
-            var trans = SyntaxTranslator.ToStructure(root, fileName.Replace(".dl", ""));
+            //SyntaxVisualizer.TestShowVisualizer(root.Void);
+            var trans = SyntaxTranslator.ToStructure(root, import, fileName.Replace(".dl", ""));
             trans.Save();
         }
 

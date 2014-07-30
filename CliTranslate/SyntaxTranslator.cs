@@ -28,13 +28,22 @@ namespace CliTranslate
             ImportDictionary = new Dictionary<Element, object>();
         }
 
-        public static RootStructure ToStructure(Root root, CilImport manager, string name, string dir = null)
+        public static RootStructure ToStructure(Root root, CilImport import, string name, string dir = null)
         {
             var trans = new SyntaxTranslator();
+            trans.PrepareImport(import);
             var ret = new RootStructure(name, dir);
             trans.CollectChild(root, ret, root);
             ret.TraversalBuildCode();
             return ret;
+        }
+
+        private void PrepareImport(CilImport import)
+        {
+            foreach(var v in import.ImportDictionary)
+            {
+                ImportDictionary.Add(v.Value, v.Key);
+            }
         }
 
         private void ChildTranslate(Element element)
@@ -56,7 +65,15 @@ namespace CliTranslate
             {
                 return TransDictionary[element];
             }
-            var ret = Translate((dynamic)element);
+            dynamic ret;
+            if (ImportDictionary.ContainsKey(element))
+            {
+                ret = Translate((dynamic)element, (dynamic)ImportDictionary[element]);
+            }
+            else
+            {
+                ret = Translate((dynamic)element);
+            }
             if (!TransDictionary.ContainsKey(element))
             {
                 TransDictionary.Add(element, ret);
@@ -66,6 +83,10 @@ namespace CliTranslate
 
         private void CollectChild(Element parent, CilStructure structure, Element element)
         {
+            if (TransDictionary.ContainsKey(parent))
+            {
+                return;
+            }
             TransDictionary.Add(parent, structure);
             foreach (var v in element)
             {
@@ -107,12 +128,12 @@ namespace CliTranslate
             return null;
         }
 
-        private TypeStructure Translate(VoidSymbol element)
+        private PureTypeStructure Translate(VoidSymbol element)
         {
             var gnr = new List<GenericParameterStructure>();
             var imp = new List<TypeStructure>();
             var ti = typeof(void);
-            var ret = new TypeStructure(ti.Name, ti.Attributes, gnr, null, imp, ti);
+            var ret = new PureTypeStructure(ti.Name, ti.Attributes, gnr, null, imp, ti);
             return ret;
         }
 
@@ -128,18 +149,18 @@ namespace CliTranslate
             return ret;
         }
 
-        private TypeStructure Translate(DeclateClass element)
+        private PureTypeStructure Translate(ClassSymbol element, Type info = null)
         {
             var attr = element.Attribute.MakeTypeAttributes(element.IsTrait);
             var gnr = CollectList<GenericParameterStructure>(element.Generics);
             var bt = RelayTranslate(element.InheritClass);
             var imp = CollectList<TypeStructure>(element.InheritTraits);
-            var ret = new TypeStructure(element.FullName, attr, gnr, bt, imp);
+            var ret = new PureTypeStructure(element.FullName, attr, gnr, bt, imp, info);
             CollectChild(element, ret, element.Block);
             return ret;
         }
 
-        private MethodBaseStructure Translate(DeclateRoutine element)
+        private MethodBaseStructure Translate(RoutineSymbol element, MethodBase info = null)
         {
             var attr = element.Attribute.MakeMethodAttributes(element.IsVirtual, element.IsAbstract);
             var gnr = CollectList<GenericParameterStructure>(element.Generics);
@@ -148,29 +169,29 @@ namespace CliTranslate
             MethodBaseStructure ret;
             if (element.IsConstructor)
             {
-                ret = new ConstructorStructure(attr, arg);
+                ret = new ConstructorStructure(attr, arg, (ConstructorInfo)info);
             }
             else
             {
-                ret = new MethodStructure(element.Name, attr, gnr, arg, rt);
+                ret = new MethodStructure(element.Name, attr, gnr, arg, rt, (MethodInfo)info);
             }
             CollectChild(element, ret, element.Block);
             return ret;
         }
 
-        private EnumStructure Translate(DeclateEnum element)
+        private EnumStructure Translate(EnumSymbol element, Type info = null)
         {
             var ret = new EnumStructure();
             return ret;
         }
 
-        private CilStructure Translate(DeclateVariant element)
+        private CilStructure Translate(VariantSymbol element, FieldInfo info = null)
         {
             if (element.IsField || element.IsGlobal)
             {
                 var attr = element.Attribute.MakeFieldAttributes();
                 var dt = RelayTranslate(element.CallReturnType);
-                var ret = new FieldStructure(element.Name, attr, dt);
+                var ret = new FieldStructure(element.Name, attr, dt, info);
                 return ret;
             }
             else
@@ -181,7 +202,7 @@ namespace CliTranslate
             }
         }
 
-        private ParameterStructure Translate(DeclateArgument element)
+        private ParameterStructure Translate(ArgumentSymbol element, ParameterInfo info = null)
         {
             var attr = ParameterAttributes.None;
             var pt = RelayTranslate(element.CallReturnType);
@@ -189,7 +210,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private GenericParameterStructure Translate(DeclateGeneric element)
+        private GenericParameterStructure Translate(GenericSymbol element, Type info = null)
         {
             var attr = GenericParameterAttributes.None;
             var ret = new GenericParameterStructure(element.Name, attr, null);
