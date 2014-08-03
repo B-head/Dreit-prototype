@@ -5,9 +5,9 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class ExpressionGroup : MonadicExpression
+    public class GroupingExpression : MonadicExpression
     {
-        public ExpressionGroup(TextPosition tp, Element exp)
+        public GroupingExpression(TextPosition tp, Element exp)
             :base(tp, TokenType.Unknoun, exp)
         {
 

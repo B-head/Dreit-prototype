@@ -71,7 +71,6 @@ namespace SyntacticAnalysis
                 {
                     icp.Any(
                         iicp => iicp.Type(TokenType.Separator),
-                        iicp => iicp.Text("do"),
                         iicp => iicp.Text("then")
                     ).Lt();
                 })
@@ -123,8 +122,8 @@ namespace SyntacticAnalysis
 
         private static AliasDirective Alias(SlimChainParser cp)
         {
-            IdentifierAccess from = null;
-            IdentifierAccess to = null;
+            Identifier from = null;
+            Identifier to = null;
             return cp.Begin
                 .Text("alias").Lt()
                 .Opt.Transfer(e => from = e, IdentifierAccess)

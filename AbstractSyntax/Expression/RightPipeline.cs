@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Daclate;
+﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
@@ -8,11 +8,11 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class RightAssign : CallRoutine
+    public class RightPipeline : CallRoutine
     {
         public TokenType Operator { get; set; }
 
-        public RightAssign(TextPosition tp, TokenType op, Element left, Element right)
+        public RightPipeline(TextPosition tp, TokenType op, Element left, Element right)
             :base(tp, right, left)
         {
             Operator = op;

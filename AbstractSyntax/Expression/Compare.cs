@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class Condition : DyadicExpression
+    public class Compare : DyadicExpression
     {
         private Scope _CallScope;
 
-        public Condition(TextPosition tp, TokenType op, Element left, Element right)
+        public Compare(TextPosition tp, TokenType op, Element left, Element right)
             :base(tp, op, left, right)
         {
 
@@ -37,12 +37,12 @@ namespace AbstractSyntax.Expression
 
         public bool IsLeftConnection
         {
-            get { return Parent is Condition; }
+            get { return Parent is Compare; }
         }
 
         public bool IsRightConnection
         {
-            get { return Right is Condition; }
+            get { return Right is Compare; }
         }
 
         public Element VirtualRight
@@ -51,7 +51,7 @@ namespace AbstractSyntax.Expression
             {
                 if (IsRightConnection)
                 {
-                    var c = (Condition)Right;
+                    var c = (Compare)Right;
                     return c.Left;
                 }
                 else

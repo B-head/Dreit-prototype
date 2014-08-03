@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 
 namespace CliTranslate
 {
@@ -147,32 +147,32 @@ namespace CliTranslate
             return Parent.CreateLexical(name);
         }
 
-        public virtual ModuleTranslator CreateModule(DeclateModule path)
+        public virtual ModuleTranslator CreateModule(ModuleDeclaration path)
         {
             return Parent.CreateModule(path);
         }
 
-        public virtual RoutineTranslator CreateRoutine(DeclateRoutine path)
+        public virtual RoutineTranslator CreateRoutine(RoutineDeclaration path)
         {
             return Parent.CreateRoutine(path);
         }
 
-        public virtual ClassTranslator CreateClass(DeclateClass path)
+        public virtual ClassTranslator CreateClass(ClassDeclaration path)
         {
             return Parent.CreateClass(path);
         }
 
-        public virtual PrimitiveTranslator CreatePrimitive(DeclateClass path)
+        public virtual PrimitiveTranslator CreatePrimitive(ClassDeclaration path)
         {
             return Parent.CreatePrimitive(path);
         }
 
-        public virtual void CreateEnum(DeclateEnum path)
+        public virtual void CreateEnum(EnumDeclaration path)
         {
             Parent.CreateEnum(path);
         }
 
-        public virtual void CreateVariant(DeclateVariant path)
+        public virtual void CreateVariant(VariantDeclaration path)
         {
             Parent.CreateVariant(path);
         }
@@ -314,7 +314,7 @@ namespace CliTranslate
 
         protected void GenerateLoad(ThisSymbol name, bool address)
         {
-            var c = name.ReturnType as DeclateClass;
+            var c = name.ReturnType as ClassDeclaration;
             var pe = c.PrimitiveType;
             Generator.Emit(OpCodes.Ldarg_0);
             return;
@@ -427,7 +427,7 @@ namespace CliTranslate
 
         protected void GenerateStore(ThisSymbol name, bool address)
         {
-            var c = name.ReturnType as DeclateClass;
+            var c = name.ReturnType as ClassDeclaration;
             var pe = c.PrimitiveType;
             Generator.Emit(OpCodes.Starg_S, 0);
             return;

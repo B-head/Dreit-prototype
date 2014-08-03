@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Daclate
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class DeclateRoutine : RoutineSymbol
+    public class RoutineDeclaration : RoutineSymbol
     {
         public TupleList AttributeAccess { get; private set; }
         public TupleList DecGenerics { get; private set; }
@@ -17,7 +17,7 @@ namespace AbstractSyntax.Daclate
         public Element ExplicitType { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
 
-        public DeclateRoutine(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, DirectiveList block)
+        public RoutineDeclaration(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, DirectiveList block)
             : base(tp, name, op, isFunc, block)
         {
             AttributeAccess = attr;
@@ -139,9 +139,9 @@ namespace AbstractSyntax.Daclate
                     {
                         _CallReturnType = ret[0].Exp.ReturnType;
                     }
-                    else if(CurrentScope is DeclateClass)
+                    else if(CurrentScope is ClassDeclaration)
                     {
-                        _CallReturnType = (DeclateClass)CurrentScope;
+                        _CallReturnType = (ClassDeclaration)CurrentScope;
                         IsDefaultThisReturn = true;
                     }
                     else

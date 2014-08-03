@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Symbol;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 
 namespace CliTranslate
 {
@@ -89,7 +89,7 @@ namespace CliTranslate
             }
         }
 
-        public override ModuleTranslator CreateModule(DeclateModule path)
+        public override ModuleTranslator CreateModule(ModuleDeclaration path)
         {
             return new ModuleTranslator(path, this, Module);
         }

@@ -7,17 +7,17 @@ namespace SyntacticAnalysis
     {
         private static Element Expression(SlimChainParser cp)
         {
-            return LeftAssign(cp);
+            return LeftPipeline(cp);
         }
 
-        private static Element LeftAssign(SlimChainParser cp)
+        private static Element LeftPipeline(SlimChainParser cp)
         {
-            return RightAssociative(cp, (tp, op, l, r) => new LeftAssign(tp, op, l, r), RightAssign, TokenType.LeftAssign);
+            return RightAssociative(cp, (tp, op, l, r) => new LeftPipeline(tp, op, l, r), RightPipeline, TokenType.LeftAssign);
         }
 
-        private static Element RightAssign(SlimChainParser cp)
+        private static Element RightPipeline(SlimChainParser cp)
         {
-            return LeftAssociative(cp, (tp, op, l, r) => new RightAssign(tp, op, l, r), TupleList, TokenType.RightAssign);
+            return LeftAssociative(cp, (tp, op, l, r) => new RightPipeline(tp, op, l, r), TupleList, TokenType.RightAssign);
         }
 
         private static Element TupleList(SlimChainParser cp)
@@ -43,13 +43,13 @@ namespace SyntacticAnalysis
 
         private static Element Logical(SlimChainParser cp)
         {
-            return RightAssociative(cp, (tp, op, l, r) => new Logical(tp, op, l, r), Condition, TokenType.And, TokenType.Or);
+            return RightAssociative(cp, (tp, op, l, r) => new Logical(tp, op, l, r), Compare, TokenType.And, TokenType.Or);
         }
 
-        private static Element Condition(SlimChainParser cp)
+        private static Element Compare(SlimChainParser cp)
         {
-            return RightAssociative(cp, (tp, op, l, r) => new Condition(tp, op, l, r), Addtive, TokenType.Equal, TokenType.NotEqual,
-                TokenType.LessThan, TokenType.LessThanOrEqual, TokenType.GreaterThan, TokenType.GreaterThanOrEqual, TokenType.Incompare);
+            return RightAssociative(cp, (tp, op, l, r) => new Compare(tp, op, l, r), Addtive, TokenType.Equal, TokenType.NotEqual,
+                TokenType.LessThan, TokenType.LessThanOrEqual, TokenType.GreaterThan, TokenType.GreaterThanOrEqual, TokenType.Incomparable);
         }
 
         private static Element Addtive(SlimChainParser cp)
@@ -83,7 +83,7 @@ namespace SyntacticAnalysis
         {
             var op = TokenType.Unknoun;
             var ret = cp.Begin
-                .Type(t => op = t.TokenType, TokenType.Refer, TokenType.Typeof).Lt()
+                .Type(t => op = t.TokenType, TokenType.Refer, TokenType.Typeof, TokenType.Reject).Lt()
                 .End(tp => new Postfix(tp, op, current));
             return ret == null ? MemberAccess(current, cp) : Postfix(ret, cp);
         }

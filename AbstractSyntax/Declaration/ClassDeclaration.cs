@@ -8,16 +8,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace AbstractSyntax.Daclate
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class DeclateClass : ClassSymbol
+    public class ClassDeclaration : ClassSymbol
     {
         public TupleList AttributeAccess { get; private set; }
         public TupleList DecGenerics { get; private set; }
         public TupleList InheritAccess { get; private set; }
 
-        public DeclateClass(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, DirectiveList block)
+        public ClassDeclaration(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, DirectiveList block)
             :base(tp, name, isTrait, block)
         {
             AttributeAccess = attr;

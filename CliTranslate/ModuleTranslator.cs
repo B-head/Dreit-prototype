@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Pragma;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 
 namespace CliTranslate
 {
@@ -17,7 +17,7 @@ namespace CliTranslate
         private TypeBuilder GlobalField;
         private MethodBuilder EntryContext;
 
-        public ModuleTranslator(DeclateModule path, Translator parent, ModuleBuilder module)
+        public ModuleTranslator(ModuleDeclaration path, Translator parent, ModuleBuilder module)
             : base(path, parent)
         {
             Module = module;
@@ -38,14 +38,14 @@ namespace CliTranslate
             return Module.DefineType(name + "@@lexical", TypeAttributes.SpecialName);
         }
 
-        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
+        public override RoutineTranslator CreateRoutine(RoutineDeclaration path)
         {
             var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual) | MethodAttributes.Static;
             var builder = GlobalField.DefineMethod(path.Name, attr);
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(DeclateClass path)
+        public override ClassTranslator CreateClass(ClassDeclaration path)
         {
             var cls = Root.GetTypeBuilder(path.InheritClass);
             var trait = Root.GetTypeBuilders(path.InheritTraits);
@@ -54,14 +54,14 @@ namespace CliTranslate
             return new ClassTranslator(path, this, builder);
         }
 
-        public override PrimitiveTranslator CreatePrimitive(DeclateClass path)
+        public override PrimitiveTranslator CreatePrimitive(ClassDeclaration path)
         {
             var attr = MakeTypeAttributes(path.Attribute, path.IsTrait);
             var builder = Module.DefineType(path.FullName, attr);
             return new PrimitiveTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(DeclateVariant path)
+        public override void CreateVariant(VariantDeclaration path)
         {
             var attr = MakeFieldAttributes(path.Attribute) | FieldAttributes.Static;
             var builder = GlobalField.DefineField(path.Name, Root.GetBuilder(path.ReturnType), attr);

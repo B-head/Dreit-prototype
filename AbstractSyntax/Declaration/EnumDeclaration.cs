@@ -5,12 +5,12 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Daclate
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class DeclateEnum : EnumSymbol
+    public class EnumDeclaration : EnumSymbol
     {
-        public DeclateEnum(TextPosition tp, string name, DirectiveList block)
+        public EnumDeclaration(TextPosition tp, string name, DirectiveList block)
             :base(tp, name, block)
         {
 

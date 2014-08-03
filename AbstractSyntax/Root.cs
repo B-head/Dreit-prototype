@@ -10,7 +10,7 @@ namespace AbstractSyntax
     [Serializable]
     public class Root : NameSpaceSymbol
     {
-        private NameSpaceSymbol BuiltInList;
+        private NameSpaceSymbol EmbedList;
         public CompileMessageManager MessageManager { get; private set; }
         internal TypeManager TypeManager { get; private set; }
         internal ConversionManager ConvManager { get; private set; }
@@ -39,21 +39,21 @@ namespace AbstractSyntax
         public Root()
         {
             Name = "global";
-            BuiltInList = new NameSpaceSymbol();
+            EmbedList = new NameSpaceSymbol();
             UndefinedOverLord = new OverLoadReference(this, null);
             TypeManager = new TypeManager();
             ConvManager = new ConversionManager(this);
             OpManager = new OperationManager(this);
             MessageManager = new CompileMessageManager();
             CreatePragma();
-            CreateBuiltInIdentifier();
-            AppendChild(BuiltInList);
+            CreateEmbedIdentifier();
+            AppendChild(EmbedList);
             AppendChild(TypeManager);
         }
 
         public void SemanticAnalysis()
         {
-            CreateBuildInOperator();
+            CreateEmbedOperator();
             TraversalCheckSemantic(this);
         }
 
@@ -68,22 +68,22 @@ namespace AbstractSyntax
 
         private void CreatePragma()
         {
-            BuiltInList.AppendChild(new PrimitivePragma("Object", PrimitivePragmaType.Object));
-            BuiltInList.AppendChild(new PrimitivePragma("String", PrimitivePragmaType.String));
-            BuiltInList.AppendChild(new PrimitivePragma("Boolean", PrimitivePragmaType.Boolean));
-            BuiltInList.AppendChild(new PrimitivePragma("Integer8", PrimitivePragmaType.Integer8));
-            BuiltInList.AppendChild(new PrimitivePragma("Integer16", PrimitivePragmaType.Integer16));
-            BuiltInList.AppendChild(new PrimitivePragma("Integer32", PrimitivePragmaType.Integer32));
-            BuiltInList.AppendChild(new PrimitivePragma("Integer64", PrimitivePragmaType.Integer64));
-            BuiltInList.AppendChild(new PrimitivePragma("Natural8", PrimitivePragmaType.Natural8));
-            BuiltInList.AppendChild(new PrimitivePragma("Natural16", PrimitivePragmaType.Natural16));
-            BuiltInList.AppendChild(new PrimitivePragma("Natural32", PrimitivePragmaType.Natural32));
-            BuiltInList.AppendChild(new PrimitivePragma("Natural64", PrimitivePragmaType.Natural64));
-            BuiltInList.AppendChild(new PrimitivePragma("Binary32", PrimitivePragmaType.Binary32));
-            BuiltInList.AppendChild(new PrimitivePragma("Binary64", PrimitivePragmaType.Binary64));
+            EmbedList.AppendChild(new PrimitivePragma("Object", PrimitivePragmaType.Object));
+            EmbedList.AppendChild(new PrimitivePragma("String", PrimitivePragmaType.String));
+            EmbedList.AppendChild(new PrimitivePragma("Boolean", PrimitivePragmaType.Boolean));
+            EmbedList.AppendChild(new PrimitivePragma("Integer8", PrimitivePragmaType.Integer8));
+            EmbedList.AppendChild(new PrimitivePragma("Integer16", PrimitivePragmaType.Integer16));
+            EmbedList.AppendChild(new PrimitivePragma("Integer32", PrimitivePragmaType.Integer32));
+            EmbedList.AppendChild(new PrimitivePragma("Integer64", PrimitivePragmaType.Integer64));
+            EmbedList.AppendChild(new PrimitivePragma("Natural8", PrimitivePragmaType.Natural8));
+            EmbedList.AppendChild(new PrimitivePragma("Natural16", PrimitivePragmaType.Natural16));
+            EmbedList.AppendChild(new PrimitivePragma("Natural32", PrimitivePragmaType.Natural32));
+            EmbedList.AppendChild(new PrimitivePragma("Natural64", PrimitivePragmaType.Natural64));
+            EmbedList.AppendChild(new PrimitivePragma("Binary32", PrimitivePragmaType.Binary32));
+            EmbedList.AppendChild(new PrimitivePragma("Binary64", PrimitivePragmaType.Binary64));
         }
 
-        private void CreateBuiltInIdentifier()
+        private void CreateEmbedIdentifier()
         {
             Void = new VoidSymbol();
             Error = new ErrorSymbol();
@@ -104,31 +104,31 @@ namespace AbstractSyntax
             Internal = new AttributeSymbol("internal", AttributeType.Internal);
             Protected = new AttributeSymbol("protected", AttributeType.Protected);
             Private = new AttributeSymbol("private", AttributeType.Private);
-            BuiltInList.AppendChild(Void);
-            BuiltInList.AppendChild(Unknown);
-            BuiltInList.AppendChild(Error);
-            BuiltInList.AppendChild(Refer);
-            BuiltInList.AppendChild(Typeof);
-            BuiltInList.AppendChild(Abstract);
-            BuiltInList.AppendChild(Final);
-            BuiltInList.AppendChild(Static);
-            BuiltInList.AppendChild(Public);
-            BuiltInList.AppendChild(Internal);
-            BuiltInList.AppendChild(Protected);
-            BuiltInList.AppendChild(Private);
-            BuiltInList.AppendChild(new BooleanSymbol(false));
-            BuiltInList.AppendChild(new BooleanSymbol(true));
+            EmbedList.AppendChild(Void);
+            EmbedList.AppendChild(Unknown);
+            EmbedList.AppendChild(Error);
+            EmbedList.AppendChild(Refer);
+            EmbedList.AppendChild(Typeof);
+            EmbedList.AppendChild(Abstract);
+            EmbedList.AppendChild(Final);
+            EmbedList.AppendChild(Static);
+            EmbedList.AppendChild(Public);
+            EmbedList.AppendChild(Internal);
+            EmbedList.AppendChild(Protected);
+            EmbedList.AppendChild(Private);
+            EmbedList.AppendChild(new BooleanSymbol(false));
+            EmbedList.AppendChild(new BooleanSymbol(true));
         }
 
-        private void CreateBuildInOperator()
+        private void CreateEmbedOperator()
         {
             var nt = GetBuildInNumberType();
-            CreateBuiltInCast(nt);
+            CreateEmbedCast(nt);
             CreateBuiltInMonadicOperator(nt);
             CreateBuiltInDyadicOperator(nt);
         }
 
-        private void CreateBuiltInCast(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
+        private void CreateEmbedCast(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
         {
             foreach(var a in nt.Keys)
             {
@@ -139,7 +139,7 @@ namespace AbstractSyntax
                         continue;
                     }
                     var p = new CastPragma(nt[b], a, b);
-                    BuiltInList.AppendChild(p);
+                    EmbedList.AppendChild(p);
                     ConvManager.Append(p);
                 }
             }
@@ -161,7 +161,7 @@ namespace AbstractSyntax
                     {
                         p = new MonadicOperatorPragma(t, a, a);
                     }
-                    BuiltInList.AppendChild(p);
+                    EmbedList.AppendChild(p);
                     OpManager.Append(p);
                 }
             }
@@ -189,7 +189,7 @@ namespace AbstractSyntax
                         {
                             p = new DyadicOperatorPragma(t, a, b, b);
                         }
-                        BuiltInList.AppendChild(p);
+                        EmbedList.AppendChild(p);
                         OpManager.Append(p);
                     }
                 }

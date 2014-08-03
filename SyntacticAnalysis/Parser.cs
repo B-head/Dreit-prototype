@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 using AbstractSyntax.Expression;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +10,12 @@ namespace SyntacticAnalysis
     {
         private delegate Element MakeDyadicExpression(TextPosition tp, TokenType op, Element left, Element right);
 
-        public static DeclateModule Parse(TokenCollection collection)
+        public static ModuleDeclaration Parse(TokenCollection collection)
         {
             var cp = new SlimChainParser(collection);
             var exp = RootDirectiveList(cp);
             var tp = collection.FirstPosition.AlterLength(collection.LastPosition);
-            return new DeclateModule(tp, exp, collection.GetName(), collection.Text, collection.ErrorToken);
+            return new ModuleDeclaration(tp, exp, collection.GetName(), collection.Text, collection.ErrorToken);
         }
 
         private static T CoalesceParser<T>(SlimChainParser cp, params TransferParser<T>[] func) where T : Element

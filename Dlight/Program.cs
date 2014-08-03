@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 using AbstractSyntax.Visualizer;
 using CliTranslate;
 using SyntacticAnalysis;
@@ -26,12 +26,12 @@ namespace Dlight
             {
                 return;
             }
-            //SyntaxVisualizer.TestShowVisualizer(root.Void);
+            SyntaxVisualizer.TestShowVisualizer(root.Void);
             var trans = SyntaxTranslator.ToStructure(root, import, fileName.Replace(".dl", ""));
             trans.Save();
         }
 
-        public static DeclateModule CompileFile(string fileName)
+        public static ModuleDeclaration CompileFile(string fileName)
         {
             string text = File.ReadAllText(fileName);
             var collection = Lexer.Lex(text, fileName);

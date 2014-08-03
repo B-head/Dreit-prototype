@@ -5,16 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Daclate
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class DeclateModule : NameSpaceSymbol
+    public class ModuleDeclaration : NameSpaceSymbol
     {
         public DirectiveList Directives { get; private set; }
         public string SourceText { get; private set; }
         public IReadOnlyList<Token> ErrorToken { get; private set; }
 
-        public DeclateModule(TextPosition tp, DirectiveList drcs, string name, string source, IReadOnlyList<Token> error)
+        public ModuleDeclaration(TextPosition tp, DirectiveList drcs, string name, string source, IReadOnlyList<Token> error)
             :base(tp)
         {
             Directives = drcs;

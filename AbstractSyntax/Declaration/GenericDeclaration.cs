@@ -4,14 +4,14 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Daclate
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class DeclateGeneric : GenericSymbol
+    public class GenericDeclaration : GenericSymbol
     {
         public Element SpecialTypeAccess { get; set; }
 
-        public DeclateGeneric(TextPosition tp, string name, Element special)
+        public GenericDeclaration(TextPosition tp, string name, Element special)
             :base(tp, name)
         {
             SpecialTypeAccess = special;

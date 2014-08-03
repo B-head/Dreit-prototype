@@ -33,7 +33,7 @@ namespace AbstractSyntax
             OpList.Add(TokenType.LessThanOrEqual, new List<RoutineSymbol>());
             OpList.Add(TokenType.GreaterThan, new List<RoutineSymbol>());
             OpList.Add(TokenType.GreaterThanOrEqual, new List<RoutineSymbol>());
-            OpList.Add(TokenType.Incompare, new List<RoutineSymbol>());
+            OpList.Add(TokenType.Incomparable, new List<RoutineSymbol>());
             OpList.Add(TokenType.Plus, new List<RoutineSymbol>());
             OpList.Add(TokenType.Minus, new List<RoutineSymbol>());
             OpList.Add(TokenType.Not, new List<RoutineSymbol>());

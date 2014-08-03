@@ -11,16 +11,16 @@ namespace SyntacticAnalysis
     {
         private static TransferParser<Element>[] primary = 
         { 
-            DeclateClass,
-            DeclateRoutine,
-            DeclateOperator,
-            DeclareVariant,
+            ClassDeclaration,
+            RoutineDeclaration,
+            OperatorDeclaration,
+            VariantDeclaration,
             IfStatement,
             LoopStatement,
             UnStatement,
-            ExpressionGroup,
+            GroupingExpression,
             StringLiteral,
-            NumberLiteral,
+            NumericLiteral,
             IdentifierAccess
         };
 
@@ -29,17 +29,17 @@ namespace SyntacticAnalysis
             return CoalesceParser(cp, primary);
         }
 
-        private static ExpressionGroup ExpressionGroup(SlimChainParser cp)
+        private static GroupingExpression GroupingExpression(SlimChainParser cp)
         {
             Element exp = null;
             return cp.Begin
                 .Type(TokenType.LeftParenthesis).Lt()
                 .Transfer(e => exp = e, Expression)
                 .Type(TokenType.RightParenthesis).Lt()
-                .End(tp => new ExpressionGroup(tp, exp));
+                .End(tp => new GroupingExpression(tp, exp));
         }
 
-        private static NumberLiteral NumberLiteral(SlimChainParser cp)
+        private static NumericLiteral NumericLiteral(SlimChainParser cp)
         {
             var integral = string.Empty;
             var fraction = string.Empty;
@@ -47,7 +47,7 @@ namespace SyntacticAnalysis
                 .Type(t => integral = t.Text, TokenType.DigitStartString).Lt()
                 .If(icp => icp.Type(TokenType.Access).Lt())
                 .Than(icp => icp.Type(t => fraction = t.Text, TokenType.DigitStartString).Lt())
-                .End(tp => new NumberLiteral(tp, integral, fraction));
+                .End(tp => new NumericLiteral(tp, integral, fraction));
         }
 
         private static StringLiteral StringLiteral(SlimChainParser cp)
@@ -73,24 +73,24 @@ namespace SyntacticAnalysis
                 .End(tp => new PlainText(tp, value));
         }
 
-        private static IdentifierAccess IdentifierAccess(SlimChainParser cp)
+        private static Identifier IdentifierAccess(SlimChainParser cp)
         {
             var isPragma = false;
             var value = string.Empty;
             return cp.Begin
                 .Opt.Type(t => isPragma = true, TokenType.Pragma).Lt()
                 .Type(t => value = t.Text, TokenType.LetterStartString).Lt()
-                .End(tp => new IdentifierAccess(tp, value, isPragma));
+                .End(tp => new Identifier(tp, value, isPragma));
         }
 
-        private static IdentifierAccess IdentifierAccess(SlimChainParser cp, params string[] match)
+        private static Identifier IdentifierAccess(SlimChainParser cp, params string[] match)
         {
             var isPragma = false;
             var value = string.Empty;
             return cp.Begin
                 .Opt.Type(t => isPragma = true, TokenType.Pragma).Lt()
                 .Text(t => value = t.Text, match).Lt()
-                .End(tp => new IdentifierAccess(tp, value, isPragma));
+                .End(tp => new Identifier(tp, value, isPragma));
         }
 
         private static UnStatement UnStatement(SlimChainParser cp)

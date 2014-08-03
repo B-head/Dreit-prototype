@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using AbstractSyntax.Literal;
@@ -142,7 +142,7 @@ namespace CliTranslate
             return null; //todo 対応するParameterStructureを返す。
         }
 
-        private GlobalContextStructure Translate(DeclateModule element)
+        private GlobalContextStructure Translate(ModuleDeclaration element)
         {
             var ret = new GlobalContextStructure(element.FullName);
             CollectChild(element, ret, element.Directives);
@@ -299,7 +299,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private DyadicOperationStructure Translate(Condition element)
+        private DyadicOperationStructure Translate(Compare element)
         {
             ExpressionStructure left;
             if(element.IsLeftConnection)
@@ -325,7 +325,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private AccessStructure Translate(IdentifierAccess element)
+        private AccessStructure Translate(Identifier element)
         {
             var call = RelayTranslate(element.CallScope);
             var rt = RelayTranslate(element.ReturnType);
@@ -356,7 +356,7 @@ namespace CliTranslate
             return null;
         }
 
-        private ValueStructure Translate(NumberLiteral element)
+        private ValueStructure Translate(NumericLiteral element)
         {
             var rt = RelayTranslate(element.ReturnType);
             var ret = new ValueStructure(rt, element.Parse());

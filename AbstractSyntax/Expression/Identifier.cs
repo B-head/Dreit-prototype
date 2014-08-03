@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Daclate;
+﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -9,14 +9,14 @@ using System.Linq;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class IdentifierAccess : Element
+    public class Identifier : Element
     {
         public string Value { get; private set; }
         public bool IsPragmaAccess { get; private set; }
         private bool? _IsTacitThis;
         private OverLoadReference _Reference;
 
-        public IdentifierAccess(TextPosition tp, string value, bool isPragma)
+        public Identifier(TextPosition tp, string value, bool isPragma)
             :base(tp)
         {
             Value = value;
@@ -35,7 +35,7 @@ namespace AbstractSyntax.Expression
                 {
                     _IsTacitThis = false;
                 }
-                else if (!(CurrentScope is DeclateRoutine)) //todo この条件が必要な理由を調べる。（忘れたｗ）
+                else if (!(CurrentScope is RoutineDeclaration)) //todo この条件が必要な理由を調べる。（忘れたｗ）
                 {
                     _IsTacitThis = false;
                 }

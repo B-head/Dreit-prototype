@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Daclate;
+﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Directive;
 using System;
 using System.Collections.Generic;

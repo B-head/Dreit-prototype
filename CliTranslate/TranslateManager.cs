@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using AbstractSyntax.Literal;
@@ -71,13 +71,13 @@ namespace CliTranslate
             TransDictionary.Add(scope, trans);
         }
 
-        private void SpreadTranslate(DeclateModule scope, Translator trans)
+        private void SpreadTranslate(ModuleDeclaration scope, Translator trans)
         {
             var temp = trans.CreateModule(scope);
             TransDictionary.Add(scope, temp);
         }
 
-        private void SpreadTranslate(DeclateClass scope, Translator trans)
+        private void SpreadTranslate(ClassDeclaration scope, Translator trans)
         {
             foreach (var v in scope.Inherit)
             {
@@ -95,7 +95,7 @@ namespace CliTranslate
             }
         }
 
-        private void SpreadTranslate(DeclateRoutine scope, Translator trans)
+        private void SpreadTranslate(RoutineDeclaration scope, Translator trans)
         {
             RoutineTranslator temp;
             if (scope.IsConstructor)
@@ -107,7 +107,7 @@ namespace CliTranslate
                 var cls = (ClassTranslator)trans;
                 temp = cls.CreateConstructor(scope);
                 TransDictionary.Add(scope, temp);
-                temp.CreateArguments(scope.DecArguments.Cast<DeclateArgument>());
+                temp.CreateArguments(scope.DecArguments.Cast<ArgumentDeclaration>());
                 return;
             }
             if (scope.IsDestructor)
@@ -126,10 +126,10 @@ namespace CliTranslate
                 RelaySpreadTranslate(v);
             }
             temp.CreateReturn(scope.CallReturnType);
-            temp.CreateArguments(scope.DecArguments.Cast<DeclateArgument>(), scope.ArgumentTypes);
+            temp.CreateArguments(scope.DecArguments.Cast<ArgumentDeclaration>(), scope.ArgumentTypes);
         }
 
-        private void SpreadTranslate(DeclateVariant scope, Translator trans)
+        private void SpreadTranslate(VariantDeclaration scope, Translator trans)
         {
             RelaySpreadTranslate(scope.ReturnType);
             trans.CreateVariant(scope);
@@ -186,19 +186,19 @@ namespace CliTranslate
             }
         }
 
-        private void Translate(DeclateModule element, Translator trans)
+        private void Translate(ModuleDeclaration element, Translator trans)
         {
             var temp = TransDictionary[element];
             ChildTranslate(element, temp);
         }
 
-        private void Translate(DeclateClass element, Translator trans)
+        private void Translate(ClassDeclaration element, Translator trans)
         {
             var temp = TransDictionary[element];
             Translate((dynamic)element.Block, temp);
         }
 
-        private void Translate(DeclateRoutine element, Translator trans)
+        private void Translate(RoutineDeclaration element, Translator trans)
         {
             var temp = TransDictionary[element];
             Translate((dynamic)element.Block, temp);
@@ -209,7 +209,7 @@ namespace CliTranslate
             }
         }
 
-        private void Translate(DeclateVariant element, Translator trans)
+        private void Translate(VariantDeclaration element, Translator trans)
         {
             Translate((dynamic)element.Ident, trans);
         }
@@ -303,7 +303,7 @@ namespace CliTranslate
             trans.GenerateEcho(element.Exp.ReturnType);
         }
 
-        private void Translate(NumberLiteral element, Translator trans)
+        private void Translate(NumericLiteral element, Translator trans)
         {
             dynamic number = element.Parse();
             trans.GeneratePrimitive(number);
@@ -340,7 +340,7 @@ namespace CliTranslate
             CallTranslate((dynamic)element.CallScope, trans);
         }
 
-        private void Translate(Condition element, Translator trans)
+        private void Translate(Compare element, Translator trans)
         {
             Translate((dynamic)element.Left, trans);
             if (element.IsRightConnection)
@@ -394,7 +394,7 @@ namespace CliTranslate
             return; //todo 参照や型情報を返すようにする。
         }
 
-        private void Translate(IdentifierAccess element, Translator trans)
+        private void Translate(Identifier element, Translator trans)
         {
             if (element.IsTacitThis)
             {
@@ -497,7 +497,7 @@ namespace CliTranslate
             return false;
         }
 
-        private bool TranslateAccess(IdentifierAccess element, Translator trans)
+        private bool TranslateAccess(Identifier element, Translator trans)
         {
             if (element.IsTacitThis)
             {
@@ -531,7 +531,7 @@ namespace CliTranslate
             TranslateBrunch((dynamic)element.Exp, trans, bfalse, !isnot);
         }
 
-        private void TranslateBrunch(Condition element, Translator trans, Label bfalse, bool isnot)
+        private void TranslateBrunch(Compare element, Translator trans, Label bfalse, bool isnot)
         {
             Translate((dynamic)element.Left, trans);
             if (element.IsRightConnection)

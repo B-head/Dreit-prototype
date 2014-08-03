@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Symbol;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 
 namespace CliTranslate
 {
@@ -19,7 +19,7 @@ namespace CliTranslate
         private MethodBuilder InitContext;
         private ILGenerator InitGenerator;
 
-        public ClassTranslator(DeclateClass path, Translator parent, TypeBuilder builder)
+        public ClassTranslator(ClassDeclaration path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
             Class = builder;
@@ -66,14 +66,14 @@ namespace CliTranslate
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
+        public override RoutineTranslator CreateRoutine(RoutineDeclaration path)
         {
             var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual);
             var builder = Class.DefineMethod(path.Name, attr);
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(DeclateClass path)
+        public override ClassTranslator CreateClass(ClassDeclaration path)
         {
             var cls = Root.GetTypeBuilder(path.InheritClass);
             var trait = Root.GetTypeBuilders(path.InheritTraits);
@@ -82,7 +82,7 @@ namespace CliTranslate
             return new ClassTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(DeclateVariant path)
+        public override void CreateVariant(VariantDeclaration path)
         {
             var type = Root.GetBuilder(path.ReturnType);
             var attr = MakeFieldAttributes(path.Attribute);

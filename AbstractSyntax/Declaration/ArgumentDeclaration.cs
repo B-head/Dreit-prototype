@@ -5,17 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Daclate
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class DeclateVariant : VariantSymbol
+    public class ArgumentDeclaration : ArgumentSymbol
     {
         public TupleList AttributeAccess { get; private set; }
-        public IdentifierAccess Ident { get; private set; }
-        public IdentifierAccess ExplicitType { get; private set; }
+        public Identifier Ident { get; private set; }
+        public Identifier ExplicitType { get; private set; }
 
-        public DeclateVariant(TextPosition tp, TupleList attr, IdentifierAccess ident, IdentifierAccess expl, bool isLet)
-            :base(tp, isLet)
+        public ArgumentDeclaration(TextPosition tp, TupleList attr, Identifier ident, Identifier expl)
+            : base(tp)
         {
             AttributeAccess = attr;
             Ident = ident;
@@ -39,11 +39,6 @@ namespace AbstractSyntax.Daclate
                 {
                     a.Add(v.OverLoad.FindDataType());
                 }
-                if (!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
-                {
-                    var p = NameResolution("public").FindDataType();
-                    a.Add(p);
-                }
                 _Attribute = a;
                 return _Attribute;
             }
@@ -53,7 +48,7 @@ namespace AbstractSyntax.Daclate
         {
             get
             {
-                if(_DataType != null)
+                if (_DataType != null)
                 {
                     return _DataType;
                 }
@@ -62,7 +57,7 @@ namespace AbstractSyntax.Daclate
                 {
                     _DataType = ExplicitType.OverLoad.FindDataType();
                 }
-                else if(caller != null && caller.HasCallTarget(this))
+                else if (caller != null && caller.HasCallTarget(this))
                 {
                     _DataType = caller.CallType;
                 }

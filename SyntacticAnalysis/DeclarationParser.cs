@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using System.Collections.Generic;
@@ -18,12 +18,12 @@ namespace SyntacticAnalysis
             "private",
         };
 
-        private static DeclateVariant DeclareVariant(SlimChainParser cp)
+        private static VariantDeclaration VariantDeclaration(SlimChainParser cp)
         {
             TupleList attr = null;
             var isLet = false;
-            IdentifierAccess ident = null;
-            IdentifierAccess expl = null;
+            Identifier ident = null;
+            Identifier expl = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Any(
@@ -33,10 +33,10 @@ namespace SyntacticAnalysis
                 .Transfer(e => ident = e, IdentifierAccess)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, IdentifierAccess))
-                .End(tp => new DeclateVariant(tp, attr, ident, expl, isLet));
+                .End(tp => new VariantDeclaration(tp, attr, ident, expl, isLet));
         }
 
-        private static DeclateRoutine DeclateRoutine(SlimChainParser cp)
+        private static RoutineDeclaration RoutineDeclaration(SlimChainParser cp)
         {
             TupleList attr = null;
             var isFunc = false;
@@ -57,10 +57,10 @@ namespace SyntacticAnalysis
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, NonTupleExpression))
                 .Transfer(e => block = e, icp => Block(icp, true))
-                .End(tp => new DeclateRoutine(tp, name, TokenType.Unknoun, isFunc, attr, generic, args, expl, block));
+                .End(tp => new RoutineDeclaration(tp, name, TokenType.Unknoun, isFunc, attr, generic, args, expl, block));
         }
 
-        private static DeclateRoutine DeclateOperator(SlimChainParser cp)
+        private static RoutineDeclaration OperatorDeclaration(SlimChainParser cp)
         {
             TupleList attr = null;
             var op = TokenType.Unknoun;
@@ -78,10 +78,10 @@ namespace SyntacticAnalysis
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, NonTupleExpression))
                 .Transfer(e => block = e, icp => Block(icp, true))
-                .End(tp => new DeclateRoutine(tp, name, op, false, attr, generic, args, expl, block));
+                .End(tp => new RoutineDeclaration(tp, name, op, false, attr, generic, args, expl, block));
         }
 
-        private static DeclateClass DeclateClass(SlimChainParser cp)
+        private static ClassDeclaration ClassDeclaration(SlimChainParser cp)
         {
             TupleList attr = null;
             var isTrait = false;
@@ -100,7 +100,7 @@ namespace SyntacticAnalysis
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, IdentifierAccess)))
                 .Transfer(e => block = e, icp => Block(icp, true))
-                .End(tp => new DeclateClass(tp, name, isTrait, attr, generic, inherit, block));
+                .End(tp => new ClassDeclaration(tp, name, isTrait, attr, generic, inherit, block));
         }
 
         private static TupleList AttributeList(SlimChainParser cp)
@@ -130,7 +130,7 @@ namespace SyntacticAnalysis
                 .Loop(icp =>
                 {
                     icp
-                    .Transfer(e => child.Add(e), DeclateGeneric)
+                    .Transfer(e => child.Add(e), GenericDeclaration)
                     .Type(TokenType.List).Lt();
                 })
                 .Type(TokenType.RightParenthesis).Lt()
@@ -138,7 +138,7 @@ namespace SyntacticAnalysis
             return ret ?? new TupleList();
         }
 
-        private static DeclateGeneric DeclateGeneric(SlimChainParser cp)
+        private static GenericDeclaration GenericDeclaration(SlimChainParser cp)
         {
             var name = string.Empty;
             Element special = null;
@@ -146,7 +146,7 @@ namespace SyntacticAnalysis
                 .Type(t => name = t.Text, TokenType.LetterStartString)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => special = e, NonTupleExpression))
-                .End(tp => new DeclateGeneric(tp, name, special));
+                .End(tp => new GenericDeclaration(tp, name, special));
         }
 
         private static TupleList ArgumentList(SlimChainParser cp)
@@ -157,7 +157,7 @@ namespace SyntacticAnalysis
                 .Loop(icp =>
                 {
                     icp
-                    .Transfer(e => child.Add(e), DeclateArgument)
+                    .Transfer(e => child.Add(e), ArgumentDeclaration)
                     .Type(TokenType.List).Lt();
                 })
                 .Type(TokenType.RightParenthesis).Lt()
@@ -166,17 +166,17 @@ namespace SyntacticAnalysis
         }
 
         //todo デフォルト引数に対応した専用の構文が必要。
-        private static DeclateArgument DeclateArgument(SlimChainParser cp)
+        private static ArgumentDeclaration ArgumentDeclaration(SlimChainParser cp)
         {
             TupleList attr = null;
-            IdentifierAccess ident = null;
-            IdentifierAccess expl = null;
+            Identifier ident = null;
+            Identifier expl = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Transfer(e => ident = e, IdentifierAccess)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, IdentifierAccess))
-                .End(tp => new DeclateArgument(tp, attr, ident, expl));
+                .End(tp => new ArgumentDeclaration(tp, attr, ident, expl));
         }
     }
 }

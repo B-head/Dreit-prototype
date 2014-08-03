@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Daclate;
+﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
@@ -8,11 +8,11 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class LeftAssign : CallRoutine
+    public class LeftPipeline : CallRoutine
     {
         public TokenType Operator { get; set; }
 
-        public LeftAssign(TextPosition tp, TokenType op, Element left, Element right)
+        public LeftPipeline(TextPosition tp, TokenType op, Element left, Element right)
             :base(tp, left, right)
         {
             Operator = op;
@@ -46,11 +46,11 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if(Right != null && Right is RightAssign)
+            if(Right != null && Right is RightPipeline)
             {
                 cmm.CompileError("not-collide-assign", this);
             }
-            if (Left != null && Left is RightAssign)
+            if (Left != null && Left is RightPipeline)
             {
                 cmm.CompileError("not-collide-assign", this);
             }

@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Daclate;
+﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
 using System;
@@ -182,7 +182,7 @@ namespace AbstractSyntax.Expression
                 case TypeMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
                 case TypeMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
             }
-            if (IsImmutableCall && !(Access is DeclateVariant))
+            if (IsImmutableCall && !(Access is VariantDeclaration))
             {
                 cmm.CompileError("not-mutable", this);
             }

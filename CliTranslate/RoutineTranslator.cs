@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Symbol;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 
 namespace CliTranslate
 {
@@ -63,21 +63,21 @@ namespace CliTranslate
             return Lexical.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
+        public override RoutineTranslator CreateRoutine(RoutineDeclaration path)
         {
             PrepareLexical();
             var builder = Lexical.DefineMethod(path.Name, MethodAttributes.PrivateScope | MethodAttributes.Final);
             return new RoutineTranslator(path, this, builder);
         }
 
-        public override ClassTranslator CreateClass(DeclateClass path)
+        public override ClassTranslator CreateClass(ClassDeclaration path)
         {
             PrepareLexical();
             var builder = Lexical.DefineNestedType(path.Name, TypeAttributes.NestedPrivate);
             return new ClassTranslator(path, this, builder);
         }
 
-        public override void CreateVariant(DeclateVariant path)
+        public override void CreateVariant(VariantDeclaration path)
         {
             PrepareLexical();
             //var builder = Lexical.DefineField(path.Name, Root.GetBuilder(type), FieldAttributes.PrivateScope);
@@ -112,7 +112,7 @@ namespace CliTranslate
             m.SetReturnType(t);
         }
 
-        public void CreateArguments(IEnumerable<DeclateArgument> args, IEnumerable<Scope> argst = null)
+        public void CreateArguments(IEnumerable<ArgumentDeclaration> args, IEnumerable<Scope> argst = null)
         {
             var next = Parent is PrimitiveTranslator ? 2 : 1;
             if (Method is MethodBuilder)

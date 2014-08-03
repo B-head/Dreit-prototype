@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AbstractSyntax;
 using AbstractSyntax.Pragma;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 
 namespace CliTranslate
 {
@@ -17,7 +17,7 @@ namespace CliTranslate
         internal Type Prim { get; private set; }
         private MethodBuilder ClassContext;
 
-        public PrimitiveTranslator(DeclateClass path, Translator parent, TypeBuilder builder)
+        public PrimitiveTranslator(ClassDeclaration path, Translator parent, TypeBuilder builder)
             : base(path, parent)
         {
             Class = builder;
@@ -65,7 +65,7 @@ namespace CliTranslate
             return Class.DefineNestedType(name + "@@lexical", TypeAttributes.SpecialName | TypeAttributes.NestedPrivate);
         }
 
-        public override RoutineTranslator CreateRoutine(DeclateRoutine path)
+        public override RoutineTranslator CreateRoutine(RoutineDeclaration path)
         {
             var attr = MakeMethodAttributes(path.Attribute, path.IsVirtual) | MethodAttributes.Static;
             var builder = Class.DefineMethod(path.Name, attr);

@@ -298,7 +298,7 @@ namespace SyntacticAnalysis
                 case "#": type = TokenType.Zone; break;
                 case "@": type = TokenType.Attribute; break;
                 case "$": type = TokenType.Lambda; break;
-                case "?": type = TokenType.Conditional; break;
+                case "?": type = TokenType.Reject; break;
                 case "!": type = TokenType.Template; break;
                 case "|": type = TokenType.Typeof; break;
                 case "&": type = TokenType.Refer; break;
@@ -332,9 +332,9 @@ namespace SyntacticAnalysis
                 case "..": type = TokenType.Range; break;
                 case "@@": type = TokenType.Pragma; break;
                 case "##": type = TokenType.Macro; break;
+                case "??": type = TokenType.Nullable; break;
                 case "||": type = TokenType.Or; break;
                 case "&&": type = TokenType.And; break;
-                case "??": type = TokenType.Coalesce; break;
                 case "!!": type = TokenType.Not; break;
                 case "++": type = TokenType.Plus; break;
                 case "--": type = TokenType.Minus; break;
@@ -370,12 +370,12 @@ namespace SyntacticAnalysis
             string sub = t.Read(0, 3);
             switch (sub)
             {
-                case "=<>": type = TokenType.Incompare; break;
-                case "=><": type = TokenType.Incompare; break;
-                case "<=>": type = TokenType.Incompare; break;
-                case ">=<": type = TokenType.Incompare; break;
-                case "<>=": type = TokenType.Incompare; break;
-                case "><=": type = TokenType.Incompare; break;
+                case "=<>": type = TokenType.Incomparable; break;
+                case "=><": type = TokenType.Incomparable; break;
+                case "<=>": type = TokenType.Incomparable; break;
+                case ">=<": type = TokenType.Incomparable; break;
+                case "<>=": type = TokenType.Incomparable; break;
+                case "><=": type = TokenType.Incomparable; break;
                 case "<<=": type = TokenType.LeftCompose | TokenType.LeftAssign; break;
                 case "=<<": type = TokenType.LeftCompose | TokenType.RightAssign; break;
                 case ">>=": type = TokenType.RightCompose | TokenType.LeftAssign; break;

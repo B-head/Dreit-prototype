@@ -6,13 +6,13 @@ using System.Numerics;
 namespace AbstractSyntax.Literal
 {
     [Serializable]
-    public class NumberLiteral : Element
+    public class NumericLiteral : Element
     {
         public string Integral { get; private set; }
         public string Fraction { get; private set; }
         private Scope _ReturnType;
 
-        public NumberLiteral(TextPosition tp, string integral, string fraction)
+        public NumericLiteral(TextPosition tp, string integral, string fraction)
             :base(tp)
         {
             Integral = integral;

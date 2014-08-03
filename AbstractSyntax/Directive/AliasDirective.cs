@@ -8,10 +8,10 @@ namespace AbstractSyntax.Directive
     [Serializable]
     public class AliasDirective : Scope
     {
-        public IdentifierAccess From { get; private set; }
-        public IdentifierAccess To { get; private set; }
+        public Identifier From { get; private set; }
+        public Identifier To { get; private set; }
 
-        public AliasDirective(TextPosition tp, IdentifierAccess from, IdentifierAccess to)
+        public AliasDirective(TextPosition tp, Identifier from, Identifier to)
             :base(tp)
         {
             From = from;

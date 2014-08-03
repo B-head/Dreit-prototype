@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Daclate;
+using AbstractSyntax.Declaration;
 using CliTranslate;
 using Dlight;
 using NUnit.Framework;
@@ -87,7 +87,7 @@ namespace DlightTest
             }
         }
 
-        private static DeclateModule CompileText(string fileName, string text)
+        private static ModuleDeclaration CompileText(string fileName, string text)
         {
             var collection = Lexer.Lex(text, fileName);
             return Parser.Parse(collection);

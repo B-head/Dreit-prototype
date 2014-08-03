@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Daclate;
+﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Statement;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
@@ -43,7 +43,7 @@ namespace AbstractSyntax.Directive
                 {
                     return true;
                 }
-                return Parent is NameSpaceSymbol && !(Parent is DeclateModule); 
+                return Parent is NameSpaceSymbol && !(Parent is ModuleDeclaration); 
             }
         }
 
