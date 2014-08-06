@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.DebuggerVisualizers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,104 +8,107 @@ using System.Windows.Forms;
 
 namespace AbstractSyntax.Visualizer
 {
-    public partial class SyntaxVisualizerForm : Form
+    partial class SyntaxVisualizerForm : Form
     {
-        private dynamic root;
-        private dynamic target;
-        private const BindingFlags showMenber = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        private IVisualizerObjectProvider Provider;
+        private SyntaxVisualizerTree Root;
+        private SyntaxVisualizerTree Target;
 
-        public SyntaxVisualizerForm(dynamic target)
+        public SyntaxVisualizerForm(IVisualizerObjectProvider provider)
         {
-            if(target == null)
+            if (provider == null)
             {
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException("provider");
             }
             InitializeComponent();
-            root = target.Root;
-            this.target = target;
+            Provider = provider;
+            var data = (InitalizeData)provider.GetObject();
+            Root = data.Root;
+            Target = data.Target;
         }
 
-        private void LoadHandler(object sender, EventArgs e)
+        private void ShownHandler(object sender, EventArgs e)
         {
-            AddTree(syntaxTree.Nodes, root);
-            SelectElement(target);
+            syntaxTree.BeginUpdate();
+            var node = AppendTree(syntaxTree.Nodes, Root);
+            AppendTrees(node, Root);
+            SelectElement(Target);
+            syntaxTree.EndUpdate();
         }
 
         private void AddSelectHandler(object sender, TreeViewEventArgs e)
         {
+            syntaxTree.BeginUpdate();
             var node = syntaxTree.SelectedNode;
             Text = node.Text;
-            ShowValueList(node.Tag);
+            ShowValueList((SyntaxVisualizerTree)node.Tag);
+            syntaxTree.EndUpdate();
         }
 
         private void ItemActivateHandler(object sender, EventArgs e)
         {
+            syntaxTree.BeginUpdate();
             var item = valueList.SelectedItems[0];
-            SelectElement(item.Tag);
+            SelectElement((SyntaxVisualizerTree)item.Tag);
+            syntaxTree.EndUpdate();
         }
 
-        private void AddTree(TreeNodeCollection nodes, dynamic data)
+        private void AfterExpandHandler(object sender, TreeViewEventArgs e)
+        {
+            syntaxTree.BeginUpdate();
+            foreach (TreeNode n in e.Node.Nodes)
+            {
+                AppendTrees(n, (SyntaxVisualizerTree)n.Tag);
+            }
+            syntaxTree.EndUpdate();
+        }
+
+        private TreeNode AppendTree(TreeNodeCollection nodes, SyntaxVisualizerTree data)
+        {
+            var node = nodes.Add(data.ToString());
+            node.Tag = data;
+            return node;
+        }
+
+        private void AppendTrees(TreeNode node, SyntaxVisualizerTree data)
+        {
+            var nodes = node.Nodes;
+            if(nodes.Count > 0)
+            {
+                return;
+            }
+            data.TransferValues(Provider);
+            foreach (var v in data.Child)
+            {
+                AppendTree(nodes, v);
+            }
+        }
+
+        private void ShowValueList(SyntaxVisualizerTree data)
         {
             if (data == null)
             {
-                var node = new TreeNode("<null>");
-                nodes.Add(node);
+                valueList.Items.Clear();
+                return;
             }
-            else
-            {
-                var node = new TreeNode(data.ToString());
-                node.Tag = data;
-                nodes.Add(node);
-                foreach (var v in data)
-                {
-                    AddTree(node.Nodes, v);
-                }
-            }
-        }
-
-        private void ShowValueList(dynamic data)
-        {
             valueList.BeginUpdate();
-            valueList.Groups.Clear();
             valueList.Items.Clear();
-            if (data != null)
+            data.TransferValues(Provider);
+            foreach(var v in data.PropertyValues)
             {
-                var type = data.GetType();
-                AddGroup(data, type);
+                AddValue(v.Key, v.Value);
             }
             valueList.EndUpdate();
         }
 
-        private ListViewGroup AddGroup(dynamic data, Type type)
-        {
-            var group = new ListViewGroup(type.Name);
-            group.Tag = type;
-            valueList.Groups.Add(group);
-            foreach (var v in type.GetProperties(showMenber))
-            {
-                object obj;
-                try
-                {
-                    obj = v.GetValue(data) ?? "<null>";
-                }
-                catch (Exception e)
-                {
-                    obj = e.ToString();
-                }
-                AddValue(group, v.Name, obj);
-            }
-            return group;
-        }
-
-        private ListViewItem AddValue(ListViewGroup group, string itemName, object obj)
+        private ListViewItem AddValue(string itemName, object obj)
         {
             var texts = new string[] { itemName, obj.ToString() };
             var item = new ListViewItem(texts);
             item.Tag = obj;
             valueList.Items.Add(item);
-            group.Items.Add(item);
             var list = obj as IReadOnlyList<object>;
-            if (obj.GetType().GetInterface("IReadOnlyTree`1") != null)
+            if (obj is SyntaxVisualizerTree)
             {
                 item.BackColor = Color.LightBlue;
             }
@@ -112,13 +116,13 @@ namespace AbstractSyntax.Visualizer
             {
                 for(var i = 0; i < list.Count; ++i)
                 {
-                    AddValue(group, itemName + "[" + i + "]", list[i]);
+                    AddValue(itemName + "[" + i + "]", list[i]);
                 }
             }
             return item;
         }
 
-        private void SelectElement(dynamic data)
+        private void SelectElement(SyntaxVisualizerTree data)
         {
             var node = GetTreeNode(data);
             if(node == null)
@@ -127,18 +131,17 @@ namespace AbstractSyntax.Visualizer
                 return;
             }
             node.EnsureVisible();
-            node.Expand();
             syntaxTree.SelectedNode = node;
         }
 
-        private TreeNode GetTreeNode(dynamic data)
+        private TreeNode GetTreeNode(SyntaxVisualizerTree data)
         {
             TreeNodeCollection nodes;
             if (data == null)
             {
                 return null;
             }
-            else if (data.Equals(root))
+            else if (data.Equals(Root))
             {
                 nodes = syntaxTree.Nodes;
             }
@@ -149,13 +152,15 @@ namespace AbstractSyntax.Visualizer
                 {
                     return null;
                 }
+                AppendTrees(node, data.Parent);
+                node.Expand();
                 nodes = node.Nodes;
             }
-            foreach(TreeNode v in nodes)
+            foreach(TreeNode node in nodes)
             {
-                if(v.Tag.Equals(data))
+                if(node.Tag.Equals(data))
                 {
-                    return v;
+                    return node;
                 }
             }
             return null;

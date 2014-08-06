@@ -29,7 +29,6 @@ namespace AbstractSyntax.Symbol
             _Attribute = new List<Scope>();
             _Generics = new List<GenericSymbol>();
             _Arguments = new List<ArgumentSymbol>();
-            _ArgumentTypes = new List<Scope>();
             AppendChild(Block);
         }
 
@@ -72,7 +71,21 @@ namespace AbstractSyntax.Symbol
 
         public virtual IReadOnlyList<Scope> ArgumentTypes
         {
-            get { return _ArgumentTypes; }
+            get
+            {
+                if (_ArgumentTypes != null)
+                {
+                    return _ArgumentTypes;
+                }
+                var a = new List<Scope>();
+                foreach (var v in Arguments)
+                {
+                    var temp = v.ReturnType;
+                    a.Add(temp);
+                }
+                _ArgumentTypes = a;
+                return _ArgumentTypes;
+            }
         }
 
         public override Scope CallReturnType
@@ -100,6 +113,10 @@ namespace AbstractSyntax.Symbol
             get
             {
                 var cls = GetParent<ClassSymbol>();
+                if(cls == null)
+                {
+                    return null;
+                }
                 if (cls.InheritClass == null)
                 {
                     return null;

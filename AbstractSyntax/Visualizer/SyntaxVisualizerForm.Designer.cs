@@ -48,6 +48,7 @@
             this.syntaxTree.Name = "syntaxTree";
             this.syntaxTree.Size = new System.Drawing.Size(602, 661);
             this.syntaxTree.TabIndex = 0;
+            this.syntaxTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.AfterExpandHandler);
             this.syntaxTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AddSelectHandler);
             // 
             // valueList
@@ -108,7 +109,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "SyntaxVisualizerForm";
             this.Text = "SyntaxVisualizerForm";
-            this.Load += new System.EventHandler(this.LoadHandler);
+            this.Shown += new System.EventHandler(this.ShownHandler);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

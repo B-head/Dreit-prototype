@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="Symbol\VoidSymbol.cs" />
     <Compile Include="Visualizer\SyntaxVisualizerSource.cs" />
+    <Compile Include="Visualizer\SyntaxVisualizerTree.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Visualizer\SyntaxVisualizerForm.resx">

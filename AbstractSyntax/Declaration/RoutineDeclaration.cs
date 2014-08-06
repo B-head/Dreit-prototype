@@ -75,7 +75,7 @@ namespace AbstractSyntax.Declaration
         {
             get
             {
-                if (_ArgumentTypes != null)
+                if (_Arguments != null)
                 {
                     return _Arguments;
                 }
@@ -86,25 +86,6 @@ namespace AbstractSyntax.Declaration
                 }
                 _Arguments = a;
                 return _Arguments;
-            }
-        }
-
-        public override IReadOnlyList<Scope> ArgumentTypes
-        {
-            get
-            {
-                if (_ArgumentTypes != null)
-                {
-                    return _ArgumentTypes;
-                }
-                var a = new List<Scope>();
-                foreach (var v in DecArguments)
-                {
-                    var temp = v.ReturnType;
-                    a.Add(temp);
-                }
-                _ArgumentTypes = a;
-                return _ArgumentTypes;
             }
         }
 

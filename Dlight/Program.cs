@@ -26,7 +26,6 @@ namespace Dlight
             {
                 return;
             }
-            SyntaxVisualizer.TestShowVisualizer(root.Void);
             var trans = SyntaxTranslator.ToStructure(root, import, fileName.Replace(".dl", ""));
             trans.Save();
         }

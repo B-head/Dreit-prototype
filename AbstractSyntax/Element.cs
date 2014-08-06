@@ -10,7 +10,7 @@ namespace AbstractSyntax
 {
     [DebuggerVisualizer(typeof(SyntaxVisualizer), typeof(SyntaxVisualizerSource))]
     [Serializable]
-    public abstract class Element : MarshalByRefObject, IReadOnlyTree<Element>
+    public abstract class Element : IReadOnlyTree<Element>
     {
         private Root _Root;
         private Scope _CurrentScope;

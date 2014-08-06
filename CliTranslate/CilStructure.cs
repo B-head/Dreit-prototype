@@ -10,7 +10,7 @@ namespace CliTranslate
 {
     [DebuggerVisualizer(typeof(SyntaxVisualizer), typeof(SyntaxVisualizerSource))]
     [Serializable]
-    public abstract class CilStructure : MarshalByRefObject, IReadOnlyTree<CilStructure>
+    public abstract class CilStructure : IReadOnlyTree<CilStructure>
     {
         private RootStructure _Root;
         private List<CilStructure> Child;
