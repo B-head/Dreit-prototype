@@ -27,4 +27,14 @@ class Random //クラス定義
 	}
 }
 ```
+
+```
+//FizzBuzz
+loop i <= 15 on var i := 1 by i += 1 {
+    echo if i % 15 = 0 :: "fizzbuzz"
+    else if i % 3 = 0 :: "fizz"
+    else if i % 5 = 0 :: "buzz"
+    else "{ i }"
+}
+```
 このほかのコード例は、[DlightTest](https://github.com/B-head/Dlight-prototype/tree/master/DlightTest)のテストケースを御覧ください。
