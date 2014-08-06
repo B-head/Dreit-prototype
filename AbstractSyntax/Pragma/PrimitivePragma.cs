@@ -10,9 +10,9 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class PrimitivePragma : ClassSymbol
     {
-        public PrimitivePragmaType BasePrimitiveType { get; private set; }
+        public CastPragmaType BasePrimitiveType { get; private set; }
 
-        public PrimitivePragma(string name, PrimitivePragmaType type)
+        public PrimitivePragma(string name, CastPragmaType type)
         {
             Name = "@@" + name;
             BasePrimitiveType = type;

@@ -41,14 +41,14 @@ namespace CliTranslate
         {
             var cg = CurrentContainer.GainGenerator();
             cg.BeginScope();
-            On.BuildCode();
+            PopBuildCode(On);
             cg.GenerateJump(OpCodes.Br, PlungeLabel);
             cg.MarkLabel(ContinueLabel);
-            By.BuildCode();
+            PopBuildCode(By);
             cg.MarkLabel(PlungeLabel);
             Condition.BuildCode();
             cg.GenerateJump(OpCodes.Brfalse, BreakLabel);
-            Block.BuildCode();
+            PopBuildCode(Block);
             cg.GenerateJump(OpCodes.Br, ContinueLabel);
             cg.MarkLabel(BreakLabel);
             cg.EndScope();

@@ -38,12 +38,6 @@ namespace CliTranslate
             Info = Builder;
         }
 
-        internal override void BuildCall()
-        {
-            var cg = CurrentContainer.GainGenerator();
-            cg.GenerateLoad(this); //todo ストアどうしようか。
-        }
-
         internal FieldInfo GainField()
         {
             return Info;

@@ -68,19 +68,19 @@ namespace AbstractSyntax
 
         private void CreatePragma()
         {
-            EmbedList.AppendChild(new PrimitivePragma("Object", PrimitivePragmaType.Object));
-            EmbedList.AppendChild(new PrimitivePragma("String", PrimitivePragmaType.String));
-            EmbedList.AppendChild(new PrimitivePragma("Boolean", PrimitivePragmaType.Boolean));
-            EmbedList.AppendChild(new PrimitivePragma("Integer8", PrimitivePragmaType.Integer8));
-            EmbedList.AppendChild(new PrimitivePragma("Integer16", PrimitivePragmaType.Integer16));
-            EmbedList.AppendChild(new PrimitivePragma("Integer32", PrimitivePragmaType.Integer32));
-            EmbedList.AppendChild(new PrimitivePragma("Integer64", PrimitivePragmaType.Integer64));
-            EmbedList.AppendChild(new PrimitivePragma("Natural8", PrimitivePragmaType.Natural8));
-            EmbedList.AppendChild(new PrimitivePragma("Natural16", PrimitivePragmaType.Natural16));
-            EmbedList.AppendChild(new PrimitivePragma("Natural32", PrimitivePragmaType.Natural32));
-            EmbedList.AppendChild(new PrimitivePragma("Natural64", PrimitivePragmaType.Natural64));
-            EmbedList.AppendChild(new PrimitivePragma("Binary32", PrimitivePragmaType.Binary32));
-            EmbedList.AppendChild(new PrimitivePragma("Binary64", PrimitivePragmaType.Binary64));
+            EmbedList.AppendChild(new PrimitivePragma("Object", CastPragmaType.Object));
+            EmbedList.AppendChild(new PrimitivePragma("String", CastPragmaType.String));
+            EmbedList.AppendChild(new PrimitivePragma("Boolean", CastPragmaType.Boolean));
+            EmbedList.AppendChild(new PrimitivePragma("Integer8", CastPragmaType.Integer8));
+            EmbedList.AppendChild(new PrimitivePragma("Integer16", CastPragmaType.Integer16));
+            EmbedList.AppendChild(new PrimitivePragma("Integer32", CastPragmaType.Integer32));
+            EmbedList.AppendChild(new PrimitivePragma("Integer64", CastPragmaType.Integer64));
+            EmbedList.AppendChild(new PrimitivePragma("Natural8", CastPragmaType.Natural8));
+            EmbedList.AppendChild(new PrimitivePragma("Natural16", CastPragmaType.Natural16));
+            EmbedList.AppendChild(new PrimitivePragma("Natural32", CastPragmaType.Natural32));
+            EmbedList.AppendChild(new PrimitivePragma("Natural64", CastPragmaType.Natural64));
+            EmbedList.AppendChild(new PrimitivePragma("Binary32", CastPragmaType.Binary32));
+            EmbedList.AppendChild(new PrimitivePragma("Binary64", CastPragmaType.Binary64));
         }
 
         private void CreateEmbedIdentifier()
@@ -128,7 +128,7 @@ namespace AbstractSyntax
             CreateBuiltInDyadicOperator(nt);
         }
 
-        private void CreateEmbedCast(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
+        private void CreateEmbedCast(IReadOnlyDictionary<ClassSymbol, CastPragmaType> nt)
         {
             foreach(var a in nt.Keys)
             {
@@ -145,12 +145,12 @@ namespace AbstractSyntax
             }
         }
 
-        private void CreateBuiltInMonadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
+        private void CreateBuiltInMonadicOperator(IReadOnlyDictionary<ClassSymbol, CastPragmaType> nt)
         {
             var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
             foreach (var a in nt.Keys)
             {
-                foreach (MonadicOperatorPragmaType t in Enum.GetValues(typeof(MonadicOperatorPragmaType)))
+                foreach (TokenType t in MonadicOperatorPragma.EnumOperator())
                 {
                     MonadicOperatorPragma p;
                     if (MonadicOperatorPragma.HasCondition(t))
@@ -167,14 +167,14 @@ namespace AbstractSyntax
             }
         }
 
-        private void CreateBuiltInDyadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> nt)
+        private void CreateBuiltInDyadicOperator(IReadOnlyDictionary<ClassSymbol, CastPragmaType> nt)
         {
             var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
             foreach (var a in nt.Keys)
             {
                 foreach (var b in nt.Keys)
                 {
-                    foreach (DyadicOperatorPragmaType t in Enum.GetValues(typeof(DyadicOperatorPragmaType)))
+                    foreach (TokenType t in DyadicOperatorPragma.EnumOperator())
                     {
                         DyadicOperatorPragma p;
                         if (DyadicOperatorPragma.HasCondition(t))
@@ -196,19 +196,19 @@ namespace AbstractSyntax
             }
         }
 
-        private IReadOnlyDictionary<ClassSymbol, PrimitivePragmaType> GetBuildInNumberType()
+        private IReadOnlyDictionary<ClassSymbol, CastPragmaType> GetBuildInNumberType()
         {
-            var ret = new Dictionary<ClassSymbol, PrimitivePragmaType>();
-            ret.Add((ClassSymbol)NameResolution("SByte").FindDataType(), PrimitivePragmaType.Integer8);
-            ret.Add((ClassSymbol)NameResolution("Int16").FindDataType(), PrimitivePragmaType.Natural16);
-            ret.Add((ClassSymbol)NameResolution("Int32").FindDataType(), PrimitivePragmaType.Integer32);
-            ret.Add((ClassSymbol)NameResolution("Int64").FindDataType(), PrimitivePragmaType.Integer64);
-            ret.Add((ClassSymbol)NameResolution("Byte").FindDataType(), PrimitivePragmaType.Natural8);
-            ret.Add((ClassSymbol)NameResolution("UInt16").FindDataType(), PrimitivePragmaType.Natural16);
-            ret.Add((ClassSymbol)NameResolution("UInt32").FindDataType(), PrimitivePragmaType.Natural32);
-            ret.Add((ClassSymbol)NameResolution("UInt64").FindDataType(), PrimitivePragmaType.Natural64);
-            ret.Add((ClassSymbol)NameResolution("Single").FindDataType(), PrimitivePragmaType.Binary32);
-            ret.Add((ClassSymbol)NameResolution("Double").FindDataType(), PrimitivePragmaType.Binary64);
+            var ret = new Dictionary<ClassSymbol, CastPragmaType>();
+            ret.Add((ClassSymbol)NameResolution("SByte").FindDataType(), CastPragmaType.Integer8);
+            ret.Add((ClassSymbol)NameResolution("Int16").FindDataType(), CastPragmaType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("Int32").FindDataType(), CastPragmaType.Integer32);
+            ret.Add((ClassSymbol)NameResolution("Int64").FindDataType(), CastPragmaType.Integer64);
+            ret.Add((ClassSymbol)NameResolution("Byte").FindDataType(), CastPragmaType.Natural8);
+            ret.Add((ClassSymbol)NameResolution("UInt16").FindDataType(), CastPragmaType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("UInt32").FindDataType(), CastPragmaType.Natural32);
+            ret.Add((ClassSymbol)NameResolution("UInt64").FindDataType(), CastPragmaType.Natural64);
+            ret.Add((ClassSymbol)NameResolution("Single").FindDataType(), CastPragmaType.Binary32);
+            ret.Add((ClassSymbol)NameResolution("Double").FindDataType(), CastPragmaType.Binary64);
             return ret;
         }
     }

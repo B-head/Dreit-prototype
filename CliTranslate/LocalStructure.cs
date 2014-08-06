@@ -19,7 +19,6 @@ namespace CliTranslate
         public LocalStructure(TypeStructure dt)
         {
             DataType = dt;
-            AppendChild(DataType);
         }
 
         public LocalStructure(string name, TypeStructure dt)
@@ -32,12 +31,6 @@ namespace CliTranslate
         {
             var cg = CurrentContainer.GainGenerator();
             Builder = cg.CreateLocal(DataType);
-        }
-
-        internal override void BuildCall()
-        {
-            var cg = CurrentContainer.GainGenerator();
-            cg.GenerateLoad(this); //todo ストアどうしようか。
         }
 
         internal LocalBuilder GainLocal()

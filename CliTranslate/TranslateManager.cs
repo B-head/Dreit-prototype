@@ -458,17 +458,17 @@ namespace CliTranslate
         {
             switch (call.CalculateType)
             {
-                case DyadicOperatorPragmaType.Add: trans.GenerateControl(OpCodes.Add); break;
-                case DyadicOperatorPragmaType.Sub: trans.GenerateControl(OpCodes.Sub); break;
-                case DyadicOperatorPragmaType.Mul: trans.GenerateControl(OpCodes.Mul); break;
-                case DyadicOperatorPragmaType.Div: trans.GenerateControl(OpCodes.Div); break;
-                case DyadicOperatorPragmaType.Mod: trans.GenerateControl(OpCodes.Rem); break;
-                case DyadicOperatorPragmaType.EQ: trans.GenerateControl(OpCodes.Ceq); break;
-                case DyadicOperatorPragmaType.NE: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
-                case DyadicOperatorPragmaType.LT: trans.GenerateControl(OpCodes.Clt); break;
-                case DyadicOperatorPragmaType.LE: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
-                case DyadicOperatorPragmaType.GT: trans.GenerateControl(OpCodes.Cgt); break;
-                case DyadicOperatorPragmaType.GE: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case TokenType.Add: trans.GenerateControl(OpCodes.Add); break;
+                case TokenType.Subtract: trans.GenerateControl(OpCodes.Sub); break;
+                case TokenType.Multiply: trans.GenerateControl(OpCodes.Mul); break;
+                case TokenType.Divide: trans.GenerateControl(OpCodes.Div); break;
+                case TokenType.Modulo: trans.GenerateControl(OpCodes.Rem); break;
+                case TokenType.Equal: trans.GenerateControl(OpCodes.Ceq); break;
+                case TokenType.NotEqual: trans.GenerateControl(OpCodes.Ceq); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case TokenType.LessThan: trans.GenerateControl(OpCodes.Clt); break;
+                case TokenType.LessThanOrEqual: trans.GenerateControl(OpCodes.Cgt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
+                case TokenType.GreaterThan: trans.GenerateControl(OpCodes.Cgt); break;
+                case TokenType.GreaterThanOrEqual: trans.GenerateControl(OpCodes.Clt); trans.GenerateControl(OpCodes.Ldc_I4_1); trans.GenerateControl(OpCodes.Xor); break;
                 default: throw new ArgumentException();
             }
         }
@@ -478,16 +478,16 @@ namespace CliTranslate
             var prim = call.PrimitiveType;
             switch (prim)
             {
-                case PrimitivePragmaType.Integer8: trans.GenerateControl(OpCodes.Conv_I1); break;
-                case PrimitivePragmaType.Integer16: trans.GenerateControl(OpCodes.Conv_I2); break;
-                case PrimitivePragmaType.Integer32: trans.GenerateControl(OpCodes.Conv_I4); break;
-                case PrimitivePragmaType.Integer64: trans.GenerateControl(OpCodes.Conv_I8); break;
-                case PrimitivePragmaType.Natural8: trans.GenerateControl(OpCodes.Conv_U1); break;
-                case PrimitivePragmaType.Natural16: trans.GenerateControl(OpCodes.Conv_U2); break;
-                case PrimitivePragmaType.Natural32: trans.GenerateControl(OpCodes.Conv_U4); break;
-                case PrimitivePragmaType.Natural64: trans.GenerateControl(OpCodes.Conv_U8); break;
-                case PrimitivePragmaType.Binary32: trans.GenerateControl(OpCodes.Conv_R4); break;
-                case PrimitivePragmaType.Binary64: trans.GenerateControl(OpCodes.Conv_R8); break;
+                case CastPragmaType.Integer8: trans.GenerateControl(OpCodes.Conv_I1); break;
+                case CastPragmaType.Integer16: trans.GenerateControl(OpCodes.Conv_I2); break;
+                case CastPragmaType.Integer32: trans.GenerateControl(OpCodes.Conv_I4); break;
+                case CastPragmaType.Integer64: trans.GenerateControl(OpCodes.Conv_I8); break;
+                case CastPragmaType.Natural8: trans.GenerateControl(OpCodes.Conv_U1); break;
+                case CastPragmaType.Natural16: trans.GenerateControl(OpCodes.Conv_U2); break;
+                case CastPragmaType.Natural32: trans.GenerateControl(OpCodes.Conv_U4); break;
+                case CastPragmaType.Natural64: trans.GenerateControl(OpCodes.Conv_U8); break;
+                case CastPragmaType.Binary32: trans.GenerateControl(OpCodes.Conv_R4); break;
+                case CastPragmaType.Binary64: trans.GenerateControl(OpCodes.Conv_R8); break;
                 default: throw new ArgumentException();
             }
         }

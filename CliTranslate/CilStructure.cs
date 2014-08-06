@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,9 +56,31 @@ namespace CliTranslate
 
         internal void ChildBuildCode(CilStructure stru)
         {
-            foreach (var v in stru)
+            for (var i = 0; i < Child.Count; ++i)
             {
-                v.BuildCode();
+                if(i == Child.Count - 1)
+                {
+                    Child[i].BuildCode();
+                }
+                else
+                {
+                    PopBuildCode(Child[i]);
+                }
+            }
+        }
+
+        protected void PopBuildCode(CilStructure cil)
+        {
+            cil.BuildCode();
+            var exp = cil as ExpressionStructure;
+            if(exp == null)
+            {
+                return;
+            }
+            if(exp.ResultType.Name != "void")
+            {
+                var cg = CurrentContainer.GainGenerator();
+                cg.GenerateControl(OpCodes.Pop);
             }
         }
 

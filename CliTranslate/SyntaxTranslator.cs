@@ -142,6 +142,31 @@ namespace CliTranslate
             return null; //todo 対応するParameterStructureを返す。
         }
 
+        private LoadStoreStructure Translate(PropertyPragma element)
+        {
+            var variant = RelayTranslate(element.Variant);
+            var ret = new LoadStoreStructure(variant, element.IsSet);
+            return ret;
+        }
+
+        private CastStructure Translate(CastPragma element)
+        {
+            var ret = new CastStructure(element.PrimitiveType);
+            return ret;
+        }
+
+        private OperationStructure Translate(MonadicOperatorPragma element)
+        {
+            var ret = new OperationStructure(element.CalculateType);
+            return ret;
+        }
+
+        private OperationStructure Translate(DyadicOperatorPragma element)
+        {
+            var ret = new OperationStructure(element.CalculateType);
+            return ret;
+        }
+
         private GlobalContextStructure Translate(ModuleDeclaration element)
         {
             var ret = new GlobalContextStructure(element.FullName);
@@ -187,16 +212,15 @@ namespace CliTranslate
 
         private CilStructure Translate(VariantSymbol element, FieldInfo info = null)
         {
+            var attr = element.Attribute.MakeFieldAttributes();
+            var dt = RelayTranslate(element.CallReturnType);
             if (element.IsField || element.IsGlobal)
             {
-                var attr = element.Attribute.MakeFieldAttributes();
-                var dt = RelayTranslate(element.CallReturnType);
                 var ret = new FieldStructure(element.Name, attr, dt, info);
                 return ret;
             }
             else
             {
-                var dt = RelayTranslate(element.CallReturnType);
                 var ret = new LocalStructure(element.Name, dt);
                 return ret;
             }
@@ -275,8 +299,8 @@ namespace CliTranslate
         private CallStructure Translate(CallRoutine element)
         {
             var call = RelayTranslate(element.CallScope);
-            var access = RelayTranslate(element.Access) as AccessStructure;
-            var pre = access == null ? null : access.Pre;
+            var access = RelayTranslate(element.Access);
+            var pre = access is AccessStructure ? access.Pre: null;
             CallStructure ret;
             if (element.IsCalculate)
             {
@@ -288,13 +312,13 @@ namespace CliTranslate
                 var args = new List<ExpressionStructure>();
                 args.Add(cal);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, args);
+                ret = new CallStructure(rt, call, pre, null, args);
             }
             else
             {
                 var args = CollectList<ExpressionStructure>(element.Arguments);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, args);
+                ret = new CallStructure(rt, call, pre, access, args);
             }
             return ret;
         }

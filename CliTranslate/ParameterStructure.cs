@@ -36,12 +36,6 @@ namespace CliTranslate
             Builder = builder;
         }
 
-        internal override void BuildCall()
-        {
-            var cg = CurrentContainer.GainGenerator();
-            cg.GenerateLoad(this); //todo ストアどうしようか。
-        }
-
         internal int GainPosition()
         {
             return Builder.Position;

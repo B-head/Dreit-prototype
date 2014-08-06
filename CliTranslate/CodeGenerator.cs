@@ -69,14 +69,19 @@ namespace CliTranslate
             var sbc = typeof(StringBuilder).GetConstructor(Type.EmptyTypes);
             var sba = typeof(StringBuilder).GetMethod("Append", new Type[] { typeof(string) });
             var sbts = typeof(StringBuilder).GetMethod("ToString", Type.EmptyTypes);
-            var ts = typeof(object).GetMethod("ToString", Type.EmptyTypes);
             var lo = Generator.DeclareLocal(typeof(StringBuilder));
             Generator.Emit(OpCodes.Newobj, sbc);
             Generator.Emit(OpCodes.Stloc, lo);
             foreach(var v in texts)
             {
+                var exp = (ExpressionStructure)v;
                 Generator.Emit(OpCodes.Ldloc, lo);
-                v.BuildCode();
+                exp.BuildCode();
+                if(exp.ResultType.GainType().IsValueType)
+                {
+                    Generator.Emit(OpCodes.Box, exp.ResultType.GainType());
+                }
+                var ts = typeof(object).GetMethod("ToString", Type.EmptyTypes);
                 Generator.Emit(OpCodes.Callvirt, ts);
                 Generator.Emit(OpCodes.Call, sba);
             }

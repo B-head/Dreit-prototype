@@ -11,10 +11,10 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public bool IsLet { get; private set; }
+        public PropertyPragma Getter { get; private set; }
+        public PropertyPragma Setter { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _DataType;
-        private PropertyPragma Getter;
-        private PropertyPragma Setter;
 
         protected VariantSymbol()
         {

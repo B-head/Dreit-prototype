@@ -22,8 +22,9 @@ namespace CliTranslate
 
         internal override void BuildCode()
         {
+            var cg = CurrentContainer.GainGenerator();
             Expression.BuildCode();
-            Call.BuildCall();
+            Call.BuildCall(cg);
         }
     }
 }

@@ -25,8 +25,16 @@ namespace CliTranslate
             AppendChild(GlobalField);
             var mattr = MethodAttributes.PrivateScope | MethodAttributes.SpecialName | MethodAttributes.Static;
             var arg = new List<ParameterStructure>();
-            GlobalContext = new MethodStructure("@@global", mattr, gnr, arg, null);
+            var gnr2 = new List<GenericParameterStructure>();
+            GlobalContext = new MethodStructure("@@global", mattr, gnr2, arg, null);
             GlobalField.AppendChild(GlobalContext);
+        }
+
+        internal override void BuildCode()
+        {
+            var cg = CurrentContainer.GainGenerator();
+            GlobalContext.BuildCall(cg);
+            ChildBuildCode(this);
         }
 
         internal override CodeGenerator GainGenerator()

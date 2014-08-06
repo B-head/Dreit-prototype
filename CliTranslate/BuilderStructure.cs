@@ -31,7 +31,7 @@ namespace CliTranslate
             return;
         }
 
-        internal virtual void BuildCall()
+        internal virtual void BuildCall(CodeGenerator cg)
         {
             throw new NotSupportedException();
         }

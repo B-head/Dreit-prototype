@@ -22,11 +22,12 @@ namespace CliTranslate
 
         internal override void BuildCode()
         {
+            var cg = CurrentContainer.GainGenerator();
             if (Pre != null)
             {
                 Pre.BuildCode();
             }
-            Call.BuildCall();
+            Call.BuildCall(cg);
         }
     }
 }

@@ -50,12 +50,15 @@ namespace CliTranslate
             Builder.SetParameters(Arguments.ToTypes());
             Arguments.RegisterBuilders(Builder);
             SpreadGenerator();
-            Generator.GenerateControl(OpCodes.Nop);
         }
 
-        internal override void BuildCall()
+        internal override void PostBuild()
         {
-            var cg = CurrentContainer.GainGenerator();
+            Generator.GenerateControl(OpCodes.Ret);
+        }
+
+        internal override void BuildCall(CodeGenerator cg)
+        {
             cg.GenerateCall(this);
         }
 

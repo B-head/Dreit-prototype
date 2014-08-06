@@ -10,10 +10,10 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class DyadicOperatorPragma : RoutineSymbol
     {
-        public DyadicOperatorPragmaType CalculateType { get; private set; }
+        public TokenType CalculateType { get; private set; }
 
-        public DyadicOperatorPragma(DyadicOperatorPragmaType type, ClassSymbol left, ClassSymbol right, ClassSymbol ret)
-            : base(GetOperatorTokenType(type))
+        public DyadicOperatorPragma(TokenType type, ClassSymbol left, ClassSymbol right, ClassSymbol ret)
+            : base(type)
         {
             Name = GetOperatorName(type);
             CalculateType = type;
@@ -21,72 +21,53 @@ namespace AbstractSyntax.Pragma
             _CallReturnType = ret;
         }
 
-        internal static bool HasCondition(DyadicOperatorPragmaType type)
+        internal static bool HasCondition(TokenType type)
         {
             switch(type)
             {
-                case DyadicOperatorPragmaType.EQ:
-                case DyadicOperatorPragmaType.NE:
-                case DyadicOperatorPragmaType.LT:
-                case DyadicOperatorPragmaType.LE:
-                case DyadicOperatorPragmaType.GT:
-                case DyadicOperatorPragmaType.GE:
+                case TokenType.Equal:
+                case TokenType.NotEqual:
+                case TokenType.LessThan:
+                case TokenType.LessThanOrEqual:
+                case TokenType.GreaterThan:
+                case TokenType.GreaterThanOrEqual:
                     return true;
             }
             return false;
         }
 
-        private static string GetOperatorName(DyadicOperatorPragmaType type)
+        private static string GetOperatorName(TokenType type)
         {
             switch(type)
             {
-                case DyadicOperatorPragmaType.Add: return "+";
-                case DyadicOperatorPragmaType.Sub: return "-";
-                case DyadicOperatorPragmaType.Mul: return "*";
-                case DyadicOperatorPragmaType.Div: return "/";
-                case DyadicOperatorPragmaType.Mod: return "%";
-                case DyadicOperatorPragmaType.EQ: return "=";
-                case DyadicOperatorPragmaType.NE: return "<>";
-                case DyadicOperatorPragmaType.LT: return "<";
-                case DyadicOperatorPragmaType.LE: return "<=";
-                case DyadicOperatorPragmaType.GT: return ">";
-                case DyadicOperatorPragmaType.GE: return ">=";
+                case TokenType.Add: return "+";
+                case TokenType.Subtract: return "-";
+                case TokenType.Multiply: return "*";
+                case TokenType.Divide: return "/";
+                case TokenType.Modulo: return "%";
+                case TokenType.Equal: return "=";
+                case TokenType.NotEqual: return "<>";
+                case TokenType.LessThan: return "<";
+                case TokenType.LessThanOrEqual: return "<=";
+                case TokenType.GreaterThan: return ">";
+                case TokenType.GreaterThanOrEqual: return ">=";
                 default: throw new ArgumentException("type");
             }
         }
 
-        private static TokenType GetOperatorTokenType(DyadicOperatorPragmaType type)
+        public static IEnumerable<TokenType> EnumOperator()
         {
-            switch (type)
-            {
-                case DyadicOperatorPragmaType.Add: return TokenType.Add;
-                case DyadicOperatorPragmaType.Sub: return TokenType.Subtract;
-                case DyadicOperatorPragmaType.Mul: return TokenType.Multiply;
-                case DyadicOperatorPragmaType.Div: return TokenType.Divide;
-                case DyadicOperatorPragmaType.Mod: return TokenType.Modulo;
-                case DyadicOperatorPragmaType.EQ: return TokenType.Equal;
-                case DyadicOperatorPragmaType.NE: return TokenType.NotEqual;
-                case DyadicOperatorPragmaType.LT: return TokenType.LessThan;
-                case DyadicOperatorPragmaType.LE: return TokenType.LessThanOrEqual;
-                case DyadicOperatorPragmaType.GT: return TokenType.GreaterThan;
-                case DyadicOperatorPragmaType.GE: return TokenType.GreaterThanOrEqual;
-                default: throw new ArgumentException("type");
-            }
+            yield return TokenType.Add;
+            yield return TokenType.Subtract;
+            yield return TokenType.Multiply;
+            yield return TokenType.Divide;
+            yield return TokenType.Modulo;
+            yield return TokenType.Equal;
+            yield return TokenType.NotEqual;
+            yield return TokenType.LessThan;
+            yield return TokenType.LessThanOrEqual;
+            yield return TokenType.GreaterThan;
+            yield return TokenType.GreaterThanOrEqual;
         }
-    }
-
-    public enum DyadicOperatorPragmaType
-    {
-        Add,
-        Sub,
-        Mul,
-        Div,
-        Mod,
-        EQ,
-        NE,
-        LT,
-        LE,
-        GT,
-        GE,
     }
 }

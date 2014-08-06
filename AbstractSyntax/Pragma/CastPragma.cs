@@ -10,9 +10,9 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class CastPragma : RoutineSymbol
     {
-        public PrimitivePragmaType PrimitiveType { get; private set; }
+        public CastPragmaType PrimitiveType { get; private set; }
 
-        public CastPragma(PrimitivePragmaType type, ClassSymbol from, ClassSymbol to)
+        public CastPragma(CastPragmaType type, ClassSymbol from, ClassSymbol to)
         {
             Name = to.Name;
             PrimitiveType = type;
@@ -21,7 +21,7 @@ namespace AbstractSyntax.Pragma
         }
     }
 
-    public enum PrimitivePragmaType
+    public enum CastPragmaType
     {
         NotPrimitive = 0,
         Object = -1,

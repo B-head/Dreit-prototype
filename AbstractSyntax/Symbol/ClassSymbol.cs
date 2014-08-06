@@ -153,7 +153,7 @@ namespace AbstractSyntax.Symbol
 
         public bool IsPrimitive
         {
-            get { return PrimitiveType != PrimitivePragmaType.NotPrimitive; }
+            get { return PrimitiveType != CastPragmaType.NotPrimitive; }
         }
 
         public override bool IsDataType
@@ -207,14 +207,14 @@ namespace AbstractSyntax.Symbol
             return ret;
         }
 
-        public PrimitivePragmaType PrimitiveType
+        public CastPragmaType PrimitiveType
         {
             get
             {
                 var prim = (PrimitivePragma)Inherit.FirstOrDefault(v => v is PrimitivePragma);
                 if (prim == null)
                 {
-                    return PrimitivePragmaType.NotPrimitive;
+                    return CastPragmaType.NotPrimitive;
                 }
                 else
                 {

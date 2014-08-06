@@ -17,6 +17,7 @@ namespace CliTranslate
         private ModuleBuilder Module;
         public string Name { get; private set; }
         public string FileName { get; private set; }
+        public MethodStructure EntryContext { get; private set; }
 
         public RootStructure(string name, string dir = null)
         {
@@ -24,6 +25,11 @@ namespace CliTranslate
             FileName = name + ".exe";
             Assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave, dir);
             Module = Assembly.DefineDynamicModule(Name, FileName);
+            var attr = MethodAttributes.PrivateScope | MethodAttributes.SpecialName | MethodAttributes.Static;
+            var arg = new List<ParameterStructure>();
+            var gnr = new List<GenericParameterStructure>();
+            EntryContext = new MethodStructure("@@entry", attr, gnr, arg, null);
+            AppendChild(EntryContext);
         }
 
         internal void TraversalBuildCode()
@@ -74,12 +80,23 @@ namespace CliTranslate
 
         internal override void PostBuild()
         {
+            Assembly.SetEntryPoint(EntryContext.GainMethod());
             Module.CreateGlobalFunctions();
+        }
+
+        internal override CodeGenerator GainGenerator()
+        {
+            return EntryContext.GainGenerator();
         }
 
         internal override TypeBuilder CreateType(string name, TypeAttributes attr)
         {
             return Module.DefineType(name, attr);
+        }
+
+        internal override MethodBuilder CreateMethod(string name, MethodAttributes attr)
+        {
+            return Module.DefineGlobalMethod(name, attr, typeof(void), Type.EmptyTypes);
         }
     }
 }

@@ -11,20 +11,26 @@ namespace CliTranslate
     {
         public BuilderStructure Call { get; private set; }
         public ExpressionStructure Pre { get; private set; }
+        public CilStructure Access { get; private set; }
         public IReadOnlyList<ExpressionStructure> Arguments { get; private set; }
 
-        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, IReadOnlyList<ExpressionStructure> args)
+        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure access, IReadOnlyList<ExpressionStructure> args)
             :base(rt)
         {
             Call = call;
             Pre = pre;
+            Access = access;
             Arguments = args;
-            AppendChild(Pre);
+            if (Access != null)
+            {
+                AppendChild(Access);
+            }
             AppendChild(Arguments);
         }
 
         internal override void BuildCode()
         {
+            var cg = CurrentContainer.GainGenerator();
             if (Pre != null)
             {
                 Pre.BuildCode();
@@ -33,7 +39,7 @@ namespace CliTranslate
             {
                 v.BuildCode();
             }
-            Call.BuildCall();
+            Call.BuildCall(cg);
         }
     }
 }

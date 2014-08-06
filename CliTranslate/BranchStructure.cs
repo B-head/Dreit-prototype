@@ -35,6 +35,7 @@ namespace CliTranslate
         {
             var cg = CurrentContainer.GainGenerator();
             cg.BeginScope();
+            Condition.BuildCode();
             cg.GenerateJump(OpCodes.Brfalse, ElseLabel);
             Then.BuildCode();
             cg.GenerateJump(OpCodes.Br, ExitLabel);

@@ -15,6 +15,14 @@ namespace AbstractSyntax.Pragma
 
         public PropertyPragma(VariantSymbol variant, bool isSet)
         {
+            if(isSet)
+            {
+                Name = "@@set";
+            }
+            else
+            {
+                Name = "@@get";
+            }
             Variant = variant;
             IsSet = isSet;
             _Attribute = null;

@@ -33,23 +33,23 @@ namespace CliTranslate
             }
         }
 
-        internal static Type GetPrimitiveType(PrimitivePragmaType type)
+        internal static Type GetPrimitiveType(CastPragmaType type)
         {
             switch(type)
             {
-                case PrimitivePragmaType.Object: return typeof(Object);
-                case PrimitivePragmaType.String: return typeof(String);
-                case PrimitivePragmaType.Boolean: return typeof(Boolean);
-                case PrimitivePragmaType.Integer8: return typeof(SByte);
-                case PrimitivePragmaType.Integer16: return typeof(Int16);
-                case PrimitivePragmaType.Integer32: return typeof(Int32);
-                case PrimitivePragmaType.Integer64: return typeof(Int64);
-                case PrimitivePragmaType.Natural8: return typeof(Byte);
-                case PrimitivePragmaType.Natural16: return typeof(UInt16);
-                case PrimitivePragmaType.Natural32: return typeof(UInt32);
-                case PrimitivePragmaType.Natural64: return typeof(UInt64);
-                case PrimitivePragmaType.Binary32: return typeof(Single);
-                case PrimitivePragmaType.Binary64: return typeof(Double);
+                case CastPragmaType.Object: return typeof(Object);
+                case CastPragmaType.String: return typeof(String);
+                case CastPragmaType.Boolean: return typeof(Boolean);
+                case CastPragmaType.Integer8: return typeof(SByte);
+                case CastPragmaType.Integer16: return typeof(Int16);
+                case CastPragmaType.Integer32: return typeof(Int32);
+                case CastPragmaType.Integer64: return typeof(Int64);
+                case CastPragmaType.Natural8: return typeof(Byte);
+                case CastPragmaType.Natural16: return typeof(UInt16);
+                case CastPragmaType.Natural32: return typeof(UInt32);
+                case CastPragmaType.Natural64: return typeof(UInt64);
+                case CastPragmaType.Binary32: return typeof(Single);
+                case CastPragmaType.Binary64: return typeof(Double);
                 default: throw new ArgumentException();
             }
         }

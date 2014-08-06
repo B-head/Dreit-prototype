@@ -49,6 +49,7 @@
     <Compile Include="BuilderStructure.cs" />
     <Compile Include="CacheStructure.cs" />
     <Compile Include="CallStructure.cs" />
+    <Compile Include="CastStructure.cs" />
     <Compile Include="CilImport.cs" />
     <Compile Include="CilStructure.cs" />
     <Compile Include="ClassTranslator.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="GotoStructure.cs" />
     <Compile Include="ImportManager.cs" />
     <Compile Include="LabelStructure.cs" />
+    <Compile Include="LoadStoreStructure.cs" />
     <Compile Include="LocalStructure.cs" />
     <Compile Include="LoopStructure.cs" />
     <Compile Include="LoopTranslator.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="MethodStructure.cs" />
     <Compile Include="ModuleTranslator.cs" />
     <Compile Include="MonadicOperationStructure.cs" />
+    <Compile Include="OperationStructure.cs" />
     <Compile Include="TypeStructure.cs" />
     <Compile Include="ValueStructure.cs" />
     <Compile Include="DyadicOperationStructure.cs" />

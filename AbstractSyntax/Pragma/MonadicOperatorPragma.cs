@@ -10,10 +10,10 @@ namespace AbstractSyntax.Pragma
     [Serializable]
     public class MonadicOperatorPragma : RoutineSymbol
     {
-        public MonadicOperatorPragmaType CalculateType { get; private set; }
+        public TokenType CalculateType { get; private set; }
 
-        public MonadicOperatorPragma(MonadicOperatorPragmaType type, ClassSymbol expt, ClassSymbol ret)
-            :base(GetOperatorTokenType(type))
+        public MonadicOperatorPragma(TokenType type, ClassSymbol expt, ClassSymbol ret)
+            :base(type)
         {
             Name = GetOperatorName(type);
             CalculateType = type;
@@ -21,43 +21,32 @@ namespace AbstractSyntax.Pragma
             _CallReturnType = ret;
         }
 
-        internal static bool HasCondition(MonadicOperatorPragmaType type)
+        internal static bool HasCondition(TokenType type)
         {
             switch (type)
             {
-                case MonadicOperatorPragmaType.Not:
+                case TokenType.Not:
                     return true;
             }
             return false;
         }
 
-        private static string GetOperatorName(MonadicOperatorPragmaType type)
+        private static string GetOperatorName(TokenType type)
         {
             switch (type)
             {
-                case MonadicOperatorPragmaType.Plus: return "++";
-                case MonadicOperatorPragmaType.Minus: return "--";
-                case MonadicOperatorPragmaType.Not: return "!!";
+                case TokenType.Plus: return "++";
+                case TokenType.Minus: return "--";
+                case TokenType.Not: return "!!";
                 default: throw new ArgumentException("type");
             }
         }
 
-        private static TokenType GetOperatorTokenType(MonadicOperatorPragmaType type)
+        public static IEnumerable<TokenType> EnumOperator()
         {
-            switch (type)
-            {
-                case MonadicOperatorPragmaType.Plus: return TokenType.Plus;
-                case MonadicOperatorPragmaType.Minus: return TokenType.Minus;
-                case MonadicOperatorPragmaType.Not: return TokenType.Not;
-                default: throw new ArgumentException("type");
-            }
+            yield return TokenType.Plus;
+            yield return TokenType.Minus;
+            yield return TokenType.Not;
         }
-    }
-
-    public enum MonadicOperatorPragmaType
-    {
-        Plus,
-        Minus,
-        Not,
     }
 }

@@ -40,9 +40,8 @@ namespace CliTranslate
             Generator.GenerateControl(OpCodes.Ret);
         }
 
-        internal override void BuildCall()
+        internal override void BuildCall(CodeGenerator cg)
         {
-            var cg = CurrentContainer.GainGenerator();
             cg.GenerateNew(this);
         }
 
