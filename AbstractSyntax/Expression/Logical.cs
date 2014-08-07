@@ -20,5 +20,10 @@ namespace AbstractSyntax.Expression
         {
             get { return Left.ReturnType; }
         }
+
+        public bool IsOr
+        {
+            get { return Operator == TokenType.Or; }
+        }
     }
 }

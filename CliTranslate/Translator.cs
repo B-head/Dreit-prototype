@@ -315,7 +315,6 @@ namespace CliTranslate
         protected void GenerateLoad(ThisSymbol name, bool address)
         {
             var c = name.ReturnType as ClassDeclaration;
-            var pe = c.PrimitiveType;
             Generator.Emit(OpCodes.Ldarg_0);
             return;
             /*
@@ -428,7 +427,6 @@ namespace CliTranslate
         protected void GenerateStore(ThisSymbol name, bool address)
         {
             var c = name.ReturnType as ClassDeclaration;
-            var pe = c.PrimitiveType;
             Generator.Emit(OpCodes.Starg_S, 0);
             return;
             /*

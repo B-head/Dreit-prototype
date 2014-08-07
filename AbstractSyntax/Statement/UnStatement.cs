@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,38 @@ namespace AbstractSyntax.Statement
     public class UnStatement : Element
     {
         public Element Exp { get; private set; }
+        private Scope _CallScope;
 
         public UnStatement(TextPosition tp, Element exp)
             :base(tp)
         {
             Exp = exp;
             AppendChild(Exp);
+        }
+
+        public Scope CallScope
+        {
+            get
+            {
+                if (_CallScope == null)
+                {
+                    _CallScope = Root.OpManager.FindMonadic(TokenType.Not, Exp.ReturnType);
+                }
+                return _CallScope;
+            }
+        }
+
+        public override Scope ReturnType
+        {
+            get { return CallScope.CallReturnType; }
+        }
+
+        internal override void CheckSemantic(CompileMessageManager cmm)
+        {
+            if (CallScope is ErrorSymbol)
+            {
+                cmm.CompileError("undefined-monadic-operator", this);
+            }
         }
     }
 }

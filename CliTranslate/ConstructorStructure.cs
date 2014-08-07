@@ -16,10 +16,10 @@ namespace CliTranslate
         [NonSerialized]
         private ConstructorInfo Info;
 
-        public ConstructorStructure(MethodAttributes attr, IReadOnlyList<ParameterStructure> arg, ConstructorInfo info = null)
-            :base(attr, arg)
+        public void Initialize(bool isInstance, MethodAttributes attr, IReadOnlyList<ParameterStructure> arg, BlockStructure block = null, ConstructorInfo info = null)
         {
             Info = info;
+            base.Initialize(isInstance, attr, arg, block);
         }
 
         protected override void PreBuild()
@@ -31,7 +31,7 @@ namespace CliTranslate
             var cont = CurrentContainer;
             Builder = cont.CreateConstructor(Attributes, Arguments.ToTypes());
             Info = Builder;
-            Arguments.RegisterBuilders(Builder);
+            Arguments.RegisterBuilders(Builder, IsInstance);
             SpreadGenerator();
         }
 

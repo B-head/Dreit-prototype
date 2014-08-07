@@ -356,6 +356,10 @@ namespace CliTranslate
             }
             foreach(var v in type.GetInterfaces())
             {
+                if (!v.IsPublic && !v.IsNestedPublic && !v.IsNestedFamily && !v.IsNestedFamORAssem)
+                {
+                    continue;
+                }
                 ret.Add(ImportType(v));
             }
             return ret;

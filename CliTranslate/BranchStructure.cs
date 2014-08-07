@@ -40,7 +40,10 @@ namespace CliTranslate
             Then.BuildCode();
             cg.GenerateJump(OpCodes.Br, ExitLabel);
             cg.MarkLabel(ElseLabel);
-            Else.BuildCode();
+            if (Else != null)
+            {
+                Else.BuildCode();
+            }
             cg.MarkLabel(ExitLabel);
             cg.EndScope();
         }

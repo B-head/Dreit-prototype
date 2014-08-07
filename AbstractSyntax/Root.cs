@@ -45,7 +45,6 @@ namespace AbstractSyntax
             ConvManager = new ConversionManager(this);
             OpManager = new OperationManager(this);
             MessageManager = new CompileMessageManager();
-            CreatePragma();
             CreateEmbedIdentifier();
             AppendChild(EmbedList);
             AppendChild(TypeManager);
@@ -64,23 +63,6 @@ namespace AbstractSyntax
             {
                 TraversalCheckSemantic(v);
             }
-        }
-
-        private void CreatePragma()
-        {
-            EmbedList.AppendChild(new PrimitivePragma("Object", CastPragmaType.Object));
-            EmbedList.AppendChild(new PrimitivePragma("String", CastPragmaType.String));
-            EmbedList.AppendChild(new PrimitivePragma("Boolean", CastPragmaType.Boolean));
-            EmbedList.AppendChild(new PrimitivePragma("Integer8", CastPragmaType.Integer8));
-            EmbedList.AppendChild(new PrimitivePragma("Integer16", CastPragmaType.Integer16));
-            EmbedList.AppendChild(new PrimitivePragma("Integer32", CastPragmaType.Integer32));
-            EmbedList.AppendChild(new PrimitivePragma("Integer64", CastPragmaType.Integer64));
-            EmbedList.AppendChild(new PrimitivePragma("Natural8", CastPragmaType.Natural8));
-            EmbedList.AppendChild(new PrimitivePragma("Natural16", CastPragmaType.Natural16));
-            EmbedList.AppendChild(new PrimitivePragma("Natural32", CastPragmaType.Natural32));
-            EmbedList.AppendChild(new PrimitivePragma("Natural64", CastPragmaType.Natural64));
-            EmbedList.AppendChild(new PrimitivePragma("Binary32", CastPragmaType.Binary32));
-            EmbedList.AppendChild(new PrimitivePragma("Binary64", CastPragmaType.Binary64));
         }
 
         private void CreateEmbedIdentifier()
@@ -148,6 +130,9 @@ namespace AbstractSyntax
         private void CreateBuiltInMonadicOperator(IReadOnlyDictionary<ClassSymbol, CastPragmaType> nt)
         {
             var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
+            var nbp = new MonadicOperatorPragma(TokenType.Not, bl, bl);
+            EmbedList.AppendChild(nbp);
+            OpManager.Append(nbp);
             foreach (var a in nt.Keys)
             {
                 foreach (TokenType t in MonadicOperatorPragma.EnumOperator())

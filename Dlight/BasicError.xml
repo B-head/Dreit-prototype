@@ -9,6 +9,7 @@
   <msg key="unmatch-overload-count">引数の数が合うオーバーロードが定義されていません。</msg>
   <msg key="unmatch-overload-type">引数の型が合うオーバーロードが定義されていません。</msg>
   <msg key="impossible-calculate">{Left.ReturnType.Name} 型と {Right.ReturnType.Name} 型を演算することは出来ません。</msg>
+  <msg key="undefined-monadic-operator">{Exp.ReturnType.Name} 型に演算子が定義されていません。</msg>
   <msg key="require-expression">式が必要です。</msg>
   <msg key="require-type">型指定が必要です。</msg>
   <msg key="undefined-pragma">プラグマ @@{Value} は定義されていません。</msg>

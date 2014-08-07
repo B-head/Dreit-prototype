@@ -14,6 +14,20 @@ namespace CliTranslate
         public CilStructure Access { get; private set; }
         public IReadOnlyList<ExpressionStructure> Arguments { get; private set; }
 
+        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre)
+            : base(rt)
+        {
+            Call = call;
+            Pre = pre;
+            Access = null;
+            Arguments = new List<ExpressionStructure>();
+            if (Access != null)
+            {
+                AppendChild(Access);
+            }
+            AppendChild(Arguments);
+        }
+
         public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure access, IReadOnlyList<ExpressionStructure> args)
             :base(rt)
         {

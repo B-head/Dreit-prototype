@@ -42,7 +42,7 @@
 
   <case>
     <code>
-      routine foo(a:Binary64) :: a + 10.5
+      routine foo(a:Double) :: a + 10.5
       echo foo := 20
     </code>
     <output>30.5</output>
@@ -67,7 +67,7 @@
 
   <case>
     <code>
-      routine foo(a:Integer32, b:Integer32) :: a % b
+      routine foo(a:Int32, b:Int32) :: a % b
       echo foo(23, 5)
     </code>
     <output>3</output>
@@ -75,7 +75,7 @@
 
   <case>
     <code>
-      routine foo(a:Binary64, b:Binary64) :: a % b
+      routine foo(a:Double, b:Double) :: a % b
       echo foo(23, 5)
     </code>
     <output>3</output>
@@ -83,7 +83,7 @@
 
   <case>
     <code>
-      routine foo(a:Integer32, b:Binary64) :: a % b
+      routine foo(a:Int32, b:Double) :: a % b
       echo foo(23, 5)
     </code>
     <output>3</output>
@@ -91,7 +91,7 @@
 
   <case>
     <code>
-      routine foo(a:Integer32, b:Integer32) :: a % b
+      routine foo(a:Int32, b:Int32) :: a % b
       echo 23, 5 =: foo
     </code>
     <output>3</output>
@@ -101,7 +101,7 @@
     <code>
       <![CDATA[
       echo foo(23, 5)
-      routine foo(a:Integer32, b:Integer32) {
+      routine foo(a:Int32, b:Int32) {
         return a % b
       }
       ]]>
@@ -109,10 +109,21 @@
     <output>3</output>
   </case>
 
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
+      
+      echo foo(10)
+      ]]>
+    </code>
+    <output>51</output>
+  </case>
+
   <case>
     <code>
-      routine foo(a:Integer32) :: a + 20
-      routine foo(b:Binary64) :: b + 55.5
+      routine foo(a:Int32) :: a + 20
+      routine foo(b:Double) :: b + 55.5
       echo foo(0)
       echo foo(0.0)
     </code>
@@ -131,7 +142,7 @@
 
   <case>
     <code>
-      routine foo(a:Int32, x:Binary64) :: a + x + 20
+      routine foo(a:Int32, x:Double) :: a + x + 20
       routine foo(b:Int32, c:Int32) :: b + c + 55
       echo foo := 10, 55.55
       echo foo := 20, 30

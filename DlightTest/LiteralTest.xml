@@ -96,7 +96,7 @@
   <case>
     <code>
       var a := 100
-      echo "a = { "{ a }" };"
+      echo "a { "= { a }" };"
     </code>
     <output>a = 100;</output>
   </case>

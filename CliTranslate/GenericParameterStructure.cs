@@ -9,22 +9,19 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class GenericParameterStructure : BuilderStructure
+    public class GenericParameterStructure : TypeStructure
     {
-        public string Name { get; private set; }
-        public GenericParameterAttributes Attributes { get; private set; }
+        public GenericParameterAttributes GenericAttributes { get; private set; }
         public IReadOnlyList<CilStructure> Constraints { get; private set; }
         [NonSerialized]
         private GenericTypeParameterBuilder Builder;
-        [NonSerialized]
-        private Type Info;
 
         public GenericParameterStructure(string name, GenericParameterAttributes attr, IReadOnlyList<CilStructure> constant, Type info = null)
         {
-            Name = name;
-            Attributes = attr;
+            GenericAttributes = attr;
             Constraints = constant;
             Info = info;
+            base.Initialize(name, 0);
         }
 
         internal void RegisterBuilder(GenericTypeParameterBuilder builder)
@@ -34,6 +31,7 @@ namespace CliTranslate
                 throw new InvalidOperationException();
             }
             Builder = builder;
+            Info = Builder;
         }
     }
 }

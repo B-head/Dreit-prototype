@@ -77,9 +77,9 @@ namespace CliTranslate
             {
                 return;
             }
-            if(exp.ResultType.Name != "void")
+            if(exp.ResultType.Name != "Void")
             {
-                var cg = CurrentContainer.GainGenerator();
+                var cg = exp.CurrentContainer.GainGenerator();
                 cg.GenerateControl(OpCodes.Pop);
             }
         }

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class BooleanSymbol : Scope
+    public class BooleanSymbol : VariantSymbol
     {
         public bool Value { get; private set; }
-        private Scope _DataType;
 
         public BooleanSymbol(bool value)
+            :base(true)
         {
             Value = value;
             if(value)
@@ -23,6 +23,7 @@ namespace AbstractSyntax.Symbol
             {
                 Name = "false";
             }
+            _Attribute = new List<Scope>();
         }
 
         public override Scope ReturnType
@@ -36,11 +37,6 @@ namespace AbstractSyntax.Symbol
                 _DataType = CurrentScope.NameResolution("Boolean").FindDataType();
                 return _DataType;
             }
-        }
-
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
-        {
-            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, new GenericSymbol[] { }, args, new Scope[] { });
         }
     }
 }

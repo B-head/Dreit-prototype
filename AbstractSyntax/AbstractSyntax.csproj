@@ -76,7 +76,6 @@
     <Compile Include="Expression\DyadicExpression.cs" />
     <Compile Include="Pragma\CastPragma.cs" />
     <Compile Include="Pragma\MonadicOperatorPragma.cs" />
-    <Compile Include="Pragma\PrimitivePragma.cs" />
     <Compile Include="Directive\ReturnDirective.cs" />
     <Compile Include="Directive\EchoDirective.cs" />
     <Compile Include="Element.cs" />

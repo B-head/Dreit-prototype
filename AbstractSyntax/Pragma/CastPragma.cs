@@ -24,9 +24,6 @@ namespace AbstractSyntax.Pragma
     public enum CastPragmaType
     {
         NotPrimitive = 0,
-        Object = -1,
-        String = -2,
-        Boolean = -3,
         Integer8 = 1,
         Integer16 = 3,
         Integer32 = 5,

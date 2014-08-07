@@ -128,8 +128,8 @@
   
   <case>
     <code>
-      var e:Binary64 := 25.5
-      var f:Integer32 := e
+      var e:Double := 25.5
+      var f:Int32 := e
       echo f
     </code>
     <output>25</output>
@@ -137,8 +137,8 @@
 
   <case ignore="true">
     <code>
-      var e:Binary64 := 25.5
-      echo Integer32(e)
+      var e:Double := 25.5
+      echo Int32(e)
     </code>
     <output>25</output>
   </case>

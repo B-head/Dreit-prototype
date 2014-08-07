@@ -83,7 +83,7 @@ namespace CliTranslate
             {
                 RelaySpreadTranslate(v);
             }
-            if (scope.IsPrimitive)
+            if (false)
             {
                 var temp = trans.CreatePrimitive(scope);
                 TransDictionary.Add(scope, temp);

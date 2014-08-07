@@ -19,14 +19,14 @@ namespace CliTranslate
         [NonSerialized]
         private MethodInfo Info;
 
-        public MethodStructure(string name, MethodAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, MethodInfo info = null)
-            :base(attr, arg)
+        public void Initialize(string name, bool isInstance, MethodAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, BlockStructure block = null, MethodInfo info = null)
         {
             Name = name;
             Generics = gnr;
             ReturnType = ret;
             AppendChild(Generics);
             Info = info;
+            base.Initialize(isInstance, attr, arg, block);
         }
 
         protected override void PreBuild()
@@ -48,7 +48,7 @@ namespace CliTranslate
                 Builder.SetReturnType(ReturnType.GainType()); //todo ジェネリクスに対応したTypeを生成する。
             }
             Builder.SetParameters(Arguments.ToTypes());
-            Arguments.RegisterBuilders(Builder);
+            Arguments.RegisterBuilders(Builder, IsInstance);
             SpreadGenerator();
         }
 

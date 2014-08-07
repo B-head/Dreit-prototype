@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccessStructure.cs" />
     <Compile Include="BlockStructure.cs" />
     <Compile Include="BranchStructure.cs" />
     <Compile Include="BuilderStructure.cs" />
@@ -68,6 +67,7 @@
     <Compile Include="LabelStructure.cs" />
     <Compile Include="LoadStoreStructure.cs" />
     <Compile Include="LocalStructure.cs" />
+    <Compile Include="LogicalStructure.cs" />
     <Compile Include="LoopStructure.cs" />
     <Compile Include="LoopTranslator.cs" />
     <Compile Include="MethodBaseStructure.cs" />

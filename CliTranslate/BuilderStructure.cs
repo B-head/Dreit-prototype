@@ -10,6 +10,7 @@ namespace CliTranslate
     public abstract class BuilderStructure : CilStructure
     {
         private bool IsPreBuilded;
+        private bool IsPostBuilded;
 
         internal void RelayPreBuild()
         {
@@ -19,6 +20,16 @@ namespace CliTranslate
             }
             IsPreBuilded = true;
             PreBuild();
+        }
+
+        internal void RelayPostBuild()
+        {
+            if (IsPostBuilded)
+            {
+                return;
+            }
+            IsPostBuilded = true;
+            PostBuild();
         }
 
         protected virtual void PreBuild()

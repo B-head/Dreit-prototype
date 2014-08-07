@@ -18,36 +18,49 @@ namespace CliTranslate
         public LabelStructure ContinueLabel { get; private set; }
         public LabelStructure PlungeLabel { get; private set; }
 
-        public LoopStructure(TypeStructure rt, ExpressionStructure cond, ExpressionStructure on, ExpressionStructure by, BlockStructure block)
+        public LoopStructure(TypeStructure rt)
             :base(rt)
+        {
+            BreakLabel = new LabelStructure();
+            ContinueLabel = new LabelStructure();
+            PlungeLabel = new LabelStructure();
+            AppendChild(BreakLabel);
+            AppendChild(ContinueLabel);
+            AppendChild(PlungeLabel);
+        }
+
+        public void Initialize(ExpressionStructure cond, ExpressionStructure on, ExpressionStructure by, BlockStructure block)
         {
             Condition = cond;
             On = on;
             By = by;
             Block = block;
-            BreakLabel = new LabelStructure();
-            ContinueLabel = new LabelStructure();
-            PlungeLabel = new LabelStructure();
             AppendChild(Condition);
             AppendChild(On);
             AppendChild(By);
             AppendChild(Block);
-            AppendChild(BreakLabel);
-            AppendChild(ContinueLabel);
-            AppendChild(PlungeLabel);
         }
 
         internal override void BuildCode()
         {
             var cg = CurrentContainer.GainGenerator();
             cg.BeginScope();
-            PopBuildCode(On);
+            if (On != null)
+            {
+                PopBuildCode(On);
+            }
             cg.GenerateJump(OpCodes.Br, PlungeLabel);
             cg.MarkLabel(ContinueLabel);
-            PopBuildCode(By);
+            if (By != null)
+            {
+                PopBuildCode(By);
+            }
             cg.MarkLabel(PlungeLabel);
-            Condition.BuildCode();
-            cg.GenerateJump(OpCodes.Brfalse, BreakLabel);
+            if (Condition != null)
+            {
+                Condition.BuildCode();
+                cg.GenerateJump(OpCodes.Brfalse, BreakLabel);
+            }
             PopBuildCode(Block);
             cg.GenerateJump(OpCodes.Br, ContinueLabel);
             cg.MarkLabel(BreakLabel);

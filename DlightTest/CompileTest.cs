@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -17,12 +18,9 @@ namespace DlightTest
     [TestFixture]
     class CompileTest
     {
-        private static string primitive;
-
         [TestFixtureSetUp]
         public static void TestFixtureSetUp()
         {
-            primitive = File.ReadAllText("lib/primitive.dl");
             Directory.CreateDirectory("output");
             Directory.SetCurrentDirectory("output");
         }
@@ -31,8 +29,8 @@ namespace DlightTest
         public void Execute(TestData data)
         {
             Root root = new Root();
-            ImportManager import = new ImportManager(root);
-            root.Append(CompileText("lib/primitive.dl", primitive));
+            var import = new CilImport(root);
+            import.ImportAssembly(Assembly.Load("mscorlib"));
             root.Append(CompileText(data.Name, data.Code));
             root.SemanticAnalysis();
             if (root.MessageManager.MessageCount > 0)
@@ -51,8 +49,7 @@ namespace DlightTest
             {
                 return;
             }
-            TranslateManager trans = new TranslateManager(data.Name);
-            trans.TranslateTo(root, import);
+            var trans = SyntaxTranslator.ToStructure(root, import, data.Name);
             trans.Save();
             //var cd = Directory.GetCurrentDirectory();
             //using (var process = MakeProcess(@"peverify.exe", data.Name + ".exe" + " /nologo /unique", cd))

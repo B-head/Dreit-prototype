@@ -16,8 +16,9 @@ namespace AbstractSyntax.Symbol
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _DataType;
 
-        protected VariantSymbol()
+        protected VariantSymbol(bool isLet)
         {
+            IsLet = isLet;
             Getter = new PropertyPragma(this, false);
             Setter = new PropertyPragma(this, true);
             AppendChild(Getter);

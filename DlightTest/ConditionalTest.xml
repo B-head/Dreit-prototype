@@ -18,7 +18,7 @@
   <case>
     <code>
       <![CDATA[
-      routine foo(a:Bool){
+      routine foo(a:Boolean){
         if a {
           echo 10
         } else {
@@ -35,7 +35,7 @@
   <case>
     <code>
       <![CDATA[
-      routine foo(a:Bool) :: if a :: 10 else 20
+      routine foo(a:Boolean) :: if a :: 10 else 20
       
       echo foo(true)
       echo foo(false)
@@ -47,7 +47,7 @@
   <case>
     <code>
       <![CDATA[
-      routine foo(a:Bool, b:Bool){
+      routine foo(a:Boolean, b:Boolean){
         return if a :: if b :: 10 else 40 else if b :: 20 else 30
       }
       echo foo(true, true)
@@ -57,17 +57,6 @@
       ]]>
     </code>
     <output>10 40 20 30</output>
-  </case>
-
-  <case ignore="true">
-    <code>
-      <![CDATA[
-      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
-      
-      echo foo(10)
-      ]]>
-    </code>
-    <output>51</output>
   </case>
 
   <case>

@@ -14,14 +14,16 @@ namespace CliTranslate
         public IReadOnlyList<GenericParameterStructure> Generics { get; private set; }
         public TypeStructure BaseType { get; private set; }
         public IReadOnlyList<TypeStructure> Implements { get; private set; }
+        [NonSerialized]
+        protected TypeBuilder Builder;
 
-        public PureTypeStructure(string name, TypeAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, TypeStructure bt, IReadOnlyList<TypeStructure> imp, Type info = null)
-            :base(name, attr, info)
+        public void Initialize(string name, TypeAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, TypeStructure bt, IReadOnlyList<TypeStructure> imp, BlockStructure block = null, Type info = null)
         {
             Generics = gnr;
             BaseType = bt;
             Implements = imp;
             AppendChild(Generics);
+            base.Initialize(name, attr, block, info);
         }
 
         protected override void PreBuild()

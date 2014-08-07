@@ -9,10 +9,10 @@ namespace CliTranslate
     [Serializable]
     public class LoadStoreStructure : BuilderStructure
     {
-        public BuilderStructure Variant { get; private set; }
+        public CilStructure Variant { get; private set; }
         public bool IsStore { get; private set; }
 
-        public LoadStoreStructure(BuilderStructure variant, bool isStore)
+        public LoadStoreStructure(CilStructure variant, bool isStore)
         {
             Variant = variant;
             IsStore = isStore;
@@ -38,6 +38,22 @@ namespace CliTranslate
                     cg.GenerateStore(l);
                 }
                 cg.GenerateLoad(l);
+                return;
+            }
+            var p = Variant as ParameterStructure;
+            if(p != null)
+            {
+                if (IsStore)
+                {
+                    cg.GenerateStore(p);
+                }
+                cg.GenerateLoad(p);
+                return;
+            }
+            var v = Variant as ValueStructure;
+            if(v != null)
+            {
+                cg.GeneratePrimitive(v.Value);
                 return;
             }
             throw new InvalidOperationException();

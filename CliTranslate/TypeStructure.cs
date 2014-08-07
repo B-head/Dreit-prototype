@@ -9,19 +9,24 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class TypeStructure : ContainerStructure
+    public abstract class TypeStructure : ContainerStructure
     {
         public string Name { get; private set; }
         public TypeAttributes Attributes { get; private set; }
-        [NonSerialized]
-        protected TypeBuilder Builder;
+        public BlockStructure Block { get; private set; }
         [NonSerialized]
         protected Type Info;
 
-        public TypeStructure(string name, TypeAttributes attr, Type info = null)
+        protected TypeStructure()
+        {
+        }
+
+        public void Initialize(string name, TypeAttributes attr, BlockStructure block = null, Type info = null)
         {
             Name = name;
             Attributes = attr;
+            Block = block;
+            AppendChild(Block);
             Info = info;
         }
 

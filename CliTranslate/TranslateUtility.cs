@@ -130,23 +130,23 @@ namespace CliTranslate
             return ret;
         }
 
-        public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, MethodBuilder builder)
+        public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, MethodBuilder builder, bool isInstance)
         {
             for (var i = 0; i < prm.Count; ++i)
             {
                 var p = prm[i];
                 var pb = builder.DefineParameter(i + 1, p.Attributes, p.Name);
-                p.RegisterBuilder(pb);
+                p.RegisterBuilder(pb, isInstance);
             }
         }
 
-        public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, ConstructorBuilder builder)
+        public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, ConstructorBuilder builder, bool isInstance)
         {
             for (var i = 0; i < prm.Count; ++i)
             {
                 var p = prm[i];
                 var pb = builder.DefineParameter(i + 1, p.Attributes, p.Name);
-                p.RegisterBuilder(pb);
+                p.RegisterBuilder(pb, isInstance);
             }
         }
     }

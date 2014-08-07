@@ -12,22 +12,27 @@ namespace CliTranslate
     public class GlobalContextStructure : ContainerStructure
     {
         public string Name { get; private set; }
-        public TypeStructure GlobalField { get; private set; }
+        public BlockStructure Block { get; private set; }
+        public PureTypeStructure GlobalField { get; private set; }
         public MethodStructure GlobalContext { get; private set; }
 
-        public GlobalContextStructure(string name)
+        public GlobalContextStructure(string name, BlockStructure block)
         {
-            Name = name;
             var tattr = TypeAttributes.Class | TypeAttributes.NotPublic | TypeAttributes.Sealed | TypeAttributes.SpecialName;
             var gnr = new List<GenericParameterStructure>();
             var imp = new List<TypeStructure>();
-            GlobalField =  new PureTypeStructure(Name + ".@@Global", tattr, gnr, null, imp);
+            GlobalField = new PureTypeStructure();
+            GlobalField.Initialize(Name + ".@@Global", tattr, gnr, null, imp);
             AppendChild(GlobalField);
             var mattr = MethodAttributes.PrivateScope | MethodAttributes.SpecialName | MethodAttributes.Static;
             var arg = new List<ParameterStructure>();
             var gnr2 = new List<GenericParameterStructure>();
-            GlobalContext = new MethodStructure("@@global", mattr, gnr2, arg, null);
+            GlobalContext = new MethodStructure();
+            GlobalContext.Initialize("@@global", false, mattr, gnr2, arg, null);
             GlobalField.AppendChild(GlobalContext);
+            Name = name;
+            Block = block;
+            AppendChild(Block);
         }
 
         internal override void BuildCode()
@@ -50,12 +55,12 @@ namespace CliTranslate
 
         internal override MethodBuilder CreateMethod(string name, MethodAttributes attr)
         {
-            return GlobalField.CreateMethod(name, attr);
+            return GlobalField.CreateMethod(name, attr | MethodAttributes.Static);
         }
 
         internal override FieldBuilder CreateField(string name, Type dt, FieldAttributes attr)
         {
-            return GlobalField.CreateField(name, dt, attr);
+            return GlobalField.CreateField(name, dt, attr | FieldAttributes.Static);
         }
     }
 }

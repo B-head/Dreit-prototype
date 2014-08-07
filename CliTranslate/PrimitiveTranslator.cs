@@ -21,7 +21,7 @@ namespace CliTranslate
             : base(path, parent)
         {
             Class = builder;
-            Prim = GetPrimitiveType(path.PrimitiveType);
+            Prim = GetPrimitiveType(CastPragmaType.NotPrimitive);
             ClassContext = Class.DefineMethod("@@init", MethodAttributes.SpecialName | MethodAttributes.Static);
             parent.GenerateCall(ClassContext);
             Generator = ClassContext.GetILGenerator();
@@ -37,9 +37,6 @@ namespace CliTranslate
         {
             switch(type)
             {
-                case CastPragmaType.Object: return typeof(Object);
-                case CastPragmaType.String: return typeof(String);
-                case CastPragmaType.Boolean: return typeof(Boolean);
                 case CastPragmaType.Integer8: return typeof(SByte);
                 case CastPragmaType.Integer16: return typeof(Int16);
                 case CastPragmaType.Integer32: return typeof(Int32);

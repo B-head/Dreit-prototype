@@ -28,7 +28,8 @@ namespace CliTranslate
             var attr = MethodAttributes.PrivateScope | MethodAttributes.SpecialName | MethodAttributes.Static;
             var arg = new List<ParameterStructure>();
             var gnr = new List<GenericParameterStructure>();
-            EntryContext = new MethodStructure("@@entry", attr, gnr, arg, null);
+            EntryContext = new MethodStructure();
+            EntryContext.Initialize("@@entry", false, attr, gnr, arg, null);
             AppendChild(EntryContext);
         }
 
@@ -54,14 +55,14 @@ namespace CliTranslate
 
         private void TraversalPostBuild(CilStructure stru)
         {
-            foreach (var v in stru)
+            foreach (var v in stru.Reverse())
             {
                 TraversalPostBuild(v);
             }
             var c = stru as BuilderStructure;
             if(c != null)
             {
-                c.PostBuild();
+                c.RelayPostBuild();
             }
         }
 

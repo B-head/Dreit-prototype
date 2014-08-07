@@ -9,7 +9,7 @@ namespace CliTranslate
     [Serializable]
     public class BlockStructure : ExpressionStructure
     {
-        public BlockStructure(TypeStructure rt, IReadOnlyList<ExpressionStructure> exps)
+        public BlockStructure(TypeStructure rt, IReadOnlyList<CilStructure> exps)
             :base(rt)
         {
             AppendChild(exps);

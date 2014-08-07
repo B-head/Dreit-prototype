@@ -69,9 +69,6 @@
     <None Include="CompileMessageSchema.xsd" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="lib\primitive.dl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="main.dl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

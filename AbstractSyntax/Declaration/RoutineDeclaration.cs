@@ -143,7 +143,7 @@ namespace AbstractSyntax.Declaration
                 {
                     return false;
                 }
-                return IsInstanceMember && !cls.IsPrimitive;
+                return IsInstanceMember;
             }
         }
 

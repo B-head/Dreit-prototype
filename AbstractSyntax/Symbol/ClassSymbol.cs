@@ -151,11 +151,6 @@ namespace AbstractSyntax.Symbol
             get { return Initializer.FirstOrDefault(v => v.ArgumentTypes.Count == 0); }
         }
 
-        public bool IsPrimitive
-        {
-            get { return PrimitiveType != CastPragmaType.NotPrimitive; }
-        }
-
         public override bool IsDataType
         {
             get { return true; }
@@ -205,22 +200,6 @@ namespace AbstractSyntax.Symbol
                 }
             }
             return ret;
-        }
-
-        public CastPragmaType PrimitiveType
-        {
-            get
-            {
-                var prim = (PrimitivePragma)Inherit.FirstOrDefault(v => v is PrimitivePragma);
-                if (prim == null)
-                {
-                    return CastPragmaType.NotPrimitive;
-                }
-                else
-                {
-                    return prim.BasePrimitiveType;
-                }
-            }
         }
 
         public IEnumerable<Scope> EnumSubType()

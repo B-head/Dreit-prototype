@@ -22,19 +22,27 @@ namespace CliTranslate
         {
             switch (CalculateType)
             {
+                case TokenType.Plus: break;
+                case TokenType.Minus: cg.GenerateControl(OpCodes.Neg); break;
+                case TokenType.Not: BuildNot(cg); break;
                 case TokenType.Add: cg.GenerateControl(OpCodes.Add); break;
                 case TokenType.Subtract: cg.GenerateControl(OpCodes.Sub); break;
                 case TokenType.Multiply: cg.GenerateControl(OpCodes.Mul); break;
                 case TokenType.Divide: cg.GenerateControl(OpCodes.Div); break;
                 case TokenType.Modulo: cg.GenerateControl(OpCodes.Rem); break;
                 case TokenType.Equal: cg.GenerateControl(OpCodes.Ceq); break;
-                case TokenType.NotEqual: cg.GenerateControl(OpCodes.Ceq); cg.GenerateControl(OpCodes.Ldc_I4_1); cg.GenerateControl(OpCodes.Xor); break;
+                case TokenType.NotEqual: cg.GenerateControl(OpCodes.Ceq); BuildNot(cg); break;
                 case TokenType.LessThan: cg.GenerateControl(OpCodes.Clt); break;
-                case TokenType.LessThanOrEqual: cg.GenerateControl(OpCodes.Cgt); cg.GenerateControl(OpCodes.Ldc_I4_1); cg.GenerateControl(OpCodes.Xor); break;
+                case TokenType.LessThanOrEqual: cg.GenerateControl(OpCodes.Cgt); BuildNot(cg); break;
                 case TokenType.GreaterThan: cg.GenerateControl(OpCodes.Cgt); break;
-                case TokenType.GreaterThanOrEqual: cg.GenerateControl(OpCodes.Clt); cg.GenerateControl(OpCodes.Ldc_I4_1); cg.GenerateControl(OpCodes.Xor); break;
+                case TokenType.GreaterThanOrEqual: cg.GenerateControl(OpCodes.Clt); BuildNot(cg); break;
                 default: throw new ArgumentException();
             }
+        }
+
+        private void BuildNot(CodeGenerator cg)
+        {
+            cg.GenerateControl(OpCodes.Ldc_I4_0); cg.GenerateControl(OpCodes.Ceq);
         }
     }
 }

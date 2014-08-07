@@ -12,6 +12,7 @@ namespace CliTranslate
     public class ParameterStructure : BuilderStructure
     {
         public string Name { get; private set; }
+        public bool IsInstance { get; private set; }
         public ParameterAttributes Attributes { get; private set; }
         public TypeStructure ParamType { get; private set; }
         public CilStructure DefaultValue { get; private set; }
@@ -27,18 +28,19 @@ namespace CliTranslate
             AppendChild(DefaultValue);
         }
 
-        internal void RegisterBuilder(ParameterBuilder builder)
+        internal void RegisterBuilder(ParameterBuilder builder, bool isInstance)
         {
             if(Builder != null)
             {
                 throw new InvalidOperationException();
             }
             Builder = builder;
+            IsInstance = isInstance;
         }
 
         internal int GainPosition()
         {
-            return Builder.Position;
+            return IsInstance ? Builder.Position : Builder.Position - 1;
         }
     }
 }
