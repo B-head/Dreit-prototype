@@ -24,7 +24,7 @@ namespace CliTranslate
             Name = name;
             FileName = name + ".exe";
             Assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(Name), AssemblyBuilderAccess.RunAndSave, dir);
-            Module = Assembly.DefineDynamicModule(Name, FileName);
+            Module = Assembly.DefineDynamicModule(Name, FileName, true);
             var attr = MethodAttributes.PrivateScope | MethodAttributes.SpecialName | MethodAttributes.Static;
             var arg = new List<ParameterStructure>();
             var gnr = new List<GenericParameterStructure>();
@@ -40,7 +40,7 @@ namespace CliTranslate
             TraversalPostBuild(this);
         }
 
-        private void TraversalPreBuild(CilStructure stru)
+        internal void TraversalPreBuild(CilStructure stru)
         {
             var c = stru as BuilderStructure;
             if (c != null)
@@ -53,7 +53,7 @@ namespace CliTranslate
             }
         }
 
-        private void TraversalPostBuild(CilStructure stru)
+        internal void TraversalPostBuild(CilStructure stru)
         {
             foreach (var v in stru.Reverse())
             {

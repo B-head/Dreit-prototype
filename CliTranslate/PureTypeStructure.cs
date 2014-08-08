@@ -26,6 +26,11 @@ namespace CliTranslate
             base.Initialize(name, attr, block, info);
         }
 
+        public void RegisterDefault(ConstructorStructure def)
+        {
+            AppendChild(def);
+        }
+
         protected override void PreBuild()
         {
             if(Info != null)
@@ -52,6 +57,10 @@ namespace CliTranslate
             if(Builder == null)
             {
                 return;
+            }
+            if(BaseType != null)
+            {
+                Root.TraversalPostBuild(BaseType);
             }
             Builder.CreateType();
         }

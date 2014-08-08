@@ -18,6 +18,8 @@ namespace CliTranslate
 
         public GlobalContextStructure(string name, BlockStructure block)
         {
+            Name = name;
+            Block = block;
             var tattr = TypeAttributes.Class | TypeAttributes.NotPublic | TypeAttributes.Sealed | TypeAttributes.SpecialName;
             var gnr = new List<GenericParameterStructure>();
             var imp = new List<TypeStructure>();
@@ -30,8 +32,6 @@ namespace CliTranslate
             GlobalContext = new MethodStructure();
             GlobalContext.Initialize("@@global", false, mattr, gnr2, arg, null);
             GlobalField.AppendChild(GlobalContext);
-            Name = name;
-            Block = block;
             AppendChild(Block);
         }
 

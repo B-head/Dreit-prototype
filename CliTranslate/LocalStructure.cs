@@ -27,10 +27,20 @@ namespace CliTranslate
             DataType = dt;
         }
 
+        public LocalStructure(TypeStructure dt, CodeGenerator cg)
+        {
+            DataType = dt;
+            Builder = cg.CreateLocal(DataType);
+        }
+
         protected override void PreBuild()
         {
             var cg = CurrentContainer.GainGenerator();
             Builder = cg.CreateLocal(DataType);
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                Builder.SetLocalSymInfo(Name);
+            }
         }
 
         internal LocalBuilder GainLocal()

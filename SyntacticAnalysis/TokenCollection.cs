@@ -92,7 +92,7 @@ namespace SyntacticAnalysis
             Token t = Read(i);
             foreach (TokenType v in type)
             {
-                if (v == TokenType.LeftAssign || v == TokenType.RightAssign)
+                if (v == TokenType.LeftPipeline || v == TokenType.RightPipeline)
                 {
                     if ((t.TokenType & v) != 0)
                     {

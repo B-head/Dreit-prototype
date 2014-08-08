@@ -27,6 +27,11 @@ namespace CliTranslate
             Info = info;
         }
 
+        public bool IsStatic
+        {
+            get { return Info.IsStatic; }
+        }
+
         protected override void PreBuild()
         {
             if (Info != null)

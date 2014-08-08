@@ -72,11 +72,11 @@
       
       class B : A
       {
-        static routine bar :: A&.foo + 25
+        static routine bar :: A|.foo + 25
       }
       
-      echo A&.foo
-      echo B&.bar
+      echo A|.foo
+      echo B|.bar
       ]]>
     </code>
     <output>10 35</output>
@@ -95,8 +95,8 @@
         static routine bar :: B&.foo + 25
       }
       
-      echo B&.foo
-      echo A&.bar
+      echo B|.foo
+      echo A|.bar
       ]]>
     </code>
     <error key="undefined-identifier"/>
@@ -123,7 +123,7 @@
       B =: a
       echo a.foo
       
-      B =: var b
+      B =: var b:B
       echo b.foo
       ]]>
     </code>

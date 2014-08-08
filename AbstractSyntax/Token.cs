@@ -78,7 +78,7 @@ namespace AbstractSyntax
         RightBracket,
         LeftBrace,
         RightBrace,
-        LeftAssign = 0x10000,
-        RightAssign = 0x20000,
+        LeftPipeline = 0x10000,
+        RightPipeline = 0x20000,
     }
 }

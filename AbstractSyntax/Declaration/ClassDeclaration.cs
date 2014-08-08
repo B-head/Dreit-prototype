@@ -88,11 +88,6 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public bool IsDefaultConstructor
-        {
-            get { return Initializer.Any(v => v is DefaultSymbol); }
-        }
-
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
             foreach (var v in InheritAccess)

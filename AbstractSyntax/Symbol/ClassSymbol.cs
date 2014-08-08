@@ -24,7 +24,7 @@ namespace AbstractSyntax.Symbol
         protected ClassSymbol()
         {
             Block = new DirectiveList();
-            Default = new DefaultSymbol(this);
+            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
             AppendChild(Block);
             AppendChild(Default);
@@ -40,7 +40,7 @@ namespace AbstractSyntax.Symbol
             Name = name;
             IsTrait = isTrait;
             Block = block;
-            Default = new DefaultSymbol(this);
+            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
             AppendChild(Block);
             AppendChild(Default);
@@ -52,7 +52,7 @@ namespace AbstractSyntax.Symbol
             Name = name;
             IsTrait = isTrait;
             Block = block;
-            Default = new DefaultSymbol(this);
+            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
             AppendChild(Block);
             AppendChild(Default);
@@ -127,13 +127,13 @@ namespace AbstractSyntax.Symbol
                 {
                     return null;
                 }
-                return _Inherit.FirstOrDefault(v => !HasTrait(v)) ?? obj; 
+                return Inherit.FirstOrDefault(v => !HasTrait(v)) ?? obj; 
             }
         }
 
         public IReadOnlyList<Scope> InheritTraits
         {
-            get { return _Inherit.Where(v => HasTrait(v)).ToList(); }
+            get { return Inherit.Where(v => HasTrait(v)).ToList(); }
         }
 
         private bool HasTrait(Scope scope)
@@ -146,9 +146,14 @@ namespace AbstractSyntax.Symbol
             return false;
         }
 
-        public RoutineSymbol DefaultInitializer
+        public bool IsDefaultConstructor
         {
-            get { return Initializer.FirstOrDefault(v => v.ArgumentTypes.Count == 0); }
+            get { return Initializer.Any(v => v is DefaultSymbol); }
+        }
+
+        public RoutineSymbol ZeroArgInitializer
+        {
+            get { return Initializer.FirstOrDefault(v => v.Arguments.Count == 0); }
         }
 
         public override bool IsDataType

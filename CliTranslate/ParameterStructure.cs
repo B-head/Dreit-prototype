@@ -13,6 +13,7 @@ namespace CliTranslate
     {
         public string Name { get; private set; }
         public bool IsInstance { get; private set; }
+        public bool IsThis { get; private set; }
         public ParameterAttributes Attributes { get; private set; }
         public TypeStructure ParamType { get; private set; }
         public CilStructure DefaultValue { get; private set; }
@@ -28,6 +29,16 @@ namespace CliTranslate
             AppendChild(DefaultValue);
         }
 
+        public ParameterStructure(TypeStructure pt)
+        {
+            Name = "this";
+            IsThis = true;
+            Attributes = ParameterAttributes.None;
+            ParamType = pt;
+            DefaultValue = null;
+            AppendChild(DefaultValue);
+        }
+
         internal void RegisterBuilder(ParameterBuilder builder, bool isInstance)
         {
             if(Builder != null)
@@ -40,7 +51,14 @@ namespace CliTranslate
 
         internal int GainPosition()
         {
-            return IsInstance ? Builder.Position : Builder.Position - 1;
+            if (IsThis)
+            {
+                return 0;
+            }
+            else
+            {
+                return IsInstance ? Builder.Position : Builder.Position - 1;
+            }
         }
     }
 }

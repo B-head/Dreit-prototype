@@ -135,9 +135,18 @@ namespace CliTranslate
             return ret;
         }
 
+        private ConstructorStructure Translate(DefaultSymbol element)
+        {
+            var ret = new ConstructorStructure();
+            ret.InitializeDefault();
+            return ret;
+        }
+
         private ParameterStructure Translate(ThisSymbol element)
         {
-            return null; //todo 対応するParameterStructureを返す。
+            var dt = RelayTranslate(element.CallReturnType);
+            var ret = new ParameterStructure(dt); 
+            return ret;
         }
 
         private LoadStoreStructure Translate(PropertyPragma element)
@@ -182,6 +191,11 @@ namespace CliTranslate
             var imp = CollectList<TypeStructure>(element.InheritTraits);
             var block = RelayTranslate(element.Block);
             ret.Initialize(element.FullName, attr, gnr, bt, imp, block, info);
+            if (element.IsDefaultConstructor)
+            {
+                var def = RelayTranslate(element.Default);
+                ret.RegisterDefault(def);
+            }
             return ret;
         }
 
@@ -191,11 +205,13 @@ namespace CliTranslate
             {
                 var ret = new ConstructorStructure();
                 TransDictionary.Add(element, ret);
-                var attr = element.Attribute.MakeMethodAttributes(element.IsVirtual, element.IsAbstract);
+                var attr = element.Attribute.MakeMethodAttributes(false, false);
                 var gnr = CollectList<GenericParameterStructure>(element.Generics);
                 var arg = CollectList<ParameterStructure>(element.Arguments);
                 var block = RelayTranslate(element.Block);
-                ret.Initialize(element.IsInstanceMember, attr, arg, block, (ConstructorInfo)info);
+                ret.Initialize(attr, arg, block, (ConstructorInfo)info);
+                var super = RelayTranslate(element.InheritInitializer);
+                ret.RegisterSuperConstructor(super);
                 return ret;
             }
             else
@@ -372,8 +388,19 @@ namespace CliTranslate
         {
             var call = RelayTranslate(element.CallScope);
             var rt = RelayTranslate(element.ReturnType);
-            var ret = new CallStructure(rt, call, null);
-            return ret;
+            if (element.IsTacitThis)
+            {
+                var thiscall = RelayTranslate(element.ThisReference.Getter);
+                var thisrt = RelayTranslate(element.ThisReference.CallReturnType);
+                var pre = new CallStructure(thisrt, thiscall, null);
+                var ret = new CallStructure(rt, call, pre);
+                return ret;
+            }
+            else
+            {
+                var ret = new CallStructure(rt, call, null);
+                return ret;
+            }
         }
 
         private CallStructure Translate(MemberAccess element)

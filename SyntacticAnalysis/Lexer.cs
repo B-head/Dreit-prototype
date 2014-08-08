@@ -347,18 +347,18 @@ namespace SyntacticAnalysis
                 case "=>": type = TokenType.GreaterThanOrEqual; break;
                 case "<<": type = TokenType.LeftCompose; break;
                 case ">>": type = TokenType.RightCompose; break;
-                case ":=": type = TokenType.LeftAssign; break;
-                case "=:": type = TokenType.RightAssign; break;
-                case "+=": type = TokenType.Add | TokenType.LeftAssign; break;
-                case "=+": type = TokenType.Add | TokenType.RightAssign; break;
-                case "-=": type = TokenType.Subtract | TokenType.LeftAssign; break;
-                case "=-": type = TokenType.Subtract | TokenType.RightAssign; break;
-                case "*=": type = TokenType.Multiply | TokenType.LeftAssign; break;
-                case "=*": type = TokenType.Multiply | TokenType.RightAssign; break;
-                case "/=": type = TokenType.Divide | TokenType.LeftAssign; break;
-                case "=/": type = TokenType.Divide | TokenType.RightAssign; break;
-                case "%=": type = TokenType.Modulo | TokenType.LeftAssign; break;
-                case "=%": type = TokenType.Modulo | TokenType.RightAssign; break;
+                case ":=": type = TokenType.LeftPipeline; break;
+                case "=:": type = TokenType.RightPipeline; break;
+                case "+=": type = TokenType.Add | TokenType.LeftPipeline; break;
+                case "=+": type = TokenType.Add | TokenType.RightPipeline; break;
+                case "-=": type = TokenType.Subtract | TokenType.LeftPipeline; break;
+                case "=-": type = TokenType.Subtract | TokenType.RightPipeline; break;
+                case "*=": type = TokenType.Multiply | TokenType.LeftPipeline; break;
+                case "=*": type = TokenType.Multiply | TokenType.RightPipeline; break;
+                case "/=": type = TokenType.Divide | TokenType.LeftPipeline; break;
+                case "=/": type = TokenType.Divide | TokenType.RightPipeline; break;
+                case "%=": type = TokenType.Modulo | TokenType.LeftPipeline; break;
+                case "=%": type = TokenType.Modulo | TokenType.RightPipeline; break;
                 default: return Token.Empty;
             }
             return t.TakeToken(2, type);
@@ -376,10 +376,10 @@ namespace SyntacticAnalysis
                 case ">=<": type = TokenType.Incomparable; break;
                 case "<>=": type = TokenType.Incomparable; break;
                 case "><=": type = TokenType.Incomparable; break;
-                case "<<=": type = TokenType.LeftCompose | TokenType.LeftAssign; break;
-                case "=<<": type = TokenType.LeftCompose | TokenType.RightAssign; break;
-                case ">>=": type = TokenType.RightCompose | TokenType.LeftAssign; break;
-                case "=>>": type = TokenType.RightCompose | TokenType.RightAssign; break;
+                case "<<=": type = TokenType.LeftCompose | TokenType.LeftPipeline; break;
+                case "=<<": type = TokenType.LeftCompose | TokenType.RightPipeline; break;
+                case ">>=": type = TokenType.RightCompose | TokenType.LeftPipeline; break;
+                case "=>>": type = TokenType.RightCompose | TokenType.RightPipeline; break;
                 default: return Token.Empty;
             }
             return t.TakeToken(3, type);

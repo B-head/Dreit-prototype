@@ -19,7 +19,7 @@ namespace CliTranslate
         {
             Call = call;
             Pre = pre;
-            Access = null;
+            Access = pre;
             Arguments = new List<ExpressionStructure>();
             if (Access != null)
             {

@@ -12,12 +12,12 @@ namespace SyntacticAnalysis
 
         private static Element LeftPipeline(SlimChainParser cp)
         {
-            return RightAssociative(cp, (tp, op, l, r) => new LeftPipeline(tp, op, l, r), RightPipeline, TokenType.LeftAssign);
+            return RightAssociative(cp, (tp, op, l, r) => new LeftPipeline(tp, op, l, r), RightPipeline, TokenType.LeftPipeline);
         }
 
         private static Element RightPipeline(SlimChainParser cp)
         {
-            return LeftAssociative(cp, (tp, op, l, r) => new RightPipeline(tp, op, l, r), TupleList, TokenType.RightAssign);
+            return LeftAssociative(cp, (tp, op, l, r) => new RightPipeline(tp, op, l, r), TupleList, TokenType.RightPipeline);
         }
 
         private static Element TupleList(SlimChainParser cp)

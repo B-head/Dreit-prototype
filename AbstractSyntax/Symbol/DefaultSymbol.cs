@@ -9,8 +9,9 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class DefaultSymbol : RoutineSymbol
     {
-        public DefaultSymbol(ClassSymbol parent)
+        public DefaultSymbol(string name, ClassSymbol parent)
         {
+            Name = name;
             _Attribute = new List<Scope>();
             _ArgumentTypes = new List<Scope>();
             _CallReturnType = parent;

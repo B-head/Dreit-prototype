@@ -29,7 +29,7 @@ namespace CliTranslate
             var ctor = Prim.GetConstructor(Type.EmptyTypes);
             if(ctor != null)
             {
-                Root.RegisterBuilder(path.DefaultInitializer, ctor);
+                Root.RegisterBuilder(path.ZeroArgInitializer, ctor);
             }
         }
 

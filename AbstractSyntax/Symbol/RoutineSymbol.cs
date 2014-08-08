@@ -122,7 +122,7 @@ namespace AbstractSyntax.Symbol
                     return null;
                 }
                 var i = cls.InheritClass as ClassSymbol;
-                return i.DefaultInitializer;
+                return i.ZeroArgInitializer;
             }
         }
 

@@ -11,15 +11,29 @@ namespace CliTranslate
     [Serializable]
     public class ConstructorStructure : MethodBaseStructure
     {
+        public bool IsDefault { get; private set; }
+        public ConstructorStructure SuperConstructor { get; private set; }
         [NonSerialized]
         private ConstructorBuilder Builder;
         [NonSerialized]
         private ConstructorInfo Info;
 
-        public void Initialize(bool isInstance, MethodAttributes attr, IReadOnlyList<ParameterStructure> arg, BlockStructure block = null, ConstructorInfo info = null)
+        public void Initialize(MethodAttributes attr, IReadOnlyList<ParameterStructure> arg, BlockStructure block, ConstructorInfo info = null)
         {
             Info = info;
-            base.Initialize(isInstance, attr, arg, block);
+            base.Initialize(true, attr, arg, block);
+        }
+
+        public void InitializeDefault()
+        {
+            IsDefault = true;
+            var arg = new List<ParameterStructure>();
+            base.Initialize(true, MethodAttributes.Public, arg, null);
+        }
+
+        public void RegisterSuperConstructor(ConstructorStructure super)
+        {
+            SuperConstructor = super;
         }
 
         protected override void PreBuild()
@@ -33,10 +47,23 @@ namespace CliTranslate
             Info = Builder;
             Arguments.RegisterBuilders(Builder, IsInstance);
             SpreadGenerator();
+            if(SuperConstructor != null)
+            {
+                Generator.GenerateControl(OpCodes.Ldarg_0);
+                Generator.GenerateCall(SuperConstructor);
+            }
         }
 
         internal override void PostBuild()
         {
+            if(Generator == null)
+            {
+                return;
+            }
+            if (Block != null && Block.IsValueReturn)
+            {
+                Generator.GenerateControl(OpCodes.Pop);
+            }
             Generator.GenerateControl(OpCodes.Ret);
         }
 

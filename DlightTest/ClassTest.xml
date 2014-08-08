@@ -5,10 +5,11 @@
       <![CDATA[
       class A
       {
-        var value := 500
+        var value:Int32
       }
 
       A() =: var a:A
+      a.value := 500
       echo a.value
       ]]>
     </code>
@@ -20,10 +21,11 @@
       <![CDATA[
       class A
       {
-        var value := 500
+        var value:Int32
       }
 
       A() =: var a
+      a.value := 500
       echo a.value
       ]]>
     </code>
@@ -35,14 +37,14 @@
       <![CDATA[
       class Counter
       {
-        var value := 0
+        var value:Int32
         routine next() :: value += 1
       }
 
-      Counter() =: var counter
-      echo counter.next()
-      echo counter.next()
-      echo counter.next()
+      Counter =: var counter
+      echo counter.next
+      echo counter.next
+      echo counter.next
       ]]>
     </code>
     <output>1 2 3</output>
@@ -53,7 +55,7 @@
       <![CDATA[
       class Counter
       {
-        var value := 0
+        var value := 5
         routine next :: value += 1
       }
 
@@ -63,7 +65,7 @@
       echo counter.next
       ]]>
     </code>
-    <output>1 2 3</output>
+    <output>6 7 8</output>
   </case>
 
   <case>
@@ -146,7 +148,7 @@
     <output>40</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       class A {
@@ -289,9 +291,9 @@
 
       A =: var o
       echo o.a
-      echo A&.b
+      echo A|.b
       echo o.foo
-      echo A&.bar
+      echo A|.bar
       ]]>
     </code>
     <output>10 20 40 60</output>
@@ -310,9 +312,9 @@
       }
 
       A =: var o
-      echo A&.a
+      echo A|.a
       echo o.b
-      echo A&.foo
+      echo A|.foo
       echo o.bar
       ]]>
     </code>
@@ -336,9 +338,9 @@
 
       A =: var o
       echo o.a
-      echo A&.b
+      echo A|.b
       echo o.foo
-      echo A&.bar
+      echo A|.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -358,9 +360,9 @@
 
       A =: var o
       echo o.a
-      echo A&.b
+      echo A|.b
       echo o.foo
-      echo A&.bar
+      echo A|.bar
       ]]>
     </code>
     <output>10 20 50 60</output>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,11 +24,26 @@ namespace CliTranslate
             var f = Variant as FieldStructure;
             if(f != null)
             {
-                if(IsStore)
+                if (IsStore)
                 {
-                    cg.GenerateStore(f);
+                    if(f.IsStatic)
+                    {
+                        cg.GenerateStore(f);
+                        cg.GenerateLoad(f);
+                    }
+                    else
+                    {
+                        cg.GenerateControl(OpCodes.Dup);
+                        var temp = new LocalStructure(f.DataType, cg);
+                        cg.GenerateStore(temp);
+                        cg.GenerateStore(f);
+                        cg.GenerateLoad(temp);
+                    }
                 }
-                cg.GenerateLoad(f);
+                else
+                {
+                    cg.GenerateLoad(f);
+                }
                 return;
             }
             var l = Variant as LocalStructure;

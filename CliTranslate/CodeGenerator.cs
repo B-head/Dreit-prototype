@@ -59,9 +59,21 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Newobj, constructor.GainConstructor());
         }
 
+        internal void GenerateCall(ConstructorStructure constructor)
+        {
+            Generator.Emit(OpCodes.Call, constructor.GainConstructor());
+        }
+
         internal void GenerateCall(MethodStructure method)
         {
-            Generator.Emit(OpCodes.Call, method.GainMethod());
+            if (method.IsVirtual)
+            {
+                Generator.Emit(OpCodes.Callvirt, method.GainMethod());
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Call, method.GainMethod());
+            }
         }
 
         internal void GenerateString(IReadOnlyList<CilStructure> texts)

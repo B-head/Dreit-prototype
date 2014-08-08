@@ -36,7 +36,7 @@ namespace AbstractSyntax.Expression
 
         public override TokenType CalculateOperator
         {
-            get { return Operator ^ TokenType.LeftAssign; }
+            get { return Operator ^ TokenType.LeftPipeline; }
         }
 
         protected override string ElementInfo

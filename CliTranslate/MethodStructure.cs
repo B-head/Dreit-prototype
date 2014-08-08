@@ -52,8 +52,26 @@ namespace CliTranslate
             SpreadGenerator();
         }
 
+        public bool IsVoidReturn
+        {
+            get { return ReturnType == null || ReturnType.Name == "Void"; }
+        }
+
+        public bool IsVirtual
+        {
+            get { return Attributes.HasFlag(MethodAttributes.Virtual); }
+        }
+
         internal override void PostBuild()
         {
+            if(Generator == null)
+            {
+                return;
+            }
+            if (Block != null && Block.IsValueReturn && IsVoidReturn)
+            {
+                Generator.GenerateControl(OpCodes.Pop);
+            }
             Generator.GenerateControl(OpCodes.Ret);
         }
 
