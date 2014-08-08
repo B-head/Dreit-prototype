@@ -14,6 +14,7 @@ namespace AbstractSyntax.Pragma
         public bool IsSet { get; private set; }
 
         public PropertyPragma(VariantSymbol variant, bool isSet)
+            : base(TokenType.Unknoun, false)
         {
             if(isSet)
             {

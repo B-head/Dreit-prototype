@@ -31,6 +31,11 @@ namespace AbstractSyntax.Literal
             }
         }
 
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
+
         public string ShowValue
         {
             get { return Regex.Replace(Value, @"\\.", TrimEscape); }

@@ -22,7 +22,7 @@ namespace AbstractSyntax.Symbol
         public const string ConstructorIdentifier = "new";
         public const string DestructorIdentifier = "free";
 
-        protected RoutineSymbol(TokenType op = TokenType.Unknoun)
+        protected RoutineSymbol(TokenType op, bool isFunc)
         {
             Operator = op;
             Block = new DirectiveList();
@@ -122,7 +122,7 @@ namespace AbstractSyntax.Symbol
                     return null;
                 }
                 var i = cls.InheritClass as ClassSymbol;
-                return i.ZeroArgInitializer;
+                return i.ZeroArgInitializer; //todo インポートされたコンストラクターも返すようにする。
             }
         }
 

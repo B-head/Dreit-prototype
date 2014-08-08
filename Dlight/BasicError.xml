@@ -23,4 +23,5 @@
   <msg key="invalid-void">値を返す式である必要があります。</msg>
   <msg key="not-convertable-right">{Left.ReturnType.Name} 型から {Right.ReturnType.Name} 型へ変換することは出来ません。</msg>
   <msg key="not-convertable-left">{Right.ReturnType.Name} 型から {Left.ReturnType.Name} 型へ変換することは出来ません。</msg>
+  <msg key="not-constant-expression">ここには定数式のみ記述できます。</msg>
 </compile-message>

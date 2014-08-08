@@ -23,5 +23,10 @@ namespace AbstractSyntax.Expression
                 return Root.TypeManager.IssueTypeQualify(Exp.ReturnType, Root.Typeof); //todo Refer版にも対応する。
             }
         }
+
+        public override bool IsConstant
+        {
+            get { return Exp.IsConstant; }
+        }
     }
 }

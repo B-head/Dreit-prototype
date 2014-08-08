@@ -76,6 +76,11 @@ namespace AbstractSyntax.Expression
             get { return CallScope.CallReturnType; }
         }
 
+        public override bool IsConstant
+        {
+            get { return ((RoutineSymbol)CallScope).IsFunction; }
+        }
+
         public Scope CallScope
         {
             get { return OverLoad.CallSelect().Call; }

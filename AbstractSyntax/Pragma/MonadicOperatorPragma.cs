@@ -13,7 +13,7 @@ namespace AbstractSyntax.Pragma
         public TokenType CalculateType { get; private set; }
 
         public MonadicOperatorPragma(TokenType type, ClassSymbol expt, ClassSymbol ret)
-            :base(type)
+            :base(type, true)
         {
             Name = GetOperatorName(type);
             CalculateType = type;

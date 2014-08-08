@@ -17,5 +17,10 @@ namespace AbstractSyntax.Expression
         {
             get { return Exp.ReturnType; }
         }
+
+        public override bool IsConstant
+        {
+            get { return Exp.IsConstant; }
+        }
     }
 }

@@ -14,22 +14,35 @@ namespace CliTranslate
         public string Name { get; private set; }
         public FieldAttributes Attributes { get; private set; }
         public TypeStructure DataType { get; private set; }
+        public object ConstantValue { get; private set; }
         [NonSerialized]
         private FieldBuilder Builder;
         [NonSerialized]
         private FieldInfo Info;
 
-        public FieldStructure(string name, FieldAttributes attr, TypeStructure dt, FieldInfo info = null)
+        public FieldStructure(string name, FieldAttributes attr, TypeStructure dt, object constval, FieldInfo info = null)
         {
             Name = name;
             Attributes = attr;
             DataType = dt;
+            ConstantValue = constval;
             Info = info;
         }
 
         public bool IsStatic
         {
             get { return Info.IsStatic; }
+        }
+
+        internal void BuildInitValue(CodeGenerator cg)
+        {
+            if(ConstantValue == null)
+            {
+                return;
+            }
+            cg.GenerateControl(OpCodes.Ldarg_0);
+            cg.GeneratePrimitive((dynamic)ConstantValue);
+            cg.GenerateStore(this);
         }
 
         protected override void PreBuild()
@@ -41,6 +54,10 @@ namespace CliTranslate
             var cont = CurrentContainer;
             Builder = cont.CreateField(Name, DataType.GainType(), Attributes);
             Info = Builder;
+            if (ConstantValue != null)
+            {
+                Builder.SetConstant(ConstantValue);
+            }
         }
 
         internal FieldInfo GainField()

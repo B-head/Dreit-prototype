@@ -30,6 +30,11 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public override bool IsConstant
+        {
+            get { return Left.IsConstant && Right.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+        }
+
         public override Scope ReturnType
         {
             get { return CallScope.CallReturnType; }

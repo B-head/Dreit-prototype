@@ -21,6 +21,11 @@ namespace CliTranslate
         {
         }
 
+        internal override bool IsDataTypeContext
+        {
+            get { return true; }
+        }
+
         public void Initialize(string name, TypeAttributes attr, BlockStructure block = null, Type info = null)
         {
             Name = name;

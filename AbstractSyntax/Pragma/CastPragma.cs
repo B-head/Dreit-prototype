@@ -13,6 +13,7 @@ namespace AbstractSyntax.Pragma
         public CastPragmaType PrimitiveType { get; private set; }
 
         public CastPragma(CastPragmaType type, ClassSymbol from, ClassSymbol to)
+            :base(TokenType.Unknoun, true)
         {
             Name = to.Name;
             PrimitiveType = type;

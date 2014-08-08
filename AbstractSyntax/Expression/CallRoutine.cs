@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Declaration;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
 using System;
@@ -102,6 +103,25 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public override bool IsConstant
+        {
+            get 
+            {
+                if (IsCalculate && !((RoutineSymbol)CalculateCallScope).IsFunction)
+                {
+                    return false;
+                }
+                if (Access is VariantDeclaration)
+                {
+                    return IsDataTypeLocation && Arguments.IsConstant;
+                }
+                else
+                {
+                    return Access.IsConstant && Arguments.IsConstant && ((RoutineSymbol)CallScope).IsFunction;
+                }
+            }
+        }
+
         public bool IsCalculate
         {
             get { return CalculateOperator != TokenType.Unknoun; }
@@ -118,6 +138,11 @@ namespace AbstractSyntax.Expression
                 }
                 return f.IsFunction;
             }
+        }
+
+        public bool IsDataTypeLocation
+        {
+            get { return CurrentScope is ClassDeclaration; }
         }
 
         public bool IsImmutableCall
@@ -172,6 +197,20 @@ namespace AbstractSyntax.Expression
                 }
                 return Arguments.GetDataTypes()[0];
             }
+        }
+
+        public object GenelateConstantValue()
+        {
+            if (Arguments.Count != 1)
+            {
+                return null;
+            }
+            var exp = Arguments[0] as NumericLiteral;
+            if(exp == null)
+            {
+                return null;
+            }
+            return exp.Parse();
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

@@ -28,6 +28,11 @@ namespace AbstractSyntax.Declaration
             AppendChild(InheritAccess);
         }
 
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
+
         public override IReadOnlyList<Scope> Attribute
         {
             get
@@ -96,6 +101,13 @@ namespace AbstractSyntax.Declaration
                 if (!(dt is ClassSymbol))
                 {
                     cmm.CompileError("not-datatype-inherit", this);
+                }
+            }
+            foreach(var v in Block)
+            {
+                if(!v.IsConstant)
+                {
+                    cmm.CompileError("not-constant-expression", v);
                 }
             }
         }

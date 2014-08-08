@@ -42,11 +42,15 @@ namespace CliTranslate
             {
                 return;
             }
-            var cont = CurrentContainer;
-            Builder = cont.CreateConstructor(Attributes, Arguments.ToTypes());
+            var pt = CurrentContainer as PureTypeStructure;
+            Builder = pt.CreateConstructor(Attributes, Arguments.ToTypes());
             Info = Builder;
             Arguments.RegisterBuilders(Builder, IsInstance);
             SpreadGenerator();
+            foreach(var f in pt.GetFields())
+            {
+                f.BuildInitValue(Generator);
+            }
             if(SuperConstructor != null)
             {
                 Generator.GenerateControl(OpCodes.Ldarg_0);

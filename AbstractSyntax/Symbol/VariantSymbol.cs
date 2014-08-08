@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Pragma;
+﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Pragma;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,6 +76,21 @@ namespace AbstractSyntax.Symbol
         public bool IsGlobal
         {
             get { return CurrentScope is NameSpaceSymbol; }
+        }
+
+        public bool IsDefinedConstantValue
+        {
+            get { return Parent is CallRoutine && CurrentScope is ClassSymbol; }
+        }
+
+        public object GenerateConstantValue()
+        {
+            var caller = Parent as CallRoutine;
+            if (caller == null)
+            {
+                return null;
+            }
+            return caller.GenelateConstantValue();
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)

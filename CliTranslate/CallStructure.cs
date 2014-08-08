@@ -44,6 +44,10 @@ namespace CliTranslate
 
         internal override void BuildCode()
         {
+            if(CurrentContainer.IsDataTypeContext)
+            {
+                return;
+            }
             var cg = CurrentContainer.GainGenerator();
             if (Pre != null)
             {

@@ -30,6 +30,21 @@ namespace AbstractSyntax.Directive
             AppendChild(child);
         }
 
+        public override bool IsConstant
+        {
+            get
+            {
+                foreach (var v in this)
+                {
+                    if (!v.IsConstant)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         protected override string ElementInfo
         {
             get { return "Count = " + Count; }

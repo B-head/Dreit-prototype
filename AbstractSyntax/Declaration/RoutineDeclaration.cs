@@ -30,6 +30,11 @@ namespace AbstractSyntax.Declaration
             AppendChild(ExplicitType);
         }
 
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
+
         public override IReadOnlyList<Scope> Attribute
         {
             get

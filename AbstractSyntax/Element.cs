@@ -44,6 +44,11 @@ namespace AbstractSyntax
             get { return Root.UndefinedOverLord; }
         }
 
+        public virtual bool IsConstant
+        {
+            get { return false; }
+        }
+
         public bool IsVoidReturn
         {
             get { return ReturnType is VoidSymbol; }

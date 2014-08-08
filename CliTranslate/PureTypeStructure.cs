@@ -17,7 +17,7 @@ namespace CliTranslate
         [NonSerialized]
         protected TypeBuilder Builder;
 
-        public void Initialize(string name, TypeAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, TypeStructure bt, IReadOnlyList<TypeStructure> imp, BlockStructure block = null, Type info = null)
+        internal void Initialize(string name, TypeAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, TypeStructure bt, IReadOnlyList<TypeStructure> imp, BlockStructure block = null, Type info = null)
         {
             Generics = gnr;
             BaseType = bt;
@@ -26,9 +26,39 @@ namespace CliTranslate
             base.Initialize(name, attr, block, info);
         }
 
-        public void RegisterDefault(ConstructorStructure def)
+        internal void RegisterDefault(ConstructorStructure def)
         {
-            AppendChild(def);
+            Block.AppendChild(def);
+        }
+
+        internal IEnumerable<FieldStructure> GetFields()
+        {
+            foreach(var v in GetFields(Block))
+            {
+                yield return v;
+            }
+        }
+
+        private IEnumerable<FieldStructure> GetFields(ExpressionStructure exp)
+        {
+            foreach(var v in exp)
+            {
+                var f = v as FieldStructure;
+                if(f != null)
+                {
+                    yield return f;
+                    continue;
+                }
+                var e = v as ExpressionStructure;
+                if(e == null)
+                {
+                    continue;
+                }
+                foreach(var w in GetFields(e))
+                {
+                    yield return w;
+                }
+            }
         }
 
         protected override void PreBuild()

@@ -33,5 +33,10 @@ namespace AbstractSyntax.Literal
                 return _ReturnType;
             }
         }
+
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
     }
 }

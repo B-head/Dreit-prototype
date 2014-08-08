@@ -11,6 +11,11 @@ namespace CliTranslate
     [Serializable]
     public abstract class ContainerStructure : BuilderStructure
     {
+        internal virtual bool IsDataTypeContext
+        {
+            get { return false; }
+        }
+
         internal virtual CodeGenerator GainGenerator()
         {
             throw new NotSupportedException();

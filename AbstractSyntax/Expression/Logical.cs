@@ -21,6 +21,11 @@ namespace AbstractSyntax.Expression
             get { return Left.ReturnType; }
         }
 
+        public override bool IsConstant
+        {
+            get { return Left.IsConstant && Right.IsConstant; }
+        }
+
         public bool IsOr
         {
             get { return Operator == TokenType.Or; }

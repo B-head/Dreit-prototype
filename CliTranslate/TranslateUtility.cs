@@ -73,9 +73,13 @@ namespace CliTranslate
             return ret;
         }
 
-        public static FieldAttributes MakeFieldAttributes(this IReadOnlyList<Scope> attr)
+        public static FieldAttributes MakeFieldAttributes(this IReadOnlyList<Scope> attr, bool isDcv)
         {
             FieldAttributes ret = 0;
+            if(isDcv)
+            {
+                ret |= FieldAttributes.HasDefault;
+            }
             foreach (var v in attr)
             {
                 var a = v as AttributeSymbol;

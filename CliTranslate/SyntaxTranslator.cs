@@ -236,11 +236,12 @@ namespace CliTranslate
 
         private CilStructure Translate(VariantSymbol element, FieldInfo info = null)
         {
-            var attr = element.Attribute.MakeFieldAttributes();
+            var attr = element.Attribute.MakeFieldAttributes(element.IsDefinedConstantValue);
             var dt = RelayTranslate(element.CallReturnType);
             if (element.IsField || element.IsGlobal)
             {
-                var ret = new FieldStructure(element.Name, attr, dt, info);
+                var constval = element.GenerateConstantValue();
+                var ret = new FieldStructure(element.Name, attr, dt, constval, info);
                 return ret;
             }
             else

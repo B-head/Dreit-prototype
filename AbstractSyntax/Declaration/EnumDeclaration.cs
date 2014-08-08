@@ -15,5 +15,10 @@ namespace AbstractSyntax.Declaration
         {
 
         }
+
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
     }
 }

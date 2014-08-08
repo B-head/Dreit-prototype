@@ -39,6 +39,11 @@ namespace AbstractSyntax.Literal
             }
         }
 
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
+
         protected override string ElementInfo
         {
             get

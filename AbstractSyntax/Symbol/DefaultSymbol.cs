@@ -10,6 +10,7 @@ namespace AbstractSyntax.Symbol
     public class DefaultSymbol : RoutineSymbol
     {
         public DefaultSymbol(string name, ClassSymbol parent)
+            :base(TokenType.Unknoun, false)
         {
             Name = name;
             _Attribute = new List<Scope>();

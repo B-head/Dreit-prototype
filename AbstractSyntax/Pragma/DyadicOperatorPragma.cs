@@ -13,7 +13,7 @@ namespace AbstractSyntax.Pragma
         public TokenType CalculateType { get; private set; }
 
         public DyadicOperatorPragma(TokenType type, ClassSymbol left, ClassSymbol right, ClassSymbol ret)
-            : base(type)
+            : base(type, true)
         {
             Name = GetOperatorName(type);
             CalculateType = type;

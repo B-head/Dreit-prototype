@@ -32,6 +32,11 @@ namespace AbstractSyntax.Expression
             get { return ReturnType.OverLoad; }
         }
 
+        public override bool IsConstant
+        {
+            get { return Access.IsConstant; }
+        }
+
         public IReadOnlyList<Scope> Parameter
         {
             get

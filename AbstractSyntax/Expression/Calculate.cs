@@ -34,6 +34,11 @@ namespace AbstractSyntax.Expression
             get { return CallScope.CallReturnType; }
         }
 
+        public override bool IsConstant
+        {
+            get { return Left.IsConstant && Right.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+        }
+
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
             if (CallScope is ErrorSymbol)
