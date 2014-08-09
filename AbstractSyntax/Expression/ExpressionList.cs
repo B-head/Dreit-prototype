@@ -6,19 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Directive
+namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class DirectiveList : Element
+    public class ExpressionList : Element
     {
         public bool IsInline { get; private set; }
 
-        public DirectiveList()
+        public ExpressionList()
         {
 
         }
 
-        public DirectiveList(TextPosition tp, List<Element> child, bool isInline)
+        public ExpressionList(TextPosition tp, List<Element> child, bool isInline)
             :base(tp)
         {
             IsInline = isInline;

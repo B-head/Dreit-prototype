@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using SyntacticAnalysis;
 using AbstractSyntax;
-using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 
 namespace SyntacticAnalysisTest
@@ -66,7 +65,7 @@ namespace SyntacticAnalysisTest
             var tc = Lexer.Lex("var a", string.Empty);
             var cp = new SlimChainParser(tc);
             var count = 0;
-            var element = new DirectiveList();
+            var element = new ExpressionList();
             ElementAction<Element> action = e => ++count;
             var ret = cp.Begin.Transfer(action, c => null, c => element).Transfer(action, c => element, c => null).End(tp => new TupleList(tp, null));
             Assert.That(ret, Is.Not.Null);

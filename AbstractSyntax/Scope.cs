@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Pragma;
+﻿using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -149,7 +149,7 @@ namespace AbstractSyntax
         {
             get 
             {
-                var pp = this as PropertyPragma;
+                var pp = this as PropertySymbol;
                 if(pp == null)
                 {
                     return false;

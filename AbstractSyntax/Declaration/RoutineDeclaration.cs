@@ -1,5 +1,5 @@
-﻿using AbstractSyntax.Directive;
-using AbstractSyntax.Expression;
+﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Statement;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -17,7 +17,7 @@ namespace AbstractSyntax.Declaration
         public Element ExplicitType { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
 
-        public RoutineDeclaration(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, DirectiveList block)
+        public RoutineDeclaration(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, ExpressionList block)
             : base(tp, name, op, isFunc, block)
         {
             AttributeAccess = attr;
@@ -108,7 +108,7 @@ namespace AbstractSyntax.Declaration
                 }
                 else if (Block.IsInline)
                 {
-                    var ret = Block[0] as ReturnDirective;
+                    var ret = Block[0] as ReturnStatement;
                     if (ret != null)
                     {
                         _CallReturnType = ret.Exp.ReturnType;
@@ -120,7 +120,7 @@ namespace AbstractSyntax.Declaration
                 }
                 else
                 {
-                    var ret = Block.FindElements<ReturnDirective>();
+                    var ret = Block.FindElements<ReturnStatement>();
                     if (ret.Count > 0)
                     {
                         _CallReturnType = ret[0].Exp.ReturnType;
@@ -173,7 +173,7 @@ namespace AbstractSyntax.Declaration
             }
             else
             {
-                var ret = Block.FindElements<ReturnDirective>();
+                var ret = Block.FindElements<ReturnStatement>();
                 foreach (var v in ret)
                 {
                     if (CallReturnType != v.Exp.ReturnType)

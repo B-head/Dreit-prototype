@@ -52,7 +52,7 @@ namespace AbstractSyntax.Declaration
                 {
                     return _DataType;
                 }
-                var caller = Parent as CallRoutine;
+                var caller = Parent as CallExpression;
                 if (ExplicitType != null)
                 {
                     _DataType = ExplicitType.OverLoad.FindDataType();

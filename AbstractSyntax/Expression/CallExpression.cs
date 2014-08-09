@@ -1,6 +1,6 @@
 ﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Literal;
-using AbstractSyntax.Pragma;
+using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class CallRoutine : Element
+    public class CallExpression : Element
     {
         public Element Access { get; private set; }
         public TupleList Arguments { get; private set; }
@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
         private Scope _CallScope;
         private Scope _CalculateCallScope;
 
-        public CallRoutine(TextPosition tp, Element acs, TupleList args)
+        public CallExpression(TextPosition tp, Element acs, TupleList args)
             : base(tp)
         {
             Access = acs;
@@ -28,7 +28,7 @@ namespace AbstractSyntax.Expression
             AppendChild(Arguments);
         }
 
-        protected CallRoutine(TextPosition tp, Element acs, Element arg)
+        protected CallExpression(TextPosition tp, Element acs, Element arg)
             :base(tp)
         {
             Access = acs;
@@ -149,7 +149,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                var v = CallScope as PropertyPragma;
+                var v = CallScope as PropertySymbol;
                 if(v == null)
                 {
                     return false;
@@ -225,7 +225,7 @@ namespace AbstractSyntax.Expression
             {
                 cmm.CompileError("not-mutable", this);
             }
-            if (IsFunctionLocation && CallScope is PropertyPragma)
+            if (IsFunctionLocation && CallScope is PropertySymbol)
             {
                 cmm.CompileError("forbit-side-effect", this);
             }

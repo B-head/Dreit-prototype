@@ -1,6 +1,5 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Declaration;
-using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using System.Collections.Generic;
 
@@ -18,6 +17,17 @@ namespace SyntacticAnalysis
             "private",
         };
 
+        private static AliasDeclaration AliasDeclaration(SlimChainParser cp)
+        {
+            Identifier from = null;
+            Identifier to = null;
+            return cp.Begin
+                .Text("alias").Lt()
+                .Opt.Transfer(e => from = e, Identifier)
+                .Opt.Transfer(e => to = e, Identifier)
+                .End(tp => new AliasDeclaration(tp, from, to));
+        }
+
         private static VariantDeclaration VariantDeclaration(SlimChainParser cp)
         {
             TupleList attr = null;
@@ -30,9 +40,9 @@ namespace SyntacticAnalysis
                     icp => icp.Text(e => isLet = false, "var"),
                     icp => icp.Text(e => isLet = true, "let")
                 ).Lt()
-                .Transfer(e => ident = e, IdentifierAccess)
+                .Transfer(e => ident = e, Identifier)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
-                .Than(icp => icp.Transfer(e => expl = e, IdentifierAccess))
+                .Than(icp => icp.Transfer(e => expl = e, Identifier))
                 .End(tp => new VariantDeclaration(tp, attr, ident, expl, isLet));
         }
 
@@ -44,7 +54,7 @@ namespace SyntacticAnalysis
             TupleList generic = null;
             TupleList args = null;
             Element expl = null;
-            DirectiveList block = null;
+            ExpressionList block = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Any(
@@ -68,7 +78,7 @@ namespace SyntacticAnalysis
             TupleList generic = null;
             TupleList args = null;
             Element expl = null;
-            DirectiveList block = null;
+            ExpressionList block = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Text("operator").Lt()
@@ -88,7 +98,7 @@ namespace SyntacticAnalysis
             var name = string.Empty;
             TupleList generic = null;
             TupleList inherit = new TupleList();
-            DirectiveList block = null;
+            ExpressionList block = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Any(
@@ -98,7 +108,7 @@ namespace SyntacticAnalysis
                 .Type(t => name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer(e => generic = e, GenericList)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
-                .Than(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, IdentifierAccess)))
+                .Than(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, Identifier)))
                 .Transfer(e => block = e, icp => Block(icp, true))
                 .End(tp => new ClassDeclaration(tp, name, isTrait, attr, generic, inherit, block));
         }
@@ -112,10 +122,10 @@ namespace SyntacticAnalysis
                 {
                     icp
                     .If(iicp => iicp.Type(TokenType.Attribute).Lt())
-                    .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), IdentifierAccess); })
+                    .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), Identifier); })
                     .ElseIf(iicp => iicp.Is(atFlag).Type(TokenType.List).Lt())
-                    .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), IdentifierAccess); })
-                    .Else(iicp => { atFlag = false; iicp.Transfer(e => child.Add(e), iiicp => IdentifierAccess(iiicp, attribute)); });
+                    .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), Identifier); })
+                    .Else(iicp => { atFlag = false; iicp.Transfer(e => child.Add(e), iiicp => Identifier(iiicp, attribute)); });
                 })
                 .End(tp => new TupleList(tp, child));
             return ret ?? new TupleList();
@@ -173,10 +183,24 @@ namespace SyntacticAnalysis
             Identifier expl = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
-                .Transfer(e => ident = e, IdentifierAccess)
+                .Transfer(e => ident = e, Identifier)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
-                .Than(icp => icp.Transfer(e => expl = e, IdentifierAccess))
+                .Than(icp => icp.Transfer(e => expl = e, Identifier))
                 .End(tp => new ArgumentDeclaration(tp, attr, ident, expl));
+        }
+
+        private static AttributeScope AttributeScope(SlimChainParser cp)
+        {
+            var child = new List<Element>();
+            return cp.Begin
+                .Type(TokenType.Zone).Lt()
+                .Loop(icp =>
+                {
+                    icp
+                    .Transfer(e => child.Add(e), Identifier)
+                    .Type(TokenType.List).Lt();
+                })
+                .End(tp => new AttributeScope(tp, child));
         }
     }
 }

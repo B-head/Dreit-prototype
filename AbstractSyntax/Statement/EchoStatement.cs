@@ -3,14 +3,14 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Directive
+namespace AbstractSyntax.Statement
 {
     [Serializable]
-    public class EchoDirective : Element //todo echoディレクティブではなく、標準の関数を使用するように置き換える。
+    public class EchoStatement : Element //todo echoディレクティブではなく、標準の関数を使用するように置き換える。
     {
         public Element Exp { get; private set; }
 
-        public EchoDirective(TextPosition tp, Element exp)
+        public EchoStatement(TextPosition tp, Element exp)
             :base(tp)
         {
             Exp = exp;

@@ -13,7 +13,7 @@ namespace SyntacticAnalysis
         public static ModuleDeclaration Parse(TokenCollection collection)
         {
             var cp = new SlimChainParser(collection);
-            var exp = RootDirectiveList(cp);
+            var exp = RootExpressionList(cp);
             var tp = collection.FirstPosition.AlterLength(collection.LastPosition);
             return new ModuleDeclaration(tp, exp, collection.GetName(), collection.Text, collection.ErrorToken);
         }

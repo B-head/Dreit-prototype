@@ -3,15 +3,15 @@ using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Directive
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class AliasDirective : Scope
+    public class AliasDeclaration : Scope
     {
         public Identifier From { get; private set; }
         public Identifier To { get; private set; }
 
-        public AliasDirective(TextPosition tp, Identifier from, Identifier to)
+        public AliasDeclaration(TextPosition tp, Identifier from, Identifier to)
             :base(tp)
         {
             From = from;

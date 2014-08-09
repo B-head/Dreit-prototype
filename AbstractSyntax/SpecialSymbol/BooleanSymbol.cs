@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Symbol
+namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
     public class BooleanSymbol : VariantSymbol

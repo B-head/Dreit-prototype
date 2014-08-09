@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Symbol
+namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
     public class ErrorSymbol : Scope

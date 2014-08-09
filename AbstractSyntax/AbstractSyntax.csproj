@@ -47,13 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Directive\AliasDirective.cs" />
+    <Compile Include="Declaration\AliasDeclaration.cs" />
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
-    <Compile Include="Directive\AttributeZoneDirective.cs" />
-    <Compile Include="Directive\BreakDirective.cs" />
-    <Compile Include="Directive\ContinueDirective.cs" />
-    <Compile Include="Expression\CallRoutine.cs" />
+    <Compile Include="Declaration\AttributeScope.cs" />
+    <Compile Include="Statement\BreakStatement.cs" />
+    <Compile Include="Statement\ContinueStatement.cs" />
+    <Compile Include="Expression\CallExpression.cs" />
     <Compile Include="Expression\Compare.cs" />
     <Compile Include="Expression\Logical.cs" />
     <Compile Include="Expression\Postfix.cs" />
@@ -64,7 +64,7 @@
     <Compile Include="OperationManager.cs" />
     <Compile Include="OverLoadReference.cs" />
     <Compile Include="OverLoadSet.cs" />
-    <Compile Include="Pragma\DyadicOperatorPragma.cs" />
+    <Compile Include="SpecialSymbol\DyadicOperatorSymbol.cs" />
     <Compile Include="Declaration\ArgumentDeclaration.cs" />
     <Compile Include="Declaration\ClassDeclaration.cs" />
     <Compile Include="Declaration\EnumDeclaration.cs" />
@@ -74,17 +74,17 @@
     <Compile Include="Declaration\VariantDeclaration.cs" />
     <Compile Include="Expression\Calculate.cs" />
     <Compile Include="Expression\DyadicExpression.cs" />
-    <Compile Include="Pragma\CastPragma.cs" />
-    <Compile Include="Pragma\MonadicOperatorPragma.cs" />
-    <Compile Include="Directive\ReturnDirective.cs" />
-    <Compile Include="Directive\EchoDirective.cs" />
+    <Compile Include="SpecialSymbol\CastSymbol.cs" />
+    <Compile Include="SpecialSymbol\MonadicOperatorSymbol.cs" />
+    <Compile Include="Statement\ReturnStatement.cs" />
+    <Compile Include="Statement\EchoStatement.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="Expression\GroupingExpression.cs" />
-    <Compile Include="Directive\DirectiveList.cs" />
+    <Compile Include="Expression\ExpressionList.cs" />
     <Compile Include="Expression\Identifier.cs" />
     <Compile Include="Expression\LeftPipeline.cs" />
     <Compile Include="Expression\MemberAccess.cs" />
-    <Compile Include="Pragma\PropertyPragma.cs" />
+    <Compile Include="SpecialSymbol\PropertySymbol.cs" />
     <Compile Include="Symbol\ArgumentSymbol.cs" />
     <Compile Include="Symbol\NameSpaceSymbol.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
@@ -97,22 +97,22 @@
     <Compile Include="Statement\LoopStatement.cs" />
     <Compile Include="Statement\UnStatement.cs" />
     <Compile Include="Symbol\AttributeSymbol.cs" />
-    <Compile Include="Symbol\BooleanSymbol.cs" />
+    <Compile Include="SpecialSymbol\BooleanSymbol.cs" />
     <Compile Include="Symbol\ClassSymbol.cs" />
-    <Compile Include="Symbol\DefaultSymbol.cs" />
+    <Compile Include="SpecialSymbol\DefaultSymbol.cs" />
     <Compile Include="Symbol\EnumSymbol.cs" />
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
     <Compile Include="Symbol\TemplateInstanceSymbol.cs" />
     <Compile Include="Symbol\QualifyTypeSymbol.cs" />
-    <Compile Include="Symbol\UnknownSymbol.cs" />
+    <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
-    <Compile Include="Symbol\ErrorSymbol.cs" />
+    <Compile Include="SpecialSymbol\ErrorSymbol.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="TypeManager.cs" />
     <Compile Include="TypeMatch.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
-    <Compile Include="Symbol\ThisSymbol.cs" />
+    <Compile Include="SpecialSymbol\ThisSymbol.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Expression\TupleList.cs" />
     <Compile Include="Visualizer\SyntaxVisualizerForm.cs">
@@ -121,7 +121,7 @@
     <Compile Include="Visualizer\SyntaxVisualizerForm.Designer.cs">
       <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Symbol\VoidSymbol.cs" />
+    <Compile Include="SpecialSymbol\VoidSymbol.cs" />
     <Compile Include="Visualizer\SyntaxVisualizerSource.cs" />
     <Compile Include="Visualizer\SyntaxVisualizerTree.cs" />
   </ItemGroup>
@@ -130,6 +130,7 @@
       <DependentUpon>SyntaxVisualizerForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

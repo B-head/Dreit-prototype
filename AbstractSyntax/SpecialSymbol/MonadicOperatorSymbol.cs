@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Pragma
+namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
-    public class MonadicOperatorPragma : RoutineSymbol
+    public class MonadicOperatorSymbol : RoutineSymbol
     {
         public TokenType CalculateType { get; private set; }
 
-        public MonadicOperatorPragma(TokenType type, ClassSymbol expt, ClassSymbol ret)
+        public MonadicOperatorSymbol(TokenType type, ClassSymbol expt, ClassSymbol ret)
             :base(type, true)
         {
             Name = GetOperatorName(type);

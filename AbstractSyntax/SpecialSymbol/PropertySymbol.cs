@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Pragma
+namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
-    public class PropertyPragma : RoutineSymbol
+    public class PropertySymbol : RoutineSymbol
     {
         public VariantSymbol Variant { get; private set; }
         public bool IsSet { get; private set; }
 
-        public PropertyPragma(VariantSymbol variant, bool isSet)
+        public PropertySymbol(VariantSymbol variant, bool isSet)
             : base(TokenType.Unknoun, false)
         {
             if(isSet)

@@ -1,9 +1,8 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Declaration;
-using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using AbstractSyntax.Literal;
-using AbstractSyntax.Pragma;
+using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Statement;
 using AbstractSyntax.Symbol;
 using System;
@@ -149,26 +148,26 @@ namespace CliTranslate
             return ret;
         }
 
-        private LoadStoreStructure Translate(PropertyPragma element)
+        private LoadStoreStructure Translate(PropertySymbol element)
         {
             var variant = RelayTranslate(element.Variant);
             var ret = new LoadStoreStructure(variant, element.IsSet);
             return ret;
         }
 
-        private CastStructure Translate(CastPragma element)
+        private CastStructure Translate(CastSymbol element)
         {
             var ret = new CastStructure(element.PrimitiveType);
             return ret;
         }
 
-        private OperationStructure Translate(MonadicOperatorPragma element)
+        private OperationStructure Translate(MonadicOperatorSymbol element)
         {
             var ret = new OperationStructure(element.CalculateType);
             return ret;
         }
 
-        private OperationStructure Translate(DyadicOperatorPragma element)
+        private OperationStructure Translate(DyadicOperatorSymbol element)
         {
             var ret = new OperationStructure(element.CalculateType);
             return ret;
@@ -266,12 +265,12 @@ namespace CliTranslate
             return ret;
         }
 
-        private CilStructure Translate(AliasDirective element)
+        private CilStructure Translate(AliasDeclaration element)
         {
             return null; //todo CILにエイリアスを反映させる方法を調査する。
         }
 
-        private GotoStructure Translate(BreakDirective element)
+        private GotoStructure Translate(BreakStatement element)
         {
             var loop = (LoopStructure)RelayTranslate(element.CurrentLoop());
             var rt = RelayTranslate(element.ReturnType);
@@ -279,7 +278,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private GotoStructure Translate(ContinueDirective element)
+        private GotoStructure Translate(ContinueStatement element)
         {
             var loop = (LoopStructure)RelayTranslate(element.CurrentLoop());
             var rt = RelayTranslate(element.ReturnType);
@@ -287,7 +286,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private BlockStructure Translate(DirectiveList element)
+        private BlockStructure Translate(ExpressionList element)
         {
             var exps = CollectList<CilStructure>(element);
             var rt = RelayTranslate(element.ReturnType);
@@ -295,7 +294,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private WriteLineStructure Translate(EchoDirective element)
+        private WriteLineStructure Translate(EchoStatement element)
         {
             var exp = RelayTranslate(element.Exp);
             var rt = RelayTranslate(element.ReturnType);
@@ -303,7 +302,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private ReturnStructure Translate(ReturnDirective element)
+        private ReturnStructure Translate(ReturnStatement element)
         {
             var exp = RelayTranslate(element.Exp);
             var rt = RelayTranslate(element.ReturnType);
@@ -311,7 +310,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private CallStructure Translate(CallRoutine element)
+        private CallStructure Translate(CallExpression element)
         {
             var call = RelayTranslate(element.CallScope);
             var access = RelayTranslate(element.Access);

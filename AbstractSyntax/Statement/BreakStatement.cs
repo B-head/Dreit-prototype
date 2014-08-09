@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Directive
+namespace AbstractSyntax.Statement
 {
     [Serializable]
-    public class BreakDirective : Element
+    public class BreakStatement : Element
     {
-        public BreakDirective(TextPosition tp)
+        public BreakStatement(TextPosition tp)
             :base(tp)
         {
 

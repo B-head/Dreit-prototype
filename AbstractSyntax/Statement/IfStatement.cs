@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Directive;
+﻿using AbstractSyntax.Expression;
 using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
@@ -12,11 +12,11 @@ namespace AbstractSyntax.Statement
     public class IfStatement : Scope
     {
         public Element Condition { get; private set; }
-        public DirectiveList Then { get; private set; }
-        public DirectiveList Else { get; private set; }
+        public ExpressionList Then { get; private set; }
+        public ExpressionList Else { get; private set; }
         private Scope _ReturnType;
 
-        public IfStatement(TextPosition tp, Element cond, DirectiveList than, DirectiveList els)
+        public IfStatement(TextPosition tp, Element cond, ExpressionList than, ExpressionList els)
             :base(tp)
         {
             Condition = cond;
@@ -54,7 +54,7 @@ namespace AbstractSyntax.Statement
             }
         } 
 
-        private Scope BlockReturnType(DirectiveList block)
+        private Scope BlockReturnType(ExpressionList block)
         {
             if(block == null)
             {

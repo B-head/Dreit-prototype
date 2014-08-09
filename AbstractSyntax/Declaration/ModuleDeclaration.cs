@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Directive;
+﻿using AbstractSyntax.Expression;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -10,11 +10,11 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class ModuleDeclaration : NameSpaceSymbol
     {
-        public DirectiveList Directives { get; private set; }
+        public ExpressionList Directives { get; private set; }
         public string SourceText { get; private set; }
         public IReadOnlyList<Token> ErrorToken { get; private set; }
 
-        public ModuleDeclaration(TextPosition tp, DirectiveList drcs, string name, string source, IReadOnlyList<Token> error)
+        public ModuleDeclaration(TextPosition tp, ExpressionList drcs, string name, string source, IReadOnlyList<Token> error)
             :base(tp)
         {
             Directives = drcs;

@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Pragma
+namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
-    public class DyadicOperatorPragma : RoutineSymbol
+    public class DyadicOperatorSymbol : RoutineSymbol
     {
         public TokenType CalculateType { get; private set; }
 
-        public DyadicOperatorPragma(TokenType type, ClassSymbol left, ClassSymbol right, ClassSymbol ret)
+        public DyadicOperatorSymbol(TokenType type, ClassSymbol left, ClassSymbol right, ClassSymbol ret)
             : base(type, true)
         {
             Name = GetOperatorName(type);

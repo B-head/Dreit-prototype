@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Directive
+namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class AttributeZoneDirective : Element
+    public class AttributeScope : Element
     {
         private List<Scope> _Attribute;
 
-        public AttributeZoneDirective(TextPosition tp, List<Element> child)
+        public AttributeScope(TextPosition tp, List<Element> child)
             :base(tp)
         {
             AppendChild(child);

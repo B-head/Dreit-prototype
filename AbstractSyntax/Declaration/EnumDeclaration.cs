@@ -1,5 +1,4 @@
-﻿using AbstractSyntax.Directive;
-using AbstractSyntax.Expression;
+﻿using AbstractSyntax.Expression;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -10,7 +9,7 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class EnumDeclaration : EnumSymbol
     {
-        public EnumDeclaration(TextPosition tp, string name, DirectiveList block)
+        public EnumDeclaration(TextPosition tp, string name, ExpressionList block)
             :base(tp, name, block)
         {
 

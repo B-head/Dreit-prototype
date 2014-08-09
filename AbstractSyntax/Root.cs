@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Pragma;
+﻿using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -110,7 +110,7 @@ namespace AbstractSyntax
             CreateBuiltInDyadicOperator(nt);
         }
 
-        private void CreateEmbedCast(IReadOnlyDictionary<ClassSymbol, CastPragmaType> nt)
+        private void CreateEmbedCast(IReadOnlyDictionary<ClassSymbol, PrimitiveType> nt)
         {
             foreach(var a in nt.Keys)
             {
@@ -120,31 +120,31 @@ namespace AbstractSyntax
                     {
                         continue;
                     }
-                    var p = new CastPragma(nt[b], a, b);
+                    var p = new CastSymbol(nt[b], a, b);
                     EmbedList.AppendChild(p);
                     ConvManager.Append(p);
                 }
             }
         }
 
-        private void CreateBuiltInMonadicOperator(IReadOnlyDictionary<ClassSymbol, CastPragmaType> nt)
+        private void CreateBuiltInMonadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitiveType> nt)
         {
             var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
-            var nbp = new MonadicOperatorPragma(TokenType.Not, bl, bl);
+            var nbp = new MonadicOperatorSymbol(TokenType.Not, bl, bl);
             EmbedList.AppendChild(nbp);
             OpManager.Append(nbp);
             foreach (var a in nt.Keys)
             {
-                foreach (TokenType t in MonadicOperatorPragma.EnumOperator())
+                foreach (TokenType t in MonadicOperatorSymbol.EnumOperator())
                 {
-                    MonadicOperatorPragma p;
-                    if (MonadicOperatorPragma.HasCondition(t))
+                    MonadicOperatorSymbol p;
+                    if (MonadicOperatorSymbol.HasCondition(t))
                     {
-                        p = new MonadicOperatorPragma(t, a, bl);
+                        p = new MonadicOperatorSymbol(t, a, bl);
                     }
                     else
                     {
-                        p = new MonadicOperatorPragma(t, a, a);
+                        p = new MonadicOperatorSymbol(t, a, a);
                     }
                     EmbedList.AppendChild(p);
                     OpManager.Append(p);
@@ -152,27 +152,27 @@ namespace AbstractSyntax
             }
         }
 
-        private void CreateBuiltInDyadicOperator(IReadOnlyDictionary<ClassSymbol, CastPragmaType> nt)
+        private void CreateBuiltInDyadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitiveType> nt)
         {
             var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
             foreach (var a in nt.Keys)
             {
                 foreach (var b in nt.Keys)
                 {
-                    foreach (TokenType t in DyadicOperatorPragma.EnumOperator())
+                    foreach (TokenType t in DyadicOperatorSymbol.EnumOperator())
                     {
-                        DyadicOperatorPragma p;
-                        if (DyadicOperatorPragma.HasCondition(t))
+                        DyadicOperatorSymbol p;
+                        if (DyadicOperatorSymbol.HasCondition(t))
                         {
-                            p = new DyadicOperatorPragma(t, a, b, bl);
+                            p = new DyadicOperatorSymbol(t, a, b, bl);
                         }
                         else if (nt[a] >= nt[b])
                         {
-                            p = new DyadicOperatorPragma(t, a, b, a);
+                            p = new DyadicOperatorSymbol(t, a, b, a);
                         }
                         else
                         {
-                            p = new DyadicOperatorPragma(t, a, b, b);
+                            p = new DyadicOperatorSymbol(t, a, b, b);
                         }
                         EmbedList.AppendChild(p);
                         OpManager.Append(p);
@@ -181,19 +181,19 @@ namespace AbstractSyntax
             }
         }
 
-        private IReadOnlyDictionary<ClassSymbol, CastPragmaType> GetBuildInNumberType()
+        private IReadOnlyDictionary<ClassSymbol, PrimitiveType> GetBuildInNumberType()
         {
-            var ret = new Dictionary<ClassSymbol, CastPragmaType>();
-            ret.Add((ClassSymbol)NameResolution("SByte").FindDataType(), CastPragmaType.Integer8);
-            ret.Add((ClassSymbol)NameResolution("Int16").FindDataType(), CastPragmaType.Natural16);
-            ret.Add((ClassSymbol)NameResolution("Int32").FindDataType(), CastPragmaType.Integer32);
-            ret.Add((ClassSymbol)NameResolution("Int64").FindDataType(), CastPragmaType.Integer64);
-            ret.Add((ClassSymbol)NameResolution("Byte").FindDataType(), CastPragmaType.Natural8);
-            ret.Add((ClassSymbol)NameResolution("UInt16").FindDataType(), CastPragmaType.Natural16);
-            ret.Add((ClassSymbol)NameResolution("UInt32").FindDataType(), CastPragmaType.Natural32);
-            ret.Add((ClassSymbol)NameResolution("UInt64").FindDataType(), CastPragmaType.Natural64);
-            ret.Add((ClassSymbol)NameResolution("Single").FindDataType(), CastPragmaType.Binary32);
-            ret.Add((ClassSymbol)NameResolution("Double").FindDataType(), CastPragmaType.Binary64);
+            var ret = new Dictionary<ClassSymbol, PrimitiveType>();
+            ret.Add((ClassSymbol)NameResolution("SByte").FindDataType(), PrimitiveType.Integer8);
+            ret.Add((ClassSymbol)NameResolution("Int16").FindDataType(), PrimitiveType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("Int32").FindDataType(), PrimitiveType.Integer32);
+            ret.Add((ClassSymbol)NameResolution("Int64").FindDataType(), PrimitiveType.Integer64);
+            ret.Add((ClassSymbol)NameResolution("Byte").FindDataType(), PrimitiveType.Natural8);
+            ret.Add((ClassSymbol)NameResolution("UInt16").FindDataType(), PrimitiveType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("UInt32").FindDataType(), PrimitiveType.Natural32);
+            ret.Add((ClassSymbol)NameResolution("UInt64").FindDataType(), PrimitiveType.Natural64);
+            ret.Add((ClassSymbol)NameResolution("Single").FindDataType(), PrimitiveType.Binary32);
+            ret.Add((ClassSymbol)NameResolution("Double").FindDataType(), PrimitiveType.Binary64);
             return ret;
         }
     }

@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Directive
+namespace AbstractSyntax.Statement
 {
     [Serializable]
-    public class ContinueDirective : Element
+    public class ContinueStatement : Element
     {
-        public ContinueDirective(TextPosition tp)
+        public ContinueStatement(TextPosition tp)
             :base(tp)
         {
 

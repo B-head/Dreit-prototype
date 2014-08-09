@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Pragma
+namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
-    public class CastPragma : RoutineSymbol
+    public class CastSymbol : RoutineSymbol
     {
-        public CastPragmaType PrimitiveType { get; private set; }
+        public PrimitiveType PrimitiveType { get; private set; }
 
-        public CastPragma(CastPragmaType type, ClassSymbol from, ClassSymbol to)
+        public CastSymbol(PrimitiveType type, ClassSymbol from, ClassSymbol to)
             :base(TokenType.Unknoun, true)
         {
             Name = to.Name;
@@ -22,7 +22,7 @@ namespace AbstractSyntax.Pragma
         }
     }
 
-    public enum CastPragmaType
+    public enum PrimitiveType
     {
         NotPrimitive = 0,
         Integer8 = 1,

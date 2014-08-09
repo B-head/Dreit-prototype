@@ -1,6 +1,4 @@
-﻿using AbstractSyntax.Directive;
-using AbstractSyntax.Expression;
-using AbstractSyntax.Pragma;
+﻿using AbstractSyntax.Expression;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -17,7 +15,7 @@ namespace AbstractSyntax.Declaration
         public TupleList DecGenerics { get; private set; }
         public TupleList InheritAccess { get; private set; }
 
-        public ClassDeclaration(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, DirectiveList block)
+        public ClassDeclaration(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, ExpressionList block)
             :base(tp, name, isTrait, block)
         {
             AttributeAccess = attr;

@@ -1,5 +1,4 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Directive;
 using AbstractSyntax.Expression;
 using AbstractSyntax.Literal;
 using AbstractSyntax.Statement;
@@ -11,17 +10,23 @@ namespace SyntacticAnalysis
     {
         private static TransferParser<Element>[] primary = 
         { 
-            ClassDeclaration,
+            AliasDeclaration,
+            VariantDeclaration,
             RoutineDeclaration,
             OperatorDeclaration,
-            VariantDeclaration,
+            ClassDeclaration,
+            AttributeScope,
             IfStatement,
             LoopStatement,
             UnStatement,
-            GroupingExpression,
+            EchoStatement,
+            ReturnStatement,
+            BreakStatement,
+            ContinueStatement,
             StringLiteral,
             NumericLiteral,
-            IdentifierAccess
+            GroupingExpression,
+            Identifier
         };
 
         private static Element Primary(SlimChainParser cp)
@@ -73,7 +78,7 @@ namespace SyntacticAnalysis
                 .End(tp => new PlainText(tp, value));
         }
 
-        private static Identifier IdentifierAccess(SlimChainParser cp)
+        private static Identifier Identifier(SlimChainParser cp)
         {
             var isPragma = false;
             var value = string.Empty;
@@ -83,7 +88,7 @@ namespace SyntacticAnalysis
                 .End(tp => new Identifier(tp, value, isPragma));
         }
 
-        private static Identifier IdentifierAccess(SlimChainParser cp, params string[] match)
+        private static Identifier Identifier(SlimChainParser cp, params string[] match)
         {
             var isPragma = false;
             var value = string.Empty;
@@ -91,46 +96,6 @@ namespace SyntacticAnalysis
                 .Opt.Type(t => isPragma = true, TokenType.Pragma).Lt()
                 .Text(t => value = t.Text, match).Lt()
                 .End(tp => new Identifier(tp, value, isPragma));
-        }
-
-        private static UnStatement UnStatement(SlimChainParser cp)
-        {
-            Element exp = null;
-            return cp.Begin
-                .Text("un").Lt()
-                .Transfer(e => exp = e, Directive)
-                .End(tp => new UnStatement(tp, exp));
-        }
-
-        private static IfStatement IfStatement(SlimChainParser cp)
-        {
-            Element cond = null;
-            DirectiveList than = null;
-            DirectiveList els = null;
-            return cp.Begin
-                .Text("if").Lt()
-                .Transfer(e => cond = e, Directive)
-                .Transfer(e => than = e, icp => Block(icp, true))
-                .If(icp => icp.Text("else").Lt())
-                .Than(icp => icp.Transfer(e => els = e, iicp => Block(iicp, false)))
-                .End(tp => new IfStatement(tp, cond, than, els));
-        }
-
-        private static LoopStatement LoopStatement(SlimChainParser cp)
-        {
-            Element cond = null;
-            Element on = null;
-            Element by = null;
-            DirectiveList block = null;
-            return cp.Begin
-                .Text("loop").Lt()
-                .Opt.Transfer(e => cond = e, Directive)
-                .If(icp => icp.Text("on").Lt())
-                .Than(icp => icp.Transfer(e => on = e, Directive))
-                .If(icp => icp.Text("by").Lt())
-                .Than(icp => icp.Transfer(e => by = e, Directive))
-                .Transfer(e => block = e, icp => Block(icp, true))
-                .End(tp => new LoopStatement(tp, cond, on, by, block));
         }
     }
 }

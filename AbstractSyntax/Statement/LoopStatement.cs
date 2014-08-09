@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax.Declaration;
-using AbstractSyntax.Directive;
+using AbstractSyntax.Expression;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,9 @@ namespace AbstractSyntax.Statement
         public Element Condition { get; set; }
         public Element On { get; set; }
         public Element By { get; set; }
-        public DirectiveList Block { get; set; }
+        public ExpressionList Block { get; set; }
 
-        public LoopStatement(TextPosition tp, Element cond, Element on, Element by, DirectiveList block)
+        public LoopStatement(TextPosition tp, Element cond, Element on, Element by, ExpressionList block)
             :base(tp)
         {
             Condition = cond;

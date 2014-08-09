@@ -1,5 +1,4 @@
 ﻿using AbstractSyntax.Declaration;
-using AbstractSyntax.Pragma;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -8,7 +7,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class LeftPipeline : CallRoutine
+    public class LeftPipeline : CallExpression
     {
         public TokenType Operator { get; set; }
 

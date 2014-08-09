@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Symbol
+namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
     public class UnknownSymbol : Scope

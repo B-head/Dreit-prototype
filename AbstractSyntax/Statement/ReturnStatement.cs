@@ -2,14 +2,14 @@
 using System;
 using System.Diagnostics;
 
-namespace AbstractSyntax.Directive
+namespace AbstractSyntax.Statement
 {
     [Serializable]
-    public class ReturnDirective : Element
+    public class ReturnStatement : Element
     {
         public Element Exp { get; private set; }
 
-        public ReturnDirective(TextPosition tp, Element exp)
+        public ReturnStatement(TextPosition tp, Element exp)
             :base(tp)
         {
             Exp = exp;
