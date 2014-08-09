@@ -10,6 +10,18 @@ Dlightは、初心者でも簡単に扱えるD言語を目指して構想して�
 - 今後の開発のために、開発・保守のしやすいコード設計を確立する。
 
 ##コード例
+###FizzBuzz
+```
+//FizzBuzz
+loop i <= 15 on var i := 1 by i += 1 {
+    echo if i % 15 = 0 :: "fizzbuzz"
+    else if i % 3 = 0 :: "fizz"
+    else if i % 5 = 0 :: "buzz"
+    else "{ i }"
+}
+```
+
+###線形合同法乱数生成器
 ```
 Random =: var rand //クラスインスタンスの生成と変数定義。
 echo rand.value //フィールドを参照し出力。
@@ -28,13 +40,4 @@ class Random //クラス定義
 }
 ```
 
-```
-//FizzBuzz
-loop i <= 15 on var i := 1 by i += 1 {
-    echo if i % 15 = 0 :: "fizzbuzz"
-    else if i % 3 = 0 :: "fizz"
-    else if i % 5 = 0 :: "buzz"
-    else "{ i }"
-}
-```
 このほかのコード例は、[DlightTest](https://github.com/B-head/Dlight-prototype/tree/master/DlightTest)のテストケースを御覧ください。
