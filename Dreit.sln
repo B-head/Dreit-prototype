@@ -1,17 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dlight", "Dlight\Dlight.csproj", "{76C1B982-7FDC-4223-9E70-59798DD42C73}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntacticAnalysis", "SyntacticAnalysis\SyntacticAnalysis.csproj", "{4E625555-55AD-4C76-B124-0E056D055F40}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntax", "AbstractSyntax\AbstractSyntax.csproj", "{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliTranslate", "CliTranslate\CliTranslate.csproj", "{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlightTest", "DlightTest\DlightTest.csproj", "{AAC2414D-F807-4A18-B981-E6B2E7A0571A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E12D2AF0-1862-4EC2-8E9C-6386610DEEB7}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,10 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E12D2A
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntacticAnalysisTest", "SyntacticAnalysisTest\SyntacticAnalysisTest.csproj", "{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtility", "TestUtility\TestUtility.csproj", "{76B0AC11-B904-4892-992C-A6B05E154188}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntaxTest", "AbstractSyntaxTest\AbstractSyntaxTest.csproj", "{9071F952-F9E4-485B-B49E-455B71DFC108}"
 EndProject
@@ -33,20 +23,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreitCompiler", "DreitCompiler\DreitCompiler.csproj", "{76C1B982-7FDC-4223-9E70-59798DD42C73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompileTest", "CompileTest\CompileTest.csproj", "{AAC2414D-F807-4A18-B981-E6B2E7A0571A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E625555-55AD-4C76-B124-0E056D055F40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E625555-55AD-4C76-B124-0E056D055F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E625555-55AD-4C76-B124-0E056D055F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E625555-55AD-4C76-B124-0E056D055F40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,22 +41,18 @@ Global
 		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE6F3528-B4DE-4CC9-9554-FBE2B1213041}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B1E326D-EF2F-4373-BBA5-88625DD7AF98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76B0AC11-B904-4892-992C-A6B05E154188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76B0AC11-B904-4892-992C-A6B05E154188}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76B0AC11-B904-4892-992C-A6B05E154188}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76B0AC11-B904-4892-992C-A6B05E154188}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9071F952-F9E4-485B-B49E-455B71DFC108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9071F952-F9E4-485B-B49E-455B71DFC108}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9071F952-F9E4-485B-B49E-455B71DFC108}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9071F952-F9E4-485B-B49E-455B71DFC108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76C1B982-7FDC-4223-9E70-59798DD42C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

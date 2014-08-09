@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SyntacticAnalysis
+namespace AbstractSyntax.SyntacticAnalysis
 {
     public partial class Parser
     {

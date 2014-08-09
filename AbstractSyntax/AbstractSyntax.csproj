@@ -108,6 +108,15 @@
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ErrorSymbol.cs" />
+    <Compile Include="SyntacticAnalysis\DeclarationParser.cs" />
+    <Compile Include="SyntacticAnalysis\ExpressionParser.cs" />
+    <Compile Include="SyntacticAnalysis\Lexer.cs" />
+    <Compile Include="SyntacticAnalysis\Parser.cs" />
+    <Compile Include="SyntacticAnalysis\PrimaryParser.cs" />
+    <Compile Include="SyntacticAnalysis\SlimChainParser.cs" />
+    <Compile Include="SyntacticAnalysis\StatementParser.cs" />
+    <Compile Include="SyntacticAnalysis\TokenCollection.cs" />
+    <Compile Include="SyntacticAnalysis\Tokenizer.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="TypeManager.cs" />
     <Compile Include="TypeMatch.cs" />

@@ -1,9 +1,9 @@
 ﻿using System;
 using NUnit.Framework;
-using SyntacticAnalysis;
+using AbstractSyntax.SyntacticAnalysis;
 using AbstractSyntax;
 
-namespace SyntacticAnalysisTest
+namespace AbstractSyntaxTest
 {
     [TestFixture]
     public class TokenCollectionTest

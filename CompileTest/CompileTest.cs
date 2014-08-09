@@ -3,7 +3,7 @@ using AbstractSyntax.Declaration;
 using CliTranslate;
 using Dlight;
 using NUnit.Framework;
-using SyntacticAnalysis;
+using AbstractSyntax.SyntacticAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

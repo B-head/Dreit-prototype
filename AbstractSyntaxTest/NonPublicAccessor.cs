@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace TestUtility
+namespace AbstractSyntaxTest
 {
     public static class NonPublicAccessor
     {

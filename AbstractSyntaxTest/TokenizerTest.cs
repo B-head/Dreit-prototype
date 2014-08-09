@@ -1,8 +1,8 @@
 ﻿using AbstractSyntax;
 using NUnit.Framework;
-using SyntacticAnalysis;
+using AbstractSyntax.SyntacticAnalysis;
 
-namespace SyntacticAnalysisTest
+namespace AbstractSyntaxTest
 {
     [TestFixture]
     public class TokenizerTest

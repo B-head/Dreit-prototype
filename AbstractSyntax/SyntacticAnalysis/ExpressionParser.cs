@@ -3,7 +3,7 @@ using AbstractSyntax.Expression;
 using System;
 using System.Collections.Generic;
 
-namespace SyntacticAnalysis
+namespace AbstractSyntax.SyntacticAnalysis
 {
     public partial class Parser
     {

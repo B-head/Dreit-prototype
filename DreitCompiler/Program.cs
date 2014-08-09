@@ -2,7 +2,7 @@
 using AbstractSyntax.Declaration;
 using AbstractSyntax.Visualizer;
 using CliTranslate;
-using SyntacticAnalysis;
+using AbstractSyntax.SyntacticAnalysis;
 using System;
 using System.Collections.Generic;
 using System.IO;

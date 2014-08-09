@@ -1,10 +1,9 @@
 ﻿using AbstractSyntax;
 using NUnit.Framework;
-using SyntacticAnalysis;
+using AbstractSyntax.SyntacticAnalysis;
 using System.Collections.Generic;
-using TestUtility;
 
-namespace SyntacticAnalysisTest
+namespace AbstractSyntaxTest
 {
     [TestFixture]
     public class LexerTest

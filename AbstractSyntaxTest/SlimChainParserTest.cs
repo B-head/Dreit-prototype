@@ -1,10 +1,10 @@
 ﻿using System;
 using NUnit.Framework;
-using SyntacticAnalysis;
+using AbstractSyntax.SyntacticAnalysis;
 using AbstractSyntax;
 using AbstractSyntax.Expression;
 
-namespace SyntacticAnalysisTest
+namespace AbstractSyntaxTest
 {
     [TestFixture]
     public class SlimChainParserTest

@@ -4,7 +4,7 @@ using AbstractSyntax.Expression;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SyntacticAnalysis
+namespace AbstractSyntax.SyntacticAnalysis
 {
     public partial class Parser
     {

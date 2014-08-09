@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SyntacticAnalysis
+namespace AbstractSyntax.SyntacticAnalysis
 {
     delegate T MakeElement<T>(TextPosition tp) where T : Element;
     delegate T TransferParser<T>(SlimChainParser cp) where T : Element;

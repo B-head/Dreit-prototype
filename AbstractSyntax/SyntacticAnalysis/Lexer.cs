@@ -1,7 +1,7 @@
 ﻿using AbstractSyntax;
 using System.Collections.Generic;
 
-namespace SyntacticAnalysis
+namespace AbstractSyntax.SyntacticAnalysis
 {
     public static class Lexer
     {

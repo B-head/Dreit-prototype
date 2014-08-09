@@ -1,6 +1,6 @@
 ﻿using AbstractSyntax;
 
-namespace SyntacticAnalysis
+namespace AbstractSyntax.SyntacticAnalysis
 {
     class Tokenizer
     {
