@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Directive;
+﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace AbstractSyntax
 
         internal void Append(Scope scope)
         {
-            if(scope is AliasDirective)
+            if(scope is AliasDeclaration)
             {
                 IsHoldAlias = true;
             }
@@ -60,8 +60,8 @@ namespace AbstractSyntax
 
         private void SpreadAlias()
         {
-            var alias = Symbols.FindAll(v => v is AliasDirective);
-            Symbols.RemoveAll(v => v is AliasDirective);
+            var alias = Symbols.FindAll(v => v is AliasDeclaration);
+            Symbols.RemoveAll(v => v is AliasDeclaration);
             foreach(var v in alias)
             {
                 var ol = v.OverLoad;

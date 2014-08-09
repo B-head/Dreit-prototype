@@ -1,6 +1,6 @@
 ﻿using AbstractSyntax.Declaration;
-using AbstractSyntax.Directive;
-using AbstractSyntax.Pragma;
+using AbstractSyntax.Expression;
+using AbstractSyntax.SpecialSymbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace AbstractSyntax.Symbol
         public DefaultSymbol Default { get; private set; }
         public ThisSymbol This { get; private set; }
         public bool IsTrait { get; private set; }
-        public DirectiveList Block { get; private set; }
+        public ExpressionList Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<Scope> _Inherit;
@@ -23,7 +23,7 @@ namespace AbstractSyntax.Symbol
 
         protected ClassSymbol()
         {
-            Block = new DirectiveList();
+            Block = new ExpressionList();
             Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
             AppendChild(Block);
@@ -34,7 +34,7 @@ namespace AbstractSyntax.Symbol
             _Inherit = new List<Scope>();
         }
 
-        protected ClassSymbol(TextPosition tp, string name, bool isTrait, DirectiveList block)
+        protected ClassSymbol(TextPosition tp, string name, bool isTrait, ExpressionList block)
             :base(tp)
         {
             Name = name;
@@ -47,7 +47,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(This);
         }
 
-        public ClassSymbol(string name, bool isTrait, DirectiveList block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
+        public ClassSymbol(string name, bool isTrait, ExpressionList block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
         {
             Name = name;
             IsTrait = isTrait;

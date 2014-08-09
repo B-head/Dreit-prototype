@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Declaration;
+using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;

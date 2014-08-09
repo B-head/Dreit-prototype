@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax.Expression;
-using AbstractSyntax.Pragma;
+using AbstractSyntax.SpecialSymbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +12,16 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public bool IsLet { get; private set; }
-        public PropertyPragma Getter { get; private set; }
-        public PropertyPragma Setter { get; private set; }
+        public PropertySymbol Getter { get; private set; }
+        public PropertySymbol Setter { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _DataType;
 
         protected VariantSymbol(bool isLet)
         {
             IsLet = isLet;
-            Getter = new PropertyPragma(this, false);
-            Setter = new PropertyPragma(this, true);
+            Getter = new PropertySymbol(this, false);
+            Setter = new PropertySymbol(this, true);
             AppendChild(Getter);
             AppendChild(Setter);
         }
@@ -30,8 +30,8 @@ namespace AbstractSyntax.Symbol
             : base(tp)
         {
             IsLet = isLet;
-            Getter = new PropertyPragma(this, false);
-            Setter = new PropertyPragma(this, true);
+            Getter = new PropertySymbol(this, false);
+            Setter = new PropertySymbol(this, true);
             AppendChild(Getter);
             AppendChild(Setter);
         }
@@ -42,8 +42,8 @@ namespace AbstractSyntax.Symbol
             IsLet = isLet;
             _Attribute = attr;
             _DataType = dt;
-            Getter = new PropertyPragma(this, false);
-            Setter = new PropertyPragma(this, true);
+            Getter = new PropertySymbol(this, false);
+            Setter = new PropertySymbol(this, true);
             AppendChild(Getter);
             AppendChild(Setter);
         }
@@ -80,12 +80,12 @@ namespace AbstractSyntax.Symbol
 
         public bool IsDefinedConstantValue
         {
-            get { return Parent is CallRoutine && CurrentScope is ClassSymbol; }
+            get { return Parent is CallExpression && CurrentScope is ClassSymbol; }
         }
 
         public object GenerateConstantValue()
         {
-            var caller = Parent as CallRoutine;
+            var caller = Parent as CallExpression;
             if (caller == null)
             {
                 return null;

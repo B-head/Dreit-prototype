@@ -1,5 +1,5 @@
 ﻿using AbstractSyntax;
-using AbstractSyntax.Directive;
+using AbstractSyntax.Expression;
 using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
@@ -89,7 +89,7 @@ namespace CliTranslate
             var attribute = CreateAttributeList(type.Attributes, out isTrait);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
-            var block = new DirectiveList();
+            var block = new ExpressionList();
             var elem = new ClassSymbol(TrimTypeNameMangling(type.Name), isTrait, block, attribute, generic, inherit);
             if (ImportDictionary.ContainsKey(type))
             {
@@ -182,7 +182,7 @@ namespace CliTranslate
             bool isTrait;
             var attribute = CreateAttributeList(type.Attributes, out isTrait);
             var dt = ImportType(type.GetEnumUnderlyingType());
-            var block = new DirectiveList();
+            var block = new ExpressionList();
             var elem = new EnumSymbol(type.Name, block, attribute, dt);
             if (ImportDictionary.ContainsKey(type))
             {

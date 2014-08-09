@@ -1,4 +1,4 @@
-﻿using AbstractSyntax.Directive;
+﻿using AbstractSyntax.Expression;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,11 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class EnumSymbol : Scope
     {
-        public DirectiveList Block { get; private set; }
+        public ExpressionList Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _BaseType;
 
-        protected EnumSymbol(TextPosition tp, string name, DirectiveList block)
+        protected EnumSymbol(TextPosition tp, string name, ExpressionList block)
             :base(tp)
         {
             Name = name;
@@ -22,7 +22,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
         }
 
-        public EnumSymbol(string name, DirectiveList block, IReadOnlyList<Scope> attr, Scope bt)
+        public EnumSymbol(string name, ExpressionList block, IReadOnlyList<Scope> attr, Scope bt)
         {
             Name = name;
             Block = block;
