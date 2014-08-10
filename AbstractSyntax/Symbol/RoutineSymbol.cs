@@ -13,7 +13,7 @@ namespace AbstractSyntax.Symbol
     {
         public TokenType Operator { get; private set; }
         public bool IsFunction { get; private set; }
-        public ExpressionList Block { get; private set; }
+        public ProgramContext Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<ArgumentSymbol> _Arguments;
@@ -25,14 +25,14 @@ namespace AbstractSyntax.Symbol
         protected RoutineSymbol(TokenType op, bool isFunc)
         {
             Operator = op;
-            Block = new ExpressionList();
+            Block = new ProgramContext();
             _Attribute = new List<Scope>();
             _Generics = new List<GenericSymbol>();
             _Arguments = new List<ArgumentSymbol>();
             AppendChild(Block);
         }
 
-        protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc, ExpressionList block)
+        protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc, ProgramContext block)
             : base(tp)
         {
             Name = name;
@@ -46,7 +46,7 @@ namespace AbstractSyntax.Symbol
         {
             Name = name;
             Operator = op;
-            Block = new ExpressionList();
+            Block = new ProgramContext();
             _Attribute = attr;
             _Generics = gnr;
             _Arguments = arg;

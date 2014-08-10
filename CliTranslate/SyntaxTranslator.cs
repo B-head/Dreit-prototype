@@ -286,7 +286,7 @@ namespace CliTranslate
             return ret;
         }
 
-        private BlockStructure Translate(ExpressionList element)
+        private BlockStructure Translate(ProgramContext element)
         {
             var exps = CollectList<CilStructure>(element);
             var rt = RelayTranslate(element.ReturnType);

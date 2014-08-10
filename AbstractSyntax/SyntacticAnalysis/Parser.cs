@@ -1,6 +1,7 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Declaration;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +14,7 @@ namespace AbstractSyntax.SyntacticAnalysis
         public static ModuleDeclaration Parse(TokenCollection collection)
         {
             var cp = new SlimChainParser(collection);
-            var exp = RootExpressionList(cp);
+            var exp = GlobalContext(cp);
             var tp = collection.FirstPosition.AlterLength(collection.LastPosition);
             return new ModuleDeclaration(tp, exp, collection.GetName(), collection.Text, collection.ErrorToken);
         }
@@ -61,7 +62,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             return ret ?? current;
         }
 
-        private static TupleList ParseTuple<T>(SlimChainParser cp, TransferParser<T> next) where T : Element
+        private static TupleLiteral ParseTuple<T>(SlimChainParser cp, TransferParser<T> next) where T : Element
         {
             var child = new List<Element>();
             var result = cp.Begin
@@ -71,10 +72,10 @@ namespace AbstractSyntax.SyntacticAnalysis
                     .Transfer(e => child.Add(e), next)
                     .Type(TokenType.List).Lt();
                 })
-                .End(tp => new TupleList(tp, child));
+                .End(tp => new TupleLiteral(tp, child));
             if (result == null)
             {
-                result = new TupleList();
+                result = new TupleLiteral();
             }
             return result;
         }

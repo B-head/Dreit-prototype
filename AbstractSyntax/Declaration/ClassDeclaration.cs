@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -11,11 +12,11 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class ClassDeclaration : ClassSymbol
     {
-        public TupleList AttributeAccess { get; private set; }
-        public TupleList DecGenerics { get; private set; }
-        public TupleList InheritAccess { get; private set; }
+        public TupleLiteral AttributeAccess { get; private set; }
+        public TupleLiteral DecGenerics { get; private set; }
+        public TupleLiteral InheritAccess { get; private set; }
 
-        public ClassDeclaration(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, ExpressionList block)
+        public ClassDeclaration(TextPosition tp, string name, bool isTrait, TupleLiteral attr, TupleLiteral generic, TupleLiteral inherit, ProgramContext block)
             :base(tp, name, isTrait, block)
         {
             AttributeAccess = attr;

@@ -51,6 +51,7 @@
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
     <Compile Include="Declaration\AttributeScope.cs" />
+    <Compile Include="ElementList.cs" />
     <Compile Include="Statement\BreakStatement.cs" />
     <Compile Include="Statement\ContinueStatement.cs" />
     <Compile Include="Expression\CallExpression.cs" />
@@ -58,7 +59,7 @@
     <Compile Include="Expression\Logical.cs" />
     <Compile Include="Expression\Postfix.cs" />
     <Compile Include="Expression\Prefix.cs" />
-    <Compile Include="Expression\TemplateInstanceExpression.cs" />
+    <Compile Include="Expression\TemplateInstance.cs" />
     <Compile Include="Literal\PlainText.cs" />
     <Compile Include="Literal\StringLiteral.cs" />
     <Compile Include="OperationManager.cs" />
@@ -80,7 +81,7 @@
     <Compile Include="Statement\EchoStatement.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="Expression\GroupingExpression.cs" />
-    <Compile Include="Expression\ExpressionList.cs" />
+    <Compile Include="Expression\ProgramContext.cs" />
     <Compile Include="Expression\Identifier.cs" />
     <Compile Include="Expression\LeftPipeline.cs" />
     <Compile Include="Expression\MemberAccess.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ErrorSymbol.cs" />
+    <Compile Include="SyntacticAnalysis\ContextParser.cs" />
     <Compile Include="SyntacticAnalysis\DeclarationParser.cs" />
     <Compile Include="SyntacticAnalysis\ExpressionParser.cs" />
     <Compile Include="SyntacticAnalysis\Lexer.cs" />
@@ -123,7 +125,7 @@
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="SpecialSymbol\ThisSymbol.cs" />
     <Compile Include="Token.cs" />
-    <Compile Include="Expression\TupleList.cs" />
+    <Compile Include="Literal\TupleLiteral.cs" />
     <Compile Include="Visualizer\SyntaxVisualizerForm.cs">
       <SubType>Form</SubType>
     </Compile>

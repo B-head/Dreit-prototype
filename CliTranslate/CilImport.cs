@@ -89,7 +89,7 @@ namespace CliTranslate
             var attribute = CreateAttributeList(type.Attributes, out isTrait);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
-            var block = new ExpressionList();
+            var block = new ProgramContext();
             var elem = new ClassSymbol(TrimTypeNameMangling(type.Name), isTrait, block, attribute, generic, inherit);
             if (ImportDictionary.ContainsKey(type))
             {
@@ -182,7 +182,7 @@ namespace CliTranslate
             bool isTrait;
             var attribute = CreateAttributeList(type.Attributes, out isTrait);
             var dt = ImportType(type.GetEnumUnderlyingType());
-            var block = new ExpressionList();
+            var block = new ProgramContext();
             var elem = new EnumSymbol(type.Name, block, attribute, dt);
             if (ImportDictionary.ContainsKey(type))
             {
@@ -360,7 +360,11 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                ret.Add(ImportType(v));
+                var t = ImportType(v);
+                if (t != null)
+                {
+                    ret.Add(t);
+                }
             }
             return ret;
         }

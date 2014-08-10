@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Statement;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
@@ -11,13 +12,13 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class RoutineDeclaration : RoutineSymbol
     {
-        public TupleList AttributeAccess { get; private set; }
-        public TupleList DecGenerics { get; private set; }
-        public TupleList DecArguments { get; private set; }
+        public TupleLiteral AttributeAccess { get; private set; }
+        public TupleLiteral DecGenerics { get; private set; }
+        public TupleLiteral DecArguments { get; private set; }
         public Element ExplicitType { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
 
-        public RoutineDeclaration(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, ExpressionList block)
+        public RoutineDeclaration(TextPosition tp, string name, TokenType op, bool isFunc, TupleLiteral attr, TupleLiteral generic, TupleLiteral args, Element expl, ProgramContext block)
             : base(tp, name, op, isFunc, block)
         {
             AttributeAccess = attr;

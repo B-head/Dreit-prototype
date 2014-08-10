@@ -14,14 +14,14 @@ namespace AbstractSyntax.SyntacticAnalysis
         private static IfStatement IfStatement(SlimChainParser cp)
         {
             Element cond = null;
-            ExpressionList than = null;
-            ExpressionList els = null;
+            ProgramContext than = null;
+            ProgramContext els = null;
             return cp.Begin
                 .Text("if").Lt()
                 .Transfer(e => cond = e, Expression)
-                .Transfer(e => than = e, icp => Block(icp, true))
+                .Transfer(e => than = e, ThanContext)
                 .If(icp => icp.Text("else").Lt())
-                .Than(icp => icp.Transfer(e => els = e, iicp => Block(iicp, false)))
+                .Than(icp => icp.Transfer(e => els = e, DirectContext))
                 .End(tp => new IfStatement(tp, cond, than, els));
         }
 
@@ -30,7 +30,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             Element cond = null;
             Element on = null;
             Element by = null;
-            ExpressionList block = null;
+            ProgramContext block = null;
             return cp.Begin
                 .Text("loop").Lt()
                 .Opt.Transfer(e => cond = e, Expression)
@@ -38,7 +38,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Than(icp => icp.Transfer(e => on = e, Expression))
                 .If(icp => icp.Text("by").Lt())
                 .Than(icp => icp.Transfer(e => by = e, Expression))
-                .Transfer(e => block = e, icp => Block(icp, true))
+                .Transfer(e => block = e, InlineContext)
                 .End(tp => new LoopStatement(tp, cond, on, by, block));
         }
 

@@ -10,11 +10,11 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class EnumSymbol : Scope
     {
-        public ExpressionList Block { get; private set; }
+        public ProgramContext Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _BaseType;
 
-        protected EnumSymbol(TextPosition tp, string name, ExpressionList block)
+        protected EnumSymbol(TextPosition tp, string name, ProgramContext block)
             :base(tp)
         {
             Name = name;
@@ -22,7 +22,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
         }
 
-        public EnumSymbol(string name, ExpressionList block, IReadOnlyList<Scope> attr, Scope bt)
+        public EnumSymbol(string name, ProgramContext block, IReadOnlyList<Scope> attr, Scope bt)
         {
             Name = name;
             Block = block;

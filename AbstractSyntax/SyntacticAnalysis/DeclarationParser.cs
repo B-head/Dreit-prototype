@@ -1,6 +1,7 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Declaration;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using System.Collections.Generic;
 
 namespace AbstractSyntax.SyntacticAnalysis
@@ -30,7 +31,7 @@ namespace AbstractSyntax.SyntacticAnalysis
 
         private static VariantDeclaration VariantDeclaration(SlimChainParser cp)
         {
-            TupleList attr = null;
+            TupleLiteral attr = null;
             var isLet = false;
             Identifier ident = null;
             Identifier expl = null;
@@ -48,13 +49,13 @@ namespace AbstractSyntax.SyntacticAnalysis
 
         private static RoutineDeclaration RoutineDeclaration(SlimChainParser cp)
         {
-            TupleList attr = null;
+            TupleLiteral attr = null;
             var isFunc = false;
             var name = string.Empty;
-            TupleList generic = null;
-            TupleList args = null;
+            TupleLiteral generic = null;
+            TupleLiteral args = null;
             Element expl = null;
-            ExpressionList block = null;
+            ProgramContext block = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Any(
@@ -66,19 +67,19 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Transfer(e => args = e, ArgumentList)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, NonTupleExpression))
-                .Transfer(e => block = e, icp => Block(icp, true))
+                .Transfer(e => block = e, InlineContext)
                 .End(tp => new RoutineDeclaration(tp, name, TokenType.Unknoun, isFunc, attr, generic, args, expl, block));
         }
 
         private static RoutineDeclaration OperatorDeclaration(SlimChainParser cp)
         {
-            TupleList attr = null;
+            TupleLiteral attr = null;
             var op = TokenType.Unknoun;
             var name = string.Empty;
-            TupleList generic = null;
-            TupleList args = null;
+            TupleLiteral generic = null;
+            TupleLiteral args = null;
             Element expl = null;
-            ExpressionList block = null;
+            ProgramContext block = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Text("operator").Lt()
@@ -87,18 +88,18 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Transfer(e => args = e, ArgumentList)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => expl = e, NonTupleExpression))
-                .Transfer(e => block = e, icp => Block(icp, true))
+                .Transfer(e => block = e, InlineContext)
                 .End(tp => new RoutineDeclaration(tp, name, op, false, attr, generic, args, expl, block));
         }
 
         private static ClassDeclaration ClassDeclaration(SlimChainParser cp)
         {
-            TupleList attr = null;
+            TupleLiteral attr = null;
             var isTrait = false;
             var name = string.Empty;
-            TupleList generic = null;
-            TupleList inherit = new TupleList();
-            ExpressionList block = null;
+            TupleLiteral generic = null;
+            TupleLiteral inherit = new TupleLiteral();
+            ProgramContext block = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
                 .Any(
@@ -109,11 +110,11 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Transfer(e => generic = e, GenericList)
                 .If(icp => icp.Type(TokenType.Peir).Lt())
                 .Than(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, Identifier)))
-                .Transfer(e => block = e, icp => Block(icp, true))
+                .Transfer(e => block = e, InlineContext)
                 .End(tp => new ClassDeclaration(tp, name, isTrait, attr, generic, inherit, block));
         }
 
-        private static TupleList AttributeList(SlimChainParser cp)
+        private static TupleLiteral AttributeList(SlimChainParser cp)
         {
             var child = new List<Element>();
             var atFlag = false;
@@ -127,11 +128,11 @@ namespace AbstractSyntax.SyntacticAnalysis
                     .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), Identifier); })
                     .Else(iicp => { atFlag = false; iicp.Transfer(e => child.Add(e), iiicp => Identifier(iiicp, attribute)); });
                 })
-                .End(tp => new TupleList(tp, child));
-            return ret ?? new TupleList();
+                .End(tp => new TupleLiteral(tp, child));
+            return ret ?? new TupleLiteral();
         }
 
-        private static TupleList GenericList(SlimChainParser cp)
+        private static TupleLiteral GenericList(SlimChainParser cp)
         {
             var child = new List<Element>();
             var ret = cp.Begin
@@ -144,8 +145,8 @@ namespace AbstractSyntax.SyntacticAnalysis
                     .Type(TokenType.List).Lt();
                 })
                 .Type(TokenType.RightParenthesis).Lt()
-                .End(tp => new TupleList(tp, child));
-            return ret ?? new TupleList();
+                .End(tp => new TupleLiteral(tp, child));
+            return ret ?? new TupleLiteral();
         }
 
         private static GenericDeclaration GenericDeclaration(SlimChainParser cp)
@@ -159,7 +160,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .End(tp => new GenericDeclaration(tp, name, special));
         }
 
-        private static TupleList ArgumentList(SlimChainParser cp)
+        private static TupleLiteral ArgumentList(SlimChainParser cp)
         {
             var child = new List<Element>();
             var ret = cp.Begin
@@ -171,14 +172,14 @@ namespace AbstractSyntax.SyntacticAnalysis
                     .Type(TokenType.List).Lt();
                 })
                 .Type(TokenType.RightParenthesis).Lt()
-                .End(tp => new TupleList(tp, child));
-            return ret ?? new TupleList();
+                .End(tp => new TupleLiteral(tp, child));
+            return ret ?? new TupleLiteral();
         }
 
         //todo デフォルト引数に対応した専用の構文が必要。
         private static ArgumentDeclaration ArgumentDeclaration(SlimChainParser cp)
         {
-            TupleList attr = null;
+            TupleLiteral attr = null;
             Identifier ident = null;
             Identifier expl = null;
             return cp.Begin

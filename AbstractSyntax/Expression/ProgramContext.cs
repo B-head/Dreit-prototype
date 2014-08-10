@@ -9,20 +9,19 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class ExpressionList : Element
+    public class ProgramContext : ElementList<Element>
     {
         public bool IsInline { get; private set; }
 
-        public ExpressionList()
+        public ProgramContext()
         {
 
         }
 
-        public ExpressionList(TextPosition tp, List<Element> child, bool isInline)
-            :base(tp)
+        public ProgramContext(TextPosition tp, IReadOnlyList<Element> child, bool isInline)
+            :base(tp, child)
         {
             IsInline = isInline;
-            AppendChild(child);
         }
 
         public void Append(Element child)
@@ -45,11 +44,6 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        protected override string ElementInfo
-        {
-            get { return "Count = " + Count; }
-        }
-
         public bool IsNoReturn
         {
             get 
@@ -60,19 +54,6 @@ namespace AbstractSyntax.Expression
                 }
                 return Parent is NameSpaceSymbol && !(Parent is ModuleDeclaration); 
             }
-        }
-
-        public IReadOnlyList<T> FindElements<T>() where T : Element
-        {
-            var result = new List<T>();
-            foreach(var v in this)
-            {
-                if(v is T)
-                {
-                    result.Add((T)v);
-                }
-            }
-            return result;
         }
     }
 }

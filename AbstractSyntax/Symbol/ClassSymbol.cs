@@ -15,7 +15,7 @@ namespace AbstractSyntax.Symbol
         public DefaultSymbol Default { get; private set; }
         public ThisSymbol This { get; private set; }
         public bool IsTrait { get; private set; }
-        public ExpressionList Block { get; private set; }
+        public ProgramContext Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<Scope> _Inherit;
@@ -23,7 +23,7 @@ namespace AbstractSyntax.Symbol
 
         protected ClassSymbol()
         {
-            Block = new ExpressionList();
+            Block = new ProgramContext();
             Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
             AppendChild(Block);
@@ -34,7 +34,7 @@ namespace AbstractSyntax.Symbol
             _Inherit = new List<Scope>();
         }
 
-        protected ClassSymbol(TextPosition tp, string name, bool isTrait, ExpressionList block)
+        protected ClassSymbol(TextPosition tp, string name, bool isTrait, ProgramContext block)
             :base(tp)
         {
             Name = name;
@@ -47,7 +47,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(This);
         }
 
-        public ClassSymbol(string name, bool isTrait, ExpressionList block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
+        public ClassSymbol(string name, bool isTrait, ProgramContext block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
         {
             Name = name;
             IsTrait = isTrait;

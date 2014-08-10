@@ -117,6 +117,10 @@ namespace AbstractSyntax
 
         private void RegisterParent(Element parent)
         {
+            if(Parent != null)
+            {
+                throw new InvalidOperationException();
+            }
             Parent = parent;
             var s = this as Scope;
             if(s == null)

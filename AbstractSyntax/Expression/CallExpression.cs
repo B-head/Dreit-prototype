@@ -14,12 +14,12 @@ namespace AbstractSyntax.Expression
     public class CallExpression : Element
     {
         public Element Access { get; private set; }
-        public TupleList Arguments { get; private set; }
+        public TupleLiteral Arguments { get; private set; }
         private TypeMatch? _Match;
         private Scope _CallScope;
         private Scope _CalculateCallScope;
 
-        public CallExpression(TextPosition tp, Element acs, TupleList args)
+        public CallExpression(TextPosition tp, Element acs, TupleLiteral args)
             : base(tp)
         {
             Access = acs;
@@ -32,13 +32,13 @@ namespace AbstractSyntax.Expression
             :base(tp)
         {
             Access = acs;
-            if (arg is TupleList)
+            if (arg is TupleLiteral)
             {
-                Arguments = (TupleList)arg;
+                Arguments = (TupleLiteral)arg;
             }
             else
             {
-                Arguments = new TupleList(arg);
+                Arguments = new TupleLiteral(arg);
             }
             AppendChild(Access);
             AppendChild(Arguments);
@@ -68,7 +68,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _Match.Value;
                 }
-                var tie = Access as TemplateInstanceExpression;
+                var tie = Access as TemplateInstance;
                 IReadOnlyList<Scope> pars;
                 if(tie == null)
                 {

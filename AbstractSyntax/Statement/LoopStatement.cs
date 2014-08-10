@@ -14,9 +14,9 @@ namespace AbstractSyntax.Statement
         public Element Condition { get; set; }
         public Element On { get; set; }
         public Element By { get; set; }
-        public ExpressionList Block { get; set; }
+        public ProgramContext Block { get; set; }
 
-        public LoopStatement(TextPosition tp, Element cond, Element on, Element by, ExpressionList block)
+        public LoopStatement(TextPosition tp, Element cond, Element on, Element by, ProgramContext block)
             :base(tp)
         {
             Condition = cond;

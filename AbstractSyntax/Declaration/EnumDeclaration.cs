@@ -9,7 +9,7 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class EnumDeclaration : EnumSymbol
     {
-        public EnumDeclaration(TextPosition tp, string name, ExpressionList block)
+        public EnumDeclaration(TextPosition tp, string name, ProgramContext block)
             :base(tp, name, block)
         {
 

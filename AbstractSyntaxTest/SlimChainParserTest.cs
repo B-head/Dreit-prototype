@@ -3,6 +3,7 @@ using NUnit.Framework;
 using AbstractSyntax.SyntacticAnalysis;
 using AbstractSyntax;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 
 namespace AbstractSyntaxTest
 {
@@ -16,7 +17,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var count = 0;
             TokenAction action = t => ++count;
-            var ret = cp.Begin.Text(action, "var").Text(action, "a").End(tp => new TupleList(tp, null));
+            var ret = cp.Begin.Text(action, "var").Text(action, "a").End(tp => new TupleLiteral(tp, null));
             Assert.That(ret, Is.Not.Null);
             Assert.That(ret.Position.Length, Is.EqualTo(5));
             Assert.That(count, Is.EqualTo(2));
@@ -29,7 +30,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var count = 0;
             TokenAction action = t => ++count;
-            var ret = cp.Begin.Text(action, "let").Text(action, "a").End(tp => new TupleList(tp, null));
+            var ret = cp.Begin.Text(action, "let").Text(action, "a").End(tp => new TupleLiteral(tp, null));
             Assert.That(ret, Is.Null);
             Assert.That(count, Is.EqualTo(0));
         }
@@ -41,7 +42,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var count = 0;
             TokenAction action = t => ++count;
-            var ret = cp.Begin.Type(action, TokenType.LetterStartString).Type(action, TokenType.LetterStartString).End(tp => new TupleList(tp, null));
+            var ret = cp.Begin.Type(action, TokenType.LetterStartString).Type(action, TokenType.LetterStartString).End(tp => new TupleLiteral(tp, null));
             Assert.That(ret, Is.Not.Null);
             Assert.That(ret.Position.Length, Is.EqualTo(5));
             Assert.That(count, Is.EqualTo(2));
@@ -54,7 +55,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var count = 0;
             TokenAction action = t => ++count;
-            var ret = cp.Begin.Type(action, TokenType.DigitStartString).Type(action, TokenType.LetterStartString).End(tp => new TupleList(tp, null));
+            var ret = cp.Begin.Type(action, TokenType.DigitStartString).Type(action, TokenType.LetterStartString).End(tp => new TupleLiteral(tp, null));
             Assert.That(ret, Is.Null);
             Assert.That(count, Is.EqualTo(0));
         }
@@ -65,9 +66,9 @@ namespace AbstractSyntaxTest
             var tc = Lexer.Lex("var a", string.Empty);
             var cp = new SlimChainParser(tc);
             var count = 0;
-            var element = new ExpressionList();
+            var element = new ProgramContext();
             ElementAction<Element> action = e => ++count;
-            var ret = cp.Begin.Transfer(action, c => null, c => element).Transfer(action, c => element, c => null).End(tp => new TupleList(tp, null));
+            var ret = cp.Begin.Transfer(action, c => null, c => element).Transfer(action, c => element, c => null).End(tp => new TupleLiteral(tp, null));
             Assert.That(ret, Is.Not.Null);
             Assert.That(count, Is.EqualTo(2));
         }
@@ -79,7 +80,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var count = 0;
             ElementAction<Element> action = e => ++count;
-            var ret = cp.Begin.Transfer(action, c => null, c => null).Transfer(action, c => null, c => null).End(tp => new TupleList(tp, null));
+            var ret = cp.Begin.Transfer(action, c => null, c => null).Transfer(action, c => null, c => null).End(tp => new TupleLiteral(tp, null));
             Assert.That(ret, Is.Null);
             Assert.That(count, Is.EqualTo(0));
         }
@@ -90,7 +91,7 @@ namespace AbstractSyntaxTest
         {
             var tc = Lexer.Lex(text, string.Empty);
             var cp = new SlimChainParser(tc);
-            var ret = cp.Begin.Ignore(TokenType.EndExpression, TokenType.LineTerminator).Text("test").End(tp => new TupleList(tp, null));
+            var ret = cp.Begin.Ignore(TokenType.EndExpression, TokenType.LineTerminator).Text("test").End(tp => new TupleLiteral(tp, null));
             Assert.That(ret, Is.Not.Null);
             Assert.That(ret.Position.Length, Is.EqualTo(expected));
         }
@@ -108,7 +109,7 @@ namespace AbstractSyntaxTest
             var ret = cp.Begin.Text("test")
                 .If(icp => icp.Type(TokenType.LeftParenthesis))
                 .Than(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
-                .End(tp => new TupleList(tp, null));
+                .End(tp => new TupleLiteral(tp, null));
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);
@@ -136,7 +137,7 @@ namespace AbstractSyntaxTest
                 .If(icp => icp.Type(TokenType.LeftParenthesis))
                 .Than(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
                 .Else(icp => icp.Type(TokenType.LeftBracket).Type(TokenType.LetterStartString).Type(TokenType.RightBracket))
-                .End(tp => new TupleList(tp, null));
+                .End(tp => new TupleLiteral(tp, null));
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);
@@ -166,7 +167,7 @@ namespace AbstractSyntaxTest
                 .ElseIf(icp => icp.Type(TokenType.LeftBracket))
                 .Than(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightBracket))
                 .Else(icp => icp.Type(TokenType.LetterStartString))
-                .End(tp => new TupleList(tp, null));
+                .End(tp => new TupleLiteral(tp, null));
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);
@@ -192,7 +193,7 @@ namespace AbstractSyntaxTest
                     icp => icp.Type(TokenType.LetterStartString),
                     icp => icp.Type(TokenType.DigitStartString)
                 )
-                .End(tp => new TupleList(tp, null));
+                .End(tp => new TupleLiteral(tp, null));
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);
@@ -215,7 +216,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var ret = cp.Begin.Text("test")
                 .Not.Type(TokenType.DigitStartString)
-                .End(tp => new TupleList(tp, null));
+                .End(tp => new TupleLiteral(tp, null));
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);
@@ -238,7 +239,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var ret = cp.Begin.Text("test")
                 .Opt.Type(TokenType.DigitStartString)
-                .End(tp => new TupleList(tp, null));
+                .End(tp => new TupleLiteral(tp, null));
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);
@@ -264,7 +265,7 @@ namespace AbstractSyntaxTest
                 {
                     icp.Type(TokenType.LetterStartString);
                 })
-                .End(tp => new TupleList(tp, null));
+                .End(tp => new TupleLiteral(tp, null));
             if (expected == 0)
             {
                 Assert.That(ret, Is.Null);

@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -10,11 +11,11 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class VariantDeclaration : VariantSymbol
     {
-        public TupleList AttributeAccess { get; private set; }
+        public TupleLiteral AttributeAccess { get; private set; }
         public Identifier Ident { get; private set; }
         public Identifier ExplicitType { get; private set; }
 
-        public VariantDeclaration(TextPosition tp, TupleList attr, Identifier ident, Identifier expl, bool isLet)
+        public VariantDeclaration(TextPosition tp, TupleLiteral attr, Identifier ident, Identifier expl, bool isLet)
             :base(tp, isLet)
         {
             AttributeAccess = attr;
