@@ -163,7 +163,7 @@ namespace AbstractSyntax
                 {
                     continue;
                 }
-                if (type.Any(t => t == a.Attr))
+                if (type.Any(t => t == a.AttributeType))
                 {
                     return true;
                 }

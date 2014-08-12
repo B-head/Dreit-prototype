@@ -137,12 +137,28 @@ namespace AbstractSyntax
 
         public bool IsStaticMember
         {
-            get { return GetParent<ClassSymbol>() != null && HasAnyAttribute(Attribute, AttributeType.Static); }
+            get 
+            {
+                var rout = this as RoutineSymbol;
+                if(rout != null && rout.IsConstructor)
+                {
+                    return false;
+                }
+                return GetParent<ClassSymbol>() != null && HasAnyAttribute(Attribute, AttributeType.Static); 
+            }
         }
 
         public bool IsInstanceMember
         {
-            get { return GetParent<ClassSymbol>() != null && !HasAnyAttribute(Attribute, AttributeType.Static); }
+            get
+            {
+                var rout = this as RoutineSymbol;
+                if (rout != null && rout.IsConstructor)
+                {
+                    return false;
+                }
+                return GetParent<ClassSymbol>() != null && !HasAnyAttribute(Attribute, AttributeType.Static); 
+            }
         }
 
         public bool IsThisCall

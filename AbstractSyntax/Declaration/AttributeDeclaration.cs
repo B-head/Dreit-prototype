@@ -10,13 +10,8 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class AttributeDeclaration : AttributeSymbol
     {
-        public AttributeDeclaration(AttributeType attr)
-            :base(attr)
-        {
-        }
-
-        public AttributeDeclaration(string name, AttributeType attr)
-            :base(name, attr)
+        public AttributeDeclaration(AttributeType attr, string name)
+            :base(attr, name)
         {
         }
     }

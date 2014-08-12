@@ -64,21 +64,21 @@ namespace CliTranslate
 
         private Scope ImportType(Type type)
         {
-            if (type.IsEnum)
+            if (type.HasElementType)
             {
-                return ImportEnum(type);
+                return ImportModifyType(type);
+            }
+            if (type.IsGenericType && !type.IsGenericTypeDefinition)
+            {
+                return ImportModifyType(type);
             }
             if (type.IsGenericParameter)
             {
                 return ImportGenericType(type);
             }
-            if (type.IsArray || type.IsByRef || type.IsPointer)
+            if (type.IsEnum)
             {
-                return ImportQualifyType(type);
-            }
-            if (type.IsGenericType && !type.IsGenericTypeDefinition)
-            {
-                return ImportQualifyType(type);
+                return ImportEnum(type);
             }
             return ImportPureType(type);
         }
@@ -86,16 +86,28 @@ namespace CliTranslate
         private ClassSymbol ImportPureType(Type type)
         {
             ClassType classType;
-            var attribute = CreateAttributeList(type.Attributes, out classType);
+            var attribute = new List<Scope>();
+            AppendEmbededAttribute(attribute, type.Attributes, out classType);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
             var block = new ProgramContext();
-            var elem = new ClassSymbol(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit);
+            ClassSymbol elem;
+            if (type.IsSubclassOf(typeof(Attribute)))
+            {
+                var attrUsage = (AttributeUsageAttribute)type.GetCustomAttribute<AttributeUsageAttribute>(true);
+                elem = new AttributeSymbol(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit, 
+                    attrUsage.ValidOn, attrUsage.AllowMultiple, attrUsage.Inherited);
+            }
+            else
+            {
+                elem = new ClassSymbol(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit);
+            }
             if (ImportDictionary.ContainsKey(type))
             {
                 return (ClassSymbol)ImportDictionary[type];
             }
             ImportDictionary.Add(type, elem);
+            AppendCustomAttribute(attribute, type.GetCustomAttributesData());
             var ctor = type.GetConstructors(Binding);
             foreach (var c in ctor)
             {
@@ -159,14 +171,16 @@ namespace CliTranslate
             return elem;
         }
 
-        private QualifyTypeSymbol ImportQualifyType(Type type)
+        private QualifyTypeSymbol ImportModifyType(Type type)
         {
             return null;
         }
 
         private GenericSymbol ImportGenericType(Type type)
         {
-            var attribute = CreateAttributeList(type.GenericParameterAttributes);
+            var attribute = new List<Scope>();
+            AppendCustomAttribute(attribute, type.GetCustomAttributesData());
+            AppendEmbededAttribute(attribute, type.GenericParameterAttributes);
             var constraint = CreateConstraintList(type.GetGenericParameterConstraints());
             var elem = new GenericSymbol(type.Name, attribute, constraint);
             if (ImportDictionary.ContainsKey(type))
@@ -180,7 +194,9 @@ namespace CliTranslate
         private EnumSymbol ImportEnum(Type type)
         {
             ClassType classType;
-            var attribute = CreateAttributeList(type.Attributes, out classType);
+            var attribute = new List<Scope>();
+            AppendCustomAttribute(attribute, type.GetCustomAttributesData());
+            AppendEmbededAttribute(attribute, type.Attributes, out classType);
             var dt = ImportType(type.GetEnumUnderlyingType());
             var block = new ProgramContext();
             var elem = new EnumSymbol(type.Name, block, attribute, dt);
@@ -203,7 +219,9 @@ namespace CliTranslate
             {
                 return (RoutineSymbol)ImportDictionary[method];
             }
-            var attribute = CreateAttributeList(method.Attributes);
+            var attribute = new List<Scope>();
+            AppendCustomAttribute(attribute, method.GetCustomAttributesData());
+            AppendEmbededAttribute(attribute, method.Attributes);
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
             var rt = ImportType(method.ReturnType);
@@ -218,7 +236,9 @@ namespace CliTranslate
             {
                 return (RoutineSymbol)ImportDictionary[prop];
             }
-            var attribute = CreateAttributeList(prop.Attributes);
+            var attribute = new List<Scope>();
+            AppendCustomAttribute(attribute, prop.GetCustomAttributesData());
+            AppendEmbededAttribute(attribute, prop.Attributes);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(prop);
             var rt = ImportType(prop.ReturnType);
@@ -233,7 +253,9 @@ namespace CliTranslate
             {
                 return (RoutineSymbol)ImportDictionary[ctor];
             }
-            var attribute = CreateAttributeList(ctor.Attributes);
+            var attribute = new List<Scope>();
+            AppendCustomAttribute(attribute, ctor.GetCustomAttributesData());
+            AppendEmbededAttribute(attribute, ctor.Attributes);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(ctor);
             var rt = ImportType(ctor.DeclaringType);
@@ -248,7 +270,9 @@ namespace CliTranslate
             {
                 return (ParameterSymbol)ImportDictionary[prm];
             }
-            var attribute = CreateAttributeList(prm.Attributes);
+            var attribute = new List<Scope>();
+            AppendCustomAttribute(attribute, prm.GetCustomAttributesData());
+            AppendEmbededAttribute(attribute, prm.Attributes);
             var dt = ImportType(prm.ParameterType);
             var elem = new ParameterSymbol(prm.Name, VariantType.Var, attribute, dt);
             ImportDictionary.Add(prm, elem);
@@ -262,7 +286,9 @@ namespace CliTranslate
                 return (VariantSymbol)ImportDictionary[field];
             }
             VariantType type;
-            var attribute = CreateAttributeList(field.Attributes, out type);
+            var attribute = new List<Scope>();
+            AppendCustomAttribute(attribute, field.GetCustomAttributesData());
+            AppendEmbededAttribute(attribute, field.Attributes, out type);
             var dt = ImportType(field.FieldType);
             var elem = new VariantSymbol(field.Name, type, attribute, dt);
             ImportDictionary.Add(field, elem);
@@ -279,63 +305,62 @@ namespace CliTranslate
             return name.Substring(0, i);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(TypeAttributes attr, out ClassType type)
+        //todo カスタム属性のデータもインポートできるようにする。
+        private void AppendCustomAttribute(List<Scope> list, IList<CustomAttributeData> attrData)
+        {
+            foreach(var v in attrData)
+            {
+                list.Add((AttributeSymbol)ImportType(v.AttributeType));
+            }
+        }
+
+        private void AppendEmbededAttribute(List<Scope> list, TypeAttributes attr, out ClassType type)
         {
             type = ClassType.Class;
-            var ret = new List<Scope>();
-            if (attr.HasFlag(TypeAttributes.Abstract)) ret.Add(Root.Abstract);
+            if (attr.HasFlag(TypeAttributes.Abstract)) list.Add(Root.Abstract);
             if (attr.HasFlag(TypeAttributes.Class)) type = ClassType.Class;
             if (attr.HasFlag(TypeAttributes.Interface)) type = ClassType.Trait;
-            if (attr.HasFlag(TypeAttributes.NestedFamily)) ret.Add(Root.Protected);
-            if (attr.HasFlag(TypeAttributes.NestedFamORAssem)) ret.Add(Root.Protected);
-            if (attr.HasFlag(TypeAttributes.NestedPublic)) ret.Add(Root.Public);
-            if (attr.HasFlag(TypeAttributes.Public)) ret.Add(Root.Public);
-            return ret;
+            if (attr.HasFlag(TypeAttributes.NestedFamily)) list.Add(Root.Protected);
+            if (attr.HasFlag(TypeAttributes.NestedFamORAssem)) list.Add(Root.Protected);
+            if (attr.HasFlag(TypeAttributes.NestedPublic)) list.Add(Root.Public);
+            if (attr.HasFlag(TypeAttributes.Public)) list.Add(Root.Public);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(GenericParameterAttributes attr)
+        private void AppendEmbededAttribute(List<Scope> list, GenericParameterAttributes attr)
         {
-            var ret = new List<Scope>();
-            if (attr.HasFlag(GenericParameterAttributes.Contravariant)) ret.Add(Root.Contravariant);
-            if (attr.HasFlag(GenericParameterAttributes.Covariant)) ret.Add(Root.Covariant);
-            if (attr.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint)) ret.Add(Root.ConstructorConstraint);
-            if (attr.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) ret.Add(Root.ValueConstraint);
-            if (attr.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) ret.Add(Root.ReferenceConstraint);
-            return ret;
+            if (attr.HasFlag(GenericParameterAttributes.Contravariant)) list.Add(Root.Contravariant);
+            if (attr.HasFlag(GenericParameterAttributes.Covariant)) list.Add(Root.Covariant);
+            if (attr.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint)) list.Add(Root.ConstructorConstraint);
+            if (attr.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) list.Add(Root.ValueConstraint);
+            if (attr.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) list.Add(Root.ReferenceConstraint);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(MethodAttributes attr)
+        private void AppendEmbededAttribute(List<Scope> list, MethodAttributes attr)
         {
-            var ret = new List<Scope>();
-            if (attr.HasFlag(MethodAttributes.Abstract)) ret.Add(Root.Abstract);
-            if (attr.HasFlag(MethodAttributes.Family)) ret.Add(Root.Protected);
-            if (attr.HasFlag(MethodAttributes.FamORAssem)) ret.Add(Root.Protected);
-            if (attr.HasFlag(MethodAttributes.Final)) ret.Add(Root.Final);
-            if (attr.HasFlag(MethodAttributes.Public)) ret.Add(Root.Public);
-            if (attr.HasFlag(MethodAttributes.Static)) ret.Add(Root.Static);
-            if (attr.HasFlag(MethodAttributes.Virtual)) ret.Add(Root.Virtual);
-            return ret;
+            if (attr.HasFlag(MethodAttributes.Abstract)) list.Add(Root.Abstract);
+            if (attr.HasFlag(MethodAttributes.Family)) list.Add(Root.Protected);
+            if (attr.HasFlag(MethodAttributes.FamORAssem)) list.Add(Root.Protected);
+            if (attr.HasFlag(MethodAttributes.Final)) list.Add(Root.Final);
+            if (attr.HasFlag(MethodAttributes.Public)) list.Add(Root.Public);
+            if (attr.HasFlag(MethodAttributes.Static)) list.Add(Root.Static);
+            if (attr.HasFlag(MethodAttributes.Virtual)) list.Add(Root.Virtual);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(FieldAttributes attr, out VariantType type)
+        private void AppendEmbededAttribute(List<Scope> list, FieldAttributes attr, out VariantType type)
         {
             type = VariantType.Var;
-            var ret = new List<Scope>();
-            if (attr.HasFlag(FieldAttributes.Family)) ret.Add(Root.Protected);
-            if (attr.HasFlag(FieldAttributes.FamORAssem)) ret.Add(Root.Protected);
+            if (attr.HasFlag(FieldAttributes.Family)) list.Add(Root.Protected);
+            if (attr.HasFlag(FieldAttributes.FamORAssem)) list.Add(Root.Protected);
             if (attr.HasFlag(FieldAttributes.InitOnly)) type = VariantType.Let;
             if (attr.HasFlag(FieldAttributes.Literal)) type = VariantType.Const;
-            if (attr.HasFlag(FieldAttributes.Public)) ret.Add(Root.Public);
-            if (attr.HasFlag(FieldAttributes.Static)) ret.Add(Root.Static);
-            return ret;
+            if (attr.HasFlag(FieldAttributes.Public)) list.Add(Root.Public);
+            if (attr.HasFlag(FieldAttributes.Static)) list.Add(Root.Static);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(ParameterAttributes attr)
+        private void AppendEmbededAttribute(List<Scope> list, ParameterAttributes attr)
         {
-            var ret = new List<Scope>();
-            if (attr.HasFlag(ParameterAttributes.HasDefault)) ret.Add(Root.Optional);
-            if (attr.HasFlag(ParameterAttributes.Optional)) ret.Add(Root.Optional);
-            return ret;
+            if (attr.HasFlag(ParameterAttributes.HasDefault)) list.Add(Root.Optional);
+            if (attr.HasFlag(ParameterAttributes.Optional)) list.Add(Root.Optional);
         }
 
         private IReadOnlyList<GenericSymbol> CreateGenericList(Type[] gnr)

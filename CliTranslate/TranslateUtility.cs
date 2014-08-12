@@ -24,7 +24,7 @@ namespace CliTranslate
                 }
                 if (isNested)
                 {
-                    switch (a.Attr)
+                    switch (a.AttributeType)
                     {
                         case AttributeType.Public: ret |= TypeAttributes.Public | TypeAttributes.NestedAssembly; break;
                         case AttributeType.Protected: ret |= TypeAttributes.NotPublic | TypeAttributes.NestedFamily; break;
@@ -33,7 +33,7 @@ namespace CliTranslate
                 }
                 else
                 {
-                    switch (a.Attr)
+                    switch (a.AttributeType)
                     {
                         case AttributeType.Public: ret |= TypeAttributes.Public; break;
                         case AttributeType.Protected: ret |= TypeAttributes.NotPublic; break;
@@ -62,7 +62,7 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                switch (a.Attr)
+                switch (a.AttributeType)
                 {
                     case AttributeType.Static: ret |= MethodAttributes.Static; break;
                     case AttributeType.Public: ret |= MethodAttributes.Assembly; break;
@@ -87,7 +87,7 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                switch (a.Attr)
+                switch (a.AttributeType)
                 {
                     case AttributeType.Static: ret |= FieldAttributes.Static; break;
                     case AttributeType.Public: ret |= FieldAttributes.Assembly; break;

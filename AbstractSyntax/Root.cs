@@ -72,6 +72,7 @@ namespace AbstractSyntax
             Unknown = new UnknownSymbol();
             Refer = new AttributeSymbol(AttributeType.Refer);
             Typeof = new AttributeSymbol(AttributeType.Tyoeof);
+            Static = new AttributeSymbol(AttributeType.Variadic, "variadic");
             Contravariant = new AttributeSymbol(AttributeType.Contravariant);
             Covariant = new AttributeSymbol(AttributeType.Covariant);
             ConstructorConstraint = new AttributeSymbol(AttributeType.ConstructorConstraint);
@@ -80,12 +81,12 @@ namespace AbstractSyntax
             Optional = new AttributeSymbol(AttributeType.Optional);
             Abstract = new AttributeSymbol(AttributeType.Abstract);
             Virtual = new AttributeSymbol(AttributeType.Virtual);
-            Final = new AttributeSymbol("final", AttributeType.Final);
-            Static = new AttributeSymbol("static", AttributeType.Static);
-            Public = new AttributeSymbol("public", AttributeType.Public);
-            Internal = new AttributeSymbol("internal", AttributeType.Internal);
-            Protected = new AttributeSymbol("protected", AttributeType.Protected);
-            Private = new AttributeSymbol("private", AttributeType.Private);
+            Final = new AttributeSymbol(AttributeType.Final, "final");
+            Static = new AttributeSymbol(AttributeType.Static, "static");
+            Public = new AttributeSymbol(AttributeType.Public, "public");
+            Internal = new AttributeSymbol(AttributeType.Internal, "internal");
+            Protected = new AttributeSymbol(AttributeType.Protected, "protected");
+            Private = new AttributeSymbol(AttributeType.Private, "private");
             EmbedList.AppendChild(Void);
             EmbedList.AppendChild(Unknown);
             EmbedList.AppendChild(Error);

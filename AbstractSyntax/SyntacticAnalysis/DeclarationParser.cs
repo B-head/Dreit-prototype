@@ -12,6 +12,7 @@ namespace AbstractSyntax.SyntacticAnalysis
     {
         private static string[] attribute = 
         { 
+            "variadic",
             "final",
             "static",
             "public",
@@ -137,29 +138,6 @@ namespace AbstractSyntax.SyntacticAnalysis
             name = n;
         }
 
-        private static EnumDeclaration EnumDeclaration(SlimChainParser cp)
-        {
-            var name = string.Empty;
-            TupleLiteral attr = null;
-            TupleLiteral generic = null;
-            Identifier expli = null;
-            ProgramContext block = null;
-            return cp.Begin
-                .Transfer(e => attr = e, AttributeList)
-                .Text("enum").Lt()
-                .Type(t => name = t.Text, TokenType.LetterStartString).Lt()
-                .Transfer(e => generic = e, GenericList)
-                .If(icp => icp.Type(TokenType.Pair).Lt())
-                .Than(icp => icp.Transfer(e => expli = e, Identifier))
-                .Transfer(e => block = e, InlineContext)
-                .End(tp => new EnumDeclaration(tp, name, attr, generic, expli, block));
-        }
-
-        private static AlgebraDeclaration AlgebraDeclaration(SlimChainParser cp)
-        {
-            return null;
-        }
-
         private static ClassDeclaration ClassDeclaration(SlimChainParser cp)
         {
             var type = ClassType.Unknown;
@@ -181,6 +159,29 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Than(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, Identifier)))
                 .Transfer(e => block = e, InlineContext)
                 .End(tp => new ClassDeclaration(tp, name, type, attr, generic, inherit, block));
+        }
+
+        private static EnumDeclaration EnumDeclaration(SlimChainParser cp)
+        {
+            var name = string.Empty;
+            TupleLiteral attr = null;
+            TupleLiteral generic = null;
+            Identifier expli = null;
+            ProgramContext block = null;
+            return cp.Begin
+                .Transfer(e => attr = e, AttributeList)
+                .Text("enum").Lt()
+                .Type(t => name = t.Text, TokenType.LetterStartString).Lt()
+                .Transfer(e => generic = e, GenericList)
+                .If(icp => icp.Type(TokenType.Pair).Lt())
+                .Than(icp => icp.Transfer(e => expli = e, Identifier))
+                .Transfer(e => block = e, InlineContext)
+                .End(tp => new EnumDeclaration(tp, name, attr, generic, expli, block));
+        }
+
+        private static AlgebraDeclaration AlgebraDeclaration(SlimChainParser cp)
+        {
+            return null;
         }
 
         private static AttributeDeclaration AttributeDeclaration(SlimChainParser cp)
