@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      10 =: stdout
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      10, 20 =: stdout
+    </code>
+    <output>10 20</output>
+  </case>
+
+  <case>
+    <code>
+      10, "hello" =: stdout
+    </code>
+    <output>10 hello</output>
+  </case>
+</compile-test>

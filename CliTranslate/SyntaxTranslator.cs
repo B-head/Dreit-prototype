@@ -263,8 +263,9 @@ namespace CliTranslate
             {
                 var attr = ParameterAttributes.None;
                 var pt = RelayTranslate(element.CallReturnType);
-                var def = RelayTranslate(element.DefaultValue);
-                var ret = new ParameterStructure(element.Name, attr, pt, def);
+                //todo 無限再帰に対処する。
+                //var def = RelayTranslate(element.DefaultValue);
+                var ret = new ParameterStructure(element.Name, attr, pt, null);
                 return ret;
             }
         }

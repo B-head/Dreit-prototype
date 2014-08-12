@@ -1,8 +1,8 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Declaration;
+using AbstractSyntax.SyntacticAnalysis;
 using AbstractSyntax.Visualizer;
 using CliTranslate;
-using AbstractSyntax.SyntacticAnalysis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +19,7 @@ namespace Dlight
             var root = new Root();
             var import = new CilImport(root);
             import.ImportAssembly(Assembly.Load("mscorlib"));
+            import.ImportAssembly(Assembly.Load("CoreLibrary"));
             root.Append(CompileFile(fileName));
             root.SemanticAnalysis();
             Console.WriteLine(CompileMessageBuilder.Build(root.MessageManager));

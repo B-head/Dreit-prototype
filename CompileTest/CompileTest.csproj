@@ -94,6 +94,10 @@
       <Project>{fe6f3528-b4de-4cc9-9554-fbe2b1213041}</Project>
       <Name>CliTranslate</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj">
+      <Project>{97a80420-f612-42e7-95e1-bce70ed5cb4d}</Project>
+      <Name>CoreLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DreitCompiler\DreitCompiler.csproj">
       <Project>{76c1b982-7fdc-4223-9e70-59798dd42c73}</Project>
       <Name>DreitCompiler</Name>
@@ -123,6 +127,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ConditionalTest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OtherTest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="OverallTest.xml">

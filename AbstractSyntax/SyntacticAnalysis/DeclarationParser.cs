@@ -142,7 +142,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             var name = string.Empty;
             TupleLiteral attr = null;
             TupleLiteral generic = null;
-            Identifier bt = null;
+            Identifier expli = null;
             ProgramContext block = null;
             return cp.Begin
                 .Transfer(e => attr = e, AttributeList)
@@ -150,9 +150,9 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Type(t => name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer(e => generic = e, GenericList)
                 .If(icp => icp.Type(TokenType.Pair).Lt())
-                .Than(icp => icp.Transfer(e => bt = e, Identifier))
+                .Than(icp => icp.Transfer(e => expli = e, Identifier))
                 .Transfer(e => block = e, InlineContext)
-                .End(tp => new EnumDeclaration(tp, name, attr, generic, bt, block));
+                .End(tp => new EnumDeclaration(tp, name, attr, generic, expli, block));
         }
 
         private static AlgebraDeclaration AlgebraDeclaration(SlimChainParser cp)
