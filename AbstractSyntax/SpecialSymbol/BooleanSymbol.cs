@@ -13,7 +13,7 @@ namespace AbstractSyntax.SpecialSymbol
         public bool Value { get; private set; }
 
         public BooleanSymbol(bool value)
-            :base(true)
+            : base(VariantType.Const)
         {
             Value = value;
             if(value)

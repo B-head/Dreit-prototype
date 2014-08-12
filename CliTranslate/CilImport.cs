@@ -85,12 +85,12 @@ namespace CliTranslate
 
         private ClassSymbol ImportPureType(Type type)
         {
-            bool isTrait;
-            var attribute = CreateAttributeList(type.Attributes, out isTrait);
+            ClassType classType;
+            var attribute = CreateAttributeList(type.Attributes, out classType);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
             var block = new ProgramContext();
-            var elem = new ClassSymbol(TrimTypeNameMangling(type.Name), isTrait, block, attribute, generic, inherit);
+            var elem = new ClassSymbol(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit);
             if (ImportDictionary.ContainsKey(type))
             {
                 return (ClassSymbol)ImportDictionary[type];
@@ -179,8 +179,8 @@ namespace CliTranslate
 
         private EnumSymbol ImportEnum(Type type)
         {
-            bool isTrait;
-            var attribute = CreateAttributeList(type.Attributes, out isTrait);
+            ClassType classType;
+            var attribute = CreateAttributeList(type.Attributes, out classType);
             var dt = ImportType(type.GetEnumUnderlyingType());
             var block = new ProgramContext();
             var elem = new EnumSymbol(type.Name, block, attribute, dt);
@@ -191,7 +191,7 @@ namespace CliTranslate
             ImportDictionary.Add(type, elem);
             foreach(var v in type.GetEnumNames())
             {
-                var f = new VariantSymbol(v, true, new List<Scope>(), dt);
+                var f = new VariantSymbol(v, VariantType.Const, new List<Scope>(), dt);
                 block.Append(f);
             }
             return elem;
@@ -207,7 +207,7 @@ namespace CliTranslate
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
             var rt = ImportType(method.ReturnType);
-            var elem = new RoutineSymbol(method.Name, TokenType.Unknoun, attribute, generic, arguments, rt);
+            var elem = new RoutineSymbol(method.Name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             ImportDictionary.Add(method, elem);
             return elem;
         }
@@ -222,7 +222,7 @@ namespace CliTranslate
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(prop);
             var rt = ImportType(prop.ReturnType);
-            var elem = new RoutineSymbol(name, TokenType.Unknoun, attribute, generic, arguments, rt);
+            var elem = new RoutineSymbol(name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             ImportDictionary.Add(prop, elem);
             return elem;
         }
@@ -237,20 +237,20 @@ namespace CliTranslate
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(ctor);
             var rt = ImportType(ctor.DeclaringType);
-            var elem = new RoutineSymbol(RoutineSymbol.ConstructorIdentifier, TokenType.Unknoun, attribute, generic, arguments, rt);
+            var elem = new RoutineSymbol(RoutineSymbol.ConstructorIdentifier, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             ImportDictionary.Add(ctor, elem);
             return elem;
         }
 
-        private ArgumentSymbol ImportArgument(ParameterInfo prm)
+        private ParameterSymbol ImportArgument(ParameterInfo prm)
         {
             if (ImportDictionary.ContainsKey(prm))
             {
-                return (ArgumentSymbol)ImportDictionary[prm];
+                return (ParameterSymbol)ImportDictionary[prm];
             }
             var attribute = CreateAttributeList(prm.Attributes);
             var dt = ImportType(prm.ParameterType);
-            var elem = new ArgumentSymbol(prm.Name, attribute, dt);
+            var elem = new ParameterSymbol(prm.Name, VariantType.Var, attribute, dt);
             ImportDictionary.Add(prm, elem);
             return elem;
         }
@@ -261,10 +261,10 @@ namespace CliTranslate
             {
                 return (VariantSymbol)ImportDictionary[field];
             }
-            bool isLet = false;
-            var attribute = CreateAttributeList(field.Attributes, out isLet);
+            VariantType type;
+            var attribute = CreateAttributeList(field.Attributes, out type);
             var dt = ImportType(field.FieldType);
-            var elem = new VariantSymbol(field.Name, isLet, attribute, dt);
+            var elem = new VariantSymbol(field.Name, type, attribute, dt);
             ImportDictionary.Add(field, elem);
             return elem;
         }
@@ -279,13 +279,13 @@ namespace CliTranslate
             return name.Substring(0, i);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(TypeAttributes attr, out bool isTrait)
+        private IReadOnlyList<Scope> CreateAttributeList(TypeAttributes attr, out ClassType type)
         {
-            isTrait = false;
+            type = ClassType.Class;
             var ret = new List<Scope>();
             if (attr.HasFlag(TypeAttributes.Abstract)) ret.Add(Root.Abstract);
-            if (attr.HasFlag(TypeAttributes.Class)) isTrait = false;
-            if (attr.HasFlag(TypeAttributes.Interface)) isTrait = true;
+            if (attr.HasFlag(TypeAttributes.Class)) type = ClassType.Class;
+            if (attr.HasFlag(TypeAttributes.Interface)) type = ClassType.Trait;
             if (attr.HasFlag(TypeAttributes.NestedFamily)) ret.Add(Root.Protected);
             if (attr.HasFlag(TypeAttributes.NestedFamORAssem)) ret.Add(Root.Protected);
             if (attr.HasFlag(TypeAttributes.NestedPublic)) ret.Add(Root.Public);
@@ -317,13 +317,14 @@ namespace CliTranslate
             return ret;
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(FieldAttributes attr, out bool isLet)
+        private IReadOnlyList<Scope> CreateAttributeList(FieldAttributes attr, out VariantType type)
         {
-            isLet = false;
+            type = VariantType.Var;
             var ret = new List<Scope>();
             if (attr.HasFlag(FieldAttributes.Family)) ret.Add(Root.Protected);
             if (attr.HasFlag(FieldAttributes.FamORAssem)) ret.Add(Root.Protected);
-            if (attr.HasFlag(FieldAttributes.InitOnly)) isLet = true;
+            if (attr.HasFlag(FieldAttributes.InitOnly)) type = VariantType.Let;
+            if (attr.HasFlag(FieldAttributes.Literal)) type = VariantType.Const;
             if (attr.HasFlag(FieldAttributes.Public)) ret.Add(Root.Public);
             if (attr.HasFlag(FieldAttributes.Static)) ret.Add(Root.Static);
             return ret;
@@ -379,9 +380,9 @@ namespace CliTranslate
             return ret;
         }
 
-        private IReadOnlyList<ArgumentSymbol> CreateArgumentList(MethodBase method)
+        private IReadOnlyList<ParameterSymbol> CreateArgumentList(MethodBase method)
         {
-            var ret = new List<ArgumentSymbol>();
+            var ret = new List<ParameterSymbol>();
             foreach (var v in method.GetParameters())
             {
                 ret.Add(ImportArgument(v));

@@ -9,8 +9,6 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class ElementList<ELEMENT> : Element, IReadOnlyList<ELEMENT> where ELEMENT : Element
     {
-        private List<Scope> DataTypes;
-
         public ElementList()
         {
 
@@ -20,38 +18,6 @@ namespace AbstractSyntax.Expression
             :base(tp)
         {
             AppendChild(child);
-        }
-
-        public IReadOnlyList<T> FindElements<T>() where T : ELEMENT
-        {
-            var result = new List<T>();
-            foreach (var v in this)
-            {
-                if (v is T)
-                {
-                    result.Add((T)v);
-                }
-            }
-            return result;
-        }
-
-        public IReadOnlyList<Scope> GetDataTypes()
-        {
-            if (DataTypes != null)
-            {
-                return DataTypes;
-            }
-            DataTypes = new List<Scope>();
-            foreach (var v in this)
-            {
-                DataTypes.Add(v.ReturnType);
-            }
-            return DataTypes;
-        }
-
-        protected override string ElementInfo
-        {
-            get { return "Count = " + Count; }
         }
 
         public new ELEMENT this[int index]

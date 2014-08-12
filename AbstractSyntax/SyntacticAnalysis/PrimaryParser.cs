@@ -10,21 +10,40 @@ namespace AbstractSyntax.SyntacticAnalysis
     {
         private static TransferParser<Element>[] primary = 
         { 
+            ImportDeclaration,
             AliasDeclaration,
             VariantDeclaration,
             RoutineDeclaration,
-            OperatorDeclaration,
+            EnumDeclaration,
+            AlgebraDeclaration,
             ClassDeclaration,
+            AttributeDeclaration,
             AttributeScope,
             IfStatement,
+            PatternMatchStatement,
             LoopStatement,
-            UnStatement,
+            LaterLoopStatement,
             EchoStatement,
-            ReturnStatement,
-            BreakStatement,
+            UnStatement,
+            LabelStatement,
+            GotoStatement,
             ContinueStatement,
-            StringLiteral,
+            BreakStatement,
+            GiveStatement,
+            ReturnStatement,
+            YieldStatement,
+            ThrowStatement,
+            CatchStatement,
+            ScopeGuardStatement,
+            RequireStatement,
+            EnsureStatement,
             NumericLiteral,
+            StringLiteral,
+            HereDocument,
+            RangeLiteral,
+            ArrayLiteral,
+            DictionaryLiteral,
+            LambdaLiteral,
             GroupingExpression,
             Identifier
         };
@@ -44,58 +63,22 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .End(tp => new GroupingExpression(tp, exp));
         }
 
-        private static NumericLiteral NumericLiteral(SlimChainParser cp)
-        {
-            var integral = string.Empty;
-            var fraction = string.Empty;
-            return cp.Begin
-                .Type(t => integral = t.Text, TokenType.DigitStartString).Lt()
-                .If(icp => icp.Type(TokenType.Access).Lt())
-                .Than(icp => icp.Type(t => fraction = t.Text, TokenType.DigitStartString).Lt())
-                .End(tp => new NumericLiteral(tp, integral, fraction));
-        }
-
-        private static StringLiteral StringLiteral(SlimChainParser cp)
-        {
-            var texts = new List<Element>();
-            return cp.Begin
-                .Type(TokenType.QuoteSeparator)
-                .Loop(icp => icp.Not.Type(TokenType.QuoteSeparator), icp =>
-                {
-                    icp
-                    .If(iicp => iicp.Type(TokenType.LeftBrace))
-                    .Than(iicp => iicp.Transfer(e => texts.Add(e), Expression).Type(TokenType.RightBrace))
-                    .Else(iicp => iicp.Transfer(e => texts.Add(e), PlainText));
-                })
-                .End(tp => new StringLiteral(tp, texts));
-        }
-
-        private static PlainText PlainText(SlimChainParser cp)
-        {
-            var value = string.Empty;
-            return cp.Begin
-                .Type(t => value = t.Text, TokenType.PlainText)
-                .End(tp => new PlainText(tp, value));
-        }
-
         private static Identifier Identifier(SlimChainParser cp)
         {
-            var isPragma = false;
+            var identType = TokenType.Unknoun;
             var value = string.Empty;
             return cp.Begin
-                .Opt.Type(t => isPragma = true, TokenType.Pragma).Lt()
+                .Opt.Type(t => identType = t.TokenType, TokenType.Pragma, TokenType.Macro, TokenType.Nullable).Lt()
                 .Type(t => value = t.Text, TokenType.LetterStartString).Lt()
-                .End(tp => new Identifier(tp, value, isPragma));
+                .End(tp => new Identifier(tp, value, identType));
         }
 
-        private static Identifier Identifier(SlimChainParser cp, params string[] match)
+        private static Identifier IdentifierMatch(SlimChainParser cp, params string[] match)
         {
-            var isPragma = false;
             var value = string.Empty;
             return cp.Begin
-                .Opt.Type(t => isPragma = true, TokenType.Pragma).Lt()
                 .Text(t => value = t.Text, match).Lt()
-                .End(tp => new Identifier(tp, value, isPragma));
+                .End(tp => new Identifier(tp, value, TokenType.Unknoun));
         }
     }
 }

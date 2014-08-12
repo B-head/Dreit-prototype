@@ -250,12 +250,23 @@ namespace CliTranslate
             }
         }
 
-        private ParameterStructure Translate(ArgumentSymbol element, ParameterInfo info = null)
+        private CilStructure Translate(ParameterSymbol element, ParameterInfo info = null)
         {
-            var attr = ParameterAttributes.None;
-            var pt = RelayTranslate(element.CallReturnType);
-            var ret = new ParameterStructure(element.Name, attr, pt, null);
-            return ret;
+            if (element.IsLoopParameter)
+            {
+                var dt = RelayTranslate(element.CallReturnType);
+                var def = RelayTranslate(element.DefaultValue);
+                var ret = new LoopParameterStructure(element.Name, dt, def);
+                return ret;
+            }
+            else
+            {
+                var attr = ParameterAttributes.None;
+                var pt = RelayTranslate(element.CallReturnType);
+                var def = RelayTranslate(element.DefaultValue);
+                var ret = new ParameterStructure(element.Name, attr, pt, def);
+                return ret;
+            }
         }
 
         private GenericParameterStructure Translate(GenericSymbol element, Type info = null)
@@ -464,10 +475,10 @@ namespace CliTranslate
             var ret = new LoopStructure(rt);
             TransDictionary.Add(element, ret);
             var cond = RelayTranslate(element.Condition);
-            var on = RelayTranslate(element.On);
+            var use = RelayTranslate(element.Use);
             var by = RelayTranslate(element.By);
             var block = RelayTranslate(element.Block);
-            ret.Initialize(cond, on, by, block);
+            ret.Initialize(cond, use, by, block);
             return ret;
         }
 

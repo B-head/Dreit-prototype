@@ -11,20 +11,22 @@ namespace AbstractSyntax.Statement
     [Serializable]
     public class LoopStatement : Scope
     {
-        public Element Condition { get; set; }
-        public Element On { get; set; }
-        public Element By { get; set; }
-        public ProgramContext Block { get; set; }
+        public bool IsLater { get; private set; }
+        public Element Condition { get; private set; }
+        public Element Use { get; private set; }
+        public Element By { get; private set; }
+        public ProgramContext Block { get; private set; }
 
-        public LoopStatement(TextPosition tp, Element cond, Element on, Element by, ProgramContext block)
+        public LoopStatement(TextPosition tp, bool isLater, Element cond, Element use, Element by, ProgramContext block)
             :base(tp)
         {
+            IsLater = isLater;
             Condition = cond;
-            On = on;
+            Use = use;
             By = by;
             Block = block;
             AppendChild(Condition);
-            AppendChild(On);
+            AppendChild(Use);
             AppendChild(By);
             AppendChild(Block);
         }
@@ -36,7 +38,7 @@ namespace AbstractSyntax.Statement
 
         public bool IsDefinedOn
         {
-            get { return On != null; }
+            get { return Use != null; }
         }
 
         public bool IsDefinedBy

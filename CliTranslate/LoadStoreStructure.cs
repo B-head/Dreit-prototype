@@ -66,6 +66,16 @@ namespace CliTranslate
                 cg.GenerateLoad(p);
                 return;
             }
+            var lo = Variant as LoopParameterStructure;
+            if (lo != null)
+            {
+                if (IsStore)
+                {
+                    cg.GenerateStore(lo.Local);
+                }
+                cg.GenerateLoad(lo.Local);
+                return;
+            }
             var v = Variant as ValueStructure;
             if(v != null)
             {

@@ -9,17 +9,14 @@ namespace AbstractSyntax.Literal
     [Serializable]
     public class StringLiteral : Element
     {
+        public IReadOnlyList<Element> Texts { get; private set; }
         private Scope _ReturnType;
 
-        public StringLiteral(TextPosition tp, List<Element> texts)
+        public StringLiteral(TextPosition tp, IReadOnlyList<Element> texts)
             :base(tp)
         {
-            AppendChild(texts);
-        }
-
-        public IReadOnlyList<Element> Texts
-        {
-            get { return this; }
+            Texts = texts;
+            AppendChild(Texts);
         }
 
         public override Scope ReturnType

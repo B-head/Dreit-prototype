@@ -13,15 +13,15 @@ namespace AbstractSyntax.Expression
     public class Identifier : Element
     {
         public string Value { get; private set; }
-        public bool IsPragmaAccess { get; private set; }
+        public TokenType IdentType { get; private set; }
         private bool? _IsTacitThis;
         private OverLoadReference _Reference;
 
-        public Identifier(TextPosition tp, string value, bool isPragma)
+        public Identifier(TextPosition tp, string value, TokenType identType)
             :base(tp)
         {
             Value = value;
-            IsPragmaAccess = isPragma;
+            IdentType = identType;
         }
 
         public bool IsTacitThis
@@ -61,13 +61,12 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (IsPragmaAccess)
+                switch(IdentType)
                 {
-                    return "@@" + Value;
-                }
-                else
-                {
-                    return Value;
+                    case TokenType.Pragma: return "@@" + Value;
+                    case TokenType.Macro: return "##" + Value;
+                    case TokenType.Nullable: return "??" + Value;
+                    default: return Value;
                 }
             }
         }
@@ -80,6 +79,11 @@ namespace AbstractSyntax.Expression
         public override bool IsConstant
         {
             get { return ((RoutineSymbol)CallScope).IsFunction; }
+        }
+
+        public bool IsPragma
+        {
+            get { return IdentType == TokenType.Pragma; }
         }
 
         public Scope CallScope
@@ -95,7 +99,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _Reference;
                 }
-                if (IsPragmaAccess)
+                if (IsPragma)
                 {
                     _Reference = CurrentScope.NameResolution("@@" + Value);
                 }
@@ -139,7 +143,7 @@ namespace AbstractSyntax.Expression
         {
             if (OverLoad.IsUndefined)
             {
-                if (IsPragmaAccess)
+                if (IsPragma)
                 {
                     cmm.CompileError("undefined-pragma", this);
                 }

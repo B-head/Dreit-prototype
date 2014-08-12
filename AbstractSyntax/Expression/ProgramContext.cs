@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class ProgramContext : ElementList<Element>
+    public class ProgramContext : Element
     {
         public bool IsInline { get; private set; }
 
@@ -19,9 +19,10 @@ namespace AbstractSyntax.Expression
         }
 
         public ProgramContext(TextPosition tp, IReadOnlyList<Element> child, bool isInline)
-            :base(tp, child)
+            :base(tp)
         {
             IsInline = isInline;
+            AppendChild(child);
         }
 
         public void Append(Element child)

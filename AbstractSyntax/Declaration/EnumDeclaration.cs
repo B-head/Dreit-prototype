@@ -9,10 +9,13 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class EnumDeclaration : EnumSymbol
     {
-        public EnumDeclaration(TextPosition tp, string name, ProgramContext block)
+        public Element ExplicitBaseType { get; private set; }
+
+        public EnumDeclaration(TextPosition tp, string name, Element expli, ProgramContext block)
             :base(tp, name, block)
         {
-
+            ExplicitBaseType = expli;
+            AppendChild(ExplicitBaseType);
         }
 
         public override bool IsConstant

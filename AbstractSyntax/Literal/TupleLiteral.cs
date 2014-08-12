@@ -7,22 +7,23 @@ using System.Diagnostics;
 namespace AbstractSyntax.Literal
 {
     [Serializable]
-    public class TupleLiteral : ElementList<Element>
+    public class TupleLiteral : Element
     {
         public TupleLiteral()
         {
 
         }
 
-        public TupleLiteral(Element append)
+        public TupleLiteral(TextPosition tp, Element append)
+            : base(tp)
         {
             AppendChild(append);
         }
 
         public TupleLiteral(TextPosition tp, List<Element> child)
-            :base(tp, child)
+            :base(tp)
         {
-
+            AppendChild(child);
         }
 
         public override bool IsConstant

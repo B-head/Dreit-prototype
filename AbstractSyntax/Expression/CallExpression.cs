@@ -38,7 +38,7 @@ namespace AbstractSyntax.Expression
             }
             else
             {
-                Arguments = new TupleLiteral(arg);
+                Arguments = new TupleLiteral(arg.Position, arg);
             }
             AppendChild(Access);
             AppendChild(Arguments);
@@ -154,7 +154,7 @@ namespace AbstractSyntax.Expression
                 {
                     return false;
                 }
-                return v.Variant.IsLet;
+                return v.Variant.IsImmtable;
             }
         }
 

@@ -8,44 +8,57 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    public enum RoutineType
+    {
+        Unknown,
+        Routine,
+        Function,
+        RoutineOperator,
+        FunctionOperator,
+        RoutineConverter,
+        FunctionConverter,
+    }
+
     [Serializable]
     public class RoutineSymbol : Scope
     {
-        public TokenType Operator { get; private set; }
-        public bool IsFunction { get; private set; }
+        public RoutineType RoutineType { get; private set; }
+        public TokenType OperatorType { get; private set; }
         public ProgramContext Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
-        protected IReadOnlyList<ArgumentSymbol> _Arguments;
+        protected IReadOnlyList<ParameterSymbol> _Arguments;
         protected IReadOnlyList<Scope> _ArgumentTypes;
         protected Scope _CallReturnType;
         public const string ConstructorIdentifier = "new";
         public const string DestructorIdentifier = "free";
 
-        protected RoutineSymbol(TokenType op, bool isFunc)
+        protected RoutineSymbol(RoutineType type, TokenType opType)
         {
-            Operator = op;
+            RoutineType = type;
+            OperatorType = opType;
             Block = new ProgramContext();
             _Attribute = new List<Scope>();
             _Generics = new List<GenericSymbol>();
-            _Arguments = new List<ArgumentSymbol>();
+            _Arguments = new List<ParameterSymbol>();
             AppendChild(Block);
         }
 
-        protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc, ProgramContext block)
+        protected RoutineSymbol(TextPosition tp, string name, RoutineType type, TokenType opType, ProgramContext block)
             : base(tp)
         {
             Name = name;
-            Operator = op;
-            IsFunction = isFunc;
+            RoutineType = type;
+            OperatorType = opType;
             Block = block;
             AppendChild(Block);
         }
 
-        public RoutineSymbol(string name, TokenType op, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ArgumentSymbol> arg, Scope rt)
+        public RoutineSymbol(string name, RoutineType type, TokenType opType, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ParameterSymbol> arg, Scope rt)
         {
             Name = name;
-            Operator = op;
+            RoutineType = type;
+            OperatorType = opType;
             Block = new ProgramContext();
             _Attribute = attr;
             _Generics = gnr;
@@ -64,7 +77,7 @@ namespace AbstractSyntax.Symbol
             get { return _Generics; }
         }
 
-        public virtual IReadOnlyList<ArgumentSymbol> Arguments
+        public virtual IReadOnlyList<ParameterSymbol> Arguments
         {
             get { return _Arguments; }
         }
@@ -101,6 +114,11 @@ namespace AbstractSyntax.Symbol
         public virtual bool IsAbstract
         {
             get { return HasAnyAttribute(Attribute, AttributeType.Abstract); }
+        }
+
+        public virtual bool IsFunction
+        {
+            get { return RoutineType == RoutineType.Function || RoutineType == RoutineType.FunctionConverter || RoutineType == RoutineType.FunctionOperator; }
         }
 
         internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)

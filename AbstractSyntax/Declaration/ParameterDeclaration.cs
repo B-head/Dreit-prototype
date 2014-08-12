@@ -9,21 +9,18 @@ using System.Diagnostics;
 namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class ArgumentDeclaration : ArgumentSymbol
+    public class ParameterDeclaration : ParameterSymbol
     {
         public TupleLiteral AttributeAccess { get; private set; }
-        public Identifier Ident { get; private set; }
         public Identifier ExplicitType { get; private set; }
 
-        public ArgumentDeclaration(TextPosition tp, TupleLiteral attr, Identifier ident, Identifier expl)
-            : base(tp)
+        public ParameterDeclaration(TextPosition tp, VariantType type, string name, TupleLiteral attr, Identifier expli, Element def)
+            : base(tp, type, def)
         {
+            Name = name;
             AttributeAccess = attr;
-            Ident = ident;
-            ExplicitType = expl;
-            Name = Ident == null ? string.Empty : Ident.Value;
+            ExplicitType = expli;
             AppendChild(AttributeAccess);
-            AppendChild(Ident);
             AppendChild(ExplicitType);
         }
 
@@ -53,14 +50,13 @@ namespace AbstractSyntax.Declaration
                 {
                     return _DataType;
                 }
-                var caller = Parent as CallExpression;
                 if (ExplicitType != null)
                 {
                     _DataType = ExplicitType.OverLoad.FindDataType();
                 }
-                else if (caller != null && caller.HasCallTarget(this))
+                else if (DefaultValue != null)
                 {
-                    _DataType = caller.CallType;
+                    _DataType = DefaultValue.ReturnType;
                 }
                 else
                 {
@@ -68,11 +64,6 @@ namespace AbstractSyntax.Declaration
                 }
                 return _DataType;
             }
-        }
-
-        public override OverLoadReference OverLoad
-        {
-            get { return Ident.OverLoad; }
         }
     }
 }

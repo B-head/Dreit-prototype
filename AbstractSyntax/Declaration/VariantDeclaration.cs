@@ -15,12 +15,12 @@ namespace AbstractSyntax.Declaration
         public Identifier Ident { get; private set; }
         public Identifier ExplicitType { get; private set; }
 
-        public VariantDeclaration(TextPosition tp, TupleLiteral attr, Identifier ident, Identifier expl, bool isLet)
-            :base(tp, isLet)
+        public VariantDeclaration(TextPosition tp, VariantType type, TupleLiteral attr, Identifier ident, Identifier expli)
+            : base(tp, type)
         {
             AttributeAccess = attr;
             Ident = ident;
-            ExplicitType = expl;
+            ExplicitType = expli;
             Name = Ident == null ? string.Empty : Ident.Value;
             AppendChild(AttributeAccess);
             AppendChild(Ident);

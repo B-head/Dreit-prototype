@@ -38,6 +38,7 @@ namespace AbstractSyntax.Symbol
         None,
         Refer,
         Tyoeof,
+        Variadic,
         Contravariant,
         Covariant,
         ConstructorConstraint,

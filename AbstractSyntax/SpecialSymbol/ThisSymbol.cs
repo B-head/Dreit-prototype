@@ -11,7 +11,7 @@ namespace AbstractSyntax.SpecialSymbol
     public class ThisSymbol : VariantSymbol
     {
         public ThisSymbol(ClassSymbol dataType)
-            :base(false)
+            : base(VariantType.Var)
         {
             Name = "this";
             _Attribute = new List<Scope>();

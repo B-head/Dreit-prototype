@@ -16,8 +16,8 @@ namespace AbstractSyntax.Declaration
         public TupleLiteral DecGenerics { get; private set; }
         public TupleLiteral InheritAccess { get; private set; }
 
-        public ClassDeclaration(TextPosition tp, string name, bool isTrait, TupleLiteral attr, TupleLiteral generic, TupleLiteral inherit, ProgramContext block)
-            :base(tp, name, isTrait, block)
+        public ClassDeclaration(TextPosition tp, string name, ClassType type, TupleLiteral attr, TupleLiteral generic, TupleLiteral inherit, ProgramContext block)
+            :base(tp, name, type, block)
         {
             AttributeAccess = attr;
             DecGenerics = generic;

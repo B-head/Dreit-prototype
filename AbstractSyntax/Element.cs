@@ -187,7 +187,7 @@ namespace AbstractSyntax
 
         protected virtual string ElementInfo
         {
-            get { return null; }
+            get { return "Count = " + Count; }
         }
 
         public override string ToString()

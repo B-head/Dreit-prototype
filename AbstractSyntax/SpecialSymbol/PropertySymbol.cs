@@ -14,7 +14,7 @@ namespace AbstractSyntax.SpecialSymbol
         public bool IsSet { get; private set; }
 
         public PropertySymbol(VariantSymbol variant, bool isSet)
-            : base(TokenType.Unknoun, false)
+            : base(RoutineType.Routine, TokenType.Unknoun)
         {
             if(isSet)
             {

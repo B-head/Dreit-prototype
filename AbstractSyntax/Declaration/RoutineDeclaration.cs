@@ -18,13 +18,13 @@ namespace AbstractSyntax.Declaration
         public Element ExplicitType { get; private set; }
         public bool IsDefaultThisReturn { get; private set; }
 
-        public RoutineDeclaration(TextPosition tp, string name, TokenType op, bool isFunc, TupleLiteral attr, TupleLiteral generic, TupleLiteral args, Element expl, ProgramContext block)
-            : base(tp, name, op, isFunc, block)
+        public RoutineDeclaration(TextPosition tp, string name, RoutineType type, TokenType opType, TupleLiteral attr, TupleLiteral generic, TupleLiteral args, Element expli, ProgramContext block)
+            : base(tp, name, type, opType, block)
         {
             AttributeAccess = attr;
             DecGenerics = generic;
             DecArguments = args;
-            ExplicitType = expl;
+            ExplicitType = expli;
             AppendChild(AttributeAccess);
             AppendChild(DecGenerics);
             AppendChild(DecArguments);
@@ -77,7 +77,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override IReadOnlyList<ArgumentSymbol> Arguments
+        public override IReadOnlyList<ParameterSymbol> Arguments
         {
             get
             {
@@ -85,10 +85,10 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Arguments;
                 }
-                var a = new List<ArgumentSymbol>();
+                var a = new List<ParameterSymbol>();
                 foreach (var v in DecArguments)
                 {
-                    a.Add((ArgumentSymbol)v);
+                    a.Add((ParameterSymbol)v);
                 }
                 _Arguments = a;
                 return _Arguments;

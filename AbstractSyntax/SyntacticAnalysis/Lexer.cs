@@ -292,7 +292,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             switch (sub)
             {
                 case ";": type = TokenType.EndExpression; break;
-                case ":": type = TokenType.Peir; break;
+                case ":": type = TokenType.Pair; break;
                 case ",": type = TokenType.List; break;
                 case ".": type = TokenType.Access; break;
                 case "#": type = TokenType.Zone; break;
@@ -370,6 +370,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             string sub = t.Read(0, 3);
             switch (sub)
             {
+                case ":=:": type = TokenType.Swap; break;
                 case "=<>": type = TokenType.Incomparable; break;
                 case "=><": type = TokenType.Incomparable; break;
                 case "<=>": type = TokenType.Incomparable; break;

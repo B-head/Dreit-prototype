@@ -65,6 +65,7 @@
     <Compile Include="LoadStoreStructure.cs" />
     <Compile Include="LocalStructure.cs" />
     <Compile Include="LogicalStructure.cs" />
+    <Compile Include="LoopParameterStructure.cs" />
     <Compile Include="LoopStructure.cs" />
     <Compile Include="MethodBaseStructure.cs" />
     <Compile Include="MethodStructure.cs" />

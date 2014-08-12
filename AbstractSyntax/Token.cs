@@ -37,7 +37,7 @@ namespace AbstractSyntax
         OtherString,
 
         EndExpression,
-        Peir,
+        Pair,
         Separator,
         List,
         Access,
@@ -78,6 +78,7 @@ namespace AbstractSyntax
         RightBracket,
         LeftBrace,
         RightBrace,
+        Swap,
         LeftPipeline = 0x10000,
         RightPipeline = 0x20000,
     }

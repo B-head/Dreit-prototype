@@ -13,7 +13,7 @@ namespace AbstractSyntax.SpecialSymbol
         public PrimitiveType PrimitiveType { get; private set; }
 
         public CastSymbol(PrimitiveType type, ClassSymbol from, ClassSymbol to)
-            :base(TokenType.Unknoun, true)
+            :base(RoutineType.FunctionConverter, TokenType.Unknoun)
         {
             Name = to.Name;
             PrimitiveType = type;

@@ -47,12 +47,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Declaration\AlgebraDeclaration.cs" />
     <Compile Include="Declaration\AliasDeclaration.cs" />
     <Compile Include="CompileMessageManager.cs" />
     <Compile Include="ConversionManager.cs" />
+    <Compile Include="Declaration\AttributeDeclaration.cs" />
     <Compile Include="Declaration\AttributeScope.cs" />
+    <Compile Include="Declaration\ImportDeclaration.cs" />
     <Compile Include="ElementList.cs" />
+    <Compile Include="Expression\Compose.cs" />
+    <Compile Include="Expression\SwapExpression.cs" />
+    <Compile Include="Expression\WithExpression.cs" />
+    <Compile Include="Literal\ArrayLiteral.cs" />
+    <Compile Include="Literal\AssociatePair.cs" />
+    <Compile Include="Literal\DictionaryLiteral.cs" />
+    <Compile Include="Literal\HereDocument.cs" />
+    <Compile Include="Literal\LambdaLiteral.cs" />
+    <Compile Include="Literal\RangeLiteral.cs" />
+    <Compile Include="Literal\TuplePair.cs" />
     <Compile Include="Statement\BreakStatement.cs" />
+    <Compile Include="Statement\CatchStatement.cs" />
     <Compile Include="Statement\ContinueStatement.cs" />
     <Compile Include="Expression\CallExpression.cs" />
     <Compile Include="Expression\Compare.cs" />
@@ -66,7 +80,7 @@
     <Compile Include="OverLoadReference.cs" />
     <Compile Include="OverLoadSet.cs" />
     <Compile Include="SpecialSymbol\DyadicOperatorSymbol.cs" />
-    <Compile Include="Declaration\ArgumentDeclaration.cs" />
+    <Compile Include="Declaration\ParameterDeclaration.cs" />
     <Compile Include="Declaration\ClassDeclaration.cs" />
     <Compile Include="Declaration\EnumDeclaration.cs" />
     <Compile Include="Declaration\GenericDeclaration.cs" />
@@ -77,6 +91,13 @@
     <Compile Include="Expression\DyadicExpression.cs" />
     <Compile Include="SpecialSymbol\CastSymbol.cs" />
     <Compile Include="SpecialSymbol\MonadicOperatorSymbol.cs" />
+    <Compile Include="Statement\EnsureStatement.cs" />
+    <Compile Include="Statement\ForStatement.cs" />
+    <Compile Include="Statement\GiveStatement.cs" />
+    <Compile Include="Statement\GotoStatement.cs" />
+    <Compile Include="Statement\LabelStatement.cs" />
+    <Compile Include="Statement\PatternMatchStatement.cs" />
+    <Compile Include="Statement\RequireStatement.cs" />
     <Compile Include="Statement\ReturnStatement.cs" />
     <Compile Include="Statement\EchoStatement.cs" />
     <Compile Include="Element.cs" />
@@ -86,7 +107,11 @@
     <Compile Include="Expression\LeftPipeline.cs" />
     <Compile Include="Expression\MemberAccess.cs" />
     <Compile Include="SpecialSymbol\PropertySymbol.cs" />
-    <Compile Include="Symbol\ArgumentSymbol.cs" />
+    <Compile Include="Statement\ScopeGuardStatement.cs" />
+    <Compile Include="Statement\ThrowStatement.cs" />
+    <Compile Include="Statement\YieldStatement.cs" />
+    <Compile Include="Symbol\AlgebraSymbol.cs" />
+    <Compile Include="Symbol\ParameterSymbol.cs" />
     <Compile Include="Symbol\NameSpaceSymbol.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
     <Compile Include="Literal\NumericLiteral.cs" />
@@ -113,12 +138,14 @@
     <Compile Include="SyntacticAnalysis\DeclarationParser.cs" />
     <Compile Include="SyntacticAnalysis\ExpressionParser.cs" />
     <Compile Include="SyntacticAnalysis\Lexer.cs" />
+    <Compile Include="SyntacticAnalysis\LiteralParser.cs" />
     <Compile Include="SyntacticAnalysis\Parser.cs" />
     <Compile Include="SyntacticAnalysis\PrimaryParser.cs" />
     <Compile Include="SyntacticAnalysis\SlimChainParser.cs" />
     <Compile Include="SyntacticAnalysis\StatementParser.cs" />
     <Compile Include="SyntacticAnalysis\TokenCollection.cs" />
     <Compile Include="SyntacticAnalysis\Tokenizer.cs" />
+    <Compile Include="SyntaxUtility.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="TypeManager.cs" />
     <Compile Include="TypeMatch.cs" />

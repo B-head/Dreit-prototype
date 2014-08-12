@@ -42,7 +42,7 @@ namespace AbstractSyntax
 
         public void Append(RoutineSymbol symbol)
         {
-            OpList[symbol.Operator].Add(symbol);
+            OpList[symbol.OperatorType].Add(symbol);
         }
 
         public Scope FindMonadic(TokenType op, Scope expt)

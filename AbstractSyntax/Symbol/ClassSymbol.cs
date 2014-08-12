@@ -9,12 +9,20 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    public enum ClassType
+    {
+        Unknown,
+        Class,
+        Trait,
+        Extend,
+    }
+
     [Serializable]
     public class ClassSymbol : Scope
     {
         public DefaultSymbol Default { get; private set; }
         public ThisSymbol This { get; private set; }
-        public bool IsTrait { get; private set; }
+        public ClassType ClassType { get; private set; }
         public ProgramContext Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
@@ -34,11 +42,11 @@ namespace AbstractSyntax.Symbol
             _Inherit = new List<Scope>();
         }
 
-        protected ClassSymbol(TextPosition tp, string name, bool isTrait, ProgramContext block)
+        protected ClassSymbol(TextPosition tp, string name, ClassType type, ProgramContext block)
             :base(tp)
         {
             Name = name;
-            IsTrait = isTrait;
+            ClassType = type;
             Block = block;
             Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
@@ -47,10 +55,10 @@ namespace AbstractSyntax.Symbol
             AppendChild(This);
         }
 
-        public ClassSymbol(string name, bool isTrait, ProgramContext block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
+        public ClassSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
         {
             Name = name;
-            IsTrait = isTrait;
+            ClassType = type;
             Block = block;
             Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
@@ -141,7 +149,7 @@ namespace AbstractSyntax.Symbol
             var c = scope as ClassSymbol;
             if(c != null)
             {
-                return c.IsTrait;
+                return c.ClassType == ClassType.Trait;
             }
             return false;
         }
@@ -154,6 +162,11 @@ namespace AbstractSyntax.Symbol
         public RoutineSymbol ZeroArgInitializer
         {
             get { return Initializer.FirstOrDefault(v => v.Arguments.Count == 0); }
+        }
+
+        public bool IsTrait
+        {
+            get { return ClassType == ClassType.Trait; }
         }
 
         public override bool IsDataType

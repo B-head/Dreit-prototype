@@ -73,6 +73,19 @@ namespace AbstractSyntax.SyntacticAnalysis
                 icp => icp.Text("then")
             );
         }
+        
+        private static ProgramContext EnumContext(SlimChainParser cp)
+        {
+            IReadOnlyList<Element> child = null;
+            var isInline = true;
+            return cp.Begin
+                .Any(
+                    icp => icp.Opt.Type(TokenType.Separator).Type(TokenType.EndExpression),
+                    icp => icp.Type(TokenType.Separator).Transfer(e => child = new Element[] { e }, EnumField).Lt().Opt.Type(TokenType.EndExpression),
+                    icp => icp.Opt.Type(TokenType.Separator).Call(c => child = c, EnumList).Self(() => isInline = false)
+                )
+                .End(tp => new ProgramContext(tp, child, isInline));
+        }
 
         private static IReadOnlyList<Element> ExpressionList(SlimChainParser cp, bool isBlock)
         {
@@ -97,6 +110,26 @@ namespace AbstractSyntax.SyntacticAnalysis
                     icp.Opt.Call(ExpressionSeparators)
                     .Opt.Any(
                         iicp => iicp.Transfer(e => child.Add(e), Expression),
+                        iicp => iicp.AddError()
+                    );
+                })
+                .Opt.Call(ExpressionSeparators);
+            return child;
+        }
+
+        private static IReadOnlyList<Element> EnumList(SlimChainParser cp)
+        {
+            var child = new List<Element>();
+            cp.Opt.Call(ExpressionSeparators)
+                .Any(
+                    iicp => iicp.Transfer(e => child.Add(e), EnumField),
+                    iicp => iicp.AddError()
+                )
+                .Loop(icp => icp.Not.Type(TokenType.RightBrace), icp =>
+                {
+                    icp.Opt.Call(ExpressionSeparators)
+                    .Opt.Any(
+                        iicp => iicp.Transfer(e => child.Add(e), EnumField),
                         iicp => iicp.AddError()
                     );
                 })

@@ -8,38 +8,46 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    public enum VariantType
+    {
+        Unknown,
+        Var,
+        Let,
+        Const,
+    }
+
     [Serializable]
     public class VariantSymbol : Scope
     {
-        public bool IsLet { get; private set; }
+        public VariantType VariantType { get; private set; }
         public PropertySymbol Getter { get; private set; }
         public PropertySymbol Setter { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _DataType;
 
-        protected VariantSymbol(bool isLet)
+        protected VariantSymbol(VariantType type)
         {
-            IsLet = isLet;
+            VariantType = type;
             Getter = new PropertySymbol(this, false);
             Setter = new PropertySymbol(this, true);
             AppendChild(Getter);
             AppendChild(Setter);
         }
 
-        protected VariantSymbol(TextPosition tp, bool isLet)
+        protected VariantSymbol(TextPosition tp, VariantType type)
             : base(tp)
         {
-            IsLet = isLet;
+            VariantType = type;
             Getter = new PropertySymbol(this, false);
             Setter = new PropertySymbol(this, true);
             AppendChild(Getter);
             AppendChild(Setter);
         }
 
-        public VariantSymbol(string name, bool isLet, IReadOnlyList<Scope> attr, Scope dt)
+        public VariantSymbol(string name, VariantType type, IReadOnlyList<Scope> attr, Scope dt)
         {
             Name = name;
-            IsLet = isLet;
+            VariantType = type;
             _Attribute = attr;
             _DataType = dt;
             Getter = new PropertySymbol(this, false);
@@ -81,6 +89,11 @@ namespace AbstractSyntax.Symbol
         public bool IsDefinedConstantValue
         {
             get { return Parent is CallExpression && CurrentScope is ClassSymbol; }
+        }
+
+        public bool IsImmtable
+        {
+            get { return VariantType == VariantType.Let || VariantType == VariantType.Const; }
         }
 
         public object GenerateConstantValue()
