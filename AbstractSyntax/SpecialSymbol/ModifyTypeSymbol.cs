@@ -13,8 +13,8 @@ namespace AbstractSyntax.SpecialSymbol
         Refer,
         Typeof,
         Nullable,
-        EmbedArray,
         Pointer,
+        EmbedArray,
     }
 
     [Serializable]
@@ -27,6 +27,21 @@ namespace AbstractSyntax.SpecialSymbol
             ModifyType = type;
             var g = new GenericSymbol("T", new List<Scope>(), new List<Scope>());
             _Generics = new GenericSymbol[] { g };
+        }
+
+        public static bool HasContainModify(Scope type, ModifyType modify)
+        {
+            var t = type as TemplateInstanceSymbol;
+            if (t == null)
+            {
+                return false;
+            }
+            var m = t.Template.FindDataType() as ModifyTypeSymbol;
+            if (m == null)
+            {
+                return false;
+            }
+            return m.ModifyType == modify;
         }
     }
 }

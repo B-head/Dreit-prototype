@@ -133,7 +133,6 @@
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
     <Compile Include="Symbol\TemplateInstanceSymbol.cs" />
-    <Compile Include="SpecialSymbol\QualifyTypeSymbol.cs" />
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ErrorSymbol.cs" />

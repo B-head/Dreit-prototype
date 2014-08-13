@@ -69,11 +69,11 @@ namespace AbstractSyntax.Expression
             {
                 cmm.CompileError("not-accessable", this);
             }
-            if (CallScope.IsInstanceMember && QualifyTypeSymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
+            if (CallScope.IsInstanceMember && ModifyTypeSymbol.HasContainModify(Access.ReturnType, ModifyType.Typeof))
             {
                 cmm.CompileError("not-accessable", this);
             }
-            if (CallScope.IsStaticMember && !QualifyTypeSymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
+            if (CallScope.IsStaticMember && !ModifyTypeSymbol.HasContainModify(Access.ReturnType, ModifyType.Typeof))
             {
                 cmm.CompileError("not-accessable", this);
             }
@@ -89,10 +89,10 @@ namespace AbstractSyntax.Expression
             {
                 return cls == type;
             }
-            else if(type is QualifyTypeSymbol)
+            else if(type is TemplateInstanceSymbol)
             {
-                var tq = (QualifyTypeSymbol)type;
-                return cls == tq.BaseType;
+                var tis = (TemplateInstanceSymbol)type;
+                return tis.ContainClass(cls);
             }
             else
             {

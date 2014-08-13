@@ -20,7 +20,22 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                return Root.TypeManager.IssueTypeQualify(Exp.ReturnType, Root.Typeof); //todo Refer版にも対応する。
+                if(Operator == TokenType.Refer)
+                {
+                    return Root.TypeManager.IssueTemplateInstance(Root.Refer, Exp.ReturnType);
+                }
+                else if(Operator == TokenType.Typeof)
+                {
+                    return Root.TypeManager.IssueTemplateInstance(Root.Typeof, Exp.ReturnType);
+                }
+                else if(Operator == TokenType.Reject)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
             }
         }
 

@@ -174,13 +174,38 @@ namespace CliTranslate
 
         private TemplateInstanceSymbol ImportModifyType(Type type)
         {
-
-            return null;
+            var elementType = ImportType(type.GetElementType());
+            if(type.IsArray)
+            {
+                return new TemplateInstanceSymbol(Root.EmbedArray, elementType);
+            }
+            else if(type.IsByRef)
+            {
+                return new TemplateInstanceSymbol(Root.Refer, elementType);
+            }
+            else if(type.IsPointer)
+            {
+                return new TemplateInstanceSymbol(Root.Pointer, elementType);
+            }
+            else
+            {
+                throw new ArgumentException("type");
+            }
         }
 
         private TemplateInstanceSymbol ImportTemplateInstance(Type type)
         {
-            return null;
+            var definition = ImportType(type.GetGenericTypeDefinition());
+            var template = new OverLoadSimplex(definition);
+            var parameter = new List<Scope>();
+            var elem = new TemplateInstanceSymbol(template, parameter);
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (TemplateInstanceSymbol)ImportDictionary[type];
+            }
+            ImportDictionary.Add(type, elem);
+            AppendParameterType(parameter, type.GetGenericArguments());
+            return elem;
         }
 
         private GenericSymbol ImportGenericType(Type type)
@@ -363,6 +388,14 @@ namespace CliTranslate
             var attr = parameter.Attributes;
             if (attr.HasFlag(ParameterAttributes.HasDefault)) list.Add(Root.Optional);
             if (attr.HasFlag(ParameterAttributes.Optional)) list.Add(Root.Optional);
+        }
+
+        private void AppendParameterType(List<Scope> list, Type[] prm)
+        {
+            foreach (var v in prm)
+            {
+                list.Add(ImportType(v));
+            }
         }
 
         private IReadOnlyList<GenericSymbol> CreateGenericList(Type[] gnr)

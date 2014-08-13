@@ -198,6 +198,11 @@ namespace CliTranslate
             return ret;
         }
 
+        private CilStructure Translate(TemplateInstanceSymbol element, Type info = null)
+        {
+            return null;
+        }
+
         private MethodBaseStructure Translate(RoutineSymbol element, MethodBase info = null)
         {
             if (element.IsConstructor)

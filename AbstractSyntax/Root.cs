@@ -19,8 +19,11 @@ namespace AbstractSyntax
         public VoidSymbol Void { get; private set; }
         public ErrorSymbol Error { get; private set; }
         public UnknownSymbol Unknown { get; private set; }
-        public AttributeSymbol Refer { get; private set; }
-        public AttributeSymbol Typeof { get; private set; }
+        public ModifyTypeSymbol Refer { get; private set; }
+        public ModifyTypeSymbol Typeof { get; private set; }
+        public ModifyTypeSymbol Nullable { get; private set; }
+        public ModifyTypeSymbol Pointer { get; private set; }
+        public ModifyTypeSymbol EmbedArray { get; private set; }
         public AttributeSymbol Contravariant { get; private set; }
         public AttributeSymbol Covariant { get; private set; }
         public AttributeSymbol ConstructorConstraint { get; private set; }
@@ -72,8 +75,11 @@ namespace AbstractSyntax
             Void = new VoidSymbol();
             Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
-            Refer = new AttributeSymbol(AttributeType.Refer);
-            Typeof = new AttributeSymbol(AttributeType.Tyoeof);
+            Refer = new ModifyTypeSymbol(ModifyType.Refer);
+            Typeof = new ModifyTypeSymbol(ModifyType.Typeof);
+            Nullable = new ModifyTypeSymbol(ModifyType.Nullable);
+            Pointer = new ModifyTypeSymbol(ModifyType.Pointer);
+            EmbedArray = new ModifyTypeSymbol(ModifyType.EmbedArray);
             Contravariant = new AttributeSymbol(AttributeType.Contravariant);
             Covariant = new AttributeSymbol(AttributeType.Covariant);
             ConstructorConstraint = new AttributeSymbol(AttributeType.ConstructorConstraint);

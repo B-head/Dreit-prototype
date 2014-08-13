@@ -11,29 +11,23 @@ namespace AbstractSyntax
     [Serializable]
     public class TemplateInstanceManager : Element
     {
-        private List<QualifyTypeSymbol> TypeQualifyList;
         private List<TemplateInstanceSymbol> TemplateInstanceList;
 
         public TemplateInstanceManager()
         {
-            TypeQualifyList = new List<QualifyTypeSymbol>();
             TemplateInstanceList = new List<TemplateInstanceSymbol>();
         }
-
-        public QualifyTypeSymbol IssueTypeQualify(Scope baseType, params AttributeSymbol[] qualify)
+        
+        //todo インスタンスの再利用をする。
+        public TemplateInstanceSymbol IssueTemplateInstance(Scope baseType, params Scope[] parameter)
         {
-            var ret = TypeQualifyList.FirstOrDefault(v => v.BaseType == baseType && v.Qualify.SequenceEqual(qualify));
-            if(ret != null)
-            {
-                return ret;
-            }
-            ret = new QualifyTypeSymbol(baseType, qualify);
+            var ret = new TemplateInstanceSymbol(baseType, parameter);
             AppendChild(ret);
-            TypeQualifyList.Add(ret);
+            TemplateInstanceList.Add(ret);
             return ret;
         }
 
-        public TemplateInstanceSymbol IssueTemplateInstance(OverLoad template, params Scope[] parameter)
+        public TemplateInstanceSymbol IssueTemplateInstance(OverLoad template, IReadOnlyList<Scope> parameter)
         {
             var ret = TemplateInstanceList.FirstOrDefault(v => v.Template == template && v.Parameter.SequenceEqual(parameter));
             if (ret != null)

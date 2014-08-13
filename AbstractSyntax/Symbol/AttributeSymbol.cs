@@ -38,8 +38,6 @@ namespace AbstractSyntax.Symbol
     {
         Unknown,
         Custom,
-        Refer,
-        Tyoeof,
         Contravariant,
         Covariant,
         ConstructorConstraint,
