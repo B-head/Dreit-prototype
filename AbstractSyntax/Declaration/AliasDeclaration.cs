@@ -19,7 +19,7 @@ namespace AbstractSyntax.Declaration
             Name = To == null ? string.Empty : To.Value;
         }
 
-        public override OverLoadReference OverLoad
+        public override OverLoad OverLoad
         {
             get { return CurrentScope.NameResolution(From.Value); }
         }

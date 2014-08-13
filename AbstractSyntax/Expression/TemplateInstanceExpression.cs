@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Expression
 {
     [Serializable]
-    public class TemplateInstance : Element
+    public class TemplateInstanceExpression : Element
     {
         public Element Access { get; private set; }
         public TupleLiteral DecParameters { get; private set; }
         private IReadOnlyList<Scope> _Parameter;
 
-        public TemplateInstance(TextPosition tp, Element acs, TupleLiteral args)
+        public TemplateInstanceExpression(TextPosition tp, Element acs, TupleLiteral args)
             : base(tp)
         {
             Access = acs;
@@ -28,7 +28,7 @@ namespace AbstractSyntax.Expression
             get { return Root.TypeManager.IssueTemplateInstance(Access.OverLoad, Parameter.ToArray()); }
         }
 
-        public override OverLoadReference OverLoad
+        public override OverLoad OverLoad
         {
             get { return ReturnType.OverLoad; }
         }

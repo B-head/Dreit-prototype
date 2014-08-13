@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Symbol;
+﻿using AbstractSyntax.SpecialSymbol;
+using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,12 @@ using System.Threading.Tasks;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class TypeManager : Element
+    public class TemplateInstanceManager : Element
     {
         private List<QualifyTypeSymbol> TypeQualifyList;
         private List<TemplateInstanceSymbol> TemplateInstanceList;
 
-        public TypeManager()
+        public TemplateInstanceManager()
         {
             TypeQualifyList = new List<QualifyTypeSymbol>();
             TemplateInstanceList = new List<TemplateInstanceSymbol>();
@@ -32,9 +33,9 @@ namespace AbstractSyntax
             return ret;
         }
 
-        public TemplateInstanceSymbol IssueTemplateInstance(OverLoadReference template, params Scope[] parameter)
+        public TemplateInstanceSymbol IssueTemplateInstance(OverLoad template, params Scope[] parameter)
         {
-            var ret = TemplateInstanceList.FirstOrDefault(v => v.BaseType == template && v.Parameter.SequenceEqual(parameter));
+            var ret = TemplateInstanceList.FirstOrDefault(v => v.Template == template && v.Parameter.SequenceEqual(parameter));
             if (ret != null)
             {
                 return ret;

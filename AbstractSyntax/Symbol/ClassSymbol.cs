@@ -174,7 +174,7 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
             foreach(var a in Initializer)
             {
@@ -185,7 +185,7 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        internal override OverLoadReference NameResolution(string name)
+        internal override OverLoadChain NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))
             {
@@ -196,22 +196,22 @@ namespace AbstractSyntax.Symbol
             if (ChildSymbols.ContainsKey(name))
             {
                 var s = ChildSymbols[name];
-                n = new OverLoadReference(Root, n, i, s);
+                n = new OverLoadChain(this, n, i, s);
             }
             else
             {
-                n = new OverLoadReference(Root, n, i);
+                n = new OverLoadChain(this, n, i);
             }
             ReferenceCache.Add(name, n);
             return n;
         }
 
-        private IReadOnlyList<OverLoadReference> InheritNameResolution(string name)
+        private IReadOnlyList<OverLoadChain> InheritNameResolution(string name)
         {
-            var ret = new List<OverLoadReference>();
+            var ret = new List<OverLoadChain>();
             foreach(var v in Inherit)
             {
-                var ol = v.NameResolution(name);
+                var ol = v.NameResolution(name) as OverLoadChain;
                 if(ol != null)
                 {
                     ret.Add(ol);

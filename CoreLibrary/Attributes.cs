@@ -8,7 +8,7 @@ namespace CoreLibrary
 {
     [Serializable]
     [AttributeUsage(AttributeTargets.Class)]
-    public class GlobalContextAttribute : Attribute
+    public class GlobalScopeAttribute : Attribute
     {
 
     }

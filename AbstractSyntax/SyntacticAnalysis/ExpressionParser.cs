@@ -158,7 +158,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                     .Type(TokenType.RightBracket).Lt();
                 })
                 .Else(icp => icp.Transfer(e => args = new TupleLiteral(e.Position, e), Identifier))
-                .End(tp => new TemplateInstance(tp, current, args));
+                .End(tp => new TemplateInstanceExpression(tp, current, args));
             return ret == null ? current : Postfix(ret, cp);
         }
     }

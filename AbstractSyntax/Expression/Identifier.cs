@@ -15,7 +15,7 @@ namespace AbstractSyntax.Expression
         public string Value { get; private set; }
         public TokenType IdentType { get; private set; }
         private bool? _IsTacitThis;
-        private OverLoadReference _Reference;
+        private OverLoad _Reference;
 
         public Identifier(TextPosition tp, string value, TokenType identType)
             :base(tp)
@@ -91,7 +91,7 @@ namespace AbstractSyntax.Expression
             get { return OverLoad.CallSelect().Call; }
         }
 
-        public override OverLoadReference OverLoad
+        public override OverLoad OverLoad
         {
             get
             {
@@ -152,6 +152,7 @@ namespace AbstractSyntax.Expression
                     cmm.CompileError("undefined-identifier", this);
                 }
             }
+            //todo より適切なエラーメッセージを出す。
             if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);

@@ -1,11 +1,13 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AbstractSyntax.Symbol
+namespace AbstractSyntax.SpecialSymbol
 {
+    //todo ジェネリッククラスを模したReferSymbol/TypeofSymbolに置き換える。
     [Serializable]
     public class QualifyTypeSymbol : Scope
     {
@@ -23,7 +25,7 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
-        internal override OverLoadReference NameResolution(string name)
+        internal override OverLoadChain NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))
             {
@@ -33,7 +35,7 @@ namespace AbstractSyntax.Symbol
             if (ChildSymbols.ContainsKey(name))
             {
                 var s = ChildSymbols[name];
-                n = new OverLoadReference(Root, n, s);
+                n = new OverLoadChain(this, n, s);
             }
             ReferenceCache.Add(name, n);
             return n;

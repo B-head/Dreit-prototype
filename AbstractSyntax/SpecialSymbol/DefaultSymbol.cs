@@ -14,8 +14,6 @@ namespace AbstractSyntax.SpecialSymbol
             :base(RoutineType.Routine, TokenType.Unknoun)
         {
             Name = name;
-            _Attribute = new List<Scope>();
-            _ArgumentTypes = new List<Scope>();
             _CallReturnType = parent;
         }
     }

@@ -40,7 +40,7 @@ namespace AbstractSyntax
             get { return Root.Void; }
         }
 
-        public virtual OverLoadReference OverLoad
+        public virtual OverLoad OverLoad
         {
             get { return Root.UndefinedOverLord; }
         }
@@ -61,7 +61,10 @@ namespace AbstractSyntax
             {
                 if (_Root == null)
                 {
-                    _Root = Parent.Root;
+                    if (Parent != null)
+                    {
+                        _Root = Parent.Root;
+                    }
                 }
                 return _Root;
             }

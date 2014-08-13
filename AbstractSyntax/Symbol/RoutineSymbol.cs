@@ -28,7 +28,6 @@ namespace AbstractSyntax.Symbol
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<ParameterSymbol> _Arguments;
-        protected IReadOnlyList<Scope> _ArgumentTypes;
         protected Scope _CallReturnType;
         public const string ConstructorIdentifier = "new";
         public const string DestructorIdentifier = "free";
@@ -82,25 +81,6 @@ namespace AbstractSyntax.Symbol
             get { return _Arguments; }
         }
 
-        public virtual IReadOnlyList<Scope> ArgumentTypes
-        {
-            get
-            {
-                if (_ArgumentTypes != null)
-                {
-                    return _ArgumentTypes;
-                }
-                var a = new List<Scope>();
-                foreach (var v in Arguments)
-                {
-                    var temp = v.ReturnType;
-                    a.Add(temp);
-                }
-                _ArgumentTypes = a;
-                return _ArgumentTypes;
-            }
-        }
-
         public override Scope CallReturnType
         {
             get { return _CallReturnType; }
@@ -121,9 +101,9 @@ namespace AbstractSyntax.Symbol
             get { return RoutineType == RoutineType.Function || RoutineType == RoutineType.FunctionConverter || RoutineType == RoutineType.FunctionOperator; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, Generics, args, ArgumentTypes);
+            yield return OverLoadMatch.MakeOverLoadMatch(Root.ConvManager, this, Generics, Arguments, pars, args);
         }
 
         public RoutineSymbol InheritInitializer

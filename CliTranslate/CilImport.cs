@@ -1,6 +1,8 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Expression;
+using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
+using CoreLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +72,7 @@ namespace CliTranslate
             }
             if (type.IsGenericType && !type.IsGenericTypeDefinition)
             {
-                return ImportModifyType(type);
+                return ImportTemplateInstance(type);
             }
             if (type.IsGenericParameter)
             {
@@ -87,7 +89,7 @@ namespace CliTranslate
         {
             ClassType classType;
             var attribute = new List<Scope>();
-            AppendEmbededAttribute(attribute, type.Attributes, out classType);
+            AppendEmbededAttribute(attribute, type, out classType);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
             var block = new ProgramContext();
@@ -107,7 +109,6 @@ namespace CliTranslate
                 return (ClassSymbol)ImportDictionary[type];
             }
             ImportDictionary.Add(type, elem);
-            AppendCustomAttribute(attribute, type.GetCustomAttributesData());
             var ctor = type.GetConstructors(Binding);
             foreach (var c in ctor)
             {
@@ -171,7 +172,13 @@ namespace CliTranslate
             return elem;
         }
 
-        private QualifyTypeSymbol ImportModifyType(Type type)
+        private TemplateInstanceSymbol ImportModifyType(Type type)
+        {
+
+            return null;
+        }
+
+        private TemplateInstanceSymbol ImportTemplateInstance(Type type)
         {
             return null;
         }
@@ -179,8 +186,7 @@ namespace CliTranslate
         private GenericSymbol ImportGenericType(Type type)
         {
             var attribute = new List<Scope>();
-            AppendCustomAttribute(attribute, type.GetCustomAttributesData());
-            AppendEmbededAttribute(attribute, type.GenericParameterAttributes);
+            AppendEmbededAttribute(attribute, type);
             var constraint = CreateConstraintList(type.GetGenericParameterConstraints());
             var elem = new GenericSymbol(type.Name, attribute, constraint);
             if (ImportDictionary.ContainsKey(type))
@@ -193,10 +199,8 @@ namespace CliTranslate
 
         private EnumSymbol ImportEnum(Type type)
         {
-            ClassType classType;
             var attribute = new List<Scope>();
-            AppendCustomAttribute(attribute, type.GetCustomAttributesData());
-            AppendEmbededAttribute(attribute, type.Attributes, out classType);
+            AppendEmbededAttribute(attribute, type);
             var dt = ImportType(type.GetEnumUnderlyingType());
             var block = new ProgramContext();
             var elem = new EnumSymbol(type.Name, block, attribute, dt);
@@ -220,8 +224,7 @@ namespace CliTranslate
                 return (RoutineSymbol)ImportDictionary[method];
             }
             var attribute = new List<Scope>();
-            AppendCustomAttribute(attribute, method.GetCustomAttributesData());
-            AppendEmbededAttribute(attribute, method.Attributes);
+            AppendEmbededAttribute(attribute, method);
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
             var rt = ImportType(method.ReturnType);
@@ -237,8 +240,7 @@ namespace CliTranslate
                 return (RoutineSymbol)ImportDictionary[prop];
             }
             var attribute = new List<Scope>();
-            AppendCustomAttribute(attribute, prop.GetCustomAttributesData());
-            AppendEmbededAttribute(attribute, prop.Attributes);
+            AppendEmbededAttribute(attribute, prop);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(prop);
             var rt = ImportType(prop.ReturnType);
@@ -254,8 +256,7 @@ namespace CliTranslate
                 return (RoutineSymbol)ImportDictionary[ctor];
             }
             var attribute = new List<Scope>();
-            AppendCustomAttribute(attribute, ctor.GetCustomAttributesData());
-            AppendEmbededAttribute(attribute, ctor.Attributes);
+            AppendEmbededAttribute(attribute, ctor);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(ctor);
             var rt = ImportType(ctor.DeclaringType);
@@ -271,8 +272,7 @@ namespace CliTranslate
                 return (ParameterSymbol)ImportDictionary[prm];
             }
             var attribute = new List<Scope>();
-            AppendCustomAttribute(attribute, prm.GetCustomAttributesData());
-            AppendEmbededAttribute(attribute, prm.Attributes);
+            AppendEmbededAttribute(attribute, prm);
             var dt = ImportType(prm.ParameterType);
             var elem = new ParameterSymbol(prm.Name, VariantType.Var, attribute, dt);
             ImportDictionary.Add(prm, elem);
@@ -287,8 +287,7 @@ namespace CliTranslate
             }
             VariantType type;
             var attribute = new List<Scope>();
-            AppendCustomAttribute(attribute, field.GetCustomAttributesData());
-            AppendEmbededAttribute(attribute, field.Attributes, out type);
+            AppendEmbededAttribute(attribute, field, out type);
             var dt = ImportType(field.FieldType);
             var elem = new VariantSymbol(field.Name, type, attribute, dt);
             ImportDictionary.Add(field, elem);
@@ -305,38 +304,38 @@ namespace CliTranslate
             return name.Substring(0, i);
         }
 
-        //todo カスタム属性のデータもインポートできるようにする。
-        private void AppendCustomAttribute(List<Scope> list, IList<CustomAttributeData> attrData)
+        private void AppendEmbededAttribute(List<Scope> list, Type type)
         {
-            foreach(var v in attrData)
-            {
-                list.Add((AttributeSymbol)ImportType(v.AttributeType));
-            }
+            ClassType classType;
+            AppendEmbededAttribute(list, type, out classType);
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, TypeAttributes attr, out ClassType type)
+        private void AppendEmbededAttribute(List<Scope> list, Type type, out ClassType classType)
         {
-            type = ClassType.Class;
+            classType = ClassType.Class;
+            if (type.GetCustomAttribute<GlobalScopeAttribute>() != null) list.Add(Root.GlobalScope);
+            var attr = type.Attributes;
             if (attr.HasFlag(TypeAttributes.Abstract)) list.Add(Root.Abstract);
-            if (attr.HasFlag(TypeAttributes.Class)) type = ClassType.Class;
-            if (attr.HasFlag(TypeAttributes.Interface)) type = ClassType.Trait;
+            if (attr.HasFlag(TypeAttributes.Class)) classType = ClassType.Class;
+            if (attr.HasFlag(TypeAttributes.Interface)) classType = ClassType.Trait;
             if (attr.HasFlag(TypeAttributes.NestedFamily)) list.Add(Root.Protected);
             if (attr.HasFlag(TypeAttributes.NestedFamORAssem)) list.Add(Root.Protected);
             if (attr.HasFlag(TypeAttributes.NestedPublic)) list.Add(Root.Public);
             if (attr.HasFlag(TypeAttributes.Public)) list.Add(Root.Public);
+            if (type.IsGenericParameter)
+            {
+                var gattr = type.GenericParameterAttributes;
+                if (gattr.HasFlag(GenericParameterAttributes.Contravariant)) list.Add(Root.Contravariant);
+                if (gattr.HasFlag(GenericParameterAttributes.Covariant)) list.Add(Root.Covariant);
+                if (gattr.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint)) list.Add(Root.ConstructorConstraint);
+                if (gattr.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) list.Add(Root.ValueConstraint);
+                if (gattr.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) list.Add(Root.ReferenceConstraint);
+            }
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, GenericParameterAttributes attr)
+        private void AppendEmbededAttribute(List<Scope> list, MethodBase method)
         {
-            if (attr.HasFlag(GenericParameterAttributes.Contravariant)) list.Add(Root.Contravariant);
-            if (attr.HasFlag(GenericParameterAttributes.Covariant)) list.Add(Root.Covariant);
-            if (attr.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint)) list.Add(Root.ConstructorConstraint);
-            if (attr.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) list.Add(Root.ValueConstraint);
-            if (attr.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) list.Add(Root.ReferenceConstraint);
-        }
-
-        private void AppendEmbededAttribute(List<Scope> list, MethodAttributes attr)
-        {
+            var attr = method.Attributes;
             if (attr.HasFlag(MethodAttributes.Abstract)) list.Add(Root.Abstract);
             if (attr.HasFlag(MethodAttributes.Family)) list.Add(Root.Protected);
             if (attr.HasFlag(MethodAttributes.FamORAssem)) list.Add(Root.Protected);
@@ -346,9 +345,10 @@ namespace CliTranslate
             if (attr.HasFlag(MethodAttributes.Virtual)) list.Add(Root.Virtual);
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, FieldAttributes attr, out VariantType type)
+        private void AppendEmbededAttribute(List<Scope> list, FieldInfo field, out VariantType type)
         {
             type = VariantType.Var;
+            var attr = field.Attributes;
             if (attr.HasFlag(FieldAttributes.Family)) list.Add(Root.Protected);
             if (attr.HasFlag(FieldAttributes.FamORAssem)) list.Add(Root.Protected);
             if (attr.HasFlag(FieldAttributes.InitOnly)) type = VariantType.Let;
@@ -357,8 +357,10 @@ namespace CliTranslate
             if (attr.HasFlag(FieldAttributes.Static)) list.Add(Root.Static);
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, ParameterAttributes attr)
+        private void AppendEmbededAttribute(List<Scope> list, ParameterInfo parameter)
         {
+            if (parameter.GetCustomAttribute<ParamArrayAttribute>() != null) list.Add(Root.Variadic);
+            var attr = parameter.Attributes;
             if (attr.HasFlag(ParameterAttributes.HasDefault)) list.Add(Root.Optional);
             if (attr.HasFlag(ParameterAttributes.Optional)) list.Add(Root.Optional);
         }

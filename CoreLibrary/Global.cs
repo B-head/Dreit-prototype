@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoreLibrary
 {
-    [GlobalContext]
+    [GlobalScope]
     public static class Global
     {
         public static void stdout(params object[] puts)

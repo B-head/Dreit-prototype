@@ -90,6 +90,10 @@
       <Project>{c1681d7b-c0fa-4c9c-8d4a-2a432b2ce764}</Project>
       <Name>AbstractSyntax</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj">
+      <Project>{97a80420-f612-42e7-95e1-bce70ed5cb4d}</Project>
+      <Name>CoreLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,5 +32,15 @@ namespace AbstractSyntax
             return result;
         }
 
+        public static IReadOnlyList<ParameterSymbol> MakeParameters(params Scope[] types)
+        {
+            var ret = new List<ParameterSymbol>();
+            for(var i = 0; i < types.Length; ++i)
+            {
+                var p = new ParameterSymbol("@@arg" + i, VariantType.Let, new List<Scope>(), types[i]);
+                ret.Add(p);
+            }
+            return ret;
+        }
     }
 }

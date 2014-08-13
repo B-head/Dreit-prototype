@@ -14,19 +14,19 @@ namespace AbstractSyntax
     {
         public string Name { get; protected set; }
         internal Dictionary<string, OverLoadSet> ChildSymbols { get; set; }
-        protected Dictionary<string, OverLoadReference> ReferenceCache { get; set; }
+        protected Dictionary<string, OverLoadChain> ReferenceCache { get; set; }
 
         protected Scope()
         {
             ChildSymbols = new Dictionary<string, OverLoadSet>();
-            ReferenceCache = new Dictionary<string, OverLoadReference>();
+            ReferenceCache = new Dictionary<string, OverLoadChain>();
         }
 
         protected Scope(TextPosition tp)
             : base(tp)
         {
             ChildSymbols = new Dictionary<string, OverLoadSet>();
-            ReferenceCache = new Dictionary<string, OverLoadReference>();
+            ReferenceCache = new Dictionary<string, OverLoadChain>();
         }
 
         internal void SpreadChildScope(Element child)
@@ -51,13 +51,13 @@ namespace AbstractSyntax
             }
             if (!ChildSymbols.ContainsKey(scope.Name))
             {
-                var ol = new OverLoadSet(CurrentScope);
+                var ol = new OverLoadSet(this);
                 ChildSymbols.Add(scope.Name, ol);
             }
             ChildSymbols[scope.Name].Append(scope);
         }
 
-        internal virtual OverLoadReference NameResolution(string name)
+        internal virtual OverLoadChain NameResolution(string name)
         {
             if(ReferenceCache.ContainsKey(name))
             {
@@ -67,7 +67,7 @@ namespace AbstractSyntax
             if(ChildSymbols.ContainsKey(name))
             {
                 var s = ChildSymbols[name];
-                n = new OverLoadReference(Root, n, s);
+                n = new OverLoadChain(this, n, s);
             }
             ReferenceCache.Add(name, n);
             return n;
@@ -115,9 +115,9 @@ namespace AbstractSyntax
             get { return Name; }
         }
 
-        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal virtual IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return TypeMatch.MakeNotCallable(Root.Unknown);
+            yield return OverLoadMatch.MakeNotCallable(Root.Unknown);
         }
 
         public virtual bool IsDataType

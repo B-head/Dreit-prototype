@@ -7,15 +7,15 @@ using System.Linq;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class OverLoadSet
+    public class OverLoadSet : OverLoad
     {
-        private Scope CurrentScope;
+        public Scope ThisScope { get; private set; }
         private List<Scope> Symbols;
         private bool IsHoldAlias;
 
-        internal OverLoadSet(Scope current)
+        internal OverLoadSet(Scope scope)
         {
-            CurrentScope = current;
+            ThisScope = scope;
             Symbols = new List<Scope>();
         }
 
@@ -28,7 +28,29 @@ namespace AbstractSyntax
             Symbols.Add(scope);
         }
 
-        internal IEnumerable<Scope> TraversalDataType()
+        public override bool IsUndefined
+        {
+            get { return Symbols.Count == 0; }
+        }
+
+        internal override Root Root
+        {
+            get { return ThisScope.Root; }
+        }
+
+        internal override IEnumerable<Scope> TraversalChilds()
+        {
+            if (IsHoldAlias)
+            {
+                SpreadAlias();
+            }
+            foreach (var v in Symbols)
+            {
+                yield return v;
+            }
+        }
+
+        internal override IEnumerable<Scope> TraversalDataType()
         {
             if(IsHoldAlias)
             {
@@ -43,7 +65,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal IEnumerable<TypeMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
             if (IsHoldAlias)
             {
@@ -65,12 +87,9 @@ namespace AbstractSyntax
             foreach(var v in alias)
             {
                 var ol = v.OverLoad;
-                foreach (var t in ol.TraversalSets(true, true))
+                foreach (var s in ol.TraversalChilds())
                 {
-                    foreach (var s in t.Symbols)
-                    {
-                        Append(s);
-                    }
+                    Append(s);
                 }
             }
         }

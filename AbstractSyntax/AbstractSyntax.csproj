@@ -65,6 +65,9 @@
     <Compile Include="Literal\LambdaLiteral.cs" />
     <Compile Include="Literal\RangeLiteral.cs" />
     <Compile Include="Literal\TuplePair.cs" />
+    <Compile Include="OverLoad.cs" />
+    <Compile Include="OverLoadSimplex.cs" />
+    <Compile Include="SpecialSymbol\ModifyTypeSymbol.cs" />
     <Compile Include="Statement\BreakStatement.cs" />
     <Compile Include="Statement\CatchStatement.cs" />
     <Compile Include="Statement\ContinueStatement.cs" />
@@ -73,11 +76,11 @@
     <Compile Include="Expression\Logical.cs" />
     <Compile Include="Expression\Postfix.cs" />
     <Compile Include="Expression\Prefix.cs" />
-    <Compile Include="Expression\TemplateInstance.cs" />
+    <Compile Include="Expression\TemplateInstanceExpression.cs" />
     <Compile Include="Literal\PlainText.cs" />
     <Compile Include="Literal\StringLiteral.cs" />
     <Compile Include="OperationManager.cs" />
-    <Compile Include="OverLoadReference.cs" />
+    <Compile Include="OverLoadChain.cs" />
     <Compile Include="OverLoadSet.cs" />
     <Compile Include="SpecialSymbol\DyadicOperatorSymbol.cs" />
     <Compile Include="Declaration\ParameterDeclaration.cs" />
@@ -130,7 +133,7 @@
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
     <Compile Include="Symbol\TemplateInstanceSymbol.cs" />
-    <Compile Include="Symbol\QualifyTypeSymbol.cs" />
+    <Compile Include="SpecialSymbol\QualifyTypeSymbol.cs" />
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ErrorSymbol.cs" />
@@ -147,8 +150,8 @@
     <Compile Include="SyntacticAnalysis\Tokenizer.cs" />
     <Compile Include="SyntaxUtility.cs" />
     <Compile Include="TextPosition.cs" />
-    <Compile Include="TypeManager.cs" />
-    <Compile Include="TypeMatch.cs" />
+    <Compile Include="TemplateInstanceManager.cs" />
+    <Compile Include="OverLoadMatch.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="SpecialSymbol\ThisSymbol.cs" />
     <Compile Include="Token.cs" />

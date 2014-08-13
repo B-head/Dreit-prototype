@@ -106,7 +106,7 @@ namespace AbstractSyntax.Symbol
             return caller.GenelateConstantValue();
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
             foreach (var v in Getter.GetTypeMatch(pars, args))
             {

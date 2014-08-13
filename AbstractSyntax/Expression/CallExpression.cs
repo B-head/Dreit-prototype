@@ -15,7 +15,7 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public TupleLiteral Arguments { get; private set; }
-        private TypeMatch? _Match;
+        private OverLoadMatch? _Match;
         private Scope _CallScope;
         private Scope _CalculateCallScope;
 
@@ -60,7 +60,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public TypeMatch Match
+        public OverLoadMatch Match
         {
             get
             {
@@ -68,7 +68,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _Match.Value;
                 }
-                var tie = Access as TemplateInstance;
+                var tie = Access as TemplateInstanceExpression;
                 IReadOnlyList<Scope> pars;
                 if(tie == null)
                 {
@@ -225,6 +225,7 @@ namespace AbstractSyntax.Expression
             {
                 cmm.CompileError("not-mutable", this);
             }
+            //todo 副作用のある関数を呼べないようにする。
             if (IsFunctionLocation && CallScope is PropertySymbol)
             {
                 cmm.CompileError("forbit-side-effect", this);

@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Symbol;
+﻿using AbstractSyntax.SpecialSymbol;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public string Member { get; private set; }
-        private OverLoadReference _Reference;
+        private OverLoad _Reference;
 
         public MemberAccess(TextPosition tp, Element acs, string member)
             :base(tp)
@@ -40,7 +41,7 @@ namespace AbstractSyntax.Expression
             get { return OverLoad.CallSelect().Call; }
         }
 
-        public override OverLoadReference OverLoad
+        public override OverLoad OverLoad
         {
             get
             {
@@ -55,6 +56,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
+            //todo より適切なエラーメッセージを出す。
             if (OverLoad.IsUndefined)
             {
                 cmm.CompileError("undefined-identifier", this);

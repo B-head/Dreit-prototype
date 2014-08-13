@@ -36,17 +36,17 @@ namespace AbstractSyntax.Symbol
             AppendChild(element);
         }
 
-        internal override OverLoadReference NameResolution(string name)
+        internal override OverLoadChain NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))
             {
                 return ReferenceCache[name];
             }
             var n = CurrentScope == null ? Root.UndefinedOverLord : CurrentScope.NameResolution(name);
-            var s = TraversalChild(name, this).ToList();
-            if (s.Count > 0)
+            var s = TraversalChild(name, this).ToArray();
+            if (s.Length > 0)
             {
-                n = new OverLoadReference(Root, n, s);
+                n = new OverLoadChain(this, n, s);
             }
             ReferenceCache.Add(name, n);
             return n;
@@ -55,13 +55,13 @@ namespace AbstractSyntax.Symbol
         private static IEnumerable<OverLoadSet> TraversalChild(string name, Element element)
         {
             var scope = element as Scope;
-            if (scope != null && scope.ChildSymbols.ContainsKey(name))
-            {
-                yield return scope.ChildSymbols[name];
-            }
-            if(!(element is NameSpaceSymbol))
+            if (scope == null || !HasGlobalScope(scope))
             {
                 yield break;
+            }
+            if (scope.ChildSymbols.ContainsKey(name))
+            {
+                yield return scope.ChildSymbols[name];
             }
             foreach(var v in element)
             {
@@ -70,6 +70,19 @@ namespace AbstractSyntax.Symbol
                     yield return e;
                 }
             }
+        }
+
+        private static bool HasGlobalScope(Scope scope)
+        {
+            if(scope is NameSpaceSymbol)
+            {
+                return true;
+            }
+            if(HasAnyAttribute(scope.Attribute, AttributeType.GlobalScope))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

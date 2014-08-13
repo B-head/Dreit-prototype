@@ -33,19 +33,21 @@ namespace AbstractSyntax.Symbol
         }
     }
 
+    //todo 単純なフラグ管理で属性を扱うようにリファクタリングする。
     public enum AttributeType
     {
         Unknown,
         Custom,
         Refer,
         Tyoeof,
-        Variadic,
         Contravariant,
         Covariant,
         ConstructorConstraint,
         ValueConstraint,
         ReferenceConstraint,
+        Variadic,
         Optional,
+        GlobalScope,
         Abstract,
         Virtual,
         Final,

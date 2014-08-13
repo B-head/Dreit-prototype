@@ -17,7 +17,7 @@ namespace AbstractSyntax.SpecialSymbol
         {
             Name = to.Name;
             PrimitiveType = type;
-            _ArgumentTypes = new Scope[] { from };
+            _Arguments = SyntaxUtility.MakeParameters(from);
             _CallReturnType = to;
         }
     }

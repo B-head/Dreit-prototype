@@ -12,10 +12,10 @@ namespace AbstractSyntax
     {
         private NameSpaceSymbol EmbedList;
         public CompileMessageManager MessageManager { get; private set; }
-        internal TypeManager TypeManager { get; private set; }
+        internal TemplateInstanceManager TypeManager { get; private set; }
         internal ConversionManager ConvManager { get; private set; }
         internal OperationManager OpManager { get; private set; }
-        internal OverLoadReference UndefinedOverLord { get; private set; }
+        internal OverLoadChain UndefinedOverLord { get; private set; }
         public VoidSymbol Void { get; private set; }
         public ErrorSymbol Error { get; private set; }
         public UnknownSymbol Unknown { get; private set; }
@@ -26,7 +26,9 @@ namespace AbstractSyntax
         public AttributeSymbol ConstructorConstraint { get; private set; }
         public AttributeSymbol ValueConstraint { get; private set; }
         public AttributeSymbol ReferenceConstraint { get; private set; }
+        public AttributeSymbol Variadic { get; private set; }
         public AttributeSymbol Optional { get; private set; }
+        public AttributeSymbol GlobalScope { get; private set; }
         public AttributeSymbol Abstract { get; private set; }
         public AttributeSymbol Virtual { get; private set; }
         public AttributeSymbol Final { get; private set; }
@@ -40,11 +42,11 @@ namespace AbstractSyntax
         {
             Name = "global";
             EmbedList = new NameSpaceSymbol();
-            UndefinedOverLord = new OverLoadReference(this, null);
-            TypeManager = new TypeManager();
-            ConvManager = new ConversionManager(this);
-            OpManager = new OperationManager(this);
             MessageManager = new CompileMessageManager();
+            TypeManager = new TemplateInstanceManager();
+            ConvManager = new ConversionManager(this);
+            OpManager = new OperationManager(this); 
+            UndefinedOverLord = new OverLoadChain(this, null);
             CreateEmbedIdentifier();
             AppendChild(EmbedList);
             AppendChild(TypeManager);
@@ -72,13 +74,14 @@ namespace AbstractSyntax
             Unknown = new UnknownSymbol();
             Refer = new AttributeSymbol(AttributeType.Refer);
             Typeof = new AttributeSymbol(AttributeType.Tyoeof);
-            Static = new AttributeSymbol(AttributeType.Variadic, "variadic");
             Contravariant = new AttributeSymbol(AttributeType.Contravariant);
             Covariant = new AttributeSymbol(AttributeType.Covariant);
             ConstructorConstraint = new AttributeSymbol(AttributeType.ConstructorConstraint);
             ValueConstraint = new AttributeSymbol(AttributeType.ValueConstraint);
             ReferenceConstraint = new AttributeSymbol(AttributeType.ReferenceConstraint);
+            Variadic = new AttributeSymbol(AttributeType.Variadic, "variadic");
             Optional = new AttributeSymbol(AttributeType.Optional);
+            GlobalScope = new AttributeSymbol(AttributeType.GlobalScope);
             Abstract = new AttributeSymbol(AttributeType.Abstract);
             Virtual = new AttributeSymbol(AttributeType.Virtual);
             Final = new AttributeSymbol(AttributeType.Final, "final");

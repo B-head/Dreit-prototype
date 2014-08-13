@@ -27,7 +27,7 @@ namespace AbstractSyntax.SpecialSymbol
             Variant = variant;
             IsSet = isSet;
             _Attribute = null;
-            _ArgumentTypes = null;
+            _Arguments = null;
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -42,22 +42,22 @@ namespace AbstractSyntax.SpecialSymbol
             }
         }
 
-        public override IReadOnlyList<Scope> ArgumentTypes
+        public override IReadOnlyList<ParameterSymbol> Arguments
         {
             get
             {
-                if (_ArgumentTypes == null)
+                if (_Arguments == null)
                 {
                     if (IsSet)
                     {
-                        _ArgumentTypes = new Scope[] { Variant.CallReturnType };
+                        _Arguments = SyntaxUtility.MakeParameters(Variant.CallReturnType);
                     }
                     else
                     {
-                        _ArgumentTypes = new Scope[] { };
+                        _Arguments = new ParameterSymbol[] { };
                     }
                 }
-                return _ArgumentTypes;
+                return _Arguments;
             }
         }
 

@@ -9,37 +9,38 @@ using System.Threading.Tasks;
 namespace AbstractSyntax
 {
     [Serializable]
-    public struct TypeMatch
+    public struct OverLoadMatch
     {
         public Scope Call { get; private set; }
         public TypeMatchResult Result { get; private set; }
-        public IReadOnlyList<Scope> ActualParameters { get; private set; }
-        public IReadOnlyList<GenericSymbol> FormalParameters { get; private set; }
-        public IReadOnlyList<Scope> InstanceParameters { get; private set; }
+        public IReadOnlyList<GenericSymbol> FormalGenerics { get; private set; }
+        public IReadOnlyList<ParameterSymbol> FormalArguments { get; private set; }
+        public IReadOnlyList<Scope> ActualGenerics { get; private set; }
         public IReadOnlyList<Scope> ActualArguments { get; private set; }
-        public IReadOnlyList<Scope> FormalArguments { get; private set; }
+        public IReadOnlyList<Scope> InstanceGenerics { get; private set; }
         public IReadOnlyList<Scope> InstanceArguments { get; private set; }
         public IReadOnlyList<Scope> Converters { get; private set; }
 
         //todo さらに詳しい順位付けをする。
-        internal static TypeMatch MakeTypeMatch(ConversionManager manager, Scope call,
-            IReadOnlyList<Scope> ap, IReadOnlyList<GenericSymbol> fp, IReadOnlyList<Scope> aa, IReadOnlyList<Scope> fa)
+        //todo 可変長引数とデフォルト引数に対応する。
+        internal static OverLoadMatch MakeOverLoadMatch(ConversionManager manager, Scope call,
+            IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa)
         {
-            var ip = new List<Scope>();
+            var ig = new List<Scope>();
             var ia = new List<Scope>();
             var convs = new List<Scope>();
-            TypeMatch result = new TypeMatch()
+            OverLoadMatch result = new OverLoadMatch()
             {
                 Call = call,
-                ActualParameters = ap,
-                FormalParameters = fp,
-                InstanceParameters = ip,
-                ActualArguments = aa,
+                FormalGenerics = fg,
                 FormalArguments = fa,
+                ActualGenerics = ag,
+                ActualArguments = aa,
+                InstanceGenerics = ig,
                 InstanceArguments = ia,
                 Converters = convs,
             };
-            if(ap.Count < fp.Count)
+            if(ag.Count < fg.Count)
             {
                 result.Result = TypeMatchResult.UnmatchParameterCount;
                 return result;
@@ -49,7 +50,7 @@ namespace AbstractSyntax
                 result.Result = TypeMatchResult.UnmatchArgumentCount;
                 return result;
             }
-            MakeInstance(ap, fp, ip, aa, fa, ia);
+            MakeInstance(fg, fa, ag, aa, ig, ia);
             for (int i = 0; i < fa.Count; i++)
             {
                 var c = manager.Find(aa[i], ia[i]);
@@ -59,14 +60,14 @@ namespace AbstractSyntax
             return result;
         }
 
-        private static void MakeInstance(IReadOnlyList<Scope> ap, IReadOnlyList<GenericSymbol> fp, List<Scope> ip,
-            IReadOnlyList<Scope> aa, IReadOnlyList<Scope> fa, List<Scope> ia)
+        private static void MakeInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, 
+            IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa, List<Scope> ig, List<Scope> ia)
         {
-            ip.AddRange(fp);
-            ia.AddRange(fa);
-            for(var i = 0; i < ap.Count; ++i)
+            ig.AddRange(fg);
+            ia.AddRange(fa.GetDataTypes());
+            for(var i = 0; i < ag.Count; ++i)
             {
-                ip[i] = ap[i];
+                ig[i] = ag[i];
             }
             for(var i = 0; i < ia.Count; ++i)
             {
@@ -74,12 +75,12 @@ namespace AbstractSyntax
                 {
                     continue;
                 }
-                var k = FindIndex(fp, ia[i]);
-                if(ip[k] is GenericSymbol)
+                var k = FindIndex(fg, ia[i]);
+                if(ig[k] is GenericSymbol)
                 {
-                    ip[k] = aa[i]; //todo 処理の順序で結果が変わるバグに対処する。
+                    ig[k] = aa[i]; //todo 処理の順序で結果が変わるバグに対処する。
                 }
-                ia[i] = ip[k];
+                ia[i] = ig[k];
             }
         }
 
@@ -121,9 +122,9 @@ namespace AbstractSyntax
             return result;
         }
 
-        internal static TypeMatch MakeNotCallable(Scope call)
+        internal static OverLoadMatch MakeNotCallable(Scope call)
         {
-            return new TypeMatch { Call = call, Result = TypeMatchResult.NotCallable };
+            return new OverLoadMatch { Call = call, Result = TypeMatchResult.NotCallable };
         }
     }
 

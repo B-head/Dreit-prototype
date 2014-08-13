@@ -9,12 +9,18 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class TemplateInstanceSymbol : Scope
     {
-        public OverLoadReference BaseType { get; private set; }
+        public OverLoad Template { get; private set; }
         public IReadOnlyList<Scope> Parameter { get; private set; }
 
-        public TemplateInstanceSymbol(OverLoadReference baseType, IReadOnlyList<Scope> parameter)
+        public TemplateInstanceSymbol(Scope baseType, IReadOnlyList<Scope> parameter)
         {
-            BaseType = baseType;
+            Template = new OverLoadSimplex(baseType);
+            Parameter = parameter;
+        }
+
+        public TemplateInstanceSymbol(OverLoad template, IReadOnlyList<Scope> parameter)
+        {
+            Template = template;
             Parameter = parameter;
         }
 
@@ -23,9 +29,9 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
-        public override OverLoadReference OverLoad
+        public override OverLoad OverLoad
         {
-            get { return BaseType; }
+            get { return Template; }
         }
     }
 }

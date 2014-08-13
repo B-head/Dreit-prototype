@@ -17,7 +17,7 @@ namespace AbstractSyntax.SpecialSymbol
         {
             Name = GetOperatorName(type);
             CalculateType = type;
-            _ArgumentTypes = new Scope[] { expt };
+            _Arguments = SyntaxUtility.MakeParameters(expt);
             _CallReturnType = ret;
         }
 

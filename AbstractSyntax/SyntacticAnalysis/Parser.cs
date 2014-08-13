@@ -62,6 +62,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             return ret ?? current;
         }
 
+        //todo ElementListを使うようにする。
         private static TupleLiteral ParseTuple<T>(SlimChainParser cp, TransferParser<T> next) where T : Element
         {
             var child = new List<Element>();

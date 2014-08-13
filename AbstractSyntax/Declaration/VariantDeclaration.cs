@@ -80,7 +80,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override OverLoadReference OverLoad
+        public override OverLoad OverLoad
         {
             get { return Ident.OverLoad; }
         }

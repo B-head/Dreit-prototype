@@ -51,7 +51,7 @@ namespace AbstractSyntax
             {
                 return Root.Unknown;
             }
-            var s = OpList[op].FindAll(v => v.ArgumentTypes[0] == expt);
+            var s = OpList[op].FindAll(v => v.Arguments[0].ReturnType == expt);
             if (s.Count == 1)
             {
                 return s[0];
@@ -68,7 +68,7 @@ namespace AbstractSyntax
             {
                 return Root.Unknown;
             }
-            var s = OpList[op].FindAll(v => v.ArgumentTypes[0] == left && v.ArgumentTypes[1] == right);
+            var s = OpList[op].FindAll(v => v.Arguments[0].ReturnType == left && v.Arguments[1].ReturnType == right);
             if (s.Count == 1)
             {
                 return s[0];
