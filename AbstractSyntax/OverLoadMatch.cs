@@ -40,18 +40,19 @@ namespace AbstractSyntax
                 InstanceArguments = ia,
                 Converters = convs,
             };
-            if(ag.Count < fg.Count)
+            if (!ContainGenericCount(fg, ag))
             {
                 result.Result = TypeMatchResult.UnmatchParameterCount;
                 return result;
             }
-            if(fa.Count != aa.Count)
+            if (!ContainArgumentCount(fa, aa) || !ContainTupleCount(fg, fa, ag, aa))
             {
                 result.Result = TypeMatchResult.UnmatchArgumentCount;
                 return result;
             }
-            MakeInstance(fg, fa, ag, aa, ig, ia);
-            for (int i = 0; i < fa.Count; i++)
+            InitInstance(fg, fa, ag, aa, ig, ia);
+            InferInstance(ag, aa, ig, ia);
+            for (int i = 0; i < ia.Count; i++)
             {
                 var c = manager.Find(aa[i], ia[i]);
                 convs.Add(c);
@@ -60,31 +61,155 @@ namespace AbstractSyntax
             return result;
         }
 
-        private static void MakeInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, 
+        private static bool ContainGenericCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<Scope> ag)
+        {
+            if (HasVariadic(fg))
+            {
+                return true;
+            }
+            else
+            {
+                return fg.Count >= ag.Count;
+            }
+        }
+
+        private static bool ContainArgumentCount(IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> aa)
+        {
+            if(HasVariadic(fa))
+            {
+                return fa.Count - 1 <= aa.Count;
+            }
+            else
+            {
+                return fa.Count == aa.Count;
+            }
+        }
+
+        private static bool ContainTupleCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa)
+        {
+            if (!HasVariadic(fg) || fg.Count > ag.Count)
+            {
+                return true;
+            }
+            return ag.Count - fg.Count == aa.Count - fa.Count;
+        }
+
+        private static void InitInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
             IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa, List<Scope> ig, List<Scope> ia)
         {
-            ig.AddRange(fg);
-            ia.AddRange(fa.GetDataTypes());
-            for(var i = 0; i < ag.Count; ++i)
+            if (!HasVariadic(fg))
+            {
+                ig.AddRange(fg);
+                if (!HasVariadic(fa))
+                {
+                    ia.AddRange(fa.GetDataTypes());
+                }
+                else
+                {
+                    ia.AddRange(fa.GetDataTypes());
+                    var t = GetVariadicType(ia);
+                    ia.RemoveAt(ia.Count - 1);
+                    ia.AddRange(MakeArgument(aa.Count - fa.Count + 1, t));
+                }
+            }
+            else
+            {
+                ig.AddRange(fg);
+                ig.RemoveAt(ig.Count - 1);
+                var c = (fg.Count > ag.Count) ? (aa.Count - fa.Count + 1) : (ag.Count - fg.Count + 1);
+                var mg = MakeGeneric(c);
+                ig.AddRange(mg);
+                if (!HasVariadic(fa))
+                {
+                    ia.AddRange(fa.GetDataTypes());
+                }
+                else
+                {
+                    ia.AddRange(fa.GetDataTypes());
+                    ia.RemoveAt(ia.Count - 1);
+                    ia.AddRange(mg);
+                }
+            }
+        }
+
+        private static void InferInstance(IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa, List<Scope> ig, List<Scope> ia)
+        {
+            var tg = new List<Scope>(ig);
+            for (var i = 0; i < ag.Count; ++i)
             {
                 ig[i] = ag[i];
             }
-            for(var i = 0; i < ia.Count; ++i)
+            for (var i = 0; i < ia.Count; ++i)
             {
                 if(!(ia[i] is GenericSymbol))
                 {
                     continue;
                 }
-                var k = FindIndex(fg, ia[i]);
+                var k = FindTypeIndex(tg, ia[i]);
                 if(ig[k] is GenericSymbol)
                 {
-                    ig[k] = aa[i]; //todo 処理の順序で結果が変わるバグに対処する。
+                    ig[k] = aa[i]; 
                 }
+                else
+                {
+                    ig[k] = GetCommonSubType(ig[k], aa[i]); 
+                }
+            }
+            for (var i = 0; i < ia.Count; ++i)
+            {
+                if (!(ia[i] is GenericSymbol))
+                {
+                    continue;
+                }
+                var k = FindTypeIndex(tg, ia[i]);
                 ia[i] = ig[k];
             }
         }
 
-        private static int FindIndex(IReadOnlyList<Scope> list, Scope value)
+        private static bool HasVariadic(IReadOnlyList<Scope> f)
+        {
+            if(f.Count == 0)
+            {
+                return false;
+            }
+            return SyntaxUtility.HasAnyAttribute(f.Last().Attribute, AttributeType.Variadic);
+        }
+
+        private static Scope GetVariadicType(List<Scope> ia)
+        {
+            var t = (TemplateInstanceSymbol)ia.Last();
+            return t.Parameter[0];
+        }
+
+        private static IReadOnlyList<GenericSymbol> MakeGeneric(int count)
+        {
+            if(count < 0)
+            {
+                throw new ArgumentException("count");
+            }
+            var ret = new List<GenericSymbol>();
+            for(var i = 0; i < count; ++i)
+            {
+                ret.Add(new GenericSymbol("@@T" + (i + 1), new List<Scope>(), new List<Scope>()));
+            }
+            return ret;
+        }
+
+        private static IReadOnlyList<Scope> MakeArgument(int count, Scope scope)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentException("count");
+            }
+            var ret = new List<Scope>();
+            for (var i = 0; i < count; ++i)
+            {
+                ret.Add(scope);
+            }
+            return ret;
+        }
+
+        private static int FindTypeIndex(IReadOnlyList<Scope> list, Scope value)
         {
             for(var i = 0; i < list.Count; ++i)
             {
@@ -93,7 +218,12 @@ namespace AbstractSyntax
                     return i;
                 }
             }
-            return -1;
+            throw new ArgumentException("value");
+        }
+
+        private static Scope GetCommonSubType(Scope t1, Scope t2)
+        {
+            return t1; //todo 処理の順序で結果が変わるバグに対処する。共通のサブタイプを返すようにする。
         }
 
         private static TypeMatchResult CheckConverterResult(IReadOnlyList<Scope> convs)

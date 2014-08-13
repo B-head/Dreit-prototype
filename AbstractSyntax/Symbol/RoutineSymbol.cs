@@ -88,12 +88,12 @@ namespace AbstractSyntax.Symbol
 
         public virtual bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
         {
-            get { return HasAnyAttribute(Attribute, AttributeType.Virtual); }
+            get { return SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Virtual); }
         }
 
         public virtual bool IsAbstract
         {
-            get { return HasAnyAttribute(Attribute, AttributeType.Abstract); }
+            get { return SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Abstract); }
         }
 
         public virtual bool IsFunction

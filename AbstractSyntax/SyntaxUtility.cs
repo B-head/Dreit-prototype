@@ -32,12 +32,29 @@ namespace AbstractSyntax
             return result;
         }
 
+        internal static bool HasAnyAttribute(IReadOnlyList<Scope> attribute, params AttributeType[] type)
+        {
+            foreach (var v in attribute)
+            {
+                var a = v as AttributeSymbol;
+                if (a == null)
+                {
+                    continue;
+                }
+                if (type.Any(t => t == a.AttributeType))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static IReadOnlyList<ParameterSymbol> MakeParameters(params Scope[] types)
         {
             var ret = new List<ParameterSymbol>();
             for(var i = 0; i < types.Length; ++i)
             {
-                var p = new ParameterSymbol("@@arg" + i, VariantType.Let, new List<Scope>(), types[i]);
+                var p = new ParameterSymbol("@@arg" + (i + 1), VariantType.Let, new List<Scope>(), types[i]);
                 ret.Add(p);
             }
             return ret;

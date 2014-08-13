@@ -78,7 +78,7 @@ namespace AbstractSyntax.Symbol
             {
                 return true;
             }
-            if(HasAnyAttribute(scope.Attribute, AttributeType.GlobalScope))
+            if (SyntaxUtility.HasAnyAttribute(scope.Attribute, AttributeType.GlobalScope))
             {
                 return true;
             }

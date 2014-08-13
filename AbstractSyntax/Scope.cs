@@ -144,7 +144,7 @@ namespace AbstractSyntax
                 {
                     return false;
                 }
-                return GetParent<ClassSymbol>() != null && HasAnyAttribute(Attribute, AttributeType.Static); 
+                return GetParent<ClassSymbol>() != null && SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Static); 
             }
         }
 
@@ -157,7 +157,7 @@ namespace AbstractSyntax
                 {
                     return false;
                 }
-                return GetParent<ClassSymbol>() != null && !HasAnyAttribute(Attribute, AttributeType.Static); 
+                return GetParent<ClassSymbol>() != null && !SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Static); 
             }
         }
 

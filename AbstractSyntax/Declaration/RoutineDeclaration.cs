@@ -49,7 +49,7 @@ namespace AbstractSyntax.Declaration
                 {
                     a.Add(v.OverLoad.FindDataType());
                 }
-                if(!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                if (!SyntaxUtility.HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
                     var p = NameResolution("public").FindDataType();
                     a.Add(p);

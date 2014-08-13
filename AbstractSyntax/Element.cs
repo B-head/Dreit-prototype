@@ -157,23 +157,6 @@ namespace AbstractSyntax
             return false;
         }
 
-        internal static bool HasAnyAttribute(IReadOnlyList<Scope> attribute, params AttributeType[] type)
-        {
-            foreach (var v in attribute)
-            {
-                var a = v as AttributeSymbol;
-                if (a == null)
-                {
-                    continue;
-                }
-                if (type.Any(t => t == a.AttributeType))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         internal T GetParent<T>() where T : Scope
         {
             var current = CurrentScope;

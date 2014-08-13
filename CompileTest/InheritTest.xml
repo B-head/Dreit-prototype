@@ -92,7 +92,7 @@
       
       class B : A
       {
-        static routine bar :: B&.foo + 25
+        static routine bar :: B|.foo + 25
       }
       
       echo B|.foo

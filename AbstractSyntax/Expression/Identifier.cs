@@ -153,7 +153,7 @@ namespace AbstractSyntax.Expression
                 }
             }
             //todo より適切なエラーメッセージを出す。
-            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
+            if (SyntaxUtility.HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);
             }
