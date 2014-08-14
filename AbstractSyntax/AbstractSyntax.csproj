@@ -68,6 +68,7 @@
     <Compile Include="OverLoad.cs" />
     <Compile Include="OverLoadSimplex.cs" />
     <Compile Include="OverLoadSimplexManager.cs" />
+    <Compile Include="SpecialSymbol\ErrorTypeSymbol.cs" />
     <Compile Include="SpecialSymbol\ModifyTypeSymbol.cs" />
     <Compile Include="Statement\BreakStatement.cs" />
     <Compile Include="Statement\CatchStatement.cs" />
@@ -136,7 +137,7 @@
     <Compile Include="Symbol\TemplateInstanceSymbol.cs" />
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
-    <Compile Include="SpecialSymbol\ErrorSymbol.cs" />
+    <Compile Include="SpecialSymbol\ErrorRoutineSymbol.cs" />
     <Compile Include="SyntacticAnalysis\ContextParser.cs" />
     <Compile Include="SyntacticAnalysis\DeclarationParser.cs" />
     <Compile Include="SyntacticAnalysis\ExpressionParser.cs" />

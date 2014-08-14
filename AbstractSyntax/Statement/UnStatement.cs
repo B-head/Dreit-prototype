@@ -12,7 +12,7 @@ namespace AbstractSyntax.Statement
     public class UnStatement : Element
     {
         public Element Exp { get; private set; }
-        private Scope _CallScope;
+        private RoutineSymbol _CallScope;
 
         public UnStatement(TextPosition tp, Element exp)
             :base(tp)
@@ -21,7 +21,7 @@ namespace AbstractSyntax.Statement
             AppendChild(Exp);
         }
 
-        public Scope CallScope
+        public RoutineSymbol CallScope
         {
             get
             {
@@ -40,12 +40,12 @@ namespace AbstractSyntax.Statement
 
         public override bool IsConstant
         {
-            get { return Exp.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+            get { return Exp.IsConstant && CallScope.IsFunction; }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (CallScope is ErrorSymbol)
+            if (CallScope is ErrorRoutineSymbol)
             {
                 cmm.CompileError("undefined-monadic-operator", this);
             }

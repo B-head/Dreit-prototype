@@ -37,9 +37,6 @@ namespace AbstractSyntax.Symbol
             RoutineType = type;
             OperatorType = opType;
             Block = new ProgramContext();
-            _Attribute = new List<Scope>();
-            _Generics = new List<GenericSymbol>();
-            _Arguments = new List<ParameterSymbol>();
             AppendChild(Block);
         }
 
@@ -68,22 +65,22 @@ namespace AbstractSyntax.Symbol
 
         public override IReadOnlyList<Scope> Attribute
         {
-            get { return _Attribute; }
+            get { return _Attribute ?? new List<Scope>(); }
         }
 
         public virtual IReadOnlyList<GenericSymbol> Generics
         {
-            get { return _Generics; }
+            get { return _Generics ?? new List<GenericSymbol>();; }
         }
 
         public virtual IReadOnlyList<ParameterSymbol> Arguments
         {
-            get { return _Arguments; }
+            get { return _Arguments ?? new List<ParameterSymbol>();; }
         }
 
         public override Scope CallReturnType
         {
-            get { return _CallReturnType; }
+            get { return _CallReturnType ?? Root.ErrorType; }
         }
 
         public virtual bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。

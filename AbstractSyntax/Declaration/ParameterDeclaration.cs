@@ -60,7 +60,7 @@ namespace AbstractSyntax.Declaration
                 }
                 else
                 {
-                    _DataType = Root.Unknown;
+                    _DataType = Root.ErrorType;
                 }
                 return _DataType;
             }

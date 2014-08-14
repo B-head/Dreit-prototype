@@ -350,14 +350,15 @@ namespace CliTranslate
         {
             classType = ClassType.Class;
             if (type.GetCustomAttribute<GlobalScopeAttribute>() != null) list.Add(Root.GlobalScope);
-            var attr = type.Attributes;
-            if (attr.HasFlag(TypeAttributes.Abstract)) list.Add(Root.Abstract);
-            if (attr.HasFlag(TypeAttributes.Class)) classType = ClassType.Class;
-            if (attr.HasFlag(TypeAttributes.Interface)) classType = ClassType.Trait;
-            if (attr.HasFlag(TypeAttributes.NestedFamily)) list.Add(Root.Protected);
-            if (attr.HasFlag(TypeAttributes.NestedFamORAssem)) list.Add(Root.Protected);
-            if (attr.HasFlag(TypeAttributes.NestedPublic)) list.Add(Root.Public);
-            if (attr.HasFlag(TypeAttributes.Public)) list.Add(Root.Public);
+            if (type.IsAbstract) list.Add(Root.Abstract);
+            if (type.IsClass) classType = ClassType.Class;
+            if (type.IsInterface) classType = ClassType.Trait;
+            if (type.IsNestedFamily) list.Add(Root.Protected);
+            if (type.IsNestedFamORAssem) list.Add(Root.Protected);
+            if (type.IsNestedPublic) list.Add(Root.Public);
+            if (type.IsPublic) list.Add(Root.Public);
+            if (type.IsSealed) list.Add(Root.Final);
+            if (type.IsValueType) classType = ClassType.Class;
             if (type.IsGenericParameter)
             {
                 var gattr = type.GenericParameterAttributes;
@@ -371,34 +372,30 @@ namespace CliTranslate
 
         private void AppendEmbededAttribute(List<Scope> list, MethodBase method)
         {
-            var attr = method.Attributes;
-            if (attr.HasFlag(MethodAttributes.Abstract)) list.Add(Root.Abstract);
-            if (attr.HasFlag(MethodAttributes.Family)) list.Add(Root.Protected);
-            if (attr.HasFlag(MethodAttributes.FamORAssem)) list.Add(Root.Protected);
-            if (attr.HasFlag(MethodAttributes.Final)) list.Add(Root.Final);
-            if (attr.HasFlag(MethodAttributes.Public)) list.Add(Root.Public);
-            if (attr.HasFlag(MethodAttributes.Static)) list.Add(Root.Static);
-            if (attr.HasFlag(MethodAttributes.Virtual)) list.Add(Root.Virtual);
+            if (method.IsAbstract) list.Add(Root.Abstract);
+            if (method.IsFamily) list.Add(Root.Protected);
+            if (method.IsFamilyOrAssembly) list.Add(Root.Protected);
+            if (method.IsFinal) list.Add(Root.Final);
+            if (method.IsPublic) list.Add(Root.Public);
+            if (method.IsStatic) list.Add(Root.Static);
+            if (method.IsVirtual) list.Add(Root.Virtual);
         }
 
         private void AppendEmbededAttribute(List<Scope> list, FieldInfo field, out VariantType type)
         {
             type = VariantType.Var;
-            var attr = field.Attributes;
-            if (attr.HasFlag(FieldAttributes.Family)) list.Add(Root.Protected);
-            if (attr.HasFlag(FieldAttributes.FamORAssem)) list.Add(Root.Protected);
-            if (attr.HasFlag(FieldAttributes.InitOnly)) type = VariantType.Let;
-            if (attr.HasFlag(FieldAttributes.Literal)) type = VariantType.Const;
-            if (attr.HasFlag(FieldAttributes.Public)) list.Add(Root.Public);
-            if (attr.HasFlag(FieldAttributes.Static)) list.Add(Root.Static);
+            if (field.IsFamily) list.Add(Root.Protected);
+            if (field.IsFamilyOrAssembly) list.Add(Root.Protected);
+            if (field.IsInitOnly) type = VariantType.Let;
+            if (field.IsLiteral) type = VariantType.Const;
+            if (field.IsPublic) list.Add(Root.Public);
+            if (field.IsStatic) list.Add(Root.Static);
         }
 
         private void AppendEmbededAttribute(List<Scope> list, ParameterInfo parameter)
         {
             if (parameter.GetCustomAttribute<ParamArrayAttribute>() != null) list.Add(Root.Variadic);
-            var attr = parameter.Attributes;
-            if (attr.HasFlag(ParameterAttributes.HasDefault)) list.Add(Root.Optional);
-            if (attr.HasFlag(ParameterAttributes.Optional)) list.Add(Root.Optional);
+            if (parameter.IsOptional) list.Add(Root.Optional);
         }
 
         private void AppendParameterType(List<Scope> list, Type[] prm)

@@ -16,8 +16,8 @@ namespace AbstractSyntax.Expression
         public Element Access { get; private set; }
         public TupleLiteral Arguments { get; private set; }
         private OverLoadMatch? _Match;
-        private Scope _CallScope;
-        private Scope _CalculateCallScope;
+        private RoutineSymbol _CallScope;
+        private RoutineSymbol _CalculateCallScope;
 
         public CallExpression(TextPosition tp, Element acs, TupleLiteral args)
             : base(tp)
@@ -83,7 +83,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public Scope CallScope
+        public RoutineSymbol CallScope
         {
             get
             {
@@ -107,7 +107,7 @@ namespace AbstractSyntax.Expression
         {
             get 
             {
-                if (IsCalculate && !((RoutineSymbol)CalculateCallScope).IsFunction)
+                if (IsCalculate && !CalculateCallScope.IsFunction)
                 {
                     return false;
                 }
@@ -117,7 +117,7 @@ namespace AbstractSyntax.Expression
                 }
                 else
                 {
-                    return Access.IsConstant && Arguments.IsConstant && ((RoutineSymbol)CallScope).IsFunction;
+                    return Access.IsConstant && Arguments.IsConstant && CallScope.IsFunction;
                 }
             }
         }
@@ -158,7 +158,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public Scope CalculateCallScope
+        public RoutineSymbol CalculateCallScope
         {
             get
             {
@@ -170,7 +170,7 @@ namespace AbstractSyntax.Expression
                     }
                     else
                     {
-                        _CalculateCallScope = Root.Unknown;
+                        _CalculateCallScope = Root.ErrorRoutine;
                     }
                 }
                 return _CalculateCallScope;
@@ -193,7 +193,7 @@ namespace AbstractSyntax.Expression
             {
                 if (Arguments.GetDataTypes().Count != 1)
                 {
-                    return Root.Unknown;
+                    return Root.ErrorType;
                 }
                 return Arguments.GetDataTypes()[0];
             }
@@ -220,6 +220,9 @@ namespace AbstractSyntax.Expression
                 case TypeMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
                 case TypeMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
                 case TypeMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
+                case TypeMatchResult.UnmatchGenericCount: cmm.CompileError("unmatch-generic-count", this); break;
+                case TypeMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
+                case TypeMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
             }
             if (IsImmutableCall && !(Access is VariantDeclaration))
             {
@@ -230,7 +233,7 @@ namespace AbstractSyntax.Expression
             {
                 cmm.CompileError("forbit-side-effect", this);
             }
-            if (CalculateCallScope is ErrorSymbol)
+            if (IsCalculate && CalculateCallScope is ErrorRoutineSymbol)
             {
                 cmm.CompileError("impossible-calculate", this);
             }

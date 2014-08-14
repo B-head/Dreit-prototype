@@ -11,7 +11,7 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Compare : DyadicExpression
     {
-        private Scope _CallScope;
+        private RoutineSymbol _CallScope;
 
         public Compare(TextPosition tp, TokenType op, Element left, Element right)
             :base(tp, op, left, right)
@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public Scope CallScope
+        public RoutineSymbol CallScope
         {
             get
             {
@@ -33,7 +33,7 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return Left.IsConstant && Right.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+            get { return Left.IsConstant && Right.IsConstant && CallScope.IsFunction; }
         }
 
         public override Scope ReturnType
@@ -69,7 +69,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (CallScope is ErrorSymbol)
+            if (CallScope is ErrorRoutineSymbol)
             {
                 cmm.CompileError("impossible-calculate", this);
             }

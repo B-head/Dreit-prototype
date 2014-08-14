@@ -11,7 +11,7 @@ namespace AbstractSyntax
     [Serializable]
     public struct OverLoadMatch
     {
-        public Scope Call { get; private set; }
+        public RoutineSymbol Call { get; private set; }
         public TypeMatchResult Result { get; private set; }
         public IReadOnlyList<GenericSymbol> FormalGenerics { get; private set; }
         public IReadOnlyList<ParameterSymbol> FormalArguments { get; private set; }
@@ -21,9 +21,19 @@ namespace AbstractSyntax
         public IReadOnlyList<Scope> InstanceArguments { get; private set; }
         public IReadOnlyList<Scope> Converters { get; private set; }
 
+        internal static OverLoadMatch MakeNotCallable(RoutineSymbol call)
+        {
+            return new OverLoadMatch { Call = call, Result = TypeMatchResult.NotCallable };
+        }
+
+        internal static OverLoadMatch MakeUnknown(RoutineSymbol call)
+        {
+            return new OverLoadMatch { Call = call, Result = TypeMatchResult.Unknown };
+        }
+
         //todo さらに詳しい順位付けをする。
         //todo 可変長引数とデフォルト引数に対応する。
-        internal static OverLoadMatch MakeOverLoadMatch(ConversionManager manager, Scope call,
+        internal static OverLoadMatch MakeOverLoadMatch(ConversionManager manager, RoutineSymbol call,
             IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa)
         {
             var ig = new List<Scope>();
@@ -40,9 +50,14 @@ namespace AbstractSyntax
                 InstanceArguments = ia,
                 Converters = convs,
             };
+            if(CheckErrorType(fg) || CheckErrorType(fa.GetDataTypes()))
+            {
+                result.Result = TypeMatchResult.Unknown;
+                return result;
+            }
             if (!ContainGenericCount(fg, ag))
             {
-                result.Result = TypeMatchResult.UnmatchParameterCount;
+                result.Result = TypeMatchResult.UnmatchGenericCount;
                 return result;
             }
             if (!ContainArgumentCount(fa, aa) || !ContainTupleCount(fg, fa, ag, aa))
@@ -231,20 +246,16 @@ namespace AbstractSyntax
             var result = TypeMatchResult.PerfectMatch;
             foreach (var v in convs)
             {
-                if (v is VoidSymbol)
+                if (v is DefaultSymbol)
                 {
                     continue;
                 }
-                else if (v is ErrorSymbol)
+                else if (v is ErrorRoutineSymbol)
                 {
                     result = TypeMatchResult.UnmatchArgumentType;
                     break;
                 }
-                else if (v is UnknownSymbol)
-                {
-                    result = TypeMatchResult.Unknown;
-                }
-                else if (result != TypeMatchResult.Unknown)
+                else
                 {
                     result = TypeMatchResult.ConvertMatch;
                 }
@@ -252,9 +263,33 @@ namespace AbstractSyntax
             return result;
         }
 
-        internal static OverLoadMatch MakeNotCallable(Scope call)
+        internal static bool CheckErrorType(IReadOnlyList<Scope> scope)
         {
-            return new OverLoadMatch { Call = call, Result = TypeMatchResult.NotCallable };
+            foreach (var v in scope)
+            {
+                if (v is VoidSymbol || v is UnknownSymbol || v is ErrorTypeSymbol)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static int GetMatchPriority(TypeMatchResult r)
+        {
+            switch (r)
+            {
+                case TypeMatchResult.Unknown: return 10;
+                case TypeMatchResult.PerfectMatch: return 9;
+                case TypeMatchResult.ConvertMatch: return 8;
+                case TypeMatchResult.AmbiguityMatch: return 7;
+                case TypeMatchResult.UnmatchArgumentType: return 4;
+                case TypeMatchResult.UnmatchArgumentCount: return 3;
+                case TypeMatchResult.UnmatchGenericType: return 2;
+                case TypeMatchResult.UnmatchGenericCount: return 1;
+                case TypeMatchResult.NotCallable: return 0;
+                default: throw new ArgumentException("r");
+            }
         }
     }
 
@@ -267,7 +302,7 @@ namespace AbstractSyntax
         NotCallable,
         UnmatchArgumentCount,
         UnmatchArgumentType,
-        UnmatchParameterCount,
-        UnmatchParameterType,
+        UnmatchGenericCount,
+        UnmatchGenericType,
     }
 }

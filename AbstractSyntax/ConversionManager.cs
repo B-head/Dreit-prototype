@@ -27,10 +27,6 @@ namespace AbstractSyntax
 
         public Scope Find(Scope from, Scope to)
         {
-            if (from is UnknownSymbol || to is UnknownSymbol || from is GenericSymbol || to is GenericSymbol)
-            {
-                return Root.Unknown;
-            }
             var s = ConvList.FindAll(v => v.CallReturnType == to && v.Arguments[0].ReturnType == from);
             if(s.Count == 1)
             {
@@ -38,17 +34,17 @@ namespace AbstractSyntax
             }
             else if(s.Count > 1)
             {
-                return Root.Error;
+                return Root.ErrorRoutine;
             }
             else
             {
                 if (ContainSubType(from, to))
                 {
-                    return Root.Void;
+                    return Root.Default;
                 }
                 else
                 {
-                    return Root.Error;
+                    return Root.ErrorRoutine;
                 }
             }
         }

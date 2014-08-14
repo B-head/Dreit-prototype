@@ -92,7 +92,7 @@
   <case>
     <code>
       routine foo(a:Int32, b:Int32) :: a % b
-      stdout := 23, 5 =: foo
+      23, 5 =: foo =: stdout
     </code>
     <output>3</output>
   </case>

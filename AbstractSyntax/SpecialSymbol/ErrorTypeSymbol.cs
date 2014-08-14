@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
-    public class UnknownSymbol : Scope
+    public class ErrorTypeSymbol : Scope
     {
     }
 }

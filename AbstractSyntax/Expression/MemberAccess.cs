@@ -33,10 +33,10 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return Access.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+            get { return Access.IsConstant && CallScope.IsFunction; }
         }
 
-        public Scope CallScope
+        public RoutineSymbol CallScope
         {
             get { return OverLoad.CallSelect().Call; }
         }
@@ -61,6 +61,10 @@ namespace AbstractSyntax.Expression
             {
                 cmm.CompileError("undefined-identifier", this);
             }
+            if (CallScope.IsStaticMember && !ContainClass(CallScope.GetParent<ClassSymbol>(), Access.ReturnType))
+            {
+                cmm.CompileError("undefined-identifier", this);
+            }
             if (SyntaxUtility.HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);
@@ -76,10 +80,6 @@ namespace AbstractSyntax.Expression
             if (CallScope.IsStaticMember && !ModifyTypeSymbol.HasContainModify(Access.ReturnType, ModifyType.Typeof))
             {
                 cmm.CompileError("not-accessable", this);
-            }
-            if (CallScope.IsStaticMember && !ContainClass(CallScope.GetParent<ClassSymbol>(), Access.ReturnType))
-            {
-                cmm.CompileError("undefined-identifier", this);
             }
         }
 

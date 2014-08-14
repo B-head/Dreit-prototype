@@ -41,13 +41,28 @@ namespace AbstractSyntax.Symbol
                 return ReferenceCache[name];
             }
             OverLoadChain n = Root.UndefinedOverLord;
-            var m = Template.FindDataType() as ModifyTypeSymbol;
+            var bt = Template.FindDataType();
+            var m = bt as ModifyTypeSymbol;
             if (m != null && HasInheritModify(m.ModifyType))
             {
                 n = Parameters[0].NameResolution(name);
             }
+            else
+            {
+                n = bt.NameResolution(name);
+            }
             ReferenceCache.Add(name, n);
             return n;
+        }
+
+        public IEnumerable<Scope> EnumSubType()
+        {
+            yield return this;
+            var baseType = Template.FindDataType() as ClassSymbol;
+            foreach (var b in baseType.EnumSubType())
+            {
+                yield return b;
+            }
         }
 
         internal bool ContainClass(ClassSymbol cls)

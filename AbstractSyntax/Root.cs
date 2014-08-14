@@ -18,8 +18,10 @@ namespace AbstractSyntax
         internal OperationManager OpManager { get; private set; }
         internal OverLoadChain UndefinedOverLord { get; private set; }
         public VoidSymbol Void { get; private set; }
-        public ErrorSymbol Error { get; private set; }
         public UnknownSymbol Unknown { get; private set; }
+        public ErrorTypeSymbol ErrorType { get; private set; }
+        public ErrorRoutineSymbol ErrorRoutine { get; private set; }
+        public DefaultSymbol Default { get; private set; }
         public ModifyTypeSymbol Refer { get; private set; }
         public ModifyTypeSymbol Typeof { get; private set; }
         public ModifyTypeSymbol Nullable { get; private set; }
@@ -75,8 +77,10 @@ namespace AbstractSyntax
         private void CreateEmbedIdentifier()
         {
             Void = new VoidSymbol();
-            Error = new ErrorSymbol();
             Unknown = new UnknownSymbol();
+            ErrorType = new ErrorTypeSymbol();
+            ErrorRoutine = new ErrorRoutineSymbol();
+            Default = new DefaultSymbol();
             Refer = new ModifyTypeSymbol(ModifyType.Refer);
             Typeof = new ModifyTypeSymbol(ModifyType.Typeof);
             Nullable = new ModifyTypeSymbol(ModifyType.Nullable);
@@ -100,7 +104,9 @@ namespace AbstractSyntax
             Private = new AttributeSymbol(AttributeType.Private, "private");
             EmbedList.AppendChild(Void);
             EmbedList.AppendChild(Unknown);
-            EmbedList.AppendChild(Error);
+            EmbedList.AppendChild(ErrorType);
+            EmbedList.AppendChild(ErrorRoutine);
+            EmbedList.AppendChild(Default);
             EmbedList.AppendChild(Refer);
             EmbedList.AppendChild(Typeof);
             EmbedList.AppendChild(Nullable);

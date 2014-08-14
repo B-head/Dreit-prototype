@@ -19,7 +19,7 @@ namespace AbstractSyntax
 
         public override bool IsUndefined
         {
-            get { return Symbol is ErrorSymbol; }
+            get { return Symbol is ErrorRoutineSymbol; }
         }
 
         internal override Root Root

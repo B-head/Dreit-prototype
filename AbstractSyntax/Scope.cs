@@ -18,6 +18,7 @@ namespace AbstractSyntax
 
         protected Scope()
         {
+            Name = string.Empty;
             ChildSymbols = new Dictionary<string, OverLoadSet>();
             ReferenceCache = new Dictionary<string, OverLoadChain>();
         }
@@ -25,6 +26,7 @@ namespace AbstractSyntax
         protected Scope(TextPosition tp)
             : base(tp)
         {
+            Name = string.Empty;
             ChildSymbols = new Dictionary<string, OverLoadSet>();
             ReferenceCache = new Dictionary<string, OverLoadChain>();
         }
@@ -117,7 +119,7 @@ namespace AbstractSyntax
 
         internal virtual IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            yield return OverLoadMatch.MakeNotCallable(Root.Unknown);
+            yield return OverLoadMatch.MakeNotCallable(Root.ErrorRoutine);
         }
 
         public virtual bool IsDataType
@@ -127,7 +129,7 @@ namespace AbstractSyntax
 
         public virtual Scope CallReturnType
         {
-            get { return Root.Unknown; }
+            get { return Root.ErrorType; }
         }
 
         public virtual IReadOnlyList<Scope> Attribute

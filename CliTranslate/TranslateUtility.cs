@@ -26,7 +26,7 @@ namespace CliTranslate
                 {
                     switch (a.AttributeType)
                     {
-                        case AttributeType.Public: ret |= TypeAttributes.Public | TypeAttributes.NestedAssembly; break;
+                        case AttributeType.Public: ret |= TypeAttributes.Public | TypeAttributes.NestedPublic; break;
                         case AttributeType.Protected: ret |= TypeAttributes.NotPublic | TypeAttributes.NestedFamily; break;
                         case AttributeType.Private: ret |= TypeAttributes.NotPublic | TypeAttributes.NestedPrivate; break;
                     }
@@ -65,7 +65,7 @@ namespace CliTranslate
                 switch (a.AttributeType)
                 {
                     case AttributeType.Static: ret |= MethodAttributes.Static; break;
-                    case AttributeType.Public: ret |= MethodAttributes.Assembly; break;
+                    case AttributeType.Public: ret |= MethodAttributes.Public; break;
                     case AttributeType.Protected: ret |= MethodAttributes.Family; break;
                     case AttributeType.Private: ret |= MethodAttributes.Private; break;
                 }
@@ -90,7 +90,7 @@ namespace CliTranslate
                 switch (a.AttributeType)
                 {
                     case AttributeType.Static: ret |= FieldAttributes.Static; break;
-                    case AttributeType.Public: ret |= FieldAttributes.Assembly; break;
+                    case AttributeType.Public: ret |= FieldAttributes.Public; break;
                     case AttributeType.Protected: ret |= FieldAttributes.Family; break;
                     case AttributeType.Private: ret |= FieldAttributes.Private; break;
                 }

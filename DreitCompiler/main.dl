@@ -1,6 +1,2 @@
-﻿loop i <= 15 use i := 1 by i += 1 {
-	stdout := if i % 15 = 0 :: "fizzbuzz"
-	else if i % 3 = 0 :: "fizz"
-	else if i % 5 = 0 :: "buzz"
-	else "{ i }"
-}
+﻿[10, 20, 30, 40] =: var arr
+loop i < arr.Count use i := 0 by i += 1 :: arr[i] =: stdout

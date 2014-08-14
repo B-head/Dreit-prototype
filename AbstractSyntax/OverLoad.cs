@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AbstractSyntax.SpecialSymbol;
+using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +17,7 @@ namespace AbstractSyntax
             {
                 return v;
             }
-            return Root.Unknown;
+            return Root.ErrorType;
         }
 
         public OverLoadMatch CallSelect()
@@ -25,34 +27,21 @@ namespace AbstractSyntax
 
         public OverLoadMatch CallSelect(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            OverLoadMatch result = OverLoadMatch.MakeNotCallable(Root.Unknown);
+            if (OverLoadMatch.CheckErrorType(pars) || OverLoadMatch.CheckErrorType(args))
+            {
+                return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
+            }
+            OverLoadMatch result = OverLoadMatch.MakeNotCallable(Root.ErrorRoutine);
             foreach (var m in TraversalCall(pars, args))
             {
-                var a = GetMatchPriority(result.Result);
-                var b = GetMatchPriority(m.Result);
+                var a = OverLoadMatch.GetMatchPriority(result.Result);
+                var b = OverLoadMatch.GetMatchPriority(m.Result);
                 if (a < b)
                 {
                     result = m; //todo 優先順位が重複した場合の対処が必要。
                 }
             }
             return result;
-        }
-
-        private static int GetMatchPriority(TypeMatchResult r)
-        {
-            switch (r)
-            {
-                case TypeMatchResult.Unknown: return 10;
-                case TypeMatchResult.PerfectMatch: return 9;
-                case TypeMatchResult.ConvertMatch: return 8;
-                case TypeMatchResult.AmbiguityMatch: return 7;
-                case TypeMatchResult.UnmatchArgumentType: return 4;
-                case TypeMatchResult.UnmatchArgumentCount: return 3;
-                case TypeMatchResult.UnmatchParameterType: return 2;
-                case TypeMatchResult.UnmatchParameterCount: return 1;
-                case TypeMatchResult.NotCallable: return 0;
-                default: throw new ArgumentException("r");
-            }
         }
 
         public abstract bool IsUndefined { get; }

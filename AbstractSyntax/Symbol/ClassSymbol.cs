@@ -37,9 +37,6 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
             AppendChild(Default);
             AppendChild(This);
-            _Attribute = new List<Scope>();
-            _Generics = new List<GenericSymbol>();
-            _Inherit = new List<Scope>();
         }
 
         protected ClassSymbol(TextPosition tp, string name, ClassType type, ProgramContext block)
@@ -72,17 +69,17 @@ namespace AbstractSyntax.Symbol
 
         public override IReadOnlyList<Scope> Attribute
         {
-            get { return _Attribute; }
+            get { return _Attribute ?? new List<Scope>(); }
         }
 
         public virtual IReadOnlyList<GenericSymbol> Generics
         {
-            get { return _Generics; }
+            get { return _Generics ?? new List<GenericSymbol>(); }
         }
 
         public virtual IReadOnlyList<Scope> Inherit
         {
-            get { return _Inherit; }
+            get { return _Inherit ?? new List<Scope>(); }
         }
 
         public IReadOnlyList<RoutineSymbol> Initializer
@@ -225,10 +222,21 @@ namespace AbstractSyntax.Symbol
             yield return this;
             foreach(var a in Inherit)
             {
-                ClassSymbol c = a as ClassSymbol;
-                foreach(var b in c.EnumSubType())
+                var c = a as ClassSymbol;
+                if (c != null)
                 {
-                    yield return b;
+                    foreach (var b in c.EnumSubType())
+                    {
+                        yield return b;
+                    }
+                }
+                var ti = a as TemplateInstanceSymbol;
+                if (ti != null)
+                {
+                    foreach (var b in ti.EnumSubType())
+                    {
+                        yield return b;
+                    }
                 }
             }
         }

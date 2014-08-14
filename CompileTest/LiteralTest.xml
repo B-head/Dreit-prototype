@@ -9,14 +9,6 @@
   
   <case>
     <code>
-      stdout := { 30 }
-    </code>
-    <error key="error-token"/>
-    <error key="error-token"/>
-  </case>
-  
-  <case>
-    <code>
       stdout := 00123
       stdout := 4_5_6
       stdout := 56.789

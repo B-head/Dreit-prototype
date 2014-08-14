@@ -48,7 +48,7 @@ namespace AbstractSyntax.Statement
                 }
                 else
                 {
-                    _ReturnType = Root.Unknown;
+                    _ReturnType = Root.ErrorType;
                 }
                 return _ReturnType; 
             }

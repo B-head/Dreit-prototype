@@ -78,7 +78,7 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return ((RoutineSymbol)CallScope).IsFunction; }
+            get { return CallScope.IsFunction; }
         }
 
         public bool IsPragma
@@ -86,7 +86,7 @@ namespace AbstractSyntax.Expression
             get { return IdentType == TokenType.Pragma; }
         }
 
-        public Scope CallScope
+        public RoutineSymbol CallScope
         {
             get { return OverLoad.CallSelect().Call; }
         }
@@ -143,14 +143,7 @@ namespace AbstractSyntax.Expression
         {
             if (OverLoad.IsUndefined)
             {
-                if (IsPragma)
-                {
-                    cmm.CompileError("undefined-pragma", this);
-                }
-                else
-                {
-                    cmm.CompileError("undefined-identifier", this);
-                }
+                cmm.CompileError("undefined-identifier", this);
             }
             //todo より適切なエラーメッセージを出す。
             if (SyntaxUtility.HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))

@@ -58,7 +58,7 @@ namespace AbstractSyntax.Symbol
 
         public override IReadOnlyList<Scope> Attribute
         {
-            get { return _Attribute; }
+            get { return _Attribute ?? new List<AttributeSymbol>(); }
         }
 
         public override Scope ReturnType
@@ -68,7 +68,7 @@ namespace AbstractSyntax.Symbol
 
         public override Scope CallReturnType
         {
-            get { return _DataType; }
+            get { return _DataType ?? Root.ErrorType; }
         }
 
         public bool IsField
@@ -120,7 +120,7 @@ namespace AbstractSyntax.Symbol
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (ReturnType is UnknownSymbol)
+            if (ReturnType is ErrorTypeSymbol)
             {
                 cmm.CompileError("require-type", this);
             }

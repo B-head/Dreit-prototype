@@ -11,7 +11,7 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Prefix : MonadicExpression
     {
-        private Scope _CallScope;
+        private RoutineSymbol _CallScope;
 
         public Prefix(TextPosition tp, TokenType op, Element exp)
             :base(tp, op, exp)
@@ -19,7 +19,7 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public Scope CallScope
+        public RoutineSymbol CallScope
         {
             get
             {
@@ -38,12 +38,12 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return Exp.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+            get { return Exp.IsConstant && CallScope.IsFunction; }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (CallScope is ErrorSymbol)
+            if (CallScope is ErrorRoutineSymbol)
             {
                 cmm.CompileError("undefined-monadic-operator", this);
             }
