@@ -4,7 +4,7 @@
     <code>
       <![CDATA[
       var a := 0
-      loop a < 10 :: echo a += 2
+      loop a < 10 :: stdout := a += 2
       ]]>
     </code>
     <output>2 4 6 8 10</output>
@@ -12,7 +12,7 @@
   <case>
     <code>
       <![CDATA[
-      loop a < 10 use var a := 0 by a += 2 :: echo a
+      loop a < 10 use var a := 0 by a += 2 :: stdout := a
       ]]>
     </code>
     <output>0 2 4 6 8</output>
@@ -22,7 +22,7 @@
       <![CDATA[
       var a := 0
       loop {
-        echo a += 2
+        stdout := a += 2
         if a >= 10 :: break
       }
       ]]>
@@ -34,7 +34,7 @@
       <![CDATA[
       loop a < 10 use var a := 0 by a += 1 {
         if a % 3 <> 0 :: continue
-        echo a
+        stdout := a
       }
       ]]>
     </code>

@@ -31,7 +31,7 @@ namespace CliTranslate
                 {
                     return false;
                 }
-                return exp.ResultType.Name != "Void";
+                return !exp.ResultType.IsVoid;
             }
         }
     }

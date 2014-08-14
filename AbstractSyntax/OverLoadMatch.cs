@@ -178,7 +178,7 @@ namespace AbstractSyntax
         private static Scope GetVariadicType(List<Scope> ia)
         {
             var t = (TemplateInstanceSymbol)ia.Last();
-            return t.Parameter[0];
+            return t.Parameters[0];
         }
 
         private static IReadOnlyList<GenericSymbol> MakeGeneric(int count)

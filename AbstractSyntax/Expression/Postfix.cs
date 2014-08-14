@@ -22,11 +22,11 @@ namespace AbstractSyntax.Expression
             {
                 if(Operator == TokenType.Refer)
                 {
-                    return Root.TypeManager.IssueTemplateInstance(Root.Refer, Exp.ReturnType);
+                    return Root.TemplateInstanceManager.Issue(Root.Refer, Exp.ReturnType);
                 }
                 else if(Operator == TokenType.Typeof)
                 {
-                    return Root.TypeManager.IssueTemplateInstance(Root.Typeof, Exp.ReturnType);
+                    return Root.TemplateInstanceManager.Issue(Root.Typeof, Exp.ReturnType);
                 }
                 else if(Operator == TokenType.Reject)
                 {

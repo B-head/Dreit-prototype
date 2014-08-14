@@ -59,6 +59,7 @@
     <Compile Include="ExpressionStructure.cs" />
     <Compile Include="FieldStructure.cs" />
     <Compile Include="GenericParameterStructure.cs" />
+    <Compile Include="GenericTypeStructure.cs" />
     <Compile Include="GlobalContextStructure.cs" />
     <Compile Include="GotoStructure.cs" />
     <Compile Include="LabelStructure.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="LoopStructure.cs" />
     <Compile Include="MethodBaseStructure.cs" />
     <Compile Include="MethodStructure.cs" />
+    <Compile Include="ModifyTypeStructure.cs" />
     <Compile Include="MonadicOperationStructure.cs" />
     <Compile Include="OperationStructure.cs" />
     <Compile Include="TypeStructure.cs" />

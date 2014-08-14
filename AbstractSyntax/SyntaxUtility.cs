@@ -32,7 +32,7 @@ namespace AbstractSyntax
             return result;
         }
 
-        internal static bool HasAnyAttribute(IReadOnlyList<Scope> attribute, params AttributeType[] type)
+        internal static bool HasAnyAttribute(this IReadOnlyList<Scope> attribute, params AttributeType[] type)
         {
             foreach (var v in attribute)
             {
@@ -58,6 +58,20 @@ namespace AbstractSyntax
                 ret.Add(p);
             }
             return ret;
+        }
+
+        public static bool HasVariadicArguments(this Scope scope)
+        {
+            var r = scope as RoutineSymbol;
+            if(r == null)
+            {
+                return false;
+            }
+            if(r.Arguments.Count == 0)
+            {
+                return false;
+            }
+            return r.Arguments.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
         }
     }
 }

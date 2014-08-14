@@ -22,6 +22,10 @@ namespace DlightTest
         public static void TestFixtureSetUp()
         {
             Directory.CreateDirectory("output");
+            if (!File.Exists(@"output/CoreLibrary.dll"))
+            {
+                File.Copy(@"CoreLibrary.dll", @"output\CoreLibrary.dll");
+            }
             Directory.SetCurrentDirectory("output");
         }
 

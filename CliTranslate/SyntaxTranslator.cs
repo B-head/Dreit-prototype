@@ -45,7 +45,7 @@ namespace CliTranslate
         {
             foreach(var v in import.ImportDictionary)
             {
-                ImportDictionary.Add(v.Value, v.Key);
+                ImportDictionary[v.Value] = v.Key;
             }
         }
 
@@ -173,6 +173,12 @@ namespace CliTranslate
             return ret;
         }
 
+        private ModifyTypeStructure Translate(ModifyTypeSymbol element)
+        {
+            var ret = new ModifyTypeStructure(element.ModifyType);
+            return ret;
+        }
+
         private GlobalContextStructure Translate(ModuleDeclaration element)
         {
             var block = RelayTranslate(element.Directives);
@@ -198,9 +204,14 @@ namespace CliTranslate
             return ret;
         }
 
-        private CilStructure Translate(TemplateInstanceSymbol element, Type info = null)
+        private GenericTypeStructure Translate(TemplateInstanceSymbol element, Type info = null)
         {
-            return null;
+            var ret = new GenericTypeStructure();
+            TransDictionary.Add(element, ret);
+            var bt = RelayTranslate(element.BaseType);
+            var gnr = CollectList<TypeStructure>(element.Parameters);
+            ret.Initialize(bt, gnr);
+            return ret;
         }
 
         private MethodBaseStructure Translate(RoutineSymbol element, MethodBase info = null)
@@ -332,6 +343,7 @@ namespace CliTranslate
             var call = RelayTranslate(element.CallScope);
             var access = RelayTranslate(element.Access);
             var pre = access is CallStructure ? access.Pre: null;
+            var isVariadic = element.CallScope.HasVariadicArguments();
             CallStructure ret;
             if (element.IsCalculate)
             {
@@ -343,13 +355,13 @@ namespace CliTranslate
                 var args = new List<ExpressionStructure>();
                 args.Add(cal);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, null, args);
+                ret = new CallStructure(rt, call, pre, null, args, isVariadic);
             }
             else
             {
                 var args = CollectList<ExpressionStructure>(element.Arguments);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, access, args);
+                ret = new CallStructure(rt, call, pre, access, args, isVariadic);
             }
             return ret;
         }

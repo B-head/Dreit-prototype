@@ -35,10 +35,25 @@ namespace CliTranslate
             Info = info;
         }
 
-        internal Type GainType()
+        internal virtual Type GainType()
         {
             RelayPreBuild();
             return Info;
+        }
+
+        internal bool IsReferType
+        {
+            get { return Info.IsClass || Info.IsInterface; }
+        }
+
+        internal bool IsValueType
+        {
+            get { return Info.IsValueType; }
+        }
+
+        internal bool IsVoid
+        {
+            get { return Info == typeof(void); }
         }
     }
 }

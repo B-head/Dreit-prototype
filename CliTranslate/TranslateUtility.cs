@@ -134,6 +134,16 @@ namespace CliTranslate
             return ret;
         }
 
+        public static Type[] GainTypes(this IReadOnlyList<TypeStructure> types)
+        {
+            var ret = new Type[types.Count];
+            for (var i = 0; i < types.Count; ++i)
+            {
+                ret[i] = types[i].GainType();
+            }
+            return ret;
+        }
+
         public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, MethodBuilder builder, bool isInstance)
         {
             for (var i = 0; i < prm.Count; ++i)
@@ -151,6 +161,23 @@ namespace CliTranslate
                 var p = prm[i];
                 var pb = builder.DefineParameter(i + 1, p.Attributes, p.Name);
                 p.RegisterBuilder(pb, isInstance);
+            }
+        }
+
+        public static TypeStructure GetBaseType(this TypeStructure type)
+        {
+            var tit = type as GenericTypeStructure;
+            if(tit == null)
+            {
+                return type;
+            }
+            if (tit.BaseType is ModifyTypeStructure)
+            {
+                return tit.GenericParameter[0];
+            }
+            else
+            {
+                return tit.BaseType;
             }
         }
     }

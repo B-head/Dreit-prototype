@@ -3,21 +3,14 @@
   <case>
     <code>
       10 =: stdout
+      10, 20 =: stdout
     </code>
     <output>10</output>
   </case>
 
   <case>
     <code>
-      10, 20 =: stdout
     </code>
     <output>10 20</output>
-  </case>
-
-  <case>
-    <code>
-      10, "hello" =: stdout
-    </code>
-    <output>10 hello</output>
   </case>
 </compile-test>

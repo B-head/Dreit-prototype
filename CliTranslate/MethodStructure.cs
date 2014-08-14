@@ -54,7 +54,7 @@ namespace CliTranslate
 
         public bool IsVoidReturn
         {
-            get { return ReturnType == null || ReturnType.Name == "Void"; }
+            get { return ReturnType == null || ReturnType.IsVoid; }
         }
 
         public bool IsVirtual

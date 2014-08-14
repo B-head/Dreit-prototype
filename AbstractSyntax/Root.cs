@@ -12,7 +12,8 @@ namespace AbstractSyntax
     {
         private NameSpaceSymbol EmbedList;
         public CompileMessageManager MessageManager { get; private set; }
-        internal TemplateInstanceManager TypeManager { get; private set; }
+        public OverLoadSimplexManager SimplexManager { get; private set; }
+        public TemplateInstanceManager TemplateInstanceManager { get; private set; }
         internal ConversionManager ConvManager { get; private set; }
         internal OperationManager OpManager { get; private set; }
         internal OverLoadChain UndefinedOverLord { get; private set; }
@@ -46,13 +47,14 @@ namespace AbstractSyntax
             Name = "global";
             EmbedList = new NameSpaceSymbol();
             MessageManager = new CompileMessageManager();
-            TypeManager = new TemplateInstanceManager();
+            SimplexManager = new OverLoadSimplexManager();
+            TemplateInstanceManager = new TemplateInstanceManager(SimplexManager);
             ConvManager = new ConversionManager(this);
             OpManager = new OperationManager(this); 
             UndefinedOverLord = new OverLoadChain(this, null);
             CreateEmbedIdentifier();
             AppendChild(EmbedList);
-            AppendChild(TypeManager);
+            AppendChild(TemplateInstanceManager);
         }
 
         public void SemanticAnalysis()
@@ -101,7 +103,13 @@ namespace AbstractSyntax
             EmbedList.AppendChild(Error);
             EmbedList.AppendChild(Refer);
             EmbedList.AppendChild(Typeof);
-            EmbedList.AppendChild(Abstract);
+            EmbedList.AppendChild(Nullable);
+            EmbedList.AppendChild(Pointer);
+            EmbedList.AppendChild(EmbedArray);
+            EmbedList.AppendChild(Variadic);
+            EmbedList.AppendChild(Optional);
+            EmbedList.AppendChild(GlobalScope);
+            EmbedList.AppendChild(Virtual);
             EmbedList.AppendChild(Final);
             EmbedList.AppendChild(Static);
             EmbedList.AppendChild(Public);

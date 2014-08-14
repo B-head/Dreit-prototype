@@ -11,32 +11,57 @@ namespace AbstractSyntax
     [Serializable]
     public class TemplateInstanceManager : Element
     {
-        private List<TemplateInstanceSymbol> TemplateInstanceList;
+        private Dictionary<OverLoad, List<TemplateInstanceSymbol>> TemplateDictonary;
+        private OverLoadSimplexManager SimplexManager;
 
-        public TemplateInstanceManager()
+        public TemplateInstanceManager(OverLoadSimplexManager simplexManager)
         {
-            TemplateInstanceList = new List<TemplateInstanceSymbol>();
+            TemplateDictonary = new Dictionary<AbstractSyntax.OverLoad, List<TemplateInstanceSymbol>>();
+            SimplexManager = simplexManager;
         }
         
-        //todo インスタンスの再利用をする。
-        public TemplateInstanceSymbol IssueTemplateInstance(Scope baseType, params Scope[] parameter)
+        public TemplateInstanceSymbol Issue(Scope baseType, params Scope[] parameter)
         {
-            var ret = new TemplateInstanceSymbol(baseType, parameter);
-            AppendChild(ret);
-            TemplateInstanceList.Add(ret);
-            return ret;
+            var ol = SimplexManager.Issue(baseType);
+            return Issue(ol, parameter);
         }
 
-        public TemplateInstanceSymbol IssueTemplateInstance(OverLoad template, IReadOnlyList<Scope> parameter)
+        public TemplateInstanceSymbol Issue(Scope baseType, IReadOnlyList<Scope> parameter)
         {
-            var ret = TemplateInstanceList.FirstOrDefault(v => v.Template == template && v.Parameter.SequenceEqual(parameter));
+            var ol = SimplexManager.Issue(baseType);
+            return Issue(ol, parameter);
+        }
+
+        public TemplateInstanceSymbol Issue(OverLoad template, IReadOnlyList<Scope> parameter)
+        {
+            var ret = FindInstance(template, parameter);
             if (ret != null)
             {
                 return ret;
             }
             ret = new TemplateInstanceSymbol(template, parameter);
-            AppendChild(ret);
-            TemplateInstanceList.Add(ret);
+            AppendInstance(ret);
+            return ret;
+        }
+
+        private void AppendInstance(TemplateInstanceSymbol instance)
+        {
+            if(!TemplateDictonary.ContainsKey(instance.OverLoad))
+            {
+                TemplateDictonary.Add(instance.OverLoad, new List<TemplateInstanceSymbol>());
+            }
+            TemplateDictonary[instance.OverLoad].Add(instance);
+            AppendChild(instance);
+        }
+
+        private TemplateInstanceSymbol FindInstance(OverLoad template, IReadOnlyList<Scope> parameter)
+        {
+            if (!TemplateDictonary.ContainsKey(template))
+            {
+                return null;
+            }
+            var list = TemplateDictonary[template];
+            var ret = list.FirstOrDefault(v => v.Parameters.SequenceEqual(parameter));
             return ret;
         }
     }

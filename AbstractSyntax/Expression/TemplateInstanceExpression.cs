@@ -25,7 +25,7 @@ namespace AbstractSyntax.Expression
 
         public override Scope ReturnType
         {
-            get { return Root.TypeManager.IssueTemplateInstance(Access.OverLoad, Parameter.ToArray()); }
+            get { return Root.TemplateInstanceManager.Issue(Access.OverLoad, Parameter.ToArray()); }
         }
 
         public override OverLoad OverLoad

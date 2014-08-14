@@ -11,18 +11,12 @@ namespace AbstractSyntax.Symbol
     public class TemplateInstanceSymbol : Scope
     {
         public OverLoad Template { get; private set; }
-        public IReadOnlyList<Scope> Parameter { get; private set; }
-
-        public TemplateInstanceSymbol(Scope baseType, params Scope[] parameter)
-        {
-            Template = new OverLoadSimplex(baseType);
-            Parameter = parameter;
-        }
+        public IReadOnlyList<Scope> Parameters { get; private set; }
 
         public TemplateInstanceSymbol(OverLoad template, IReadOnlyList<Scope> parameter)
         {
             Template = template;
-            Parameter = parameter;
+            Parameters = parameter;
         }
 
         public override bool IsDataType
@@ -35,6 +29,11 @@ namespace AbstractSyntax.Symbol
             get { return Template; }
         }
 
+        public Scope BaseType
+        {
+            get { return Template.FindDataType(); }
+        }
+
         internal override OverLoadChain NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))
@@ -45,7 +44,7 @@ namespace AbstractSyntax.Symbol
             var m = Template.FindDataType() as ModifyTypeSymbol;
             if (m != null && HasInheritModify(m.ModifyType))
             {
-                n = Parameter[0].NameResolution(name);
+                n = Parameters[0].NameResolution(name);
             }
             ReferenceCache.Add(name, n);
             return n;
@@ -56,7 +55,7 @@ namespace AbstractSyntax.Symbol
             var m = Template.FindDataType() as ModifyTypeSymbol;
             if (m != null && HasInheritModify(m.ModifyType))
             {
-                return Parameter[0] == cls;
+                return Parameters[0] == cls;
             }
             return false;
         }

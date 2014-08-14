@@ -10,7 +10,7 @@
 
       A() =: var a:A
       a.value := 500
-      echo a.value
+      stdout := a.value
       ]]>
     </code>
     <output>500</output>
@@ -26,7 +26,7 @@
 
       A() =: var a
       a.value := 500
-      echo a.value
+      stdout := a.value
       ]]>
     </code>
     <output>500</output>
@@ -42,9 +42,9 @@
       }
 
       Counter =: var counter
-      echo counter.next
-      echo counter.next
-      echo counter.next
+      stdout := counter.next
+      stdout := counter.next
+      stdout := counter.next
       ]]>
     </code>
     <output>1 2 3</output>
@@ -60,9 +60,9 @@
       }
 
       Counter =: var counter
-      echo counter.next
-      echo counter.next
-      echo counter.next
+      stdout := counter.next
+      stdout := counter.next
+      stdout := counter.next
       ]]>
     </code>
     <output>6 7 8</output>
@@ -82,7 +82,7 @@
       }
       
       var a := A
-      echo a.x * a.y
+      stdout := a.x * a.y
       ]]>
     </code>
     <output>18</output>
@@ -102,7 +102,7 @@
       }
       
       var a:A := A(4, 7)
-      echo a.x * a.y
+      stdout := a.x * a.y
       ]]>
     </code>
     <output>28</output>
@@ -122,7 +122,7 @@
       }
       
       var a := A(4, 7)
-      echo a.x * a.y
+      stdout := a.x * a.y
       ]]>
     </code>
     <output>28</output>
@@ -142,7 +142,7 @@
       }
       
       var a := A(5, 8)
-      echo a.x * a.y
+      stdout := a.x * a.y
       ]]>
     </code>
     <output>40</output>
@@ -152,7 +152,7 @@
     <code>
       <![CDATA[
       class A {
-        routine free :: echo 10
+        routine free :: stdout := 10
       }
       
       var a := A
@@ -174,8 +174,8 @@
       }
 
       A =: var o
-      echo o.foo
-      echo o.bar
+      stdout := o.foo
+      stdout := o.bar
       ]]>
     </code>
     <output>40 60</output>
@@ -194,10 +194,10 @@
       }
 
       A =: var o
-      echo o.a
-      echo o.b
-      echo o.foo
-      echo o.bar
+      stdout := o.a
+      stdout := o.b
+      stdout := o.foo
+      stdout := o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -217,10 +217,10 @@
       }
 
       A =: var o
-      echo o.a
-      echo o.b
-      echo o.foo
-      echo o.bar
+      stdout := o.a
+      stdout := o.b
+      stdout := o.foo
+      stdout := o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -241,10 +241,10 @@
       }
 
       A =: var o
-      echo o.a
-      echo o.b
-      echo o.foo
-      echo o.bar
+      stdout := o.a
+      stdout := o.b
+      stdout := o.foo
+      stdout := o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -267,10 +267,10 @@
       }
 
       A =: var o
-      echo o.a
-      echo o.b
-      echo o.foo
-      echo o.bar
+      stdout := o.a
+      stdout := o.b
+      stdout := o.foo
+      stdout := o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -290,10 +290,10 @@
       }
 
       A =: var o
-      echo o.a
-      echo A|.b
-      echo o.foo
-      echo A|.bar
+      stdout := o.a
+      stdout := A|.b
+      stdout := o.foo
+      stdout := A|.bar
       ]]>
     </code>
     <output>10 20 40 60</output>
@@ -312,10 +312,10 @@
       }
 
       A =: var o
-      echo A|.a
-      echo o.b
-      echo A|.foo
-      echo o.bar
+      stdout := A|.a
+      stdout := o.b
+      stdout := A|.foo
+      stdout := o.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -337,10 +337,10 @@
       }
 
       A =: var o
-      echo o.a
-      echo A|.b
-      echo o.foo
-      echo A|.bar
+      stdout := o.a
+      stdout := A|.b
+      stdout := o.foo
+      stdout := A|.bar
       ]]>
     </code>
     <error key="not-accessable"/>
@@ -359,10 +359,10 @@
       }
 
       A =: var o
-      echo o.a
-      echo A|.b
-      echo o.foo
-      echo A|.bar
+      stdout := o.a
+      stdout := A|.b
+      stdout := o.foo
+      stdout := A|.bar
       ]]>
     </code>
     <output>10 20 50 60</output>
@@ -386,8 +386,8 @@
       var a := A
       var b := A
       var c := a + b
-      echo c.x
-      echo c.y
+      stdout := c.x
+      stdout := c.y
       ]]>
     </code>
     <output>22 44</output>
@@ -413,7 +413,7 @@
 
       var a := A()
       var b:B := a
-      echo b.value
+      stdout := b.value
       ]]>
     </code>
     <output>11</output>

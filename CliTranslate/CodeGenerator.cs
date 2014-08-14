@@ -54,6 +54,12 @@ namespace CliTranslate
             Generator.Emit(type);
         }
 
+        internal void GenerateArray(int length, TypeStructure type)
+        {
+            GeneratePrimitive(length);
+            Generator.Emit(OpCodes.Newarr, type.GainType());
+        }
+
         internal void GenerateNew(ConstructorStructure constructor)
         {
             Generator.Emit(OpCodes.Newobj, constructor.GainConstructor());
@@ -88,7 +94,7 @@ namespace CliTranslate
                 exp.BuildCode();
                 if (exp.ResultType.GainType() != typeof(String))
                 {
-                    if (exp.ResultType.GainType().IsValueType)
+                    if (exp.ResultType.IsValueType)
                     {
                         Generator.Emit(OpCodes.Box, exp.ResultType.GainType());
                     }
@@ -107,6 +113,18 @@ namespace CliTranslate
             var wl = typeof(Console).GetMethod("WriteLine", types);
             exp.BuildCode();
             Generator.Emit(OpCodes.Call, wl);
+        }
+
+        internal void GenerateBoxing(TypeStructure from, TypeStructure to)
+        {
+            if(from.IsValueType && to.IsReferType)
+            {
+                Generator.Emit(OpCodes.Box, from.GainType());
+            }
+            else if(from.IsReferType && to.IsValueType)
+            {
+                Generator.Emit(OpCodes.Unbox, to.GainType());
+            }
         }
 
         internal void GenerateLoad(LocalStructure local)
@@ -245,6 +263,23 @@ namespace CliTranslate
             {
                 Generator.Emit(OpCodes.Starg, index);
             }
+        }
+
+        internal void GenerateStoreElement(TypeStructure type)
+        {
+            var t = type.GainType();
+            if(t.IsClass || t.IsInterface)
+            {
+                Generator.Emit(OpCodes.Stelem_Ref);
+            }
+            else if (t == typeof(IntPtr)) Generator.Emit(OpCodes.Stelem_I);
+            else if (t == typeof(SByte)) Generator.Emit(OpCodes.Stelem_I1);
+            else if (t == typeof(Int16)) Generator.Emit(OpCodes.Stelem_I2);
+            else if (t == typeof(Int32)) Generator.Emit(OpCodes.Stelem_I4);
+            else if (t == typeof(Int64)) Generator.Emit(OpCodes.Stelem_I8);
+            else if (t == typeof(Single)) Generator.Emit(OpCodes.Stelem_R4);
+            else if (t == typeof(Double)) Generator.Emit(OpCodes.Stelem_R8);
+            else Generator.Emit(OpCodes.Stelem);
         }
 
         internal void GeneratePrimitive(int value)

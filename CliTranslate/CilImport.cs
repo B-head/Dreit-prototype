@@ -22,6 +22,7 @@ namespace CliTranslate
         {
             Root = root;
             ImportDictionary = new Dictionary<object, Scope>();
+            ImportDictionary.Add(typeof(void), Root.Void);
         }
 
         private NameSpaceSymbol GetNameSpace(string name)
@@ -60,6 +61,10 @@ namespace CliTranslate
                     continue;
                 }
                 var ns = GetNameSpace(t.Namespace);
+                if (typeof(void) == t)
+                {
+                    continue;
+                }
                 ns.Append(ImportType(t));
             }
         }
@@ -175,30 +180,36 @@ namespace CliTranslate
         private TemplateInstanceSymbol ImportModifyType(Type type)
         {
             var elementType = ImportType(type.GetElementType());
+            TemplateInstanceSymbol elem = null;
             if(type.IsArray)
             {
-                return new TemplateInstanceSymbol(Root.EmbedArray, elementType);
+                elem = Root.TemplateInstanceManager.Issue(Root.EmbedArray, elementType);
             }
             else if(type.IsByRef)
             {
-                return new TemplateInstanceSymbol(Root.Refer, elementType);
+                elem = Root.TemplateInstanceManager.Issue(Root.Refer, elementType);
             }
             else if(type.IsPointer)
             {
-                return new TemplateInstanceSymbol(Root.Pointer, elementType);
+                elem = Root.TemplateInstanceManager.Issue(Root.Pointer, elementType);
             }
             else
             {
                 throw new ArgumentException("type");
             }
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (TemplateInstanceSymbol)ImportDictionary[type];
+            }
+            ImportDictionary.Add(type, elem);
+            return elem;
         }
 
         private TemplateInstanceSymbol ImportTemplateInstance(Type type)
         {
             var definition = ImportType(type.GetGenericTypeDefinition());
-            var template = new OverLoadSimplex(definition);
             var parameter = new List<Scope>();
-            var elem = new TemplateInstanceSymbol(template, parameter);
+            var elem = Root.TemplateInstanceManager.Issue(definition, parameter);
             if (ImportDictionary.ContainsKey(type))
             {
                 return (TemplateInstanceSymbol)ImportDictionary[type];

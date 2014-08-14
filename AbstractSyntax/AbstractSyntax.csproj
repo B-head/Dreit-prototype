@@ -67,6 +67,7 @@
     <Compile Include="Literal\TuplePair.cs" />
     <Compile Include="OverLoad.cs" />
     <Compile Include="OverLoadSimplex.cs" />
+    <Compile Include="OverLoadSimplexManager.cs" />
     <Compile Include="SpecialSymbol\ModifyTypeSymbol.cs" />
     <Compile Include="Statement\BreakStatement.cs" />
     <Compile Include="Statement\CatchStatement.cs" />
