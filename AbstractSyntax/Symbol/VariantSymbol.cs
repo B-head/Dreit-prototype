@@ -20,7 +20,7 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public VariantType VariantType { get; private set; }
-        public PropertySymbol Getter { get; private set; }
+        public PropertySymbol Getter { get; private set; } //todo 型定義に移す。
         public PropertySymbol Setter { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _DataType;

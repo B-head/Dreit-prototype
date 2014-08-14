@@ -104,7 +104,6 @@
     <Compile Include="Statement\PatternMatchStatement.cs" />
     <Compile Include="Statement\RequireStatement.cs" />
     <Compile Include="Statement\ReturnStatement.cs" />
-    <Compile Include="Statement\EchoStatement.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="Expression\GroupingExpression.cs" />
     <Compile Include="Expression\ProgramContext.cs" />

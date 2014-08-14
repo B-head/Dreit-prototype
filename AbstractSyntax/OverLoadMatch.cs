@@ -32,7 +32,7 @@ namespace AbstractSyntax
         }
 
         //todo さらに詳しい順位付けをする。
-        //todo 可変長引数とデフォルト引数に対応する。
+        //todo デフォルト引数に対応する。
         internal static OverLoadMatch MakeOverLoadMatch(ConversionManager manager, RoutineSymbol call,
             IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa)
         {

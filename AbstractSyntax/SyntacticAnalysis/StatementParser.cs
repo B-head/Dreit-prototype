@@ -88,15 +88,6 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .End(tp => new ForStatement(tp, cond, of, at, block));
         }
 
-        private static EchoStatement EchoStatement(SlimChainParser cp)
-        {
-            Element exp = null;
-            return cp.Begin
-                .Text("echo").Lt()
-                .Opt.Transfer(e => exp = e, Expression)
-                .End(tp => new EchoStatement(tp, exp));
-        }
-
         private static UnStatement UnStatement(SlimChainParser cp)
         {
             Element exp = null;

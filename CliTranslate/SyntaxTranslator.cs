@@ -322,14 +322,6 @@ namespace CliTranslate
             return ret;
         }
 
-        private WriteLineStructure Translate(EchoStatement element)
-        {
-            var exp = RelayTranslate(element.Exp);
-            var rt = RelayTranslate(element.ReturnType);
-            var ret = new WriteLineStructure(rt, exp);
-            return ret;
-        }
-
         private ReturnStructure Translate(ReturnStatement element)
         {
             var exp = RelayTranslate(element.Exp);

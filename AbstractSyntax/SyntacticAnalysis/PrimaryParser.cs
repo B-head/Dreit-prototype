@@ -23,7 +23,6 @@ namespace AbstractSyntax.SyntacticAnalysis
             PatternMatchStatement,
             LoopStatement,
             LaterLoopStatement,
-            EchoStatement,
             UnStatement,
             LabelStatement,
             GotoStatement,
