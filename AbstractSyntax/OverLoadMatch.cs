@@ -50,7 +50,7 @@ namespace AbstractSyntax
                 InstanceArguments = ia,
                 Converters = convs,
             };
-            if(CheckErrorType(fg) || CheckErrorType(fa.GetDataTypes()))
+            if(SyntaxUtility.HasAnyErrorType(fg) || SyntaxUtility.HasAnyErrorType(fa.GetDataTypes()))
             {
                 result.Result = TypeMatchResult.Unknown;
                 return result;
@@ -187,7 +187,7 @@ namespace AbstractSyntax
             {
                 return false;
             }
-            return SyntaxUtility.HasAnyAttribute(f.Last().Attribute, AttributeType.Variadic);
+            return f.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
         }
 
         private static Scope GetVariadicType(List<Scope> ia)
@@ -261,18 +261,6 @@ namespace AbstractSyntax
                 }
             }
             return result;
-        }
-
-        internal static bool CheckErrorType(IReadOnlyList<Scope> scope)
-        {
-            foreach (var v in scope)
-            {
-                if (v is VoidSymbol || v is UnknownSymbol || v is ErrorTypeSymbol)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         internal static int GetMatchPriority(TypeMatchResult r)

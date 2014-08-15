@@ -10,21 +10,14 @@ namespace AbstractSyntax.SpecialSymbol
     [Serializable]
     public class PropertySymbol : RoutineSymbol
     {
-        public VariantSymbol Variant { get; private set; }
+        public ClassSymbol Type { get; private set; }
         public bool IsSet { get; private set; }
 
-        public PropertySymbol(VariantSymbol variant, bool isSet)
+        public PropertySymbol(string name, ClassSymbol type, bool isSet)
             : base(RoutineType.Routine, TokenType.Unknoun)
         {
-            if(isSet)
-            {
-                Name = "@@set";
-            }
-            else
-            {
-                Name = "@@get";
-            }
-            Variant = variant;
+            Name = name;
+            Type = type;
             IsSet = isSet;
             _Attribute = null;
             _Arguments = null;
@@ -36,7 +29,7 @@ namespace AbstractSyntax.SpecialSymbol
             {
                 if (_Attribute == null)
                 {
-                    _Attribute = Variant.Attribute;
+                    _Attribute = Type.Attribute;
                 }
                 return _Attribute;
             }
@@ -50,7 +43,7 @@ namespace AbstractSyntax.SpecialSymbol
                 {
                     if (IsSet)
                     {
-                        _Arguments = SyntaxUtility.MakeParameters(Variant.CallReturnType);
+                        _Arguments = SyntaxUtility.MakeParameters(Type);
                     }
                     else
                     {
@@ -63,14 +56,7 @@ namespace AbstractSyntax.SpecialSymbol
 
         public override Scope CallReturnType
         {
-            get
-            {
-                if (_CallReturnType == null)
-                {
-                    _CallReturnType = Variant.CallReturnType;
-                }
-                return _CallReturnType;
-            }
+            get { return Type; }
         }
     }
 }

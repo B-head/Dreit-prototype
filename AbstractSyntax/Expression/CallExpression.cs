@@ -16,7 +16,7 @@ namespace AbstractSyntax.Expression
         public Element Access { get; private set; }
         public TupleLiteral Arguments { get; private set; }
         private OverLoadMatch? _Match;
-        private RoutineSymbol _CallScope;
+        private RoutineSymbol _CallRoutine;
         private RoutineSymbol _CalculateCallScope;
 
         public CallExpression(TextPosition tp, Element acs, TupleLiteral args)
@@ -83,15 +83,20 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public RoutineSymbol CallScope
+        public VariantSymbol ReferVariant
+        {
+            get { return Access.OverLoad.FindVariant(); }
+        }
+
+        public RoutineSymbol CallRoutine
         {
             get
             {
-                if (_CallScope == null)
+                if (_CallRoutine == null)
                 {
-                    _CallScope = Match.Call;
+                    _CallRoutine = Match.Call;
                 }
-                return _CallScope;
+                return _CallRoutine;
             }
         }
 
@@ -99,7 +104,7 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                return CallScope.CallReturnType;
+                return CallRoutine.CallReturnType;
             }
         }
 
@@ -117,7 +122,7 @@ namespace AbstractSyntax.Expression
                 }
                 else
                 {
-                    return Access.IsConstant && Arguments.IsConstant && CallScope.IsFunction;
+                    return Access.IsConstant && Arguments.IsConstant && CallRoutine.IsFunction;
                 }
             }
         }
@@ -147,15 +152,7 @@ namespace AbstractSyntax.Expression
 
         public bool IsImmutableCall
         {
-            get
-            {
-                var v = CallScope as PropertySymbol;
-                if(v == null)
-                {
-                    return false;
-                }
-                return v.Variant.IsImmtable;
-            }
+            get { return ReferVariant.IsImmtable; }
         }
 
         public RoutineSymbol CalculateCallScope
@@ -229,7 +226,7 @@ namespace AbstractSyntax.Expression
                 cmm.CompileError("not-mutable", this);
             }
             //todo 副作用のある関数を呼べないようにする。
-            if (IsFunctionLocation && CallScope is PropertySymbol)
+            if (IsFunctionLocation && CallRoutine is PropertySymbol)
             {
                 cmm.CompileError("forbit-side-effect", this);
             }

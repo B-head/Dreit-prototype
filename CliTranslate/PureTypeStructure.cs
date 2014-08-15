@@ -26,11 +26,6 @@ namespace CliTranslate
             base.Initialize(name, attr, block, info);
         }
 
-        internal void RegisterDefault(ConstructorStructure def)
-        {
-            Block.AppendChild(def);
-        }
-
         internal IEnumerable<FieldStructure> GetFields()
         {
             foreach(var v in GetFields(Block))

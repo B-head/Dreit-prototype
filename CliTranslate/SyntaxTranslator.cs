@@ -150,8 +150,7 @@ namespace CliTranslate
 
         private LoadStoreStructure Translate(PropertySymbol element)
         {
-            var variant = RelayTranslate(element.Variant);
-            var ret = new LoadStoreStructure(variant, element.IsSet);
+            var ret = new LoadStoreStructure(element.IsSet);
             return ret;
         }
 
@@ -196,11 +195,6 @@ namespace CliTranslate
             var imp = CollectList<TypeStructure>(element.InheritTraits);
             var block = RelayTranslate(element.Block);
             ret.Initialize(element.FullName, attr, gnr, bt, imp, block, info);
-            if (element.IsDefaultConstructor)
-            {
-                var def = RelayTranslate(element.Default);
-                ret.RegisterDefault(def);
-            }
             return ret;
         }
 
@@ -332,10 +326,11 @@ namespace CliTranslate
 
         private CallStructure Translate(CallExpression element)
         {
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var access = RelayTranslate(element.Access);
             var pre = access is CallStructure ? access.Pre: null;
-            var isVariadic = element.CallScope.HasVariadicArguments();
+            var variant = RelayTranslate(element.ReferVariant);
+            var isVariadic = element.CallRoutine.HasVariadicArguments();
             CallStructure ret;
             if (element.IsCalculate)
             {
@@ -347,13 +342,13 @@ namespace CliTranslate
                 var args = new List<ExpressionStructure>();
                 args.Add(cal);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, null, args, isVariadic);
+                ret = new CallStructure(rt, call, pre, null, variant, args, isVariadic);
             }
             else
             {
                 var args = CollectList<ExpressionStructure>(element.Arguments);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, access, args, isVariadic);
+                ret = new CallStructure(rt, call, pre, access, variant, args, isVariadic);
             }
             return ret;
         }
@@ -362,7 +357,7 @@ namespace CliTranslate
         {
             var left = RelayTranslate(element.Left);
             var right = RelayTranslate(element.Right);
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new DyadicOperationStructure(rt, left, right, call);
             return ret;
@@ -390,7 +385,7 @@ namespace CliTranslate
             {
                 right = RelayTranslate(element.VirtualRight);
             }
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new DyadicOperationStructure(rt, left, right, call, next);
             return ret;
@@ -407,29 +402,32 @@ namespace CliTranslate
 
         private CallStructure Translate(Identifier element)
         {
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
+            var variant = RelayTranslate(element.ReferVariant);
             var rt = RelayTranslate(element.ReturnType);
             if (element.IsTacitThis)
             {
-                var thiscall = RelayTranslate(element.ThisReference.Getter);
+                var thiscall = RelayTranslate(element.ThisCallRoutine);
                 var thisrt = RelayTranslate(element.ThisReference.CallReturnType);
-                var pre = new CallStructure(thisrt, thiscall, null);
-                var ret = new CallStructure(rt, call, pre);
+                var thisvar = RelayTranslate(element.ThisReference);
+                var pre = new CallStructure(thisrt, thiscall, null, thisvar);
+                var ret = new CallStructure(rt, call, pre, variant);
                 return ret;
             }
             else
             {
-                var ret = new CallStructure(rt, call, null);
+                var ret = new CallStructure(rt, call, null, variant);
                 return ret;
             }
         }
 
         private CallStructure Translate(MemberAccess element)
         {
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var pre = RelayTranslate(element.Access);
+            var variant = RelayTranslate(element.ReferVariant);
             var rt = RelayTranslate(element.ReturnType);
-            var ret = new CallStructure(rt, call, pre);
+            var ret = new CallStructure(rt, call, pre, variant);
             return ret;
         }
 
@@ -441,7 +439,7 @@ namespace CliTranslate
         private MonadicOperationStructure Translate(Prefix element)
         {
             var exp = RelayTranslate(element.Exp);
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new MonadicOperationStructure(rt, exp, call);
             return ret;
@@ -495,7 +493,7 @@ namespace CliTranslate
         private MonadicOperationStructure Translate(UnStatement element)
         {
             var exp = RelayTranslate(element.Exp);
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new MonadicOperationStructure(rt, exp, call);
             return ret;

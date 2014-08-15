@@ -50,6 +50,22 @@ namespace AbstractSyntax
             }
         }
 
+        internal override IEnumerable<VariantSymbol> TraversalVariant()
+        {
+            if (IsHoldAlias)
+            {
+                SpreadAlias();
+            }
+            foreach (var v in Symbols)
+            {
+                var variant = v as VariantSymbol;
+                if (variant != null)
+                {
+                    yield return variant;
+                }
+            }
+        }
+
         internal override IEnumerable<Scope> TraversalDataType()
         {
             if(IsHoldAlias)

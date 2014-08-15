@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -69,6 +70,17 @@ namespace AbstractSyntax
             foreach (var s in TraversalSets(true, true))
             {
                 foreach (var v in s.TraversalChilds())
+                {
+                    yield return v;
+                }
+            }
+        }
+
+        internal override IEnumerable<VariantSymbol> TraversalVariant()
+        {
+            foreach (var s in TraversalSets(true, false))
+            {
+                foreach (var v in s.TraversalVariant())
                 {
                     yield return v;
                 }

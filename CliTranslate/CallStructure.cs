@@ -13,15 +13,17 @@ namespace CliTranslate
         public BuilderStructure Call { get; private set; }
         public ExpressionStructure Pre { get; private set; }
         public CilStructure Access { get; private set; }
+        public CilStructure Variant { get; private set; }
         public IReadOnlyList<ExpressionStructure> Arguments { get; private set; }
         public bool IsVariadic { get; private set; }
 
-        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre)
+        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure variant)
             : base(rt)
         {
             Call = call;
             Pre = pre;
             Access = pre;
+            Variant = variant;
             Arguments = new List<ExpressionStructure>();
             if (Access != null)
             {
@@ -30,12 +32,13 @@ namespace CliTranslate
             AppendChild(Arguments);
         }
 
-        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure access, IReadOnlyList<ExpressionStructure> args, bool isVariadic = false)
+        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure access, CilStructure variant, IReadOnlyList<ExpressionStructure> args, bool isVariadic = false)
             :base(rt)
         {
             Call = call;
             Pre = pre;
             Access = access;
+            Variant = variant;
             Arguments = args;
             IsVariadic = isVariadic;
             if (Access != null)
@@ -86,7 +89,15 @@ namespace CliTranslate
                     v.BuildCode();
                 }
             }
-            Call.BuildCall(cg);
+            var lss = Call as LoadStoreStructure;
+            if (lss == null)
+            {
+                Call.BuildCall(cg);
+            }
+            else
+            {
+                lss.BuildCall(Variant, cg);
+            }
         }
 
         private TypeStructure GetVariadicType(BuilderStructure call)

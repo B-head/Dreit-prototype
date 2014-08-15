@@ -24,39 +24,6 @@ namespace AbstractSyntax.Expression
             IdentType = identType;
         }
 
-        public bool IsTacitThis
-        {
-            get
-            {
-                if (_IsTacitThis != null)
-                {
-                    return _IsTacitThis.Value;
-                }
-                if (!HasThisMember(CallScope))
-                {
-                    _IsTacitThis = false;
-                }
-                else if (!(CurrentScope is RoutineDeclaration)) //todo この条件が必要な理由を調べる。（忘れたｗ）
-                {
-                    _IsTacitThis = false;
-                }
-                else
-                {
-                    _IsTacitThis = true;
-                }
-                return _IsTacitThis.Value;
-            }
-        }
-
-        public ThisSymbol ThisReference
-        {
-            get
-            {
-                var c = GetParent<ClassSymbol>();
-                return c.This;
-            }
-        }
-
         protected override string ElementInfo
         {
             get
@@ -73,12 +40,12 @@ namespace AbstractSyntax.Expression
 
         public override Scope ReturnType
         {
-            get { return CallScope.CallReturnType; }
+            get { return CallRoutine.CallReturnType; }
         }
 
         public override bool IsConstant
         {
-            get { return CallScope.IsFunction; }
+            get { return CallRoutine.IsFunction; }
         }
 
         public bool IsPragma
@@ -86,9 +53,19 @@ namespace AbstractSyntax.Expression
             get { return IdentType == TokenType.Pragma; }
         }
 
-        public RoutineSymbol CallScope
+        public VariantSymbol ReferVariant
+        {
+            get { return OverLoad.FindVariant(); }
+        }
+
+        public RoutineSymbol CallRoutine
         {
             get { return OverLoad.CallSelect().Call; }
+        }
+
+        public Scope AccessSymbol
+        {
+            get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
         }
 
         public override OverLoad OverLoad
@@ -111,6 +88,37 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public bool IsTacitThis
+        {
+            get
+            {
+                if (_IsTacitThis != null)
+                {
+                    return _IsTacitThis.Value;
+                }
+                _IsTacitThis = HasThisMember(AccessSymbol);
+                return _IsTacitThis.Value;
+            }
+        }
+
+        public ThisSymbol ThisReference
+        {
+            get
+            {
+                var c = GetParent<ClassSymbol>();
+                return c.This;
+            }
+        }
+
+        public RoutineSymbol ThisCallRoutine
+        {
+            get
+            {
+                var c = GetParent<ClassSymbol>();
+                return c.This.OverLoad.CallSelect().Call;
+            }
+        }
+
         private bool IsStaticLocation()
         {
             var r = GetParent<RoutineSymbol>();
@@ -123,7 +131,7 @@ namespace AbstractSyntax.Expression
 
         private bool HasThisMember(Scope scope)
         {
-            if (scope.IsStaticMember || scope.IsThisCall)
+            if (scope.IsStaticMember || scope is ThisSymbol)
             {
                 return false;
             }
@@ -146,11 +154,11 @@ namespace AbstractSyntax.Expression
                 cmm.CompileError("undefined-identifier", this);
             }
             //todo より適切なエラーメッセージを出す。
-            if (SyntaxUtility.HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
+            if (AccessSymbol.Attribute.HasAnyAttribute(AttributeType.Private) && !HasCurrentAccess(AccessSymbol.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);
             }
-            if (CallScope.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
+            if (AccessSymbol.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
             {
                 cmm.CompileError("not-accessable", this);
             }

@@ -11,6 +11,15 @@ namespace AbstractSyntax
     [Serializable]
     public abstract class OverLoad
     {
+        public VariantSymbol FindVariant()
+        {
+            foreach (var v in TraversalVariant())
+            {
+                return v;
+            }
+            return Root.ErrorVariant;
+        }
+
         public Scope FindDataType()
         {
             foreach (var v in TraversalDataType())
@@ -27,7 +36,7 @@ namespace AbstractSyntax
 
         public OverLoadMatch CallSelect(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            if (OverLoadMatch.CheckErrorType(pars) || OverLoadMatch.CheckErrorType(args))
+            if (SyntaxUtility.HasAnyErrorType(pars) || SyntaxUtility.HasAnyErrorType(args))
             {
                 return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
             }
@@ -47,6 +56,7 @@ namespace AbstractSyntax
         public abstract bool IsUndefined { get; }
         internal abstract Root Root { get; }
         internal abstract IEnumerable<Scope> TraversalChilds();
+        internal abstract IEnumerable<VariantSymbol> TraversalVariant();
         internal abstract IEnumerable<Scope> TraversalDataType();
         internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args);
     }

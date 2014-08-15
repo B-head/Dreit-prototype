@@ -174,6 +174,7 @@ namespace CliTranslate
                 }
                 block.Append(ImportType(n));
             }
+            elem.Initialize();
             return elem;
         }
 

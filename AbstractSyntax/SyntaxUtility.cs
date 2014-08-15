@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Symbol;
+﻿using AbstractSyntax.SpecialSymbol;
+using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,6 +73,23 @@ namespace AbstractSyntax
                 return false;
             }
             return r.Arguments.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
+        }
+
+        internal static bool HasAnyErrorType(params Scope[] scope)
+        {
+            return HasAnyErrorType((IReadOnlyList<Scope>)scope);
+        }
+
+        internal static bool HasAnyErrorType(IReadOnlyList<Scope> scope)
+        {
+            foreach (var v in scope)
+            {
+                if (v is VoidSymbol || v is UnknownSymbol || v is ErrorTypeSymbol)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

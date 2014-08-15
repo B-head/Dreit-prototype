@@ -20,23 +20,23 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class ClassSymbol : Scope
     {
-        public DefaultSymbol Default { get; private set; }
         public ThisSymbol This { get; private set; }
         public ClassType ClassType { get; private set; }
         public ProgramContext Block { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<Scope> _Inherit;
-        private IReadOnlyList<RoutineSymbol> _Initializer;
+        public IReadOnlyList<RoutineSymbol> Initializers { get; private set; }
+        public IReadOnlyList<RoutineSymbol> AliasCalls { get; private set; }
 
         protected ClassSymbol()
         {
             Block = new ProgramContext();
-            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
+            Block.Append(This);
             AppendChild(Block);
-            AppendChild(Default);
-            AppendChild(This);
+            InitInitializers();
+            InitAliasCalls();
         }
 
         protected ClassSymbol(TextPosition tp, string name, ClassType type, ProgramContext block)
@@ -45,11 +45,11 @@ namespace AbstractSyntax.Symbol
             Name = name;
             ClassType = type;
             Block = block;
-            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
+            Block.Append(This);
             AppendChild(Block);
-            AppendChild(Default);
-            AppendChild(This);
+            InitInitializers();
+            InitAliasCalls();
         }
 
         public ClassSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
@@ -57,14 +57,84 @@ namespace AbstractSyntax.Symbol
             Name = name;
             ClassType = type;
             Block = block;
-            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
+            Block.Append(This);
             AppendChild(Block);
-            AppendChild(Default);
-            AppendChild(This);
             _Attribute = attr;
             _Generics = gnr;
             _Inherit = inherit;
+        }
+
+        public void Initialize()
+        {
+            InitInitializers();
+            InitAliasCalls();
+        }
+
+        private void InitInitializers()
+        {
+            var i = new List<RoutineSymbol>();
+            var newFlag = false;
+            foreach (var e in Block)
+            {
+                var r = e as RoutineSymbol;
+                if (r == null)
+                {
+                    continue;
+                }
+                if (r.IsConstructor)
+                {
+                    i.Add(r);
+                    newFlag = true;
+                }
+            }
+            if (!newFlag)
+            {
+                var def = new DefaultSymbol(RoutineSymbol.ConstructorIdentifier, this);
+                Block.Append(def);
+                i.Add(def);
+            }
+            Initializers = i;
+        }
+
+        private void InitAliasCalls()
+        {
+            var i = new List<RoutineSymbol>();
+            var getFlag = false;
+            var serFlag = false;
+            foreach (var e in Block)
+            {
+                var r = e as RoutineSymbol;
+                if (r == null)
+                {
+                    continue;
+                }
+                if (r.IsAliasCall)
+                {
+                    i.Add(r);
+                    if (r.IsZeroArguments)
+                    {
+                        getFlag = true;
+                    }
+                    if (r.IsOneArguments)
+                    {
+                        serFlag = true;
+                    }
+                }
+            }
+            if (!getFlag)
+            {
+                var def = new PropertySymbol(RoutineSymbol.AliasCallIdentifier, this, false);
+                Block.Append(def);
+                i.Add(def);
+            }
+            if (!serFlag)
+            {
+                var def = new PropertySymbol(RoutineSymbol.AliasCallIdentifier, this, true);
+                Block.Append(def);
+                i.Add(def);
+            }
+            AliasCalls = i;
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -80,47 +150,6 @@ namespace AbstractSyntax.Symbol
         public virtual IReadOnlyList<Scope> Inherit
         {
             get { return _Inherit ?? new List<Scope>(); }
-        }
-
-        public IReadOnlyList<RoutineSymbol> Initializer
-        {
-            get
-            {
-                if (_Initializer != null)
-                {
-                    return _Initializer;
-                }
-                var i = new List<RoutineSymbol>();
-                var newFlag = false;
-                foreach (var e in Block)
-                {
-                    var r = e as RoutineSymbol;
-                    if (r == null)
-                    {
-                        continue;
-                    }
-                    if (r.IsConstructor)
-                    {
-                        i.Add(r);
-                        newFlag = true;
-                    }
-                    //else if (r.IsConvertor)
-                    //{
-                    //    Root.ConvManager.Append(r);
-                    //    i.Add(r);
-                    //}
-                    //else if (r.Operator != TokenType.Unknoun)
-                    //{
-                    //    Root.OpManager.Append(r);
-                    //}
-                }
-                if (!newFlag)
-                {
-                    i.Add(Default);
-                }
-                _Initializer = i;
-                return _Initializer;
-            }
         }
 
         public Scope InheritClass
@@ -151,14 +180,19 @@ namespace AbstractSyntax.Symbol
             return false;
         }
 
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
+
         public bool IsDefaultConstructor
         {
-            get { return Initializer.Any(v => v is DefaultSymbol); }
+            get { return Initializers.Any(v => v is DefaultSymbol); }
         }
 
         public RoutineSymbol ZeroArgInitializer
         {
-            get { return Initializer.FirstOrDefault(v => v.Arguments.Count == 0); }
+            get { return Initializers.FirstOrDefault(v => v.Arguments.Count == 0); }
         }
 
         public bool IsTrait
@@ -173,7 +207,18 @@ namespace AbstractSyntax.Symbol
 
         internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            foreach(var a in Initializer)
+            foreach(var a in Initializers)
+            {
+                foreach (var b in a.GetTypeMatch(pars, args))
+                {
+                    yield return b;
+                }
+            }
+        }
+
+        internal IEnumerable<OverLoadMatch> GetInstanceTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        {
+            foreach (var a in AliasCalls)
             {
                 foreach (var b in a.GetTypeMatch(pars, args))
                 {

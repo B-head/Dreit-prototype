@@ -20,6 +20,7 @@ namespace AbstractSyntax
         public VoidSymbol Void { get; private set; }
         public UnknownSymbol Unknown { get; private set; }
         public ErrorTypeSymbol ErrorType { get; private set; }
+        public ErrorVariantSymbol ErrorVariant { get; private set; }
         public ErrorRoutineSymbol ErrorRoutine { get; private set; }
         public DefaultSymbol Default { get; private set; }
         public ModifyTypeSymbol Refer { get; private set; }
@@ -79,6 +80,7 @@ namespace AbstractSyntax
             Void = new VoidSymbol();
             Unknown = new UnknownSymbol();
             ErrorType = new ErrorTypeSymbol();
+            ErrorVariant = new ErrorVariantSymbol();
             ErrorRoutine = new ErrorRoutineSymbol();
             Default = new DefaultSymbol();
             Refer = new ModifyTypeSymbol(ModifyType.Refer);
@@ -105,6 +107,7 @@ namespace AbstractSyntax
             EmbedList.AppendChild(Void);
             EmbedList.AppendChild(Unknown);
             EmbedList.AppendChild(ErrorType);
+            EmbedList.AppendChild(ErrorVariant);
             EmbedList.AppendChild(ErrorRoutine);
             EmbedList.AppendChild(Default);
             EmbedList.AppendChild(Refer);

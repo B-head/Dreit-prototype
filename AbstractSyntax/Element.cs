@@ -42,7 +42,7 @@ namespace AbstractSyntax
 
         public virtual OverLoad OverLoad
         {
-            get { return Root.UndefinedOverLord; }
+            get { return Root.SimplexManager.Issue(ReturnType); }
         }
 
         public virtual bool IsConstant

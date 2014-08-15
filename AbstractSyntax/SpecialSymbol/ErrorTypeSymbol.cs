@@ -9,5 +9,9 @@ namespace AbstractSyntax.SpecialSymbol
     [Serializable]
     public class ErrorTypeSymbol : Scope
     {
+        internal override void CheckSemantic(CompileMessageManager cmm)
+        {
+
+        }
     }
 }

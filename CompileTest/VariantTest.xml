@@ -123,7 +123,6 @@
     </code>
     <error key="not-collide-assign"/>
     <error key="require-type"/>
-    <error key="impossible-calculate"/>
   </case>
   
   <case>

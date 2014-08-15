@@ -20,28 +20,18 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public VariantType VariantType { get; private set; }
-        public PropertySymbol Getter { get; private set; } //todo 型定義に移す。
-        public PropertySymbol Setter { get; private set; }
         protected IReadOnlyList<Scope> _Attribute;
         protected Scope _DataType;
 
         protected VariantSymbol(VariantType type)
         {
             VariantType = type;
-            Getter = new PropertySymbol(this, false);
-            Setter = new PropertySymbol(this, true);
-            AppendChild(Getter);
-            AppendChild(Setter);
         }
 
         protected VariantSymbol(TextPosition tp, VariantType type)
             : base(tp)
         {
             VariantType = type;
-            Getter = new PropertySymbol(this, false);
-            Setter = new PropertySymbol(this, true);
-            AppendChild(Getter);
-            AppendChild(Setter);
         }
 
         public VariantSymbol(string name, VariantType type, IReadOnlyList<Scope> attr, Scope dt)
@@ -50,10 +40,6 @@ namespace AbstractSyntax.Symbol
             VariantType = type;
             _Attribute = attr;
             _DataType = dt;
-            Getter = new PropertySymbol(this, false);
-            Setter = new PropertySymbol(this, true);
-            AppendChild(Getter);
-            AppendChild(Setter);
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -69,6 +55,11 @@ namespace AbstractSyntax.Symbol
         public override Scope CallReturnType
         {
             get { return _DataType ?? Root.ErrorType; }
+        }
+
+        public override bool IsConstant
+        {
+            get { return true; }
         }
 
         public bool IsField
@@ -108,11 +99,13 @@ namespace AbstractSyntax.Symbol
 
         internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
         {
-            foreach (var v in Getter.GetTypeMatch(pars, args))
+            var type = CallReturnType as ClassSymbol;
+            if(type == null)
             {
-                yield return v;
+                yield return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
+                yield break;
             }
-            foreach (var v in Setter.GetTypeMatch(pars, args))
+            foreach (var v in type.GetInstanceTypeMatch(pars, args))
             {
                 yield return v;
             }

@@ -27,11 +27,6 @@ namespace AbstractSyntax.Declaration
             AppendChild(ExplicitType);
         }
 
-        public override bool IsConstant
-        {
-            get { return true; }
-        }
-
         public override IReadOnlyList<Scope> Attribute
         {
             get
@@ -45,7 +40,7 @@ namespace AbstractSyntax.Declaration
                 {
                     a.Add(v.OverLoad.FindDataType());
                 }
-                if (!SyntaxUtility.HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
                     var p = NameResolution("public").FindDataType();
                     a.Add(p);

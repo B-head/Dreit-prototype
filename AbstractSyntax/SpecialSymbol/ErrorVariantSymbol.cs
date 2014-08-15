@@ -1,15 +1,17 @@
 ﻿using AbstractSyntax.Symbol;
-using AbstractSyntax.Visualizer;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AbstractSyntax.SpecialSymbol
 {
     [Serializable]
-    public class ErrorRoutineSymbol : RoutineSymbol
+    public class ErrorVariantSymbol : VariantSymbol
     {
-        public ErrorRoutineSymbol()
-            :base(RoutineType.Unknown, TokenType.Unknoun)
+        public ErrorVariantSymbol()
+            :base(VariantType.Unknown)
         {
 
         }

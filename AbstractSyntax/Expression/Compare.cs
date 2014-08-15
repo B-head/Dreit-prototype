@@ -11,7 +11,7 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Compare : DyadicExpression
     {
-        private RoutineSymbol _CallScope;
+        private RoutineSymbol _CallRoutine;
 
         public Compare(TextPosition tp, TokenType op, Element left, Element right)
             :base(tp, op, left, right)
@@ -19,26 +19,26 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public RoutineSymbol CallScope
+        public RoutineSymbol CallRoutine
         {
             get
             {
-                if (_CallScope == null)
+                if (_CallRoutine == null)
                 {
-                    _CallScope = Root.OpManager.FindDyadic(Operator, Left.ReturnType, VirtualRight.ReturnType);
+                    _CallRoutine = Root.OpManager.FindDyadic(Operator, Left.ReturnType, VirtualRight.ReturnType);
                 }
-                return _CallScope;
+                return _CallRoutine;
             }
         }
 
         public override bool IsConstant
         {
-            get { return Left.IsConstant && Right.IsConstant && CallScope.IsFunction; }
+            get { return Left.IsConstant && Right.IsConstant && CallRoutine.IsFunction; }
         }
 
         public override Scope ReturnType
         {
-            get { return CallScope.CallReturnType; }
+            get { return CallRoutine.CallReturnType; }
         }
 
         public bool IsLeftConnection
@@ -69,7 +69,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (CallScope is ErrorRoutineSymbol)
+            if (CallRoutine is ErrorRoutineSymbol && !SyntaxUtility.HasAnyErrorType(Left.ReturnType, Right.ReturnType))
             {
                 cmm.CompileError("impossible-calculate", this);
             }

@@ -69,6 +69,7 @@
     <Compile Include="OverLoadSimplex.cs" />
     <Compile Include="OverLoadSimplexManager.cs" />
     <Compile Include="SpecialSymbol\ErrorTypeSymbol.cs" />
+    <Compile Include="SpecialSymbol\ErrorVariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ModifyTypeSymbol.cs" />
     <Compile Include="Statement\BreakStatement.cs" />
     <Compile Include="Statement\CatchStatement.cs" />

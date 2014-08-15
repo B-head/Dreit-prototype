@@ -16,7 +16,6 @@ namespace AbstractSyntax.Declaration
         public TupleLiteral DecGenerics { get; private set; }
         public TupleLiteral DecArguments { get; private set; }
         public Element ExplicitType { get; private set; }
-        public bool IsDefaultThisReturn { get; private set; }
 
         public RoutineDeclaration(TextPosition tp, string name, RoutineType type, TokenType opType, TupleLiteral attr, TupleLiteral generic, TupleLiteral args, Element expli, ProgramContext block)
             : base(tp, name, type, opType, block)
@@ -29,11 +28,6 @@ namespace AbstractSyntax.Declaration
             AppendChild(DecGenerics);
             AppendChild(DecArguments);
             AppendChild(ExplicitType);
-        }
-
-        public override bool IsConstant
-        {
-            get { return true; }
         }
 
         public override IReadOnlyList<Scope> Attribute
@@ -49,7 +43,7 @@ namespace AbstractSyntax.Declaration
                 {
                     a.Add(v.OverLoad.FindDataType());
                 }
-                if (!SyntaxUtility.HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
                     var p = NameResolution("public").FindDataType();
                     a.Add(p);
@@ -129,7 +123,6 @@ namespace AbstractSyntax.Declaration
                     else if(CurrentScope is ClassDeclaration)
                     {
                         _CallReturnType = (ClassDeclaration)CurrentScope;
-                        IsDefaultThisReturn = true;
                     }
                     else
                     {

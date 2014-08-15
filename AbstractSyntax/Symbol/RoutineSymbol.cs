@@ -31,6 +31,7 @@ namespace AbstractSyntax.Symbol
         protected Scope _CallReturnType;
         public const string ConstructorIdentifier = "new";
         public const string DestructorIdentifier = "free";
+        public const string AliasCallIdentifier = "call";
 
         protected RoutineSymbol(RoutineType type, TokenType opType)
         {
@@ -83,14 +84,19 @@ namespace AbstractSyntax.Symbol
             get { return _CallReturnType ?? Root.ErrorType; }
         }
 
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
+
         public virtual bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
         {
-            get { return SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Virtual); }
+            get { return Attribute.HasAnyAttribute(AttributeType.Virtual); }
         }
 
         public virtual bool IsAbstract
         {
-            get { return SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Abstract); }
+            get { return Attribute.HasAnyAttribute(AttributeType.Abstract); }
         }
 
         public virtual bool IsFunction
@@ -117,7 +123,7 @@ namespace AbstractSyntax.Symbol
                     return null;
                 }
                 var i = cls.InheritClass as ClassSymbol;
-                return i.ZeroArgInitializer; //todo インポートされたコンストラクターも返すようにする。
+                return i.ZeroArgInitializer;
             }
         }
 
@@ -151,6 +157,32 @@ namespace AbstractSyntax.Symbol
                 }
                 return true;
             }
+        }
+
+        public bool IsAliasCall
+        {
+            get
+            {
+                if (!(CurrentScope is ClassSymbol))
+                {
+                    return false;
+                }
+                if (Name != AliasCallIdentifier)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public bool IsZeroArguments
+        {
+            get { return Arguments.Count == 0; }
+        }
+
+        public bool IsOneArguments
+        {
+            get { return Arguments.Count == 1; }
         }
     }
 }

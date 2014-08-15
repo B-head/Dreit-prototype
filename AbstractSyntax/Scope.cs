@@ -132,6 +132,11 @@ namespace AbstractSyntax
             get { return Root.ErrorType; }
         }
 
+        public override OverLoad OverLoad
+        {
+            get { return Root.SimplexManager.Issue(this); }
+        }
+
         public virtual IReadOnlyList<Scope> Attribute
         {
             get { return new List<Scope>(); }
@@ -146,7 +151,7 @@ namespace AbstractSyntax
                 {
                     return false;
                 }
-                return GetParent<ClassSymbol>() != null && SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Static); 
+                return GetParent<ClassSymbol>() != null && Attribute.HasAnyAttribute(AttributeType.Static); 
             }
         }
 
@@ -159,20 +164,7 @@ namespace AbstractSyntax
                 {
                     return false;
                 }
-                return GetParent<ClassSymbol>() != null && !SyntaxUtility.HasAnyAttribute(Attribute, AttributeType.Static); 
-            }
-        }
-
-        public bool IsThisCall
-        {
-            get 
-            {
-                var pp = this as PropertySymbol;
-                if(pp == null)
-                {
-                    return false;
-                }
-                return pp.Variant is ThisSymbol; 
+                return GetParent<ClassSymbol>() != null && !Attribute.HasAnyAttribute(AttributeType.Static); 
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.SpecialSymbol;
+using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,15 @@ namespace AbstractSyntax
         internal override IEnumerable<Scope> TraversalChilds()
         {
             yield return Symbol;
+        }
+
+        internal override IEnumerable<VariantSymbol> TraversalVariant()
+        {
+            var variant = Symbol as VariantSymbol;
+            if (variant != null)
+            {
+                yield return variant;
+            }
         }
 
         internal override IEnumerable<Scope> TraversalDataType()
