@@ -26,7 +26,7 @@ namespace AbstractSyntax.Expression
             get { return Member; }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get { return CallRoutine.CallReturnType; }
         }
@@ -57,7 +57,7 @@ namespace AbstractSyntax.Expression
             {
                 if(_Reference == null)
                 {
-                    var scope = (Scope)Access.ReturnType;
+                    var scope = Access.ReturnType;
                     _Reference = scope.NameResolution(Member);
                 }
                 return _Reference;
@@ -99,9 +99,9 @@ namespace AbstractSyntax.Expression
             {
                 return cls == type;
             }
-            else if(type is TemplateInstanceSymbol)
+            else if(type is ClassTemplateInstance)
             {
-                var tis = (TemplateInstanceSymbol)type;
+                var tis = (ClassTemplateInstance)type;
                 return tis.ContainClass(cls);
             }
             else

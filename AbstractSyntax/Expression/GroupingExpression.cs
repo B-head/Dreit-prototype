@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 
@@ -16,7 +17,7 @@ namespace AbstractSyntax.Expression
             AppendChild(Exp);
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get { return Exp.ReturnType; }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class AttributeScope : Element
     {
-        private List<Scope> _Attribute;
+        private List<AttributeSymbol> _Attribute;
 
         public AttributeScope(TextPosition tp, List<Element> child)
             :base(tp)
@@ -17,7 +18,7 @@ namespace AbstractSyntax.Declaration
             AppendChild(child);
         }
 
-        public IReadOnlyList<Scope> Attribute
+        public IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -25,10 +26,10 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Attribute;
                 }
-                _Attribute = new List<Scope>();
+                _Attribute = new List<AttributeSymbol>();
                 foreach (var v in this)
                 {
-                    _Attribute.Add(v.OverLoad.FindDataType());
+                    _Attribute.Add(v.OverLoad.FindAttribute());
                 }
                 return _Attribute;
             }

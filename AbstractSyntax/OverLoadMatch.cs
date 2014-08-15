@@ -15,11 +15,11 @@ namespace AbstractSyntax
         public TypeMatchResult Result { get; private set; }
         public IReadOnlyList<GenericSymbol> FormalGenerics { get; private set; }
         public IReadOnlyList<ParameterSymbol> FormalArguments { get; private set; }
-        public IReadOnlyList<Scope> ActualGenerics { get; private set; }
-        public IReadOnlyList<Scope> ActualArguments { get; private set; }
-        public IReadOnlyList<Scope> InstanceGenerics { get; private set; }
-        public IReadOnlyList<Scope> InstanceArguments { get; private set; }
-        public IReadOnlyList<Scope> Converters { get; private set; }
+        public IReadOnlyList<TypeSymbol> ActualGenerics { get; private set; }
+        public IReadOnlyList<TypeSymbol> ActualArguments { get; private set; }
+        public IReadOnlyList<TypeSymbol> InstanceGenerics { get; private set; }
+        public IReadOnlyList<TypeSymbol> InstanceArguments { get; private set; }
+        public IReadOnlyList<RoutineSymbol> Converters { get; private set; }
 
         internal static OverLoadMatch MakeNotCallable(RoutineSymbol call)
         {
@@ -34,11 +34,11 @@ namespace AbstractSyntax
         //todo さらに詳しい順位付けをする。
         //todo デフォルト引数に対応する。
         internal static OverLoadMatch MakeOverLoadMatch(ConversionManager manager, RoutineSymbol call,
-            IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa)
+            IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
         {
-            var ig = new List<Scope>();
-            var ia = new List<Scope>();
-            var convs = new List<Scope>();
+            var ig = new List<TypeSymbol>();
+            var ia = new List<TypeSymbol>();
+            var convs = new List<RoutineSymbol>();
             OverLoadMatch result = new OverLoadMatch()
             {
                 Call = call,
@@ -76,7 +76,7 @@ namespace AbstractSyntax
             return result;
         }
 
-        private static bool ContainGenericCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<Scope> ag)
+        private static bool ContainGenericCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<TypeSymbol> ag)
         {
             if (HasVariadic(fg))
             {
@@ -88,7 +88,7 @@ namespace AbstractSyntax
             }
         }
 
-        private static bool ContainArgumentCount(IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> aa)
+        private static bool ContainArgumentCount(IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> aa)
         {
             if(HasVariadic(fa))
             {
@@ -100,7 +100,7 @@ namespace AbstractSyntax
             }
         }
 
-        private static bool ContainTupleCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa)
+        private static bool ContainTupleCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
         {
             if (!HasVariadic(fg) || fg.Count > ag.Count)
             {
@@ -110,7 +110,7 @@ namespace AbstractSyntax
         }
 
         private static void InitInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
-            IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa, List<Scope> ig, List<Scope> ia)
+            IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
         {
             if (!HasVariadic(fg))
             {
@@ -147,9 +147,9 @@ namespace AbstractSyntax
             }
         }
 
-        private static void InferInstance(IReadOnlyList<Scope> ag, IReadOnlyList<Scope> aa, List<Scope> ig, List<Scope> ia)
+        private static void InferInstance(IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
         {
-            var tg = new List<Scope>(ig);
+            var tg = new List<TypeSymbol>(ig);
             for (var i = 0; i < ag.Count; ++i)
             {
                 ig[i] = ag[i];
@@ -190,9 +190,9 @@ namespace AbstractSyntax
             return f.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
         }
 
-        private static Scope GetVariadicType(List<Scope> ia)
+        private static TypeSymbol GetVariadicType(List<TypeSymbol> ia)
         {
-            var t = (TemplateInstanceSymbol)ia.Last();
+            var t = (ClassTemplateInstance)ia.Last();
             return t.Parameters[0];
         }
 
@@ -205,18 +205,18 @@ namespace AbstractSyntax
             var ret = new List<GenericSymbol>();
             for(var i = 0; i < count; ++i)
             {
-                ret.Add(new GenericSymbol("@@T" + (i + 1), new List<Scope>(), new List<Scope>()));
+                ret.Add(new GenericSymbol("@@T" + (i + 1), new List<AttributeSymbol>(), new List<Scope>()));
             }
             return ret;
         }
 
-        private static IReadOnlyList<Scope> MakeArgument(int count, Scope scope)
+        private static IReadOnlyList<TypeSymbol> MakeArgument(int count, TypeSymbol scope)
         {
             if (count < 0)
             {
                 throw new ArgumentException("count");
             }
-            var ret = new List<Scope>();
+            var ret = new List<TypeSymbol>();
             for (var i = 0; i < count; ++i)
             {
                 ret.Add(scope);
@@ -224,7 +224,7 @@ namespace AbstractSyntax
             return ret;
         }
 
-        private static int FindTypeIndex(IReadOnlyList<Scope> list, Scope value)
+        private static int FindTypeIndex(IReadOnlyList<TypeSymbol> list, TypeSymbol value)
         {
             for(var i = 0; i < list.Count; ++i)
             {
@@ -236,12 +236,12 @@ namespace AbstractSyntax
             throw new ArgumentException("value");
         }
 
-        private static Scope GetCommonSubType(Scope t1, Scope t2)
+        private static TypeSymbol GetCommonSubType(TypeSymbol t1, TypeSymbol t2)
         {
             return t1; //todo 処理の順序で結果が変わるバグに対処する。共通のサブタイプを返すようにする。
         }
 
-        private static TypeMatchResult CheckConverterResult(IReadOnlyList<Scope> convs)
+        private static TypeMatchResult CheckConverterResult(IReadOnlyList<RoutineSymbol> convs)
         {
             var result = TypeMatchResult.PerfectMatch;
             foreach (var v in convs)

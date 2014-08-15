@@ -23,7 +23,7 @@ namespace AbstractSyntax.SpecialSymbol
             _Arguments = null;
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -54,7 +54,7 @@ namespace AbstractSyntax.SpecialSymbol
             }
         }
 
-        public override Scope CallReturnType
+        public override TypeSymbol CallReturnType
         {
             get { return Type; }
         }

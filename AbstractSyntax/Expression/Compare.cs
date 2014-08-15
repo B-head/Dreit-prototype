@@ -36,7 +36,7 @@ namespace AbstractSyntax.Expression
             get { return Left.IsConstant && Right.IsConstant && CallRoutine.IsFunction; }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get { return CallRoutine.CallReturnType; }
         }

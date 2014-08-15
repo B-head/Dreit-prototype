@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Literal;
+using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public TupleLiteral DecParameters { get; private set; }
-        private IReadOnlyList<Scope> _Parameter;
+        private IReadOnlyList<TypeSymbol> _Parameter;
 
         public TemplateInstanceExpression(TextPosition tp, Element acs, TupleLiteral args)
             : base(tp)
@@ -23,9 +24,9 @@ namespace AbstractSyntax.Expression
             AppendChild(DecParameters);
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
-            get { return Root.TemplateInstanceManager.Issue(Access.OverLoad, Parameter.ToArray()); }
+            get { return Root.ClassManager.Issue(Access.OverLoad.FindDataType(), Parameter.ToArray()); }
         }
 
         public override OverLoad OverLoad
@@ -38,7 +39,7 @@ namespace AbstractSyntax.Expression
             get { return Access.IsConstant; }
         }
 
-        public IReadOnlyList<Scope> Parameter
+        public IReadOnlyList<TypeSymbol> Parameter
         {
             get
             {
@@ -46,7 +47,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _Parameter;
                 }
-                var pt = new List<Scope>();
+                var pt = new List<TypeSymbol>();
                 foreach (var v in DecParameters)
                 {
                     var temp = v.OverLoad.FindDataType();

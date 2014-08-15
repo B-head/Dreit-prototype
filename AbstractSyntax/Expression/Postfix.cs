@@ -16,17 +16,17 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {
                 if(Operator == TokenType.Refer)
                 {
-                    return Root.TemplateInstanceManager.Issue(Root.Refer, Exp.ReturnType);
+                    return Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { Exp.ReturnType });
                 }
                 else if(Operator == TokenType.Typeof)
                 {
-                    return Root.TemplateInstanceManager.Issue(Root.Typeof, Exp.ReturnType);
+                    return Root.ClassManager.Issue(Root.Typeof, new TypeSymbol[] { Exp.ReturnType });
                 }
                 else if(Operator == TokenType.Reject)
                 {

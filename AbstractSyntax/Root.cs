@@ -13,7 +13,9 @@ namespace AbstractSyntax
         private NameSpaceSymbol EmbedList;
         public CompileMessageManager MessageManager { get; private set; }
         public OverLoadSimplexManager SimplexManager { get; private set; }
-        public TemplateInstanceManager TemplateInstanceManager { get; private set; }
+        public OverLoadTemplateInstanceManager OverLoadManager { get; private set; }
+        public ClassTemplateInstanceManager ClassManager { get; private set; }
+        public RoutineTemplateInstanceManager RoutineManager { get; private set; }
         internal ConversionManager ConvManager { get; private set; }
         internal OperationManager OpManager { get; private set; }
         internal OverLoadChain UndefinedOverLord { get; private set; }
@@ -51,13 +53,16 @@ namespace AbstractSyntax
             EmbedList = new NameSpaceSymbol();
             MessageManager = new CompileMessageManager();
             SimplexManager = new OverLoadSimplexManager();
-            TemplateInstanceManager = new TemplateInstanceManager(SimplexManager);
+            OverLoadManager = new OverLoadTemplateInstanceManager();
+            ClassManager = new ClassTemplateInstanceManager();
+            RoutineManager = new RoutineTemplateInstanceManager();
             ConvManager = new ConversionManager(this);
             OpManager = new OperationManager(this); 
             UndefinedOverLord = new OverLoadChain(this, null);
             CreateEmbedIdentifier();
             AppendChild(EmbedList);
-            AppendChild(TemplateInstanceManager);
+            AppendChild(ClassManager);
+            AppendChild(RoutineManager);
         }
 
         public void SemanticAnalysis()

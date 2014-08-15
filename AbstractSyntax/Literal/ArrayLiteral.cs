@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,8 @@ namespace AbstractSyntax.Literal
     public class ArrayLiteral : Element
     {
         public IReadOnlyList<Element> Values { get; private set; }
-        private Scope _BaseType;
-        private Scope _ReturnType;
+        private TypeSymbol _BaseType;
+        private TypeSymbol _ReturnType;
 
         public ArrayLiteral(TextPosition tp, IReadOnlyList<Element> values)
             :base(tp)
@@ -20,7 +21,7 @@ namespace AbstractSyntax.Literal
             AppendChild(Values);
         }
 
-        public Scope BaseType
+        public TypeSymbol BaseType
         {
             get
             {
@@ -40,7 +41,7 @@ namespace AbstractSyntax.Literal
             }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {
@@ -48,8 +49,8 @@ namespace AbstractSyntax.Literal
                 {
                     return _ReturnType;
                 }
-                var list = CurrentScope.NameResolution("List");
-                _ReturnType = Root.TemplateInstanceManager.Issue(list, new Scope[] { BaseType });
+                var list = CurrentScope.NameResolution("List").FindDataType();
+                _ReturnType = Root.ClassManager.Issue(list, new TypeSymbol[] { BaseType });
                 return _ReturnType;
             }
         }

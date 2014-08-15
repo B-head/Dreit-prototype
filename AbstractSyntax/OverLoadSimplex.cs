@@ -42,15 +42,25 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<Scope> TraversalDataType()
+        internal override IEnumerable<AttributeSymbol> TraversalAttribute()
         {
-            if (Symbol.IsDataType)
+            var attr = Symbol as AttributeSymbol;
+            if (attr != null)
             {
-                yield return Symbol;
+                yield return attr;
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<TypeSymbol> TraversalDataType()
+        {
+            var type = Symbol as TypeSymbol;
+            if (type != null)
+            {
+                yield return type;
+            }
+        }
+
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             foreach (var m in Symbol.GetTypeMatch(pars, args))
             {

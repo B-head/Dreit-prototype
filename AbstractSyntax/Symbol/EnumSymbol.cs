@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class EnumSymbol : Scope
+    public class EnumSymbol : TypeSymbol
     {
         public ProgramContext Block { get; private set; }
-        protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected Scope _BaseType;
 
         protected EnumSymbol(TextPosition tp, string name, ProgramContext block)
@@ -22,7 +22,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
         }
 
-        public EnumSymbol(string name, ProgramContext block, IReadOnlyList<Scope> attr, Scope bt)
+        public EnumSymbol(string name, ProgramContext block, IReadOnlyList<AttributeSymbol> attr, Scope bt)
         {
             Name = name;
             Block = block;

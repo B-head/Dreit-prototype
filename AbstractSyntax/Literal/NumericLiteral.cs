@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Visualizer;
+﻿using AbstractSyntax.Symbol;
+using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
 using System.Numerics;
@@ -10,7 +11,7 @@ namespace AbstractSyntax.Literal
     {
         public string Integral { get; private set; }
         public string Fraction { get; private set; }
-        private Scope _ReturnType;
+        private TypeSymbol _ReturnType;
 
         public NumericLiteral(TextPosition tp, string integral, string fraction)
             :base(tp)
@@ -19,7 +20,7 @@ namespace AbstractSyntax.Literal
             Fraction = fraction;
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {

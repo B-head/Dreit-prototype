@@ -24,7 +24,7 @@ namespace AbstractSyntax.Declaration
             AppendChild(ExplicitType);
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -32,17 +32,17 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Attribute;
                 }
-                var a = new List<Scope>();
+                var a = new List<AttributeSymbol>();
                 foreach (var v in AttributeAccess)
                 {
-                    a.Add(v.OverLoad.FindDataType());
+                    a.Add(v.OverLoad.FindAttribute());
                 }
                 _Attribute = a;
                 return _Attribute;
             }
         }
 
-        public override Scope CallReturnType
+        public override TypeSymbol DataType
         {
             get
             {

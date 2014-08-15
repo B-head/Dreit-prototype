@@ -66,7 +66,23 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<Scope> TraversalDataType()
+        internal override IEnumerable<AttributeSymbol> TraversalAttribute()
+        {
+            if (IsHoldAlias)
+            {
+                SpreadAlias();
+            }
+            foreach (var v in Symbols)
+            {
+                var attr = v as AttributeSymbol;
+                if (attr != null)
+                {
+                    yield return attr;
+                }
+            }
+        }
+
+        internal override IEnumerable<TypeSymbol> TraversalDataType()
         {
             if(IsHoldAlias)
             {
@@ -74,14 +90,15 @@ namespace AbstractSyntax
             }
             foreach(var v in Symbols)
             {
-                if(v.IsDataType)
+                var type = v as TypeSymbol;
+                if (type != null)
                 {
-                    yield return v;
+                    yield return type;
                 }
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             if (IsHoldAlias)
             {

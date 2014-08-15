@@ -117,6 +117,26 @@ namespace CliTranslate
             return null;
         }
 
+        private CilStructure Translate(ErrorRoutineSymbol element)
+        {
+            throw new ArgumentException("element");
+        }
+
+        private CilStructure Translate(ErrorTypeSymbol element)
+        {
+            throw new ArgumentException("element");
+        }
+
+        private CilStructure Translate(ErrorVariantSymbol element)
+        {
+            return null;
+        }
+
+        private CilStructure Translate(UnknownSymbol element)
+        {
+            throw new ArgumentException("element");
+        }
+
         private PureTypeStructure Translate(VoidSymbol element)
         {
             var gnr = new List<GenericParameterStructure>();
@@ -143,7 +163,7 @@ namespace CliTranslate
 
         private ParameterStructure Translate(ThisSymbol element)
         {
-            var dt = RelayTranslate(element.CallReturnType);
+            var dt = RelayTranslate(element.DataType);
             var ret = new ParameterStructure(dt); 
             return ret;
         }
@@ -198,11 +218,11 @@ namespace CliTranslate
             return ret;
         }
 
-        private GenericTypeStructure Translate(TemplateInstanceSymbol element, Type info = null)
+        private GenericTypeStructure Translate(ClassTemplateInstance element, Type info = null)
         {
             var ret = new GenericTypeStructure();
             TransDictionary.Add(element, ret);
-            var bt = RelayTranslate(element.BaseType);
+            var bt = RelayTranslate(element.Type);
             var gnr = CollectList<TypeStructure>(element.Parameters);
             ret.Initialize(bt, gnr);
             return ret;
@@ -246,7 +266,7 @@ namespace CliTranslate
         private CilStructure Translate(VariantSymbol element, FieldInfo info = null)
         {
             var attr = element.Attribute.MakeFieldAttributes(element.IsDefinedConstantValue);
-            var dt = RelayTranslate(element.CallReturnType);
+            var dt = RelayTranslate(element.DataType);
             if (element.IsField || element.IsGlobal)
             {
                 var constval = element.GenerateConstantValue();
@@ -264,7 +284,7 @@ namespace CliTranslate
         {
             if (element.IsLoopParameter)
             {
-                var dt = RelayTranslate(element.CallReturnType);
+                var dt = RelayTranslate(element.DataType);
                 var def = RelayTranslate(element.DefaultValue);
                 var ret = new LoopParameterStructure(element.Name, dt, def);
                 return ret;
@@ -272,7 +292,7 @@ namespace CliTranslate
             else
             {
                 var attr = ParameterAttributes.None;
-                var pt = RelayTranslate(element.CallReturnType);
+                var pt = RelayTranslate(element.DataType);
                 //todo 無限再帰に対処する。
                 //var def = RelayTranslate(element.DefaultValue);
                 var ret = new ParameterStructure(element.Name, attr, pt, null);
@@ -408,7 +428,7 @@ namespace CliTranslate
             if (element.IsTacitThis)
             {
                 var thiscall = RelayTranslate(element.ThisCallRoutine);
-                var thisrt = RelayTranslate(element.ThisReference.CallReturnType);
+                var thisrt = RelayTranslate(element.ThisReference.DataType);
                 var thisvar = RelayTranslate(element.ThisReference);
                 var pre = new CallStructure(thisrt, thiscall, null, thisvar);
                 var ret = new CallStructure(rt, call, pre, variant);

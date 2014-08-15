@@ -24,10 +24,9 @@ namespace AbstractSyntax.SpecialSymbol
             {
                 Name = "false";
             }
-            _Attribute = new List<Scope>();
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {

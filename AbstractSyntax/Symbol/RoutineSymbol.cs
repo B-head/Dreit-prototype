@@ -25,10 +25,10 @@ namespace AbstractSyntax.Symbol
         public RoutineType RoutineType { get; private set; }
         public TokenType OperatorType { get; private set; }
         public ProgramContext Block { get; private set; }
-        protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<ParameterSymbol> _Arguments;
-        protected Scope _CallReturnType;
+        protected TypeSymbol _CallReturnType;
         public const string ConstructorIdentifier = "new";
         public const string DestructorIdentifier = "free";
         public const string AliasCallIdentifier = "call";
@@ -51,7 +51,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
         }
 
-        public RoutineSymbol(string name, RoutineType type, TokenType opType, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ParameterSymbol> arg, Scope rt)
+        public RoutineSymbol(string name, RoutineType type, TokenType opType, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ParameterSymbol> arg, TypeSymbol rt)
         {
             Name = name;
             RoutineType = type;
@@ -64,9 +64,9 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
-            get { return _Attribute ?? new List<Scope>(); }
+            get { return _Attribute ?? new List<AttributeSymbol>(); }
         }
 
         public virtual IReadOnlyList<GenericSymbol> Generics
@@ -79,7 +79,7 @@ namespace AbstractSyntax.Symbol
             get { return _Arguments ?? new List<ParameterSymbol>();; }
         }
 
-        public override Scope CallReturnType
+        public virtual TypeSymbol CallReturnType
         {
             get { return _CallReturnType ?? Root.ErrorType; }
         }
@@ -104,7 +104,7 @@ namespace AbstractSyntax.Symbol
             get { return RoutineType == RoutineType.Function || RoutineType == RoutineType.FunctionConverter || RoutineType == RoutineType.FunctionOperator; }
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             yield return OverLoadMatch.MakeOverLoadMatch(Root.ConvManager, this, Generics, Arguments, pars, args);
         }
@@ -173,16 +173,6 @@ namespace AbstractSyntax.Symbol
                 }
                 return true;
             }
-        }
-
-        public bool IsZeroArguments
-        {
-            get { return Arguments.Count == 0; }
-        }
-
-        public bool IsOneArguments
-        {
-            get { return Arguments.Count == 1; }
         }
     }
 }

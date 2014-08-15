@@ -117,7 +117,7 @@ namespace AbstractSyntax
             get { return Name; }
         }
 
-        internal virtual IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal virtual IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             yield return OverLoadMatch.MakeNotCallable(Root.ErrorRoutine);
         }
@@ -127,19 +127,14 @@ namespace AbstractSyntax
             get { return false; }
         }
 
-        public virtual Scope CallReturnType
-        {
-            get { return Root.ErrorType; }
-        }
-
         public override OverLoad OverLoad
         {
             get { return Root.SimplexManager.Issue(this); }
         }
 
-        public virtual IReadOnlyList<Scope> Attribute
+        public virtual IReadOnlyList<AttributeSymbol> Attribute
         {
-            get { return new List<Scope>(); }
+            get { return new List<AttributeSymbol>(); }
         }
 
         public bool IsStaticMember

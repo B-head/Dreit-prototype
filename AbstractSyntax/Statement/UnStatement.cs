@@ -33,7 +33,7 @@ namespace AbstractSyntax.Statement
             }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get { return CallRoutine.CallReturnType; }
         }

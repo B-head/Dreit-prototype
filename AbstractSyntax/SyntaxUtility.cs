@@ -23,9 +23,9 @@ namespace AbstractSyntax
             return result;
         }
 
-        public static IReadOnlyList<Scope> GetDataTypes(this IReadOnlyList<Element> list)
+        public static IReadOnlyList<TypeSymbol> GetDataTypes(this IReadOnlyList<Element> list)
         {
-            var result = new List<Scope>();
+            var result = new List<TypeSymbol>();
             foreach (var v in list)
             {
                 result.Add(v.ReturnType);
@@ -33,16 +33,11 @@ namespace AbstractSyntax
             return result;
         }
 
-        internal static bool HasAnyAttribute(this IReadOnlyList<Scope> attribute, params AttributeType[] type)
+        internal static bool HasAnyAttribute(this IReadOnlyList<AttributeSymbol> attribute, params AttributeType[] type)
         {
             foreach (var v in attribute)
             {
-                var a = v as AttributeSymbol;
-                if (a == null)
-                {
-                    continue;
-                }
-                if (type.Any(t => t == a.AttributeType))
+                if (type.Any(t => t == v.AttributeType))
                 {
                     return true;
                 }
@@ -50,12 +45,12 @@ namespace AbstractSyntax
             return false;
         }
 
-        public static IReadOnlyList<ParameterSymbol> MakeParameters(params Scope[] types)
+        public static IReadOnlyList<ParameterSymbol> MakeParameters(params TypeSymbol[] types)
         {
             var ret = new List<ParameterSymbol>();
             for(var i = 0; i < types.Length; ++i)
             {
-                var p = new ParameterSymbol("@@arg" + (i + 1), VariantType.Let, new List<Scope>(), types[i]);
+                var p = new ParameterSymbol("@@arg" + (i + 1), VariantType.Let, new List<AttributeSymbol>(), types[i]);
                 ret.Add(p);
             }
             return ret;
@@ -75,12 +70,12 @@ namespace AbstractSyntax
             return r.Arguments.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
         }
 
-        internal static bool HasAnyErrorType(params Scope[] scope)
+        internal static bool HasAnyErrorType(params TypeSymbol[] scope)
         {
-            return HasAnyErrorType((IReadOnlyList<Scope>)scope);
+            return HasAnyErrorType((IReadOnlyList<TypeSymbol>)scope);
         }
 
-        internal static bool HasAnyErrorType(IReadOnlyList<Scope> scope)
+        internal static bool HasAnyErrorType(IReadOnlyList<TypeSymbol> scope)
         {
             foreach (var v in scope)
             {

@@ -38,7 +38,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get { return CallRoutine.CallReturnType; }
         }
@@ -46,11 +46,6 @@ namespace AbstractSyntax.Expression
         public override bool IsConstant
         {
             get { return CallRoutine.IsFunction; }
-        }
-
-        public bool IsPragma
-        {
-            get { return IdentType == TokenType.Pragma; }
         }
 
         public VariantSymbol ReferVariant
@@ -76,7 +71,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _Reference;
                 }
-                if (IsPragma)
+                if (IdentType == TokenType.Pragma)
                 {
                     _Reference = CurrentScope.NameResolution("@@" + Value);
                 }

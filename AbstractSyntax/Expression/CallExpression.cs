@@ -69,10 +69,10 @@ namespace AbstractSyntax.Expression
                     return _Match.Value;
                 }
                 var tie = Access as TemplateInstanceExpression;
-                IReadOnlyList<Scope> pars;
+                IReadOnlyList<TypeSymbol> pars;
                 if(tie == null)
                 {
-                    pars = new List<Scope>();
+                    pars = new List<TypeSymbol>();
                 }
                 else
                 {
@@ -100,7 +100,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {
@@ -184,7 +184,7 @@ namespace AbstractSyntax.Expression
             return Access == element;
         }
 
-        public Scope CallType //todo Tuple型も返せるようにする。
+        public TypeSymbol CallType //todo Tuple型も返せるようにする。
         {
             get
             {

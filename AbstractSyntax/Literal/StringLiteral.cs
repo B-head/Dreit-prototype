@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace AbstractSyntax.Literal
     public class StringLiteral : Element
     {
         public IReadOnlyList<Element> Texts { get; private set; }
-        private Scope _ReturnType;
+        private TypeSymbol _ReturnType;
 
         public StringLiteral(TextPosition tp, IReadOnlyList<Element> texts)
             :base(tp)
@@ -19,7 +20,7 @@ namespace AbstractSyntax.Literal
             AppendChild(Texts);
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {

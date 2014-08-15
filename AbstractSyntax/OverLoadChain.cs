@@ -87,7 +87,18 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<Scope> TraversalDataType()
+        internal override IEnumerable<AttributeSymbol> TraversalAttribute()
+        {
+            foreach (var s in TraversalSets(true, false))
+            {
+                foreach (var v in s.TraversalAttribute())
+                {
+                    yield return v;
+                }
+            }
+        }
+
+        internal override IEnumerable<TypeSymbol> TraversalDataType()
         {
             foreach (var s in TraversalSets(true, false))
             {
@@ -98,7 +109,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             foreach (var s in TraversalSets(true, true))
             {

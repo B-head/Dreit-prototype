@@ -19,7 +19,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(DefaultValue);
         }
 
-        public ParameterSymbol(string name, VariantType type, IReadOnlyList<Scope> attr, Scope dt)
+        public ParameterSymbol(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
             : base(name, type, attr, dt)
         {
 

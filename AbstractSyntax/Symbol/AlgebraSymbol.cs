@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class AlgebraSymbol : Scope
+    public class AlgebraSymbol : TypeSymbol
     {
     }
 }

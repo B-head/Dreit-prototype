@@ -20,7 +20,16 @@ namespace AbstractSyntax
             return Root.ErrorVariant;
         }
 
-        public Scope FindDataType()
+        public AttributeSymbol FindAttribute()
+        {
+            foreach (var v in TraversalAttribute())
+            {
+                return v;
+            }
+            return null;
+        }
+
+        public TypeSymbol FindDataType()
         {
             foreach (var v in TraversalDataType())
             {
@@ -31,10 +40,10 @@ namespace AbstractSyntax
 
         public OverLoadMatch CallSelect()
         {
-            return CallSelect(new List<Scope>(), new List<Scope>());
+            return CallSelect(new List<TypeSymbol>(), new List<TypeSymbol>());
         }
 
-        public OverLoadMatch CallSelect(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        public OverLoadMatch CallSelect(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             if (SyntaxUtility.HasAnyErrorType(pars) || SyntaxUtility.HasAnyErrorType(args))
             {
@@ -57,7 +66,8 @@ namespace AbstractSyntax
         internal abstract Root Root { get; }
         internal abstract IEnumerable<Scope> TraversalChilds();
         internal abstract IEnumerable<VariantSymbol> TraversalVariant();
-        internal abstract IEnumerable<Scope> TraversalDataType();
-        internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args);
+        internal abstract IEnumerable<AttributeSymbol> TraversalAttribute();
+        internal abstract IEnumerable<TypeSymbol> TraversalDataType();
+        internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args);
     }
 }

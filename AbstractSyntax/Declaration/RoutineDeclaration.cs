@@ -30,7 +30,7 @@ namespace AbstractSyntax.Declaration
             AppendChild(ExplicitType);
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -38,14 +38,14 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Attribute;
                 }
-                var a = new List<Scope>();
+                var a = new List<AttributeSymbol>();
                 foreach (var v in AttributeAccess)
                 {
-                    a.Add(v.OverLoad.FindDataType());
+                    a.Add(v.OverLoad.FindAttribute());
                 }
                 if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
-                    var p = NameResolution("public").FindDataType();
+                    var p = NameResolution("public").FindAttribute();
                     a.Add(p);
                 }
                 _Attribute = a;
@@ -89,7 +89,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override Scope CallReturnType
+        public override TypeSymbol CallReturnType
         {
             get
             {
@@ -97,6 +97,7 @@ namespace AbstractSyntax.Declaration
                 {
                     return _CallReturnType;
                 }
+                _CallReturnType = Root.ErrorType;
                 if (ExplicitType != null)
                 {
                     _CallReturnType = ExplicitType.OverLoad.FindDataType();

@@ -27,7 +27,7 @@ namespace AbstractSyntax.Declaration
             AppendChild(InheritAccess);
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -35,14 +35,14 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Attribute;
                 }
-                var a = new List<Scope>();
+                var a = new List<AttributeSymbol>();
                 foreach (var v in AttributeAccess)
                 {
-                    a.Add(v.OverLoad.FindDataType());
+                    a.Add(v.OverLoad.FindAttribute());
                 }
                 if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
-                    var p = NameResolution("public").FindDataType();
+                    var p = NameResolution("public").FindAttribute();
                     a.Add(p);
                 }
                 _Attribute = a;
@@ -68,7 +68,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override IReadOnlyList<Scope> Inherit 
+        public override IReadOnlyList<TypeSymbol> Inherit 
         {
             get
             {
@@ -76,7 +76,7 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Inherit;
                 }
-                var i = new List<Scope>();
+                var i = new List<TypeSymbol>();
                 foreach (var v in InheritAccess)
                 {
                     var dt = v.OverLoad.FindDataType();

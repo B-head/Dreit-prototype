@@ -20,8 +20,8 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public VariantType VariantType { get; private set; }
-        protected IReadOnlyList<Scope> _Attribute;
-        protected Scope _DataType;
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
+        protected TypeSymbol _DataType;
 
         protected VariantSymbol(VariantType type)
         {
@@ -34,7 +34,7 @@ namespace AbstractSyntax.Symbol
             VariantType = type;
         }
 
-        public VariantSymbol(string name, VariantType type, IReadOnlyList<Scope> attr, Scope dt)
+        public VariantSymbol(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
         {
             Name = name;
             VariantType = type;
@@ -42,17 +42,17 @@ namespace AbstractSyntax.Symbol
             _DataType = dt;
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get { return _Attribute ?? new List<AttributeSymbol>(); }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
-            get { return CallReturnType; }
+            get { return DataType; }
         }
 
-        public override Scope CallReturnType
+        public virtual TypeSymbol DataType
         {
             get { return _DataType ?? Root.ErrorType; }
         }
@@ -97,15 +97,9 @@ namespace AbstractSyntax.Symbol
             return caller.GenelateConstantValue();
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            var type = CallReturnType as ClassSymbol;
-            if(type == null)
-            {
-                yield return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
-                yield break;
-            }
-            foreach (var v in type.GetInstanceTypeMatch(pars, args))
+            foreach (var v in DataType.GetInstanceTypeMatch(pars, args))
             {
                 yield return v;
             }

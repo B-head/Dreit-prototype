@@ -25,7 +25,7 @@ namespace AbstractSyntax
             ConvList.Add(symbol);
         }
 
-        public Scope Find(Scope from, Scope to)
+        public RoutineSymbol Find(TypeSymbol from, TypeSymbol to)
         {
             var s = ConvList.FindAll(v => v.CallReturnType == to && v.Arguments[0].ReturnType == from);
             if(s.Count == 1)
@@ -49,7 +49,7 @@ namespace AbstractSyntax
             }
         }
 
-        private static bool ContainSubType(Scope from, Scope to)
+        private static bool ContainSubType(TypeSymbol from, TypeSymbol to)
         {
             var f = from as ClassSymbol;
             if(f == null)

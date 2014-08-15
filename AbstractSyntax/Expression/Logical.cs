@@ -16,7 +16,7 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get { return Left.ReturnType; }
         }

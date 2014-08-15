@@ -69,7 +69,7 @@ namespace CliTranslate
             }
         }
 
-        private Scope ImportType(Type type)
+        private TypeSymbol ImportType(Type type)
         {
             if (type.HasElementType)
             {
@@ -93,7 +93,7 @@ namespace CliTranslate
         private ClassSymbol ImportPureType(Type type)
         {
             ClassType classType;
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, type, out classType);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
@@ -132,15 +132,16 @@ namespace CliTranslate
             var property = type.GetProperties(Binding);
             foreach (var p in property)
             {
+                var name = p.GetIndexParameters().Count() > 0 ? RoutineSymbol.AliasCallIdentifier : p.Name; 
                 var g = p.GetMethod;
                 if (g != null && !g.IsAssembly && !g.IsFamilyAndAssembly && !g.IsPrivate)
                 {
-                    block.Append(ImportProperty(p.GetMethod, p.Name));
+                    block.Append(ImportProperty(p.GetMethod, name));
                 }
                 var s = p.SetMethod;
                 if (s != null && !s.IsAssembly && !s.IsFamilyAndAssembly && !s.IsPrivate)
                 {
-                    block.Append(ImportProperty(p.SetMethod, p.Name));
+                    block.Append(ImportProperty(p.SetMethod, name));
                 }
             }
             var method = type.GetMethods(Binding);
@@ -178,21 +179,21 @@ namespace CliTranslate
             return elem;
         }
 
-        private TemplateInstanceSymbol ImportModifyType(Type type)
+        private ClassTemplateInstance ImportModifyType(Type type)
         {
             var elementType = ImportType(type.GetElementType());
-            TemplateInstanceSymbol elem = null;
+            ClassTemplateInstance elem = null;
             if(type.IsArray)
             {
-                elem = Root.TemplateInstanceManager.Issue(Root.EmbedArray, elementType);
+                elem = Root.ClassManager.Issue(Root.EmbedArray, new TypeSymbol[] { elementType });
             }
             else if(type.IsByRef)
             {
-                elem = Root.TemplateInstanceManager.Issue(Root.Refer, elementType);
+                elem = Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { elementType });
             }
             else if(type.IsPointer)
             {
-                elem = Root.TemplateInstanceManager.Issue(Root.Pointer, elementType);
+                elem = Root.ClassManager.Issue(Root.Pointer, new TypeSymbol[] { elementType });
             }
             else
             {
@@ -200,20 +201,20 @@ namespace CliTranslate
             }
             if (ImportDictionary.ContainsKey(type))
             {
-                return (TemplateInstanceSymbol)ImportDictionary[type];
+                return (ClassTemplateInstance)ImportDictionary[type];
             }
             ImportDictionary.Add(type, elem);
             return elem;
         }
 
-        private TemplateInstanceSymbol ImportTemplateInstance(Type type)
+        private ClassTemplateInstance ImportTemplateInstance(Type type)
         {
             var definition = ImportType(type.GetGenericTypeDefinition());
-            var parameter = new List<Scope>();
-            var elem = Root.TemplateInstanceManager.Issue(definition, parameter);
+            var parameter = new List<TypeSymbol>();
+            var elem = Root.ClassManager.Issue(definition, parameter);
             if (ImportDictionary.ContainsKey(type))
             {
-                return (TemplateInstanceSymbol)ImportDictionary[type];
+                return (ClassTemplateInstance)ImportDictionary[type];
             }
             ImportDictionary.Add(type, elem);
             AppendParameterType(parameter, type.GetGenericArguments());
@@ -222,7 +223,7 @@ namespace CliTranslate
 
         private GenericSymbol ImportGenericType(Type type)
         {
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, type);
             var constraint = CreateConstraintList(type.GetGenericParameterConstraints());
             var elem = new GenericSymbol(type.Name, attribute, constraint);
@@ -236,7 +237,7 @@ namespace CliTranslate
 
         private EnumSymbol ImportEnum(Type type)
         {
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, type);
             var dt = ImportType(type.GetEnumUnderlyingType());
             var block = new ProgramContext();
@@ -248,7 +249,7 @@ namespace CliTranslate
             ImportDictionary.Add(type, elem);
             foreach(var v in type.GetEnumNames())
             {
-                var f = new VariantSymbol(v, VariantType.Const, new List<Scope>(), dt);
+                var f = new VariantSymbol(v, VariantType.Const, new List<AttributeSymbol>(), dt);
                 block.Append(f);
             }
             return elem;
@@ -260,7 +261,7 @@ namespace CliTranslate
             {
                 return (RoutineSymbol)ImportDictionary[method];
             }
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, method);
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
@@ -276,7 +277,7 @@ namespace CliTranslate
             {
                 return (RoutineSymbol)ImportDictionary[prop];
             }
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, prop);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(prop);
@@ -292,7 +293,7 @@ namespace CliTranslate
             {
                 return (RoutineSymbol)ImportDictionary[ctor];
             }
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, ctor);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(ctor);
@@ -308,7 +309,7 @@ namespace CliTranslate
             {
                 return (ParameterSymbol)ImportDictionary[prm];
             }
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, prm);
             var dt = ImportType(prm.ParameterType);
             var elem = new ParameterSymbol(prm.Name, VariantType.Var, attribute, dt);
@@ -323,7 +324,7 @@ namespace CliTranslate
                 return (VariantSymbol)ImportDictionary[field];
             }
             VariantType type;
-            var attribute = new List<Scope>();
+            var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, field, out type);
             var dt = ImportType(field.FieldType);
             var elem = new VariantSymbol(field.Name, type, attribute, dt);
@@ -341,13 +342,13 @@ namespace CliTranslate
             return name.Substring(0, i);
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, Type type)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, Type type)
         {
             ClassType classType;
             AppendEmbededAttribute(list, type, out classType);
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, Type type, out ClassType classType)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, Type type, out ClassType classType)
         {
             classType = ClassType.Class;
             if (type.GetCustomAttribute<GlobalScopeAttribute>() != null) list.Add(Root.GlobalScope);
@@ -371,7 +372,7 @@ namespace CliTranslate
             }
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, MethodBase method)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, MethodBase method)
         {
             if (method.IsAbstract) list.Add(Root.Abstract);
             if (method.IsFamily) list.Add(Root.Protected);
@@ -382,7 +383,7 @@ namespace CliTranslate
             if (method.IsVirtual) list.Add(Root.Virtual);
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, FieldInfo field, out VariantType type)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, FieldInfo field, out VariantType type)
         {
             type = VariantType.Var;
             if (field.IsFamily) list.Add(Root.Protected);
@@ -393,13 +394,13 @@ namespace CliTranslate
             if (field.IsStatic) list.Add(Root.Static);
         }
 
-        private void AppendEmbededAttribute(List<Scope> list, ParameterInfo parameter)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, ParameterInfo parameter)
         {
             if (parameter.GetCustomAttribute<ParamArrayAttribute>() != null) list.Add(Root.Variadic);
             if (parameter.IsOptional) list.Add(Root.Optional);
         }
 
-        private void AppendParameterType(List<Scope> list, Type[] prm)
+        private void AppendParameterType(List<TypeSymbol> list, Type[] prm)
         {
             foreach (var v in prm)
             {
@@ -417,9 +418,9 @@ namespace CliTranslate
             return ret;
         }
 
-        private IReadOnlyList<Scope> CreateInheritList(Type type)
+        private IReadOnlyList<TypeSymbol> CreateInheritList(Type type)
         {
-            var ret = new List<Scope>();
+            var ret = new List<TypeSymbol>();
             if (type.BaseType != null)
             {
                 ret.Add(ImportType(type.BaseType));

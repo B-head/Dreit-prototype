@@ -34,8 +34,8 @@ namespace AbstractSyntax
             Child = new List<Element>();
             Position = tp;
         }
-        
-        public virtual Scope ReturnType
+
+        public virtual TypeSymbol ReturnType
         {
             get { return Root.Void; }
         }

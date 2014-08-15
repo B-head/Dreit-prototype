@@ -14,7 +14,6 @@ namespace AbstractSyntax.SpecialSymbol
             : base(VariantType.Var)
         {
             Name = "this";
-            _Attribute = new List<Scope>();
             _DataType = dataType;
         }
     }

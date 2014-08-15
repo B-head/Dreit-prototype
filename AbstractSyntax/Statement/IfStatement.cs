@@ -14,7 +14,7 @@ namespace AbstractSyntax.Statement
         public Element Condition { get; private set; }
         public ProgramContext Then { get; private set; }
         public ProgramContext Else { get; private set; }
-        private Scope _ReturnType;
+        private TypeSymbol _ReturnType;
 
         public IfStatement(TextPosition tp, Element cond, ProgramContext than, ProgramContext els)
             :base(tp)
@@ -32,7 +32,7 @@ namespace AbstractSyntax.Statement
             get { return Else != null; }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get 
             {
@@ -52,9 +52,9 @@ namespace AbstractSyntax.Statement
                 }
                 return _ReturnType; 
             }
-        } 
+        }
 
-        private Scope BlockReturnType(ProgramContext block)
+        private TypeSymbol BlockReturnType(ProgramContext block)
         {
             if(block == null)
             {

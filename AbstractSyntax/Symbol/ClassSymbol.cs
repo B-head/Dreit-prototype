@@ -18,14 +18,14 @@ namespace AbstractSyntax.Symbol
     }
 
     [Serializable]
-    public class ClassSymbol : Scope
+    public class ClassSymbol : TypeSymbol
     {
         public ThisSymbol This { get; private set; }
         public ClassType ClassType { get; private set; }
         public ProgramContext Block { get; private set; }
-        protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
-        protected IReadOnlyList<Scope> _Inherit;
+        protected IReadOnlyList<TypeSymbol> _Inherit;
         public IReadOnlyList<RoutineSymbol> Initializers { get; private set; }
         public IReadOnlyList<RoutineSymbol> AliasCalls { get; private set; }
 
@@ -52,7 +52,7 @@ namespace AbstractSyntax.Symbol
             InitAliasCalls();
         }
 
-        public ClassSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
+        public ClassSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<TypeSymbol> inherit)
         {
             Name = name;
             ClassType = type;
@@ -112,14 +112,14 @@ namespace AbstractSyntax.Symbol
                 if (r.IsAliasCall)
                 {
                     i.Add(r);
-                    if (r.IsZeroArguments)
-                    {
-                        getFlag = true;
-                    }
-                    if (r.IsOneArguments)
-                    {
-                        serFlag = true;
-                    }
+                    //if ()
+                    //{
+                    //    getFlag = true;
+                    //}
+                    //if ()
+                    //{
+                    //    serFlag = true;
+                    //}
                 }
             }
             if (!getFlag)
@@ -137,9 +137,9 @@ namespace AbstractSyntax.Symbol
             AliasCalls = i;
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
-            get { return _Attribute ?? new List<Scope>(); }
+            get { return _Attribute ?? new List<AttributeSymbol>(); }
         }
 
         public virtual IReadOnlyList<GenericSymbol> Generics
@@ -147,9 +147,9 @@ namespace AbstractSyntax.Symbol
             get { return _Generics ?? new List<GenericSymbol>(); }
         }
 
-        public virtual IReadOnlyList<Scope> Inherit
+        public virtual IReadOnlyList<TypeSymbol> Inherit
         {
-            get { return _Inherit ?? new List<Scope>(); }
+            get { return _Inherit ?? new List<TypeSymbol>(); }
         }
 
         public Scope InheritClass
@@ -205,28 +205,6 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
-        {
-            foreach(var a in Initializers)
-            {
-                foreach (var b in a.GetTypeMatch(pars, args))
-                {
-                    yield return b;
-                }
-            }
-        }
-
-        internal IEnumerable<OverLoadMatch> GetInstanceTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
-        {
-            foreach (var a in AliasCalls)
-            {
-                foreach (var b in a.GetTypeMatch(pars, args))
-                {
-                    yield return b;
-                }
-            }
-        }
-
         internal override OverLoadChain NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))
@@ -262,26 +240,36 @@ namespace AbstractSyntax.Symbol
             return ret;
         }
 
-        public IEnumerable<Scope> EnumSubType()
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            foreach(var a in Initializers)
+            {
+                foreach (var b in a.GetTypeMatch(pars, args))
+                {
+                    yield return b;
+                }
+            }
+        }
+
+        internal override IEnumerable<OverLoadMatch> GetInstanceTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            foreach (var a in AliasCalls)
+            {
+                foreach (var b in a.GetTypeMatch(pars, args))
+                {
+                    yield return b;
+                }
+            }
+        }
+
+        internal override IEnumerable<TypeSymbol> EnumSubType()
         {
             yield return this;
             foreach(var a in Inherit)
             {
-                var c = a as ClassSymbol;
-                if (c != null)
+                foreach (var b in a.EnumSubType())
                 {
-                    foreach (var b in c.EnumSubType())
-                    {
-                        yield return b;
-                    }
-                }
-                var ti = a as TemplateInstanceSymbol;
-                if (ti != null)
-                {
-                    foreach (var b in ti.EnumSubType())
-                    {
-                        yield return b;
-                    }
+                    yield return b;
                 }
             }
         }

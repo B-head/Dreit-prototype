@@ -23,7 +23,7 @@ namespace AbstractSyntax.Symbol
             ValidOn = AttributeTargets.All;
         }
 
-        public AttributeSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit, AttributeTargets validon, bool isMulti, bool isInherit)
+        public AttributeSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<TypeSymbol> inherit, AttributeTargets validon, bool isMulti, bool isInherit)
             :base(name, type, block, attr, gnr, inherit)
         {
             AttributeType = AttributeType.Custom;

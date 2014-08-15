@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassTemplateInstanceManager.cs" />
     <Compile Include="Declaration\AlgebraDeclaration.cs" />
     <Compile Include="Declaration\AliasDeclaration.cs" />
     <Compile Include="CompileMessageManager.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="OverLoad.cs" />
     <Compile Include="OverLoadSimplex.cs" />
     <Compile Include="OverLoadSimplexManager.cs" />
+    <Compile Include="RoutineTemplateInstanceManager.cs" />
     <Compile Include="SpecialSymbol\ErrorTypeSymbol.cs" />
     <Compile Include="SpecialSymbol\ErrorVariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ModifyTypeSymbol.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Statement\ThrowStatement.cs" />
     <Compile Include="Statement\YieldStatement.cs" />
     <Compile Include="Symbol\AlgebraSymbol.cs" />
+    <Compile Include="Symbol\ClassTemplateInstance.cs" />
     <Compile Include="Symbol\ParameterSymbol.cs" />
     <Compile Include="Symbol\NameSpaceSymbol.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
@@ -134,8 +137,10 @@
     <Compile Include="Symbol\EnumSymbol.cs" />
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
-    <Compile Include="Symbol\TemplateInstanceSymbol.cs" />
+    <Compile Include="OverLoadTemplateInstance.cs" />
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
+    <Compile Include="Symbol\RoutineTemplateInstance.cs" />
+    <Compile Include="Symbol\TypeSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ErrorRoutineSymbol.cs" />
     <Compile Include="SyntacticAnalysis\ContextParser.cs" />
@@ -151,7 +156,7 @@
     <Compile Include="SyntacticAnalysis\Tokenizer.cs" />
     <Compile Include="SyntaxUtility.cs" />
     <Compile Include="TextPosition.cs" />
-    <Compile Include="TemplateInstanceManager.cs" />
+    <Compile Include="OverLoadTemplateInstanceManager.cs" />
     <Compile Include="OverLoadMatch.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="SpecialSymbol\ThisSymbol.cs" />
