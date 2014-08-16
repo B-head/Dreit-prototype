@@ -154,8 +154,10 @@
       class A {
         routine free :: stdout := 10
       }
+      rout foo :: var a := A
       
-      var a := A
+      foo
+      GC|.Collect
       ]]>
     </code>
     <output>10</output>
@@ -366,56 +368,5 @@
       ]]>
     </code>
     <output>10 20 50 60</output>
-  </case>
-
-  <case ignore="true">
-    <code>
-      <![CDATA[
-      class A {
-        var x := 11
-        var y := 22
-        
-        operator +(other:A) {
-          var ret := A
-          ret.x := x + other.x
-          ret.y := y + other.y
-          return ret
-        }
-      }
-      
-      var a := A
-      var b := A
-      var c := a + b
-      stdout := c.x
-      stdout := c.y
-      ]]>
-    </code>
-    <output>22 44</output>
-  </case>
-
-  <case ignore="true">
-    <code>
-      <![CDATA[
-      class A
-      {
-        var value := 11
-      }
-
-      class B
-      {
-        var value := 22
-        routine from(a:A)
-        {
-          value := a.value
-          return this
-        }
-      }
-
-      var a := A()
-      var b:B := a
-      stdout := b.value
-      ]]>
-    </code>
-    <output>11</output>
   </case>
 </compile-test>

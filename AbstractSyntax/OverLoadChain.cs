@@ -14,50 +14,42 @@ namespace AbstractSyntax
     public class OverLoadChain : OverLoad
     {
         public Scope ThisScope { get; private set; }
-        public OverLoadChain Next { get; private set; }
-        private IReadOnlyList<OverLoadChain> _Inherits;
-        [NonSerialized] private InitInherits InitInherits;
+        public OverLoadChain Parent { get; private set; }
+        public IReadOnlyList<OverLoadChain> Inherits { get; private set; }
         public IReadOnlyList<OverLoadSet> Sets { get; private set; }
 
-        internal OverLoadChain(Scope scope, OverLoadChain next, params OverLoadSet[] sets)
+        internal OverLoadChain(Scope scope, OverLoadChain parent, params OverLoadSet[] sets)
         {
             if(scope == null)
             {
                 throw new ArgumentNullException("current");
             }
             ThisScope = scope;
-            Next = next;
-            InitInherits = () => new List<OverLoadChain>();
+            Parent = parent;
+            Inherits = new List<OverLoadChain>();
             Sets = sets;
         }
 
-        internal OverLoadChain(Scope scope, OverLoadChain next, InitInherits initInherits, params OverLoadSet[] sets)
+        internal OverLoadChain(Scope scope, OverLoadChain parent, IReadOnlyList<OverLoadChain> inherits, params OverLoadSet[] sets)
         {
             if (scope == null)
             {
                 throw new ArgumentNullException("current");
             }
             ThisScope = scope;
-            Next = next;
-            InitInherits = initInherits;
+            Parent = parent;
+            Inherits = inherits;
             Sets = sets;
         }
 
-        public IReadOnlyList<OverLoadChain> Inherits
+        public int TotalCountSets
         {
-            get
-            {
-                if (_Inherits == null)
-                {
-                    _Inherits = InitInherits();
-                }
-                return _Inherits;
-            }
+            get { return TraversalSets(false, false).Count(); }
         }
 
         public override bool IsUndefined
         {
-            get { return TraversalSets(true, true).Count() == 0; }
+            get { return TotalCountSets == 0; }
         }
 
         internal override Root Root
@@ -76,11 +68,11 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<VariantSymbol> TraversalVariant()
+        internal override IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic)
         {
-            foreach (var s in TraversalSets(true, false))
+            foreach (var s in TraversalSets(byMember, byStatic))
             {
-                foreach (var v in s.TraversalVariant())
+                foreach (var v in s.TraversalVariant(byMember, byStatic))
                 {
                     yield return v;
                 }
@@ -89,7 +81,7 @@ namespace AbstractSyntax
 
         internal override IEnumerable<AttributeSymbol> TraversalAttribute()
         {
-            foreach (var s in TraversalSets(true, false))
+            foreach (var s in TraversalSets(false, true))
             {
                 foreach (var v in s.TraversalAttribute())
                 {
@@ -98,51 +90,57 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType()
+        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
         {
-            foreach (var s in TraversalSets(true, false))
+            foreach (var s in TraversalSets(byMember, byStatic))
             {
-                foreach (var v in s.TraversalDataType())
+                foreach (var v in s.TraversalDataType(inst, pars, byMember, byStatic))
                 {
                     yield return v;
                 }
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
+            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
         {
-            foreach (var s in TraversalSets(true, true))
+            foreach (var s in TraversalSets(byMember, byStatic))
             {
-                foreach (var m in s.TraversalCall(pars, args))
+                foreach (var m in s.TraversalCall(inst, pars, args, byMember, byStatic))
                 {
                     yield return m;
                 }
             }
         }
 
-        internal IEnumerable<OverLoadSet> TraversalSets(bool byNext, bool byInherit)
+        internal IEnumerable<OverLoadSet> TraversalSets(bool byMember, bool byStatic)
         {
             foreach(var s in Sets)
             {
                 yield return s;
             }
-            if (byInherit)
+            if (!byStatic)
             {
                 foreach (var i in Inherits)
                 {
-                    foreach (var s in i.TraversalSets(false, true))
+                    foreach (var s in i.TraversalSets(true, false))
                     {
                         yield return s;
                     }
                 }
             }
-            if (byNext && Next != null)
+            if (!byMember && Parent != null)
             {
-                foreach (var s in Next.TraversalSets(true, byInherit))
+                foreach (var s in Parent.TraversalSets(false, byStatic))
                 {
                     yield return s;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("TotalSets = {0}, This = {{{1}}}", TotalCountSets, ThisScope);
         }
     }
 }

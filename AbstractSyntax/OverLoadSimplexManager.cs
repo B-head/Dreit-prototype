@@ -9,14 +9,14 @@ namespace AbstractSyntax
     [Serializable]
     public class OverLoadSimplexManager
     {
-        private Dictionary<Scope, OverLoadSimplex> SimplexDictionary;
+        private Dictionary<Element, OverLoadSimplex> SimplexDictionary;
 
         public OverLoadSimplexManager()
         {
-            SimplexDictionary = new Dictionary<Scope,OverLoadSimplex>();
+            SimplexDictionary = new Dictionary<Element, OverLoadSimplex>();
         }
         
-        public OverLoadSimplex Issue(Scope scope)
+        public OverLoadSimplex Issue(Element scope)
         {
             if(SimplexDictionary.ContainsKey(scope))
             {

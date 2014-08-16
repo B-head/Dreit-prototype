@@ -26,12 +26,12 @@ namespace AbstractSyntax.Expression
 
         public override TypeSymbol ReturnType
         {
-            get { return Root.ClassManager.Issue(Access.OverLoad.FindDataType(), Parameter.ToArray()); }
+            get { return OverLoad.FindDataType(); }
         }
 
         public override OverLoad OverLoad
         {
-            get { return ReturnType.OverLoad; }
+            get { return OverLoadModify.MakeParameters(Access.OverLoad, Parameter); }
         }
 
         public override bool IsConstant

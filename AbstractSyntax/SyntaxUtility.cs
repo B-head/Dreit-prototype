@@ -8,8 +8,29 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
+    [Serializable]
+    public struct GenericsInstance
+    {
+        public GenericSymbol Generic { get; set; }
+        public TypeSymbol Type { get; set; }
+    }
+
     public static class SyntaxUtility
     {
+        public static string ToNames(this IReadOnlyList<Scope> scopes)
+        {
+            var build = new StringBuilder();
+            for(var i = 0; i < scopes.Count; ++i)
+            {
+                if(i > 0)
+                {
+                    build.Append(", ");
+                }
+                build.Append(scopes[i].Name);
+            }
+            return build.ToString();
+        }
+
         public static IReadOnlyList<T> FindElements<T>(this IReadOnlyList<Element> list) where T : Element
         {
             var result = new List<T>();
@@ -31,6 +52,21 @@ namespace AbstractSyntax
                 result.Add(v.ReturnType);
             }
             return result;
+        }
+
+        public static IReadOnlyList<GenericsInstance> MakeGenericInstance(IReadOnlyList<GenericSymbol> generics, IReadOnlyList<TypeSymbol> types)
+        {
+            if(generics.Count != types.Count)
+            {
+                throw new ArgumentException("count");
+            }
+            var ret = new List<GenericsInstance>();
+            for(var i = 0; i < generics.Count; ++i)
+            {
+                var gi = new GenericsInstance { Generic = generics[i], Type = types[i] };
+                ret.Add(gi);
+            }
+            return ret;
         }
 
         internal static bool HasAnyAttribute(this IReadOnlyList<AttributeSymbol> attribute, params AttributeType[] type)

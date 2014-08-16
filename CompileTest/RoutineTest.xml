@@ -109,17 +109,6 @@
     <output>3</output>
   </case>
 
-  <case ignore="true">
-    <code>
-      <![CDATA[
-      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
-      
-      stdout := foo(10)
-      ]]>
-    </code>
-    <output>51</output>
-  </case>
-
   <case>
     <code>
       routine foo(a:Int32) :: a + 20

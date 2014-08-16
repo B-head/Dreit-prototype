@@ -137,7 +137,7 @@
     <Compile Include="Symbol\EnumSymbol.cs" />
     <Compile Include="Symbol\GenericSymbol.cs" />
     <Compile Include="Symbol\RoutineSymbol.cs" />
-    <Compile Include="OverLoadTemplateInstance.cs" />
+    <Compile Include="OverLoadModify.cs" />
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\RoutineTemplateInstance.cs" />
     <Compile Include="Symbol\TypeSymbol.cs" />
@@ -156,7 +156,6 @@
     <Compile Include="SyntacticAnalysis\Tokenizer.cs" />
     <Compile Include="SyntaxUtility.cs" />
     <Compile Include="TextPosition.cs" />
-    <Compile Include="OverLoadTemplateInstanceManager.cs" />
     <Compile Include="OverLoadMatch.cs" />
     <Compile Include="Visualizer\SyntaxVisualizer.cs" />
     <Compile Include="SpecialSymbol\ThisSymbol.cs" />

@@ -84,13 +84,6 @@
     <output>10</output>
   </case>
 
-  <case ignore="true">
-    <code>
-      var a := a + 10
-      stdout := a
-    </code>
-  </case>
-
   <case>
     <code>
       let a := 40

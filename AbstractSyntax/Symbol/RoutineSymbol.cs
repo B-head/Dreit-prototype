@@ -79,6 +79,31 @@ namespace AbstractSyntax.Symbol
             get { return _Arguments ?? new List<ParameterSymbol>();; }
         }
 
+        protected override string ElementInfo
+        {
+            get
+            {
+                if (Generics.Count == 0)
+                {
+                    return string.Format("{0}", Name);
+                }
+                else
+                {
+                    return string.Format("{0}!({1})", Name, Generics.ToNames());
+                }
+            }
+        }
+
+        public override TypeSymbol ReturnType
+        {
+            get { return Root.ErrorType; } //todo デリゲート型を返すようにする。
+        }
+
+        public override OverLoad OverLoad
+        {
+            get { return Root.SimplexManager.Issue(this); }
+        }
+
         public virtual TypeSymbol CallReturnType
         {
             get { return _CallReturnType ?? Root.ErrorType; }
@@ -104,9 +129,9 @@ namespace AbstractSyntax.Symbol
             get { return RoutineType == RoutineType.Function || RoutineType == RoutineType.FunctionConverter || RoutineType == RoutineType.FunctionOperator; }
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            yield return OverLoadMatch.MakeOverLoadMatch(Root.ConvManager, this, Generics, Arguments, pars, args);
+            yield return OverLoadMatch.MakeOverLoadMatch(Root, this, Generics, Arguments, inst, pars, args);
         }
 
         public RoutineSymbol InheritInitializer

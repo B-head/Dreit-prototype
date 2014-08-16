@@ -114,22 +114,12 @@ namespace AbstractSyntax
 
         protected override string ElementInfo
         {
-            get { return Name; }
-        }
-
-        internal virtual IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
-        {
-            yield return OverLoadMatch.MakeNotCallable(Root.ErrorRoutine);
+            get { return string.Format("{0}, Child = {1}", string.IsNullOrWhiteSpace(Name) ? "<no-name>" : Name, Count); }
         }
 
         public virtual bool IsDataType
         {
             get { return false; }
-        }
-
-        public override OverLoad OverLoad
-        {
-            get { return Root.SimplexManager.Issue(this); }
         }
 
         public virtual IReadOnlyList<AttributeSymbol> Attribute

@@ -50,7 +50,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<VariantSymbol> TraversalVariant()
+        internal override IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic)
         {
             if (IsHoldAlias)
             {
@@ -82,7 +82,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType()
+        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
         {
             if(IsHoldAlias)
             {
@@ -98,7 +98,8 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
+            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
         {
             if (IsHoldAlias)
             {
@@ -106,7 +107,7 @@ namespace AbstractSyntax
             }
             foreach (var s in Symbols)
             {
-                foreach (var m in s.GetTypeMatch(pars, args))
+                foreach (var m in s.GetTypeMatch(inst, pars, args))
                 {
                     yield return m;
                 }
@@ -125,6 +126,11 @@ namespace AbstractSyntax
                     Append(s);
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Symbols = {0}, This = {{{1}}}", Symbols.Count, ThisScope);
         }
     }
 }

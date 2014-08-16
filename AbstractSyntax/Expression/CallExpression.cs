@@ -68,17 +68,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _Match.Value;
                 }
-                var tie = Access as TemplateInstanceExpression;
-                IReadOnlyList<TypeSymbol> pars;
-                if(tie == null)
-                {
-                    pars = new List<TypeSymbol>();
-                }
-                else
-                {
-                    pars = tie.Parameter;
-                }
-                _Match = Access.OverLoad.CallSelect(pars, Arguments.GetDataTypes());
+                _Match = Access.OverLoad.CallSelect(Arguments.GetDataTypes());
                 return _Match.Value;
             }
         }

@@ -36,6 +36,7 @@ namespace AbstractSyntax.Symbol
             AppendChild(element);
         }
 
+        //todo 同じオブジェクトが二重登録されるバグを取る。
         internal override OverLoadChain NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))

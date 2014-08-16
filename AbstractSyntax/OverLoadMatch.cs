@@ -21,6 +21,11 @@ namespace AbstractSyntax
         public IReadOnlyList<TypeSymbol> InstanceArguments { get; private set; }
         public IReadOnlyList<RoutineSymbol> Converters { get; private set; }
 
+        public override string ToString()
+        {
+            return string.Format("Result = {0}, Call = {{1}}", Result, Call);
+        }
+
         internal static OverLoadMatch MakeNotCallable(RoutineSymbol call)
         {
             return new OverLoadMatch { Call = call, Result = TypeMatchResult.NotCallable };
@@ -33,8 +38,8 @@ namespace AbstractSyntax
 
         //todo さらに詳しい順位付けをする。
         //todo デフォルト引数に対応する。
-        internal static OverLoadMatch MakeOverLoadMatch(ConversionManager manager, RoutineSymbol call,
-            IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
+        internal static OverLoadMatch MakeOverLoadMatch(Root root, RoutineSymbol call, IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
+            IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
         {
             var ig = new List<TypeSymbol>();
             var ia = new List<TypeSymbol>();
@@ -69,7 +74,7 @@ namespace AbstractSyntax
             InferInstance(ag, aa, ig, ia);
             for (int i = 0; i < ia.Count; i++)
             {
-                var c = manager.Find(aa[i], ia[i]);
+                var c = root.ConvManager.Find(aa[i], ia[i]);
                 convs.Add(c);
             }
             result.Result = CheckConverterResult(convs);

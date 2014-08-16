@@ -11,9 +11,14 @@ namespace AbstractSyntax
     [Serializable]
     public abstract class OverLoad
     {
-        public VariantSymbol FindVariant()
+        public virtual VariantSymbol FindVariant()
         {
-            foreach (var v in TraversalVariant())
+            return FindVariant(false, false);
+        }
+
+        public VariantSymbol FindVariant(bool byMember, bool byStatic)
+        {
+            foreach (var v in TraversalVariant(byMember, byStatic))
             {
                 return v;
             }
@@ -26,31 +31,43 @@ namespace AbstractSyntax
             {
                 return v;
             }
-            return null;
+            throw new InvalidOperationException();
         }
 
-        public TypeSymbol FindDataType()
+        public virtual TypeSymbol FindDataType()
         {
-            foreach (var v in TraversalDataType())
+            return FindDataType(new List<GenericsInstance>(), new List<TypeSymbol>(), false, false);
+        }
+
+        public TypeSymbol FindDataType(IReadOnlyList<GenericsInstance> inst,
+            IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
+        {
+            foreach (var v in TraversalDataType(inst, pars, byMember, byStatic))
             {
-                return v;
+                return v; //todo 型の選択とインスタンス化をする。
             }
             return Root.ErrorType;
         }
 
         public OverLoadMatch CallSelect()
         {
-            return CallSelect(new List<TypeSymbol>(), new List<TypeSymbol>());
+            return CallSelect(new List<TypeSymbol>());
         }
 
-        public OverLoadMatch CallSelect(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        public virtual OverLoadMatch CallSelect(IReadOnlyList<TypeSymbol> args)
+        {
+            return CallSelect(new List<GenericsInstance>(), new List<TypeSymbol>(), args, false, false);
+        }
+
+        public OverLoadMatch CallSelect(IReadOnlyList<GenericsInstance> inst, 
+            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
         {
             if (SyntaxUtility.HasAnyErrorType(pars) || SyntaxUtility.HasAnyErrorType(args))
             {
                 return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
             }
             OverLoadMatch result = OverLoadMatch.MakeNotCallable(Root.ErrorRoutine);
-            foreach (var m in TraversalCall(pars, args))
+            foreach (var m in TraversalCall(inst, pars, args, byMember, byStatic))
             {
                 var a = OverLoadMatch.GetMatchPriority(result.Result);
                 var b = OverLoadMatch.GetMatchPriority(m.Result);
@@ -65,9 +82,11 @@ namespace AbstractSyntax
         public abstract bool IsUndefined { get; }
         internal abstract Root Root { get; }
         internal abstract IEnumerable<Scope> TraversalChilds();
-        internal abstract IEnumerable<VariantSymbol> TraversalVariant();
+        internal abstract IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic);
         internal abstract IEnumerable<AttributeSymbol> TraversalAttribute();
-        internal abstract IEnumerable<TypeSymbol> TraversalDataType();
-        internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args);
+        internal abstract IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst,
+            IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic);
+        internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
+            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic);
     }
 }

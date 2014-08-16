@@ -42,7 +42,15 @@ namespace AbstractSyntax
 
         public virtual OverLoad OverLoad
         {
-            get { return Root.SimplexManager.Issue(ReturnType); }
+            get { return Root.SimplexManager.Issue(this); }
+        }
+
+        internal virtual IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            foreach (var v in ReturnType.GetInstanceMatch(inst, pars, args))
+            {
+                yield return v;
+            }
         }
 
         public virtual bool IsConstant
@@ -173,7 +181,7 @@ namespace AbstractSyntax
 
         protected virtual string ElementInfo
         {
-            get { return "Count = " + Count; }
+            get { return string.Format("Child = {0}", Count); }
         }
 
         public override string ToString()

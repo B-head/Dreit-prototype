@@ -28,6 +28,7 @@ namespace AbstractSyntax.Symbol
         protected IReadOnlyList<TypeSymbol> _Inherit;
         public IReadOnlyList<RoutineSymbol> Initializers { get; private set; }
         public IReadOnlyList<RoutineSymbol> AliasCalls { get; private set; }
+        private bool DisguiseScopeMode;
 
         protected ClassSymbol()
         {
@@ -142,12 +143,12 @@ namespace AbstractSyntax.Symbol
             get { return _Attribute ?? new List<AttributeSymbol>(); }
         }
 
-        public virtual IReadOnlyList<GenericSymbol> Generics
+        public override IReadOnlyList<GenericSymbol> Generics
         {
             get { return _Generics ?? new List<GenericSymbol>(); }
         }
 
-        public virtual IReadOnlyList<TypeSymbol> Inherit
+        public override IReadOnlyList<TypeSymbol> Inherit
         {
             get { return _Inherit ?? new List<TypeSymbol>(); }
         }
@@ -180,6 +181,21 @@ namespace AbstractSyntax.Symbol
             return false;
         }
 
+        protected override string ElementInfo
+        {
+            get 
+            { 
+                if(Generics.Count == 0)
+                {
+                    return string.Format("{0}", Name);
+                }
+                else
+                {
+                    return string.Format("{0}!({1})", Name, Generics.ToNames());
+                }
+            }
+        }
+
         public override bool IsConstant
         {
             get { return true; }
@@ -207,12 +223,16 @@ namespace AbstractSyntax.Symbol
 
         internal override OverLoadChain NameResolution(string name)
         {
+            if (DisguiseScopeMode)
+            {
+                return CurrentScope.NameResolution(name);
+            }
             if (ReferenceCache.ContainsKey(name))
             {
                 return ReferenceCache[name];
             }
             var n = CurrentScope.NameResolution(name);
-            InitInherits i = () => InheritNameResolution(name);
+            var i = InheritNameResolution(name);
             if (ChildSymbols.ContainsKey(name))
             {
                 var s = ChildSymbols[name];
@@ -229,6 +249,7 @@ namespace AbstractSyntax.Symbol
         private IReadOnlyList<OverLoadChain> InheritNameResolution(string name)
         {
             var ret = new List<OverLoadChain>();
+            DisguiseScopeMode = true;
             foreach(var v in Inherit)
             {
                 var ol = v.NameResolution(name) as OverLoadChain;
@@ -237,25 +258,26 @@ namespace AbstractSyntax.Symbol
                     ret.Add(ol);
                 }
             }
+            DisguiseScopeMode = false;
             return ret;
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             foreach(var a in Initializers)
             {
-                foreach (var b in a.GetTypeMatch(pars, args))
+                foreach (var b in a.GetTypeMatch(inst, pars, args))
                 {
                     yield return b;
                 }
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> GetInstanceTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             foreach (var a in AliasCalls)
             {
-                foreach (var b in a.GetTypeMatch(pars, args))
+                foreach (var b in a.GetTypeMatch(inst, pars, args))
                 {
                     yield return b;
                 }

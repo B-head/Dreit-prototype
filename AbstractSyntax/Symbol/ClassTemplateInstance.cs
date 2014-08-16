@@ -19,6 +19,21 @@ namespace AbstractSyntax.Symbol
             Parameters = parameter;
         }
 
+        protected override string ElementInfo
+        {
+            get
+            {
+                if (Parameters.Count == 0)
+                {
+                    return string.Format("{0}", Type.Name);
+                }
+                else
+                {
+                    return string.Format("{0}!({1})", Type.Name, Parameters.ToNames());
+                }
+            }
+        }
+
         internal override OverLoadChain NameResolution(string name)
         {
             if (ReferenceCache.ContainsKey(name))
@@ -39,19 +54,33 @@ namespace AbstractSyntax.Symbol
             return n;
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            foreach (var v in Type.GetTypeMatch(pars, args))
+            var newInst = SyntaxUtility.MakeGenericInstance(Type.Generics, Parameters);
+            var aftInst = newInst.Concat(inst).ToList();
+            foreach (var v in Type.GetTypeMatch(aftInst, pars, args))
             {
                 yield return v;
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> GetInstanceTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            foreach (var v in Type.GetInstanceTypeMatch(pars, args))
+            if (Type == Root.Typeof)
             {
-                yield return v;
+                foreach (var v in Parameters[0].GetTypeMatch(inst, pars, args))
+                {
+                    yield return v;
+                }
+            }
+            else
+            {
+                var newInst = SyntaxUtility.MakeGenericInstance(Type.Generics, Parameters);
+                var aftInst = newInst.Concat(inst).ToList();
+                foreach (var v in Type.GetInstanceMatch(aftInst, pars, args))
+                {
+                    yield return v;
+                }
             }
         }
 

@@ -11,7 +11,8 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public string Member { get; private set; }
-        private OverLoad _Reference;
+        private OverLoadMatch? _Match;
+        private OverLoad _OverLoad;
 
         public MemberAccess(TextPosition tp, Element acs, string member)
             :base(tp)
@@ -43,7 +44,7 @@ namespace AbstractSyntax.Expression
 
         public RoutineSymbol CallRoutine
         {
-            get { return OverLoad.CallSelect().Call; }
+            get { return Match.Call; }
         }
 
         public Scope AccessSymbol
@@ -51,16 +52,29 @@ namespace AbstractSyntax.Expression
             get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
         }
 
+        public OverLoadMatch Match
+        {
+            get
+            {
+                if (_Match != null)
+                {
+                    return _Match.Value;
+                }
+                _Match = OverLoad.CallSelect();
+                return _Match.Value;
+            }
+        }
+
         public override OverLoad OverLoad
         {
             get
             {
-                if(_Reference == null)
+                if(_OverLoad == null)
                 {
-                    var scope = Access.ReturnType;
-                    _Reference = scope.NameResolution(Member);
+                    var ol = Access.ReturnType.NameResolution(Member);
+                    _OverLoad = OverLoadModify.MakeMember(ol, true);
                 }
-                return _Reference;
+                return _OverLoad;
             }
         }
 

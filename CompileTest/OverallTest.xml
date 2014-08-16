@@ -3,6 +3,21 @@
   <case>
     <code>
       <![CDATA[
+      var a := 0; var b := 1
+      loop a < 1000 {
+        a =: stdout
+        a + b =: var c
+        b =: a
+        c =: b
+      }
+      ]]>
+    </code>
+    <output>0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
       loop i <= 15 use var i := 1 by i += 1 {
         stdout := if i % 15 = 0 :: "fizzbuzz"
         else if i % 3 = 0 :: "fizz"

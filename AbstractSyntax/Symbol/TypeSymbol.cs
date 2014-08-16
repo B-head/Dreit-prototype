@@ -20,12 +20,32 @@ namespace AbstractSyntax.Symbol
 
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        public override TypeSymbol ReturnType
+        {
+            get { return Root.ClassManager.Issue(Root.Typeof, new TypeSymbol[] { this }); }
+        }
+
+        public override OverLoad OverLoad
+        {
+            get { return Root.SimplexManager.Issue(this); }
+        }
+
+        public virtual IReadOnlyList<GenericSymbol> Generics
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public virtual IReadOnlyList<TypeSymbol> Inherit
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             yield return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
         }
 
-        internal virtual IEnumerable<OverLoadMatch> GetInstanceTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal virtual IEnumerable<OverLoadMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             yield return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
         }

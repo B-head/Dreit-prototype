@@ -97,14 +97,6 @@ namespace AbstractSyntax.Symbol
             return caller.GenelateConstantValue();
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
-        {
-            foreach (var v in DataType.GetInstanceTypeMatch(pars, args))
-            {
-                yield return v;
-            }
-        }
-
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
             if (ReturnType is ErrorTypeSymbol)

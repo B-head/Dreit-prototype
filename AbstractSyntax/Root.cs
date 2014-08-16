@@ -13,7 +13,6 @@ namespace AbstractSyntax
         private NameSpaceSymbol EmbedList;
         public CompileMessageManager MessageManager { get; private set; }
         public OverLoadSimplexManager SimplexManager { get; private set; }
-        public OverLoadTemplateInstanceManager OverLoadManager { get; private set; }
         public ClassTemplateInstanceManager ClassManager { get; private set; }
         public RoutineTemplateInstanceManager RoutineManager { get; private set; }
         internal ConversionManager ConvManager { get; private set; }
@@ -53,7 +52,6 @@ namespace AbstractSyntax
             EmbedList = new NameSpaceSymbol();
             MessageManager = new CompileMessageManager();
             SimplexManager = new OverLoadSimplexManager();
-            OverLoadManager = new OverLoadTemplateInstanceManager();
             ClassManager = new ClassTemplateInstanceManager();
             RoutineManager = new RoutineTemplateInstanceManager();
             ConvManager = new ConversionManager(this);

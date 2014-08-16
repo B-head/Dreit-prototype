@@ -9,4 +9,125 @@
     </code>
     <output>10 20 30 40</output>
   </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      (10 + 20).ToString =: stdout
+      ]]>
+    </code>
+    <output>hello</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      var a := a + 10
+      stdout := a
+      ]]>
+    </code>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
+      
+      stdout := foo(10)
+      ]]>
+    </code>
+    <output>51</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+        a =: stdout
+        return "world"
+      }
+      
+      foo
+      "hello" =: stdout
+      ]]>
+    </code>
+    <output>hello</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+        a =: stdout
+        return "world"
+      }
+      
+      foo\
+      "hello" =: stdout
+      ]]>
+    </code>
+    <output>hello world</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo a:String -> Void :: a =: stdout
+      
+      foo := "hello"
+      ]]>
+    </code>
+    <output>hello</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        var x := 11
+        var y := 22
+        
+        operator +(other:A) {
+          var ret := A
+          ret.x := x + other.x
+          ret.y := y + other.y
+          return ret
+        }
+      }
+      
+      var a := A
+      var b := A
+      var c := a + b
+      stdout := c.x
+      stdout := c.y
+      ]]>
+    </code>
+    <output>22 44</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        var value := 11
+      }
+
+      class B
+      {
+        var value := 22
+        routine from(a:A)
+        {
+          value := a.value
+          return this
+        }
+      }
+
+      var a := A()
+      var b:B := a
+      stdout := b.value
+      ]]>
+    </code>
+    <output>11</output>
+  </case>
 </compile-test>

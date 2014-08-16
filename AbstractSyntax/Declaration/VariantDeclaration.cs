@@ -71,10 +71,5 @@ namespace AbstractSyntax.Declaration
                 return _DataType;
             }
         }
-
-        public override OverLoad OverLoad
-        {
-            get { return Ident.OverLoad; }
-        }
     }
 }

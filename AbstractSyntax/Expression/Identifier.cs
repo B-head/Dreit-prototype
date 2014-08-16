@@ -15,7 +15,8 @@ namespace AbstractSyntax.Expression
         public string Value { get; private set; }
         public TokenType IdentType { get; private set; }
         private bool? _IsTacitThis;
-        private OverLoad _Reference;
+        private OverLoadMatch? _Match;
+        private OverLoad _OverLoad;
 
         public Identifier(TextPosition tp, string value, TokenType identType)
             :base(tp)
@@ -55,7 +56,7 @@ namespace AbstractSyntax.Expression
 
         public RoutineSymbol CallRoutine
         {
-            get { return OverLoad.CallSelect().Call; }
+            get { return Match.Call; }
         }
 
         public Scope AccessSymbol
@@ -63,23 +64,42 @@ namespace AbstractSyntax.Expression
             get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
         }
 
+        public OverLoadMatch Match
+        {
+            get
+            {
+                if (_Match != null)
+                {
+                    return _Match.Value;
+                }
+                _Match = OverLoad.CallSelect();
+                return _Match.Value;
+            }
+        }
+
         public override OverLoad OverLoad
         {
             get
             {
-                if(_Reference != null)
+                if(_OverLoad != null)
                 {
-                    return _Reference;
+                    return _OverLoad;
                 }
                 if (IdentType == TokenType.Pragma)
                 {
-                    _Reference = CurrentScope.NameResolution("@@" + Value);
+                    _OverLoad = CurrentScope.NameResolution("@@" + Value);
+                }
+                else if(IdentType == TokenType.Nullable)
+                {
+                    var type = CurrentScope.NameResolution(Value).FindDataType();
+                    var nullable = Root.ClassManager.Issue(Root.Nullable, new TypeSymbol[] { type });
+                    _OverLoad = nullable.OverLoad;
                 }
                 else
                 {
-                    _Reference = CurrentScope.NameResolution(Value);
+                    _OverLoad = CurrentScope.NameResolution(Value);
                 }
-                return _Reference;
+                return _OverLoad;
             }
         }
 

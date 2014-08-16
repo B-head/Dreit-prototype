@@ -11,9 +11,9 @@ namespace AbstractSyntax
     [Serializable]
     public class OverLoadSimplex : OverLoad
     {
-        public Scope Symbol { get; private set; }
+        public Element Symbol { get; private set; }
 
-        public OverLoadSimplex(Scope symbol)
+        public OverLoadSimplex(Element symbol)
         {
             Symbol = symbol;
         }
@@ -30,10 +30,14 @@ namespace AbstractSyntax
 
         internal override IEnumerable<Scope> TraversalChilds()
         {
-            yield return Symbol;
+            var scope = Symbol as Scope;
+            if (scope != null)
+            {
+                yield return scope;
+            }
         }
 
-        internal override IEnumerable<VariantSymbol> TraversalVariant()
+        internal override IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic)
         {
             var variant = Symbol as VariantSymbol;
             if (variant != null)
@@ -51,7 +55,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType()
+        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
         {
             var type = Symbol as TypeSymbol;
             if (type != null)
@@ -60,12 +64,18 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
+            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
         {
-            foreach (var m in Symbol.GetTypeMatch(pars, args))
+            foreach (var m in Symbol.GetTypeMatch(inst, pars, args))
             {
                 yield return m;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Symbol = {{{0}}}", Symbol);
         }
     }
 }
