@@ -18,15 +18,14 @@ namespace AbstractSyntax.SpecialSymbol
     }
 
     [Serializable]
-    public class ModifyTypeSymbol : ClassSymbol
+    public class ModifyTypeSymbol : TypeSymbol
     {
         public ModifyType ModifyType { get; private set; }
 
         public ModifyTypeSymbol(ModifyType type)
+            
         {
             ModifyType = type;
-            var g = new GenericSymbol("T", new List<AttributeSymbol>(), new List<Scope>());
-            _Generics = new GenericSymbol[] { g };
         }
 
         public static bool HasContainModify(Scope type, ModifyType modify)

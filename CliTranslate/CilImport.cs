@@ -92,28 +92,18 @@ namespace CliTranslate
 
         private ClassSymbol ImportPureType(Type type)
         {
+            var elem = new ClassSymbol();
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (ClassSymbol)ImportDictionary[type];
+            }
+            ImportDictionary.Add(type, elem);
             ClassType classType;
             var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, type, out classType);
             var generic = CreateGenericList(type.GetGenericArguments());
             var inherit = CreateInheritList(type);
             var block = new ProgramContext();
-            ClassSymbol elem;
-            if (type.IsSubclassOf(typeof(Attribute)))
-            {
-                var attrUsage = (AttributeUsageAttribute)type.GetCustomAttribute<AttributeUsageAttribute>(true);
-                elem = new AttributeSymbol(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit, 
-                    attrUsage.ValidOn, attrUsage.AllowMultiple, attrUsage.Inherited);
-            }
-            else
-            {
-                elem = new ClassSymbol(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit);
-            }
-            if (ImportDictionary.ContainsKey(type))
-            {
-                return (ClassSymbol)ImportDictionary[type];
-            }
-            ImportDictionary.Add(type, elem);
             var ctor = type.GetConstructors(Binding);
             foreach (var c in ctor)
             {
@@ -175,7 +165,7 @@ namespace CliTranslate
                 }
                 block.Append(ImportType(n));
             }
-            elem.Initialize();
+            elem.Initialize(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit);
             return elem;
         }
 
@@ -249,7 +239,8 @@ namespace CliTranslate
             ImportDictionary.Add(type, elem);
             foreach(var v in type.GetEnumNames())
             {
-                var f = new VariantSymbol(v, VariantType.Const, new List<AttributeSymbol>(), dt);
+                var f = new VariantSymbol();
+                f.Initialize(v, VariantType.Const, new List<AttributeSymbol>(), dt);
                 block.Append(f);
             }
             return elem;
@@ -257,78 +248,83 @@ namespace CliTranslate
 
         private RoutineSymbol ImportMethod(MethodInfo method)
         {
+            var elem = new RoutineSymbol();
             if (ImportDictionary.ContainsKey(method))
             {
                 return (RoutineSymbol)ImportDictionary[method];
             }
+            ImportDictionary.Add(method, elem);
             var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, method);
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
             var rt = ImportType(method.ReturnType);
-            var elem = new RoutineSymbol(method.Name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
-            ImportDictionary.Add(method, elem);
+            elem.Initialize(method.Name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             return elem;
         }
 
         private RoutineSymbol ImportProperty(MethodInfo prop, string name)
         {
+            var elem = new RoutineSymbol();
             if (ImportDictionary.ContainsKey(prop))
             {
                 return (RoutineSymbol)ImportDictionary[prop];
             }
+            ImportDictionary.Add(prop, elem);
             var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, prop);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(prop);
             var rt = ImportType(prop.ReturnType);
-            var elem = new RoutineSymbol(name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
-            ImportDictionary.Add(prop, elem);
+            elem.Initialize(name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             return elem;
         }
 
         private RoutineSymbol ImportConstructor(ConstructorInfo ctor)
         {
+            var elem = new RoutineSymbol();
             if (ImportDictionary.ContainsKey(ctor))
             {
                 return (RoutineSymbol)ImportDictionary[ctor];
             }
+            ImportDictionary.Add(ctor, elem);
             var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, ctor);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(ctor);
             var rt = ImportType(ctor.DeclaringType);
-            var elem = new RoutineSymbol(RoutineSymbol.ConstructorIdentifier, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
-            ImportDictionary.Add(ctor, elem);
+            elem.Initialize(RoutineSymbol.ConstructorIdentifier, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             return elem;
         }
 
         private ParameterSymbol ImportArgument(ParameterInfo prm)
         {
+            var elem = new ParameterSymbol();
             if (ImportDictionary.ContainsKey(prm))
             {
                 return (ParameterSymbol)ImportDictionary[prm];
             }
+            ImportDictionary.Add(prm, elem);
             var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, prm);
             var dt = ImportType(prm.ParameterType);
-            var elem = new ParameterSymbol(prm.Name, VariantType.Var, attribute, dt);
-            ImportDictionary.Add(prm, elem);
+            elem.Initialize(prm.Name, VariantType.Var, attribute, dt);
             return elem;
         }
 
         private VariantSymbol ImportField(FieldInfo field)
         {
+            var elem = new VariantSymbol();
             if (ImportDictionary.ContainsKey(field))
             {
                 return (VariantSymbol)ImportDictionary[field];
             }
+            ImportDictionary.Add(field, elem);
             VariantType type;
             var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, field, out type);
             var dt = ImportType(field.FieldType);
-            var elem = new VariantSymbol(field.Name, type, attribute, dt);
-            ImportDictionary.Add(field, elem);
+            elem.Initialize(field.Name, type, attribute, dt);
             return elem;
         }
 

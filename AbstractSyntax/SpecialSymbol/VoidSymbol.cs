@@ -9,6 +9,7 @@ namespace AbstractSyntax.SpecialSymbol
     public class VoidSymbol : ClassSymbol
     {
         public VoidSymbol()
+            :base(ClassType.Unknown)
         {
             Name = "void";
         }

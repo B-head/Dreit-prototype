@@ -22,20 +22,32 @@ namespace AbstractSyntax.Symbol
         public VariantType VariantType { get; private set; }
         protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected TypeSymbol _DataType;
+        private bool IsInitialize;
+
+        public VariantSymbol()
+        {
+        }
 
         protected VariantSymbol(VariantType type)
         {
             VariantType = type;
+            IsInitialize = true;
         }
 
         protected VariantSymbol(TextPosition tp, VariantType type)
             : base(tp)
         {
             VariantType = type;
+            IsInitialize = true;
         }
 
-        public VariantSymbol(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
+        public void Initialize(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
         {
+            if(IsInitialize)
+            {
+                throw new InvalidOperationException();
+            }
+            IsInitialize = true;
             Name = name;
             VariantType = type;
             _Attribute = attr;

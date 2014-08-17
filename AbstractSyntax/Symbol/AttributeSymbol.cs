@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class AttributeSymbol : ClassSymbol
+    public class AttributeSymbol : Scope
     {
         public AttributeType AttributeType { get; private set; }
         public AttributeTargets ValidOn { get; private set; }
@@ -21,15 +21,6 @@ namespace AbstractSyntax.Symbol
             Name = name;
             AttributeType = type;
             ValidOn = AttributeTargets.All;
-        }
-
-        public AttributeSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<TypeSymbol> inherit, AttributeTargets validon, bool isMulti, bool isInherit)
-            :base(name, type, block, attr, gnr, inherit)
-        {
-            AttributeType = AttributeType.Custom;
-            ValidOn = validon;
-            IsAllowMultiple = isMulti;
-            IsInheritable = isInherit;
         }
     }
 

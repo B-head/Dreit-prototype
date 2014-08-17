@@ -86,7 +86,8 @@ namespace AbstractSyntax
             var ret = new List<ParameterSymbol>();
             for(var i = 0; i < types.Length; ++i)
             {
-                var p = new ParameterSymbol("@@arg" + (i + 1), VariantType.Let, new List<AttributeSymbol>(), types[i]);
+                var p = new ParameterSymbol();
+                p.Initialize("@@arg" + (i + 1), VariantType.Let, new List<AttributeSymbol>(), types[i]);
                 ret.Add(p);
             }
             return ret;

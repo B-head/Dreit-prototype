@@ -29,9 +29,14 @@ namespace AbstractSyntax.Symbol
         protected IReadOnlyList<GenericSymbol> _Generics;
         protected IReadOnlyList<ParameterSymbol> _Arguments;
         protected TypeSymbol _CallReturnType;
+        private bool IsInitialize;
         public const string ConstructorIdentifier = "new";
         public const string DestructorIdentifier = "free";
         public const string AliasCallIdentifier = "call";
+
+        public RoutineSymbol()
+        {
+        }
 
         protected RoutineSymbol(RoutineType type, TokenType opType)
         {
@@ -39,6 +44,7 @@ namespace AbstractSyntax.Symbol
             OperatorType = opType;
             Block = new ProgramContext();
             AppendChild(Block);
+            IsInitialize = true;
         }
 
         protected RoutineSymbol(TextPosition tp, string name, RoutineType type, TokenType opType, ProgramContext block)
@@ -49,10 +55,16 @@ namespace AbstractSyntax.Symbol
             OperatorType = opType;
             Block = block;
             AppendChild(Block);
+            IsInitialize = true;
         }
 
-        public RoutineSymbol(string name, RoutineType type, TokenType opType, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ParameterSymbol> arg, TypeSymbol rt)
+        public void Initialize(string name, RoutineType type, TokenType opType, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ParameterSymbol> arg, TypeSymbol rt)
         {
+            if (IsInitialize)
+            {
+                throw new InvalidOperationException();
+            }
+            IsInitialize = true;
             Name = name;
             RoutineType = type;
             OperatorType = opType;

@@ -12,6 +12,11 @@ namespace AbstractSyntax.Symbol
     {
         public Element DefaultValue { get; private set; }
 
+        public ParameterSymbol()
+        {
+
+        }
+
         protected ParameterSymbol(TextPosition tp, VariantType type, Element def)
             : base(tp, type)
         {
@@ -19,10 +24,9 @@ namespace AbstractSyntax.Symbol
             AppendChild(DefaultValue);
         }
 
-        public ParameterSymbol(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
-            : base(name, type, attr, dt)
+        public new void Initialize(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
         {
-
+            base.Initialize(name, type, attr, dt);
         }
 
         public bool IsLoopParameter

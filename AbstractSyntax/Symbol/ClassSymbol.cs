@@ -29,15 +29,22 @@ namespace AbstractSyntax.Symbol
         public IReadOnlyList<RoutineSymbol> Initializers { get; private set; }
         public IReadOnlyList<RoutineSymbol> AliasCalls { get; private set; }
         private bool DisguiseScopeMode;
+        private bool IsInitialize;
 
-        protected ClassSymbol()
+        public ClassSymbol()
         {
+        }
+
+        protected ClassSymbol(ClassType type)
+        {
+            ClassType = type;
             Block = new ProgramContext();
             This = new ThisSymbol(this);
             Block.Append(This);
             AppendChild(Block);
             InitInitializers();
             InitAliasCalls();
+            IsInitialize = true;
         }
 
         protected ClassSymbol(TextPosition tp, string name, ClassType type, ProgramContext block)
@@ -51,10 +58,16 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
             InitInitializers();
             InitAliasCalls();
+            IsInitialize = true;
         }
 
-        public ClassSymbol(string name, ClassType type, ProgramContext block, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<TypeSymbol> inherit)
+        public void Initialize(string name, ClassType type, ProgramContext block, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<TypeSymbol> inherit)
         {
+            if (IsInitialize)
+            {
+                throw new InvalidOperationException();
+            }
+            IsInitialize = true;
             Name = name;
             ClassType = type;
             Block = block;
@@ -64,10 +77,6 @@ namespace AbstractSyntax.Symbol
             _Attribute = attr;
             _Generics = gnr;
             _Inherit = inherit;
-        }
-
-        public void Initialize()
-        {
             InitInitializers();
             InitAliasCalls();
         }
