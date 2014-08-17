@@ -18,6 +18,19 @@
     </code>
     <output>hello</output>
   </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32) { 
+	      return a + 20
+      }
+      
+      10.foo =: stdout
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
   
   <case>
     <code>

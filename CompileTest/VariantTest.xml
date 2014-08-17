@@ -65,7 +65,6 @@
       stdout := a
     </code>
     <error key="undefined-identifier"/>
-    <error key="require-type"/>
   </case>
 
   <case>

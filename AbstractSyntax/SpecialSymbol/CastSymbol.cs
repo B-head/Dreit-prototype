@@ -17,7 +17,7 @@ namespace AbstractSyntax.SpecialSymbol
         {
             Name = to.Name;
             PrimitiveType = type;
-            _Arguments = SyntaxUtility.MakeParameters(from);
+            _Arguments = ParameterSymbol.MakeParameters(from);
             _CallReturnType = to;
         }
     }

@@ -43,7 +43,7 @@ namespace AbstractSyntax.SpecialSymbol
                 {
                     if (IsSet)
                     {
-                        _Arguments = SyntaxUtility.MakeParameters(Type);
+                        _Arguments = ParameterSymbol.MakeParameters(Type);
                     }
                     else
                     {

@@ -50,7 +50,7 @@ namespace AbstractSyntax.Literal
                     return _ReturnType;
                 }
                 var list = CurrentScope.NameResolution("List").FindDataType();
-                _ReturnType = Root.ClassManager.Issue(list, new TypeSymbol[] { BaseType });
+                _ReturnType = Root.ClassManager.Issue(list, new TypeSymbol[] { BaseType }, new TypeSymbol[0]);
                 return _ReturnType;
             }
         }

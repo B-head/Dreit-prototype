@@ -59,6 +59,7 @@
     <Compile Include="Expression\Compose.cs" />
     <Compile Include="Expression\SwapExpression.cs" />
     <Compile Include="Expression\WithExpression.cs" />
+    <Compile Include="GenericInstance.cs" />
     <Compile Include="Literal\ArrayLiteral.cs" />
     <Compile Include="Literal\AssociatePair.cs" />
     <Compile Include="Literal\DictionaryLiteral.cs" />

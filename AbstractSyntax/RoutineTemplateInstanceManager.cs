@@ -10,44 +10,78 @@ namespace AbstractSyntax
     [Serializable]
     public class RoutineTemplateInstanceManager : Element
     {
-        private Dictionary<RoutineSymbol, List<RoutineTemplateInstance>> TemplateDictonary;
+        private Dictionary<InstanceKey, RoutineTemplateInstance> TemplateDictonary;
 
         public RoutineTemplateInstanceManager()
         {
-            TemplateDictonary = new Dictionary<RoutineSymbol, List<RoutineTemplateInstance>>();
+            TemplateDictonary = new Dictionary<InstanceKey, RoutineTemplateInstance>();
         }
 
-        public RoutineTemplateInstance Issue(RoutineSymbol routine, IReadOnlyList<TypeSymbol> parameter)
+        public RoutineTemplateInstance Issue(RoutineSymbol routine, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
         {
-            var ret = FindInstance(routine, parameter);
+            var ret = FindInstance(routine, parameters, tacitParameters);
             if (ret != null)
             {
                 return ret;
             }
-            ret = new RoutineTemplateInstance(routine, parameter);
+            ret = new RoutineTemplateInstance(routine, parameters, tacitParameters);
             AppendInstance(ret);
             return ret;
         }
 
         private void AppendInstance(RoutineTemplateInstance instance)
         {
-            if(!TemplateDictonary.ContainsKey(instance.Routine))
-            {
-                TemplateDictonary.Add(instance.Routine, new List<RoutineTemplateInstance>());
-            }
-            TemplateDictonary[instance.Routine].Add(instance);
+            var key = new InstanceKey { Routine = instance.Routine, Parameters = instance.Parameters, TacitParameters = instance.TacitParameters };
+            TemplateDictonary.Add(key, instance);
             AppendChild(instance);
         }
 
-        private RoutineTemplateInstance FindInstance(RoutineSymbol routine, IReadOnlyList<TypeSymbol> parameter)
+        private RoutineTemplateInstance FindInstance(RoutineSymbol routine, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
         {
-            if (!TemplateDictonary.ContainsKey(routine))
+            var key = new InstanceKey { Routine = routine, Parameters = parameters, TacitParameters = tacitParameters };
+            if (!TemplateDictonary.ContainsKey(key))
             {
                 return null;
             }
-            var list = TemplateDictonary[routine];
-            var ret = list.FirstOrDefault(v => v.Parameters.SequenceEqual(parameter));
-            return ret;
+            return TemplateDictonary[key];
+        }
+
+        private struct InstanceKey : IEquatable<InstanceKey>
+        {
+            public RoutineSymbol Routine { get; set; }
+            public IReadOnlyList<TypeSymbol> Parameters { get; set; }
+            public IReadOnlyList<TypeSymbol> TacitParameters { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                var other = obj as InstanceKey?;
+                if (!other.HasValue)
+                {
+                    return false;
+                }
+                return Equals(other.Value);
+            }
+
+            public bool Equals(InstanceKey other)
+            {
+                return Routine.Equals(other.Routine) &&
+                    Parameters.SequenceEqual(other.Parameters) &&
+                    TacitParameters.SequenceEqual(other.TacitParameters);
+            }
+
+            public override int GetHashCode()
+            {
+                var hash = Routine.GetHashCode();
+                foreach (var v in Parameters)
+                {
+                    hash ^= v.GetHashCode();
+                }
+                foreach (var v in TacitParameters)
+                {
+
+                }
+                return base.GetHashCode();
+            }
         }
     }
 }

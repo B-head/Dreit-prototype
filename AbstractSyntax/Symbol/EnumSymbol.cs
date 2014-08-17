@@ -30,11 +30,5 @@ namespace AbstractSyntax.Symbol
             _BaseType = bt;
             AppendChild(Block);
         }
-
-        public override bool IsDataType
-        {
-            get { return true; }
-        }
-
     }
 }

@@ -43,7 +43,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (CallRoutine is ErrorRoutineSymbol && !SyntaxUtility.HasAnyErrorType(Exp.ReturnType))
+            if (CallRoutine is ErrorRoutineSymbol && !TypeSymbol.HasAnyErrorType(Exp.ReturnType))
             {
                 cmm.CompileError("undefined-monadic-operator", this);
             }

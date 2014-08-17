@@ -12,11 +12,13 @@ namespace AbstractSyntax.Symbol
     {
         public TypeSymbol Type { get; private set; }
         public IReadOnlyList<TypeSymbol> Parameters { get; private set; }
+        public IReadOnlyList<TypeSymbol> TacitParameters { get; private set; }
 
-        public ClassTemplateInstance(TypeSymbol type, IReadOnlyList<TypeSymbol> parameter)
+        public ClassTemplateInstance(TypeSymbol type, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
         {
             Type = type;
-            Parameters = parameter;
+            Parameters = parameters;
+            TacitParameters = tacitParameters;
         }
 
         protected override string ElementInfo
@@ -40,7 +42,7 @@ namespace AbstractSyntax.Symbol
             {
                 return ReferenceCache[name];
             }
-            OverLoadChain n = Root.UndefinedOverLord;
+            OverLoadChain n;
             var m = Type as ModifyTypeSymbol;
             if (m != null && ModifyTypeSymbol.HasInheritModify(m.ModifyType))
             {
@@ -56,7 +58,7 @@ namespace AbstractSyntax.Symbol
 
         internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            var newInst = SyntaxUtility.MakeGenericInstance(Type.Generics, Parameters);
+            var newInst = GetGenericInstance(); ;
             var aftInst = newInst.Concat(inst).ToList();
             foreach (var v in Type.GetTypeMatch(aftInst, pars, args))
             {
@@ -75,7 +77,7 @@ namespace AbstractSyntax.Symbol
             }
             else
             {
-                var newInst = SyntaxUtility.MakeGenericInstance(Type.Generics, Parameters);
+                var newInst = GetGenericInstance(); ;
                 var aftInst = newInst.Concat(inst).ToList();
                 foreach (var v in Type.GetInstanceMatch(aftInst, pars, args))
                 {
@@ -101,6 +103,28 @@ namespace AbstractSyntax.Symbol
                 return Parameters[0] == cls;
             }
             return false;
+        }
+
+        internal IReadOnlyList<GenericsInstance> GetGenericInstance()
+        {
+            var p = GenericsInstance.MakeGenericInstance(Type.Generics, Parameters);
+            var tp = GenericsInstance.MakeGenericInstance(Type.TacitGeneric, TacitParameters);
+            return p.Concat(tp).ToList();
+        }
+
+        public override IReadOnlyList<AttributeSymbol> Attribute
+        {
+            get { return Type.Attribute; }
+        }
+
+        public override IReadOnlyList<GenericSymbol> Generics
+        {
+            get { return Type.Generics; }
+        }
+
+        public override IReadOnlyList<TypeSymbol> Inherit
+        {
+            get { return GenericsInstance.MakeClassTemplateInstanceList(Root, GetGenericInstance(), Type.Inherit); }
         }
     }
 }

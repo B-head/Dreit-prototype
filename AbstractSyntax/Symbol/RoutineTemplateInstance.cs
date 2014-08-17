@@ -11,12 +11,14 @@ namespace AbstractSyntax.Symbol
     {
         public RoutineSymbol Routine { get; private set; }
         public IReadOnlyList<TypeSymbol> Parameters { get; private set; }
+        public IReadOnlyList<TypeSymbol> TacitParameters { get; private set; }
 
-        public RoutineTemplateInstance(RoutineSymbol routine, IReadOnlyList<TypeSymbol> parameter)
+        public RoutineTemplateInstance(RoutineSymbol routine, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
             :base(RoutineType.Unknown, TokenType.Unknoun)
         {
             Routine = routine;
-            Parameters = parameter;
+            Parameters = parameters;
+            TacitParameters = tacitParameters;
         }
 
         protected override string ElementInfo
@@ -34,19 +36,38 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        public override TypeSymbol ReturnType
+        internal IReadOnlyList<GenericsInstance> GetGenericInstance()
         {
-            get { return Root.ErrorType; } //todo インスタンス化したデリゲート型を返すようにする。
+            var p = GenericsInstance.MakeGenericInstance(Routine.Generics, Parameters);
+            var tp = GenericsInstance.MakeGenericInstance(Routine.TacitGeneric, TacitParameters);
+            return p.Concat(tp).ToList();
         }
 
-        public override OverLoad OverLoad
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
-            get { return Root.SimplexManager.Issue(this); } //todo インスタンス化したオーバーロードを返す。
+            get { return Routine.Attribute; }
+        }
+
+        public override IReadOnlyList<GenericSymbol> Generics
+        {
+            get { return Routine.Generics; }
+        }
+
+        public override IReadOnlyList<ParameterSymbol> Arguments
+        {
+            get { return GenericsInstance.MakeArgumentTemplateInstanceList(Root, GetGenericInstance(), Routine.Arguments); }
         }
 
         public override TypeSymbol CallReturnType
         {
-            get { return _CallReturnType ?? Root.ErrorType; } //todo インスタンス化した返り値を返す。
+            get 
+            {
+                if(_CallReturnType == null)
+                {
+                    _CallReturnType = GenericsInstance.MakeClassTemplateInstance(Root, GetGenericInstance(), Routine.CallReturnType);
+                }
+                return _CallReturnType; 
+            }
         }
     }
 }

@@ -71,7 +71,12 @@ namespace AbstractSyntax.Expression
             {
                 if(_OverLoad == null)
                 {
-                    var ol = Access.ReturnType.NameResolution(Member);
+                    OverLoad ol = Access.ReturnType.NameResolution(Member);
+                    var ti = Access.ReturnType as ClassTemplateInstance;
+                    if(ti != null)
+                    {
+                        ol = OverLoadModify.MakeScopeInstance(ol, ti.GetGenericInstance());
+                    }
                     _OverLoad = OverLoadModify.MakeMember(ol, true);
                 }
                 return _OverLoad;

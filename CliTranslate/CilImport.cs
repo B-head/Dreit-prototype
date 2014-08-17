@@ -175,15 +175,15 @@ namespace CliTranslate
             ClassTemplateInstance elem = null;
             if(type.IsArray)
             {
-                elem = Root.ClassManager.Issue(Root.EmbedArray, new TypeSymbol[] { elementType });
+                elem = Root.ClassManager.Issue(Root.EmbedArray, new TypeSymbol[] { elementType }, new TypeSymbol[0]);
             }
             else if(type.IsByRef)
             {
-                elem = Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { elementType });
+                elem = Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { elementType }, new TypeSymbol[0]);
             }
             else if(type.IsPointer)
             {
-                elem = Root.ClassManager.Issue(Root.Pointer, new TypeSymbol[] { elementType });
+                elem = Root.ClassManager.Issue(Root.Pointer, new TypeSymbol[] { elementType }, new TypeSymbol[0]);
             }
             else
             {
@@ -201,7 +201,7 @@ namespace CliTranslate
         {
             var definition = ImportType(type.GetGenericTypeDefinition());
             var parameter = new List<TypeSymbol>();
-            var elem = Root.ClassManager.Issue(definition, parameter);
+            var elem = Root.ClassManager.Issue(definition, parameter, new TypeSymbol[0]);
             if (ImportDictionary.ContainsKey(type))
             {
                 return (ClassTemplateInstance)ImportDictionary[type];

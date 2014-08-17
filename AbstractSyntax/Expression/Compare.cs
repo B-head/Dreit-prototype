@@ -69,7 +69,7 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (CallRoutine is ErrorRoutineSymbol && !SyntaxUtility.HasAnyErrorType(Left.ReturnType, Right.ReturnType))
+            if (CallRoutine is ErrorRoutineSymbol && !TypeSymbol.HasAnyErrorType(Left.ReturnType, Right.ReturnType))
             {
                 cmm.CompileError("impossible-calculate", this);
             }

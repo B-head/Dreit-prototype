@@ -24,10 +24,5 @@ namespace AbstractSyntax.Symbol
             _Attribute = attr;
             _Constraint = constraint;
         }
-
-        public override bool IsDataType
-        {
-            get { return true; }
-        }
     }
 }

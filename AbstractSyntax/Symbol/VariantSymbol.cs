@@ -111,7 +111,7 @@ namespace AbstractSyntax.Symbol
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (ReturnType is ErrorTypeSymbol)
+            if (ReturnType is UnknownSymbol)
             {
                 cmm.CompileError("require-type", this);
             }

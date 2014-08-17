@@ -58,7 +58,7 @@ namespace AbstractSyntax.Declaration
                 {
                     return _DataType;
                 }
-                _DataType = Root.ErrorType;
+                _DataType = Root.Unknown;
                 var caller = Parent as CallExpression;
                 if (ExplicitType != null)
                 {

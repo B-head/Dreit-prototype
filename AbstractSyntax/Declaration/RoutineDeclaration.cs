@@ -97,7 +97,7 @@ namespace AbstractSyntax.Declaration
                 {
                     return _CallReturnType;
                 }
-                _CallReturnType = Root.ErrorType;
+                _CallReturnType = Root.Unknown;
                 if (ExplicitType != null)
                 {
                     _CallReturnType = ExplicitType.OverLoad.FindDataType();
@@ -132,24 +132,6 @@ namespace AbstractSyntax.Declaration
                 }
                 return _CallReturnType;
             }
-        }
-
-        public override bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
-        {
-            get
-            {
-                var cls = GetParent<ClassSymbol>();
-                if (cls == null)
-                {
-                    return false;
-                }
-                return IsInstanceMember;
-            }
-        }
-
-        public override bool IsAbstract
-        {
-            get { return Block == null; }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

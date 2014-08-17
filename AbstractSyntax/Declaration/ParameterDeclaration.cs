@@ -50,6 +50,7 @@ namespace AbstractSyntax.Declaration
                 {
                     return _DataType;
                 }
+                _DataType = Root.Unknown;
                 if (ExplicitType != null)
                 {
                     _DataType = ExplicitType.OverLoad.FindDataType();
@@ -57,10 +58,6 @@ namespace AbstractSyntax.Declaration
                 else if (DefaultValue != null)
                 {
                     _DataType = DefaultValue.ReturnType;
-                }
-                else
-                {
-                    _DataType = Root.ErrorType;
                 }
                 return _DataType;
             }

@@ -87,7 +87,7 @@ namespace AbstractSyntax
 
         private void BuildFullName(StringBuilder builder)
         {
-            if(CurrentScope != null && !(CurrentScope is Root))
+            if(CurrentScope != null)
             {
                 CurrentScope.BuildFullName(builder);
                 builder.Append(".");
@@ -112,14 +112,17 @@ namespace AbstractSyntax
             return null;
         }
 
+        internal virtual void BuildTacitGeneric(List<GenericSymbol> list)
+        {
+            if (CurrentScope != null)
+            {
+                CurrentScope.BuildTacitGeneric(list);
+            }
+        }
+
         protected override string ElementInfo
         {
             get { return string.Format("{0}, Child = {1}", string.IsNullOrWhiteSpace(Name) ? "<no-name>" : Name, Count); }
-        }
-
-        public virtual bool IsDataType
-        {
-            get { return false; }
         }
 
         public virtual IReadOnlyList<AttributeSymbol> Attribute

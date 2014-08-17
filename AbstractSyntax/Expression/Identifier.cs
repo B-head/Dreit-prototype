@@ -92,7 +92,7 @@ namespace AbstractSyntax.Expression
                 else if(IdentType == TokenType.Nullable)
                 {
                     var type = CurrentScope.NameResolution(Value).FindDataType();
-                    var nullable = Root.ClassManager.Issue(Root.Nullable, new TypeSymbol[] { type });
+                    var nullable = Root.ClassManager.Issue(Root.Nullable, new TypeSymbol[] { type }, new TypeSymbol[0]);
                     _OverLoad = nullable.OverLoad;
                 }
                 else

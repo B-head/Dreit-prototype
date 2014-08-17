@@ -10,44 +10,78 @@ namespace AbstractSyntax
     [Serializable]
     public class ClassTemplateInstanceManager : Element
     {
-        private Dictionary<TypeSymbol, List<ClassTemplateInstance>> TemplateDictonary;
+        private Dictionary<InstanceKey, ClassTemplateInstance> TemplateDictonary;
 
         public ClassTemplateInstanceManager()
         {
-            TemplateDictonary = new Dictionary<TypeSymbol, List<ClassTemplateInstance>>();
+            TemplateDictonary = new Dictionary<InstanceKey, ClassTemplateInstance>();
         }
 
-        public ClassTemplateInstance Issue(TypeSymbol type, IReadOnlyList<TypeSymbol> parameter)
+        public ClassTemplateInstance Issue(TypeSymbol type, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
         {
-            var ret = FindInstance(type, parameter);
+            var ret = FindInstance(type, parameters, tacitParameters);
             if (ret != null)
             {
                 return ret;
             }
-            ret = new ClassTemplateInstance(type, parameter);
+            ret = new ClassTemplateInstance(type, parameters, tacitParameters);
             AppendInstance(ret);
             return ret;
         }
 
         private void AppendInstance(ClassTemplateInstance instance)
         {
-            if(!TemplateDictonary.ContainsKey(instance.Type))
-            {
-                TemplateDictonary.Add(instance.Type, new List<ClassTemplateInstance>());
-            }
-            TemplateDictonary[instance.Type].Add(instance);
+            var key = new InstanceKey { Type = instance.Type, Parameters = instance.Parameters, TacitParameters = instance.TacitParameters };
+            TemplateDictonary.Add(key, instance);
             AppendChild(instance);
         }
 
-        private ClassTemplateInstance FindInstance(TypeSymbol type, IReadOnlyList<Scope> parameter)
+        private ClassTemplateInstance FindInstance(TypeSymbol type, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
         {
-            if (!TemplateDictonary.ContainsKey(type))
+            var key = new InstanceKey { Type = type, Parameters = parameters, TacitParameters = tacitParameters };
+            if (!TemplateDictonary.ContainsKey(key))
             {
                 return null;
             }
-            var list = TemplateDictonary[type];
-            var ret = list.FirstOrDefault(v => v.Parameters.SequenceEqual(parameter));
-            return ret;
+            return TemplateDictonary[key];
+        }
+
+        private struct InstanceKey : IEquatable<InstanceKey>
+        {
+            public TypeSymbol Type { get; set; }
+            public IReadOnlyList<TypeSymbol> Parameters { get; set; }
+            public IReadOnlyList<TypeSymbol> TacitParameters { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                var other = obj as InstanceKey?;
+                if (!other.HasValue)
+                {
+                    return false;
+                }
+                return Equals(other.Value);
+            }
+
+            public bool Equals(InstanceKey other)
+            {
+                return Type.Equals(other.Type) &&
+                    Parameters.SequenceEqual(other.Parameters) &&
+                    TacitParameters.SequenceEqual(other.TacitParameters);
+            }
+
+            public override int GetHashCode()
+            {
+                var hash = Type.GetHashCode();
+                foreach (var v in Parameters)
+                {
+                    hash ^= v.GetHashCode();
+                }
+                foreach (var v in TacitParameters)
+                {
+
+                }
+                return base.GetHashCode();
+            }
         }
     }
 }

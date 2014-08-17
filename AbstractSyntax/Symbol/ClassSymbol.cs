@@ -205,11 +205,6 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        public override bool IsConstant
-        {
-            get { return true; }
-        }
-
         public bool IsDefaultConstructor
         {
             get { return Initializers.Any(v => v is DefaultSymbol); }
@@ -223,11 +218,6 @@ namespace AbstractSyntax.Symbol
         public bool IsTrait
         {
             get { return ClassType == ClassType.Trait; }
-        }
-
-        public override bool IsDataType
-        {
-            get { return true; }
         }
 
         internal override OverLoadChain NameResolution(string name)

@@ -33,5 +33,17 @@ namespace AbstractSyntax.Symbol
         {
             get { return CurrentScope is LoopStatement || CurrentScope is ForStatement; }
         }
+
+        public static IReadOnlyList<ParameterSymbol> MakeParameters(params TypeSymbol[] types)
+        {
+            var ret = new List<ParameterSymbol>();
+            for (var i = 0; i < types.Length; ++i)
+            {
+                var p = new ParameterSymbol();
+                p.Initialize("@@arg" + (i + 1), VariantType.Let, new List<AttributeSymbol>(), types[i]);
+                ret.Add(p);
+            }
+            return ret;
+        }
     }
 }

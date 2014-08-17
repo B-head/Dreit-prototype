@@ -62,7 +62,7 @@ namespace AbstractSyntax
         public OverLoadMatch CallSelect(IReadOnlyList<GenericsInstance> inst, 
             IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
         {
-            if (SyntaxUtility.HasAnyErrorType(pars) || SyntaxUtility.HasAnyErrorType(args))
+            if (TypeSymbol.HasAnyErrorType(pars) || TypeSymbol.HasAnyErrorType(args))
             {
                 return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
             }

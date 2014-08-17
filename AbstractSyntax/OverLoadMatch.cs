@@ -15,6 +15,7 @@ namespace AbstractSyntax
         public TypeMatchResult Result { get; private set; }
         public IReadOnlyList<GenericSymbol> FormalGenerics { get; private set; }
         public IReadOnlyList<ParameterSymbol> FormalArguments { get; private set; }
+        public IReadOnlyList<GenericsInstance> ScopeInstance { get; private set; }
         public IReadOnlyList<TypeSymbol> ActualGenerics { get; private set; }
         public IReadOnlyList<TypeSymbol> ActualArguments { get; private set; }
         public IReadOnlyList<TypeSymbol> InstanceGenerics { get; private set; }
@@ -49,13 +50,14 @@ namespace AbstractSyntax
                 Call = call,
                 FormalGenerics = fg,
                 FormalArguments = fa,
+                ScopeInstance = inst,
                 ActualGenerics = ag,
                 ActualArguments = aa,
                 InstanceGenerics = ig,
                 InstanceArguments = ia,
                 Converters = convs,
             };
-            if(SyntaxUtility.HasAnyErrorType(fg) || SyntaxUtility.HasAnyErrorType(fa.GetDataTypes()))
+            if (TypeSymbol.HasAnyErrorType(fg) || TypeSymbol.HasAnyErrorType(fa.GetDataTypes()))
             {
                 result.Result = TypeMatchResult.Unknown;
                 return result;
@@ -71,7 +73,8 @@ namespace AbstractSyntax
                 return result;
             }
             InitInstance(fg, fa, ag, aa, ig, ia);
-            InferInstance(ag, aa, ig, ia);
+            var tgi = InferInstance(root, inst, ag, aa, ig, ia);
+            result.Call = GenericsInstance.MakeRoutineTemplateInstance(root, tgi, call);
             for (int i = 0; i < ia.Count; i++)
             {
                 var c = root.ConvManager.Find(aa[i], ia[i]);
@@ -152,38 +155,49 @@ namespace AbstractSyntax
             }
         }
 
-        private static void InferInstance(IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
+        private static IReadOnlyList<GenericsInstance> InferInstance(Root root, IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
         {
-            var tg = new List<TypeSymbol>(ig);
-            for (var i = 0; i < ag.Count; ++i)
+            var tgi = new List<GenericsInstance>();
+            for (var i = 0; i < ig.Count; ++i)
             {
-                ig[i] = ag[i];
-            }
-            for (var i = 0; i < ia.Count; ++i)
-            {
-                if(!(ia[i] is GenericSymbol))
+                if(i < ag.Count)
                 {
-                    continue;
-                }
-                var k = FindTypeIndex(tg, ia[i]);
-                if(ig[k] is GenericSymbol)
-                {
-                    ig[k] = aa[i]; 
+                    tgi.Add(new GenericsInstance { Generic = (GenericSymbol)ig[i], Type = ag[i] });
                 }
                 else
                 {
-                    ig[k] = GetCommonSubType(ig[k], aa[i]); 
+                    tgi.Add(new GenericsInstance { Generic = (GenericSymbol)ig[i], Type = root.Unknown });
                 }
             }
+            tgi = tgi.Concat(inst).ToList();
             for (var i = 0; i < ia.Count; ++i)
             {
-                if (!(ia[i] is GenericSymbol))
+                var g = ia[i] as GenericSymbol;
+                if(g == null)
                 {
                     continue;
                 }
-                var k = FindTypeIndex(tg, ia[i]);
-                ia[i] = ig[k];
+                var k = GenericsInstance.FindGenericIndex(tgi, g);
+                var gi = tgi[k];
+                if (tgi[k].Type is UnknownSymbol)
+                {
+                    gi.Type = aa[i]; 
+                }
+                else
+                {
+                    gi.Type = GetCommonSubType(gi.Type, aa[i]); 
+                }
+                tgi[k] = gi;
             }
+            for (var i = 0; i < ig.Count; ++i)
+            {
+                ig[i] = GenericsInstance.MakeClassTemplateInstance(root, tgi, ig[i]);
+            }
+            for (var i = 0; i < ia.Count; ++i)
+            {
+                ia[i] = GenericsInstance.MakeClassTemplateInstance(root, tgi, ia[i]);
+            }
+            return tgi;
         }
 
         private static bool HasVariadic(IReadOnlyList<Scope> f)
@@ -227,18 +241,6 @@ namespace AbstractSyntax
                 ret.Add(scope);
             }
             return ret;
-        }
-
-        private static int FindTypeIndex(IReadOnlyList<TypeSymbol> list, TypeSymbol value)
-        {
-            for(var i = 0; i < list.Count; ++i)
-            {
-                if(list[i] == value)
-                {
-                    return i;
-                }
-            }
-            throw new ArgumentException("value");
         }
 
         private static TypeSymbol GetCommonSubType(TypeSymbol t1, TypeSymbol t2)

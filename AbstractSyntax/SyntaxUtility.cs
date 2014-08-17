@@ -8,13 +8,6 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax
 {
-    [Serializable]
-    public struct GenericsInstance
-    {
-        public GenericSymbol Generic { get; set; }
-        public TypeSymbol Type { get; set; }
-    }
-
     public static class SyntaxUtility
     {
         public static string ToNames(this IReadOnlyList<Scope> scopes)
@@ -54,21 +47,6 @@ namespace AbstractSyntax
             return result;
         }
 
-        public static IReadOnlyList<GenericsInstance> MakeGenericInstance(IReadOnlyList<GenericSymbol> generics, IReadOnlyList<TypeSymbol> types)
-        {
-            if(generics.Count != types.Count)
-            {
-                throw new ArgumentException("count");
-            }
-            var ret = new List<GenericsInstance>();
-            for(var i = 0; i < generics.Count; ++i)
-            {
-                var gi = new GenericsInstance { Generic = generics[i], Type = types[i] };
-                ret.Add(gi);
-            }
-            return ret;
-        }
-
         internal static bool HasAnyAttribute(this IReadOnlyList<AttributeSymbol> attribute, params AttributeType[] type)
         {
             foreach (var v in attribute)
@@ -79,18 +57,6 @@ namespace AbstractSyntax
                 }
             }
             return false;
-        }
-
-        public static IReadOnlyList<ParameterSymbol> MakeParameters(params TypeSymbol[] types)
-        {
-            var ret = new List<ParameterSymbol>();
-            for(var i = 0; i < types.Length; ++i)
-            {
-                var p = new ParameterSymbol();
-                p.Initialize("@@arg" + (i + 1), VariantType.Let, new List<AttributeSymbol>(), types[i]);
-                ret.Add(p);
-            }
-            return ret;
         }
 
         public static bool HasVariadicArguments(this Scope scope)
@@ -105,23 +71,6 @@ namespace AbstractSyntax
                 return false;
             }
             return r.Arguments.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
-        }
-
-        internal static bool HasAnyErrorType(params TypeSymbol[] scope)
-        {
-            return HasAnyErrorType((IReadOnlyList<TypeSymbol>)scope);
-        }
-
-        internal static bool HasAnyErrorType(IReadOnlyList<TypeSymbol> scope)
-        {
-            foreach (var v in scope)
-            {
-                if (v is VoidSymbol || v is UnknownSymbol || v is ErrorTypeSymbol)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }
