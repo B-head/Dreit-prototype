@@ -328,6 +328,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             string sub = t.Read(0, 2);
             switch (sub)
             {
+                case "->": type = TokenType.ReturnArrow; break;
                 case "::": type = TokenType.Separator; break;
                 case "..": type = TokenType.Range; break;
                 case "@@": type = TokenType.Pragma; break;

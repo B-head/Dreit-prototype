@@ -25,6 +25,11 @@ namespace AbstractSyntax
             ConvList.Add(symbol);
         }
 
+        public IEnumerable<RoutineSymbol> GetAllInitializer(TypeSymbol type)
+        {
+            return ConvList.FindAll(v => v.CallReturnType == type);
+        }
+
         public RoutineSymbol Find(TypeSymbol from, TypeSymbol to)
         {
             var s = ConvList.FindAll(v => v.CallReturnType == to && v.Arguments[0].ReturnType == from);

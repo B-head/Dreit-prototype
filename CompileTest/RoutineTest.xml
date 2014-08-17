@@ -2,7 +2,7 @@
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
-      routine foo():Int32 :: 10
+      routine foo() ->Int32 :: 10
       stdout := foo()
     </code>
     <output>10</output>
@@ -26,7 +26,7 @@
 
   <case>
     <code>
-      routine foo(a:Int32):Int32 :: a + 10
+      routine foo(a:Int32) ->Int32 :: a + 10
       stdout := foo(20)
     </code>
     <output>30</output>
@@ -107,6 +107,19 @@
       ]]>
     </code>
     <output>3</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+	      a =: stdout
+      }
+      
+      foo"hello world"
+      ]]>
+    </code>
+    <output>hello world</output>
   </case>
 
   <case>

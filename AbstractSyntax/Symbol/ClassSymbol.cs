@@ -271,6 +271,13 @@ namespace AbstractSyntax.Symbol
                     yield return b;
                 }
             }
+            foreach (var a in Root.ConvManager.GetAllInitializer(this))
+            {
+                foreach (var b in a.GetTypeMatch(inst, pars, args))
+                {
+                    yield return b;
+                }
+            }
         }
 
         internal override IEnumerable<OverLoadMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)

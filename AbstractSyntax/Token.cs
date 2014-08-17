@@ -37,6 +37,7 @@ namespace AbstractSyntax
         OtherString,
 
         EndExpression,
+        ReturnArrow,
         Pair,
         Separator,
         List,

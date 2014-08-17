@@ -82,7 +82,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 )
                 .Transfer(e => generic = e, GenericList)
                 .Transfer(e => args = e, ArgumentList)
-                .If(icp => icp.Type(TokenType.Pair).Lt())
+                .If(icp => icp.Type(TokenType.ReturnArrow).Lt())
                 .Than(icp => icp.Transfer(e => expli = e, NakedRangeLiteral))
                 .Transfer(e => block = e, InlineContext)
                 .End(tp => new RoutineDeclaration(tp, name, type, opType, attr, generic, args, expli, block));

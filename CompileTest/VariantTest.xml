@@ -127,7 +127,7 @@
     <output>25</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       var e:Double := 25.5
       stdout := Int32(e)

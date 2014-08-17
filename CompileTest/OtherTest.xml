@@ -18,6 +18,16 @@
     </code>
     <output>hello</output>
   </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      var e:Double := 25.5
+      stdout := e.Int32
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
 
   <case>
     <code>
@@ -42,28 +52,40 @@
   <case>
     <code>
       <![CDATA[
-      rout foo(a:String) { 
-        a =: stdout
-        return "world"
+      rout foo(a:Int32) { 
+	      return 20
       }
       
       foo
-      "hello" =: stdout
+      (10) =: stdout
       ]]>
     </code>
-    <output>hello</output>
+    <output>10</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
-      rout foo(a:String) { 
-        a =: stdout
-        return "world"
+      rout foo(a:Int32) { 
+	      return 20
       }
       
       foo\
-      "hello" =: stdout
+      (10) =: stdout
+      ]]>
+    </code>
+    <output>20</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+	      a =: stdout
+	      return "world"
+      }
+      
+      foo"hello" =: stdout
       ]]>
     </code>
     <output>hello world</output>
@@ -72,7 +94,7 @@
   <case>
     <code>
       <![CDATA[
-      rout foo a:String -> Void :: a =: stdout
+      rout foo a:String :: a =: stdout
       
       foo := "hello"
       ]]>
@@ -86,13 +108,13 @@
       class A {
         var x := 11
         var y := 22
+      }
         
-        operator +(other:A) {
-          var ret := A
-          ret.x := x + other.x
-          ret.y := y + other.y
-          return ret
-        }
+      operator +(a:A, b:A) {
+        var ret := A
+        ret.x := a.x + b.x
+        ret.y := a.y + b.y
+        return ret
       }
       
       var a := A
@@ -116,11 +138,13 @@
       class B
       {
         var value := 22
-        routine from(a:A)
-        {
-          value := a.value
-          return this
-        }
+      }
+      
+      operator B(a:A)
+      {
+        var ret := B
+        ret.value := a.value
+        return ret
       }
 
       var a := A()

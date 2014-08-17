@@ -243,6 +243,18 @@ namespace CliTranslate
                 ret.RegisterSuperConstructor(super);
                 return ret;
             }
+            else if(element.IsDestructor)
+            {
+                var ret = new MethodStructure();
+                TransDictionary.Add(element, ret);
+                var attr = MethodAttributes.Family | MethodAttributes.RTSpecialName | MethodAttributes.Virtual;
+                var gnr = new List<GenericParameterStructure>();
+                var arg = new List<ParameterStructure>();
+                var block = RelayTranslate(element.Block);
+                var crt = RelayTranslate(element.CallReturnType);
+                ret.Initialize("Finalize", element.IsInstanceMember, attr, gnr, arg, crt, block, (MethodInfo)info);
+                return ret;
+            }
             else
             {
                 var ret = new MethodStructure();
