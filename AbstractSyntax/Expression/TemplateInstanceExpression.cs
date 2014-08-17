@@ -31,7 +31,7 @@ namespace AbstractSyntax.Expression
 
         public override OverLoad OverLoad
         {
-            get { return OverLoadModify.MakeParameters(Access.OverLoad, Parameter); }
+            get { return new OverLoadModify(Access.OverLoad, Parameter); }
         }
 
         public override bool IsConstant

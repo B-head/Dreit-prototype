@@ -11,14 +11,9 @@ namespace AbstractSyntax
     [Serializable]
     public abstract class OverLoad
     {
-        public virtual VariantSymbol FindVariant()
+        public VariantSymbol FindVariant()
         {
-            return FindVariant(false, false);
-        }
-
-        public VariantSymbol FindVariant(bool byMember, bool byStatic)
-        {
-            foreach (var v in TraversalVariant(byMember, byStatic))
+            foreach (var v in TraversalVariant())
             {
                 return v;
             }
@@ -34,15 +29,10 @@ namespace AbstractSyntax
             throw new InvalidOperationException();
         }
 
-        public virtual TypeSymbol FindDataType()
+        public TypeSymbol FindDataType()
         {
-            return FindDataType(new List<GenericsInstance>(), new List<TypeSymbol>(), false, false);
-        }
-
-        public TypeSymbol FindDataType(IReadOnlyList<GenericsInstance> inst,
-            IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
-        {
-            foreach (var v in TraversalDataType(inst, pars, byMember, byStatic))
+            var pars = new List<TypeSymbol>();
+            foreach (var v in TraversalDataType(pars))
             {
                 return v; //todo 型の選択とインスタンス化をする。
             }
@@ -54,20 +44,15 @@ namespace AbstractSyntax
             return CallSelect(new List<TypeSymbol>());
         }
 
-        public virtual OverLoadMatch CallSelect(IReadOnlyList<TypeSymbol> args)
+        public OverLoadMatch CallSelect(IReadOnlyList<TypeSymbol> args)
         {
-            return CallSelect(new List<GenericsInstance>(), new List<TypeSymbol>(), args, false, false);
-        }
-
-        public OverLoadMatch CallSelect(IReadOnlyList<GenericsInstance> inst, 
-            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
-        {
+            var pars = new List<TypeSymbol>();
             if (TypeSymbol.HasAnyErrorType(pars) || TypeSymbol.HasAnyErrorType(args))
             {
                 return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
             }
             OverLoadMatch result = OverLoadMatch.MakeNotCallable(Root.ErrorRoutine);
-            foreach (var m in TraversalCall(inst, pars, args, byMember, byStatic))
+            foreach (var m in TraversalCall(pars, args))
             {
                 var a = OverLoadMatch.GetMatchPriority(result.Result);
                 var b = OverLoadMatch.GetMatchPriority(m.Result);
@@ -82,11 +67,9 @@ namespace AbstractSyntax
         public abstract bool IsUndefined { get; }
         internal abstract Root Root { get; }
         internal abstract IEnumerable<Scope> TraversalChilds();
-        internal abstract IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic);
+        internal abstract IEnumerable<VariantSymbol> TraversalVariant();
         internal abstract IEnumerable<AttributeSymbol> TraversalAttribute();
-        internal abstract IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst,
-            IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic);
-        internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
-            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic);
+        internal abstract IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars);
+        internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args);
     }
 }

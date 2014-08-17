@@ -71,13 +71,7 @@ namespace AbstractSyntax.Expression
             {
                 if(_OverLoad == null)
                 {
-                    OverLoad ol = Access.ReturnType.NameResolution(Member);
-                    var ti = Access.ReturnType as ClassTemplateInstance;
-                    if(ti != null)
-                    {
-                        ol = OverLoadModify.MakeScopeInstance(ol, ti.GetGenericInstance());
-                    }
-                    _OverLoad = OverLoadModify.MakeMember(ol, true);
+                    _OverLoad = Access.ReturnType.NameResolution(Member);
                 }
                 return _OverLoad;
             }
@@ -114,14 +108,14 @@ namespace AbstractSyntax.Expression
 
         private static bool ContainClass(ClassSymbol cls, Scope type)
         {
-            if(type is ClassSymbol)
-            {
-                return cls == type;
-            }
-            else if(type is ClassTemplateInstance)
+            if(type is ClassTemplateInstance)
             {
                 var tis = (ClassTemplateInstance)type;
                 return tis.ContainClass(cls);
+            }
+            else if(type is ClassSymbol)
+            {
+                return cls == type;
             }
             else
             {

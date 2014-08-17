@@ -44,7 +44,7 @@ namespace AbstractSyntax
 
         public int TotalCountSets
         {
-            get { return TraversalSets(false, false).Count(); }
+            get { return TraversalSets().Count(); }
         }
 
         public override bool IsUndefined
@@ -59,7 +59,7 @@ namespace AbstractSyntax
 
         internal override IEnumerable<Scope> TraversalChilds()
         {
-            foreach (var s in TraversalSets(true, true))
+            foreach (var s in TraversalSets())
             {
                 foreach (var v in s.TraversalChilds())
                 {
@@ -68,11 +68,11 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic)
+        internal override IEnumerable<VariantSymbol> TraversalVariant()
         {
-            foreach (var s in TraversalSets(byMember, byStatic))
+            foreach (var s in TraversalSets())
             {
-                foreach (var v in s.TraversalVariant(byMember, byStatic))
+                foreach (var v in s.TraversalVariant())
                 {
                     yield return v;
                 }
@@ -81,7 +81,7 @@ namespace AbstractSyntax
 
         internal override IEnumerable<AttributeSymbol> TraversalAttribute()
         {
-            foreach (var s in TraversalSets(false, true))
+            foreach (var s in TraversalSets())
             {
                 foreach (var v in s.TraversalAttribute())
                 {
@@ -90,48 +90,44 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
+        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
         {
-            foreach (var s in TraversalSets(byMember, byStatic))
+            foreach (var s in TraversalSets())
             {
-                foreach (var v in s.TraversalDataType(inst, pars, byMember, byStatic))
+                foreach (var v in s.TraversalDataType(pars))
                 {
                     yield return v;
                 }
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
-            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            foreach (var s in TraversalSets(byMember, byStatic))
+            foreach (var s in TraversalSets())
             {
-                foreach (var m in s.TraversalCall(inst, pars, args, byMember, byStatic))
+                foreach (var m in s.TraversalCall(pars, args))
                 {
                     yield return m;
                 }
             }
         }
 
-        internal IEnumerable<OverLoadSet> TraversalSets(bool byMember, bool byStatic)
+        internal IEnumerable<OverLoadSet> TraversalSets(bool byMember = false)
         {
-            foreach(var s in Sets)
+            foreach (var s in Sets)
             {
                 yield return s;
             }
-            if (!byStatic)
+            foreach (var i in Inherits)
             {
-                foreach (var i in Inherits)
+                foreach (var s in i.TraversalSets(true))
                 {
-                    foreach (var s in i.TraversalSets(true, false))
-                    {
-                        yield return s;
-                    }
+                    yield return s;
                 }
             }
             if (!byMember && Parent != null)
             {
-                foreach (var s in Parent.TraversalSets(false, byStatic))
+                foreach (var s in Parent.TraversalSets(false))
                 {
                     yield return s;
                 }

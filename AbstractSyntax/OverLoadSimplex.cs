@@ -37,7 +37,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic)
+        internal override IEnumerable<VariantSymbol> TraversalVariant()
         {
             var variant = Symbol as VariantSymbol;
             if (variant != null)
@@ -55,7 +55,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
+        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
         {
             var type = Symbol as TypeSymbol;
             if (type != null)
@@ -64,9 +64,9 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
-            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
+            var inst = new List<GenericsInstance>();
             foreach (var m in Symbol.GetTypeMatch(inst, pars, args))
             {
                 yield return m;

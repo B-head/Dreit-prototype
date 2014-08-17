@@ -28,6 +28,14 @@ namespace AbstractSyntax
             Symbols.Add(scope);
         }
 
+        internal OverLoadSet Clone(Scope thisScope)
+        {
+            var ret = new OverLoadSet(thisScope);
+            ret.Symbols = Symbols;
+            ret.IsHoldAlias = IsHoldAlias;
+            return ret;
+        }
+
         public override bool IsUndefined
         {
             get { return Symbols.Count == 0; }
@@ -50,7 +58,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<VariantSymbol> TraversalVariant(bool byMember, bool byStatic)
+        internal override IEnumerable<VariantSymbol> TraversalVariant()
         {
             if (IsHoldAlias)
             {
@@ -82,12 +90,13 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, bool byMember, bool byStatic)
+        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
         {
             if(IsHoldAlias)
             {
                 SpreadAlias();
             }
+            var inst = GetGenericInstance();
             foreach(var v in Symbols)
             {
                 var type = v as TypeSymbol;
@@ -98,13 +107,13 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<GenericsInstance> inst,
-            IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args, bool byMember, bool byStatic)
+        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             if (IsHoldAlias)
             {
                 SpreadAlias();
             }
+            var inst = GetGenericInstance();
             foreach (var s in Symbols)
             {
                 foreach (var m in s.GetTypeMatch(inst, pars, args))
@@ -126,6 +135,21 @@ namespace AbstractSyntax
                     Append(s);
                 }
             }
+        }
+
+        private IReadOnlyList<GenericsInstance> GetGenericInstance()
+        {
+            var cti = ThisScope as ClassTemplateInstance;
+            if (cti != null)
+            {
+                return cti.GetGenericInstance();
+            }
+            var rti = ThisScope as RoutineTemplateInstance;
+            if (rti != null)
+            {
+                return rti.GetGenericInstance();
+            }
+            return new List<GenericsInstance>();
         }
 
         public override string ToString()

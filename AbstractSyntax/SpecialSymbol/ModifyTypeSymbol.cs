@@ -21,11 +21,26 @@ namespace AbstractSyntax.SpecialSymbol
     public class ModifyTypeSymbol : TypeSymbol
     {
         public ModifyType ModifyType { get; private set; }
+        private IReadOnlyList<GenericSymbol> _Generics;
+        private IReadOnlyList<TypeSymbol> _Inherit;
 
         public ModifyTypeSymbol(ModifyType type)
-            
         {
+            Name = "@@" + type.ToString();
             ModifyType = type;
+            var g = new GenericSymbol("T", new List<AttributeSymbol>(), new List<Scope>());
+            _Generics = new GenericSymbol[] { g };
+            _Inherit = new TypeSymbol[] { g };
+        }
+
+        public override IReadOnlyList<GenericSymbol> Generics
+        {
+            get { return _Generics; }
+        }
+
+        public override IReadOnlyList<TypeSymbol> Inherit
+        {
+            get { return _Inherit; }
         }
 
         public static bool HasContainModify(Scope type, ModifyType modify)

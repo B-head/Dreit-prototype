@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class ClassTemplateInstance : TypeSymbol
+    public class ClassTemplateInstance : ClassSymbol
     {
         public TypeSymbol Type { get; private set; }
         public IReadOnlyList<TypeSymbol> Parameters { get; private set; }
@@ -16,9 +16,22 @@ namespace AbstractSyntax.Symbol
 
         public ClassTemplateInstance(TypeSymbol type, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
         {
+            //if (type.Generics.Count != parameters.Count || type.TacitGeneric.Count != tacitParameters.Count)
+            //{
+            //    throw new ArgumentException("parameter count");
+            //}
             Type = type;
             Parameters = parameters;
             TacitParameters = tacitParameters;
+            InitializeChildSymbols();
+        }
+
+        private void InitializeChildSymbols()
+        {
+            foreach (var v in Type.ChildSymbols)
+            {
+                ChildSymbols.Add(v.Key, v.Value.Clone(this));
+            }
         }
 
         protected override string ElementInfo
@@ -36,31 +49,10 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        internal override OverLoadChain NameResolution(string name)
-        {
-            if (ReferenceCache.ContainsKey(name))
-            {
-                return ReferenceCache[name];
-            }
-            OverLoadChain n;
-            var m = Type as ModifyTypeSymbol;
-            if (m != null && ModifyTypeSymbol.HasInheritModify(m.ModifyType))
-            {
-                n = Parameters[0].NameResolution(name);
-            }
-            else
-            {
-                n = Type.NameResolution(name);
-            }
-            ReferenceCache.Add(name, n);
-            return n;
-        }
-
         internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            var newInst = GetGenericInstance(); ;
-            var aftInst = newInst.Concat(inst).ToList();
-            foreach (var v in Type.GetTypeMatch(aftInst, pars, args))
+            inst = GetGenericInstance();
+            foreach (var v in Type.GetTypeMatch(inst, pars, args))
             {
                 yield return v;
             }
@@ -70,6 +62,7 @@ namespace AbstractSyntax.Symbol
         {
             if (Type == Root.Typeof)
             {
+                inst = GetGenericInstance();
                 foreach (var v in Parameters[0].GetTypeMatch(inst, pars, args))
                 {
                     yield return v;
@@ -77,9 +70,8 @@ namespace AbstractSyntax.Symbol
             }
             else
             {
-                var newInst = GetGenericInstance(); ;
-                var aftInst = newInst.Concat(inst).ToList();
-                foreach (var v in Type.GetInstanceMatch(aftInst, pars, args))
+                inst = GetGenericInstance();
+                foreach (var v in Type.GetInstanceMatch(inst, pars, args))
                 {
                     yield return v;
                 }
@@ -119,7 +111,7 @@ namespace AbstractSyntax.Symbol
 
         public override IReadOnlyList<GenericSymbol> Generics
         {
-            get { return Type.Generics; }
+            get { return new List<GenericSymbol>(); }
         }
 
         public override IReadOnlyList<TypeSymbol> Inherit

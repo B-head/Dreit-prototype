@@ -201,13 +201,13 @@ namespace CliTranslate
         {
             var definition = ImportType(type.GetGenericTypeDefinition());
             var parameter = new List<TypeSymbol>();
+            AppendParameterType(parameter, type.GetGenericArguments());
             var elem = Root.ClassManager.Issue(definition, parameter, new TypeSymbol[0]);
             if (ImportDictionary.ContainsKey(type))
             {
                 return (ClassTemplateInstance)ImportDictionary[type];
             }
             ImportDictionary.Add(type, elem);
-            AppendParameterType(parameter, type.GetGenericArguments());
             return elem;
         }
 
