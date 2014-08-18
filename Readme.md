@@ -3,7 +3,7 @@ Dreitは、「初心者でも簡単に扱えるD言語ベースの言語」と�
 
 初心者が簡単に学習でき、現代的なプログラミングの手法を学べ、実用するのにも十分な機能を備えた言語を目指して開発中です。
 
-[プロジェクトのWikiページ](https://github.com/B-head/Dlight-prototype/wiki)にも情報がありますので、合わせてお読み下さい。
+[プロジェクトのWikiページ](../../wiki)にも情報がありますので、合わせてお読み下さい。
 
 ##開発目標
 - プログラミング初心者でも比較的簡単に学習できること。教師・講師の確保のため、C系の文法を基にした文法であること。
@@ -51,4 +51,4 @@ class Random //クラス定義
 }
 ```
 
-このほかのコード例は、[DlightTest](https://github.com/B-head/Dlight-prototype/tree/master/DlightTest)のテストケースを御覧ください。
+このほかのコード例は、[Dreitのテストケース](../../tree/master/CompileTest)を御覧ください。
