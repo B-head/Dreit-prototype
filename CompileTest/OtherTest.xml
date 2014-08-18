@@ -35,10 +35,20 @@
   <case>
     <code>
       <![CDATA[
+        if 5 < 10.55 :: 25 =: stdout
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
       var a := a + 10
       stdout := a
       ]]>
     </code>
+    <output>10</output>
   </case>
 
   <case>
