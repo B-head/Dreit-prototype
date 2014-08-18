@@ -90,13 +90,18 @@ namespace CliTranslate
                 }
             }
             var lss = Call as LoadStoreStructure;
-            if (lss == null)
+            var gms = Call as GenericMethodStructure;
+            if (lss != null)
             {
-                Call.BuildCall(cg);
+                lss.BuildCall(Variant, cg);
+            }
+            else if(gms != null)
+            {
+                gms.BuildCall(Variant, cg);
             }
             else
             {
-                lss.BuildCall(Variant, cg);
+                Call.BuildCall(cg);
             }
         }
 

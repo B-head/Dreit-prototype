@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayStructure.cs" />
     <Compile Include="BlockStructure.cs" />
     <Compile Include="BranchStructure.cs" />
     <Compile Include="BuilderStructure.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="EventStructure.cs" />
     <Compile Include="ExpressionStructure.cs" />
     <Compile Include="FieldStructure.cs" />
+    <Compile Include="GenericMethodStructure.cs" />
     <Compile Include="GenericParameterStructure.cs" />
     <Compile Include="GenericTypeStructure.cs" />
     <Compile Include="GlobalContextStructure.cs" />

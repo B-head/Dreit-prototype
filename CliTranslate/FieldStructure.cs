@@ -64,5 +64,10 @@ namespace CliTranslate
         {
             return Info;
         }
+
+        internal override BuilderStructure RenewInstance(TypeStructure type)
+        {
+            return new FieldStructure(Name, Attributes, DataType, ConstantValue, type.RenewField(this));;
+        }
     }
 }

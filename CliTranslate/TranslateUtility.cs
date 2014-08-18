@@ -134,6 +134,16 @@ namespace CliTranslate
             return ret;
         }
 
+        public static Type[] ToTypes(this ParameterInfo[] prm)
+        {
+            var ret = new Type[prm.Length];
+            for (var i = 0; i < prm.Length; ++i)
+            {
+                ret[i] = prm[i].ParameterType;
+            }
+            return ret;
+        }
+
         public static Type[] GainTypes(this IReadOnlyList<TypeStructure> types)
         {
             var ret = new Type[types.Count];

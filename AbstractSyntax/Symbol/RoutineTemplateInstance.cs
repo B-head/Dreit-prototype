@@ -69,5 +69,10 @@ namespace AbstractSyntax.Symbol
                 return _CallReturnType; 
             }
         }
+
+        public TypeSymbol DeclaringInstance
+        {
+            get { return GenericsInstance.MakeClassTemplateInstance(Root, GetGenericInstance(), Routine.GetParent<TypeSymbol>()); }
+        }
     }
 }

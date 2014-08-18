@@ -29,7 +29,6 @@ namespace Dlight
             }
             var trans = SyntaxTranslator.ToStructure(root, import, fileName.Replace(".dl", ""));
             trans.Save();
-            //trans.Run();
         }
 
         public static ModuleDeclaration CompileFile(string fileName)

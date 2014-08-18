@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Expression;
+using AbstractSyntax.SpecialSymbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -247,6 +248,16 @@ namespace AbstractSyntax.Symbol
                 }
                 return true;
             }
+        }
+
+        public static bool HasLoadStoreCall(RoutineSymbol routine)
+        {
+            var rti = routine as RoutineTemplateInstance;
+            if(rti != null)
+            {
+                return HasLoadStoreCall(rti.Routine);
+            }
+            return routine is PropertySymbol;
         }
     }
 }

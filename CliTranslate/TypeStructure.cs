@@ -55,5 +55,28 @@ namespace CliTranslate
         {
             get { return Info == typeof(void); }
         }
+
+        internal MethodInfo RenewMethod(MethodStructure method)
+        {
+            if(Info is TypeBuilder)
+            { 
+                return TypeBuilder.GetMethod(Info, method.GainMethod());
+            }
+            else
+            {
+                var m = method.GainMethod();
+                return Info.GetMethod(m.Name, m.GetParameters().ToTypes());
+            }
+        }
+
+        internal ConstructorInfo RenewConstructor(ConstructorStructure constructor)
+        {
+            return TypeBuilder.GetConstructor(Info, constructor.GainConstructor());
+        }
+
+        internal FieldInfo RenewField(FieldStructure field)
+        {
+            return TypeBuilder.GetField(Info, field.GainField());
+        }
     }
 }

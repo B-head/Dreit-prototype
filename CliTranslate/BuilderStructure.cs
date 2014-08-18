@@ -46,5 +46,10 @@ namespace CliTranslate
         {
             throw new NotSupportedException();
         }
+
+        internal virtual BuilderStructure RenewInstance(TypeStructure type)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

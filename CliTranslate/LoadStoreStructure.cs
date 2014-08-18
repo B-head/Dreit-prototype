@@ -11,15 +11,21 @@ namespace CliTranslate
     public class LoadStoreStructure : BuilderStructure
     {
         public bool IsStore { get; private set; }
+        public TypeStructure BaseInstance { get; private set; }
 
         public LoadStoreStructure(bool isStore)
         {
             IsStore = isStore;
         }
 
-        internal void BuildCall(CilStructure veriant, CodeGenerator cg)
+        internal void BuildCall(CilStructure variant, CodeGenerator cg)
         {
-            var f = veriant as FieldStructure;
+            var b = variant as BuilderStructure;
+            if(b != null && BaseInstance != null)
+            {
+                variant = b.RenewInstance(BaseInstance);
+            }
+            var f = variant as FieldStructure;
             if(f != null)
             {
                 if (IsStore)
@@ -44,7 +50,7 @@ namespace CliTranslate
                 }
                 return;
             }
-            var l = veriant as LocalStructure;
+            var l = variant as LocalStructure;
             if (l != null)
             {
                 if (IsStore)
@@ -54,7 +60,7 @@ namespace CliTranslate
                 cg.GenerateLoad(l);
                 return;
             }
-            var p = veriant as ParameterStructure;
+            var p = variant as ParameterStructure;
             if(p != null)
             {
                 if (IsStore)
@@ -64,7 +70,7 @@ namespace CliTranslate
                 cg.GenerateLoad(p);
                 return;
             }
-            var lo = veriant as LoopParameterStructure;
+            var lo = variant as LoopParameterStructure;
             if (lo != null)
             {
                 if (IsStore)
@@ -74,13 +80,20 @@ namespace CliTranslate
                 cg.GenerateLoad(lo.Local);
                 return;
             }
-            var v = veriant as ValueStructure;
+            var v = variant as ValueStructure;
             if(v != null)
             {
                 cg.GeneratePrimitive(v.Value);
                 return;
             }
             throw new InvalidOperationException();
+        }
+
+        internal override BuilderStructure RenewInstance(TypeStructure type)
+        {
+            var ret = new LoadStoreStructure(IsStore);
+            ret.BaseInstance = type;
+            return this;
         }
     }
 }

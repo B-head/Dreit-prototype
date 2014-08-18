@@ -98,6 +98,16 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public bool IsReferVeriant
+        {
+            get { return !(ReferVariant is ErrorVariantSymbol); }
+        }
+
+        public bool IsStoreCall
+        {
+            get { return RoutineSymbol.HasLoadStoreCall(CallRoutine); }
+        }
+
         public override bool IsConstant
         {
             get 

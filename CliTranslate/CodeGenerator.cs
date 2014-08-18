@@ -72,13 +72,27 @@ namespace CliTranslate
 
         internal void GenerateCall(MethodStructure method)
         {
-            if (method.IsVirtual)
+            var m = method.GainMethod();
+            if (m.IsVirtual)
             {
-                Generator.Emit(OpCodes.Callvirt, method.GainMethod());
+                Generator.Emit(OpCodes.Callvirt, m);
             }
             else
             {
-                Generator.Emit(OpCodes.Call, method.GainMethod());
+                Generator.Emit(OpCodes.Call, m);
+            }
+        }
+
+        internal void GenerateCall(GenericMethodStructure method)
+        {
+            var m = method.GainMethod();
+            if (m.IsVirtual)
+            {
+                Generator.Emit(OpCodes.Callvirt, m);
+            }
+            else
+            {
+                Generator.Emit(OpCodes.Call, m);
             }
         }
 
@@ -106,13 +120,22 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Call, sbts);
         }
 
-        internal void GenerateWriteLine(ExpressionStructure exp)
+        internal void GenerateList(TypeStructure type, IReadOnlyList<CilStructure> values)
         {
-            var temp = exp.ResultType.GainType();
-            var types = new Type[] { temp };
-            var wl = typeof(Console).GetMethod("WriteLine", types);
-            exp.BuildCode();
-            Generator.Emit(OpCodes.Call, wl);
+            var lt = type.GainType();
+            var lc = lt.GetConstructor(Type.EmptyTypes);
+            var ladd = lt.GetMethod("Add");
+            var local = Generator.DeclareLocal(lt);
+            Generator.Emit(OpCodes.Newobj, lc);
+            Generator.Emit(OpCodes.Stloc, local);
+            foreach (var v in values)
+            {
+                Generator.Emit(OpCodes.Ldloc, local);
+                var exp = (ExpressionStructure)v;
+                exp.BuildCode();
+                Generator.Emit(OpCodes.Call, ladd);
+            }
+            Generator.Emit(OpCodes.Ldloc, local);
         }
 
         internal void GenerateBoxing(TypeStructure from, TypeStructure to)

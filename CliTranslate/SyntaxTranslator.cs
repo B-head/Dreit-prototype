@@ -228,6 +228,17 @@ namespace CliTranslate
             return ret;
         }
 
+        private CilStructure Translate(RoutineTemplateInstance element, MethodBase info = null)
+        {
+            var ret = new GenericMethodStructure();
+            TransDictionary.Add(element, ret);
+            var br = RelayTranslate(element.Routine);
+            var gnr = CollectList<TypeStructure>(element.Parameters);
+            var di = RelayTranslate(element.DeclaringInstance);
+            ret.Initialize(br, gnr, di);
+            return ret;
+        }
+
         private MethodBaseStructure Translate(RoutineSymbol element, MethodBase info = null)
         {
             if (element.IsConstructor)
@@ -360,7 +371,15 @@ namespace CliTranslate
         {
             var call = RelayTranslate(element.CallRoutine);
             var access = RelayTranslate(element.Access);
-            var pre = access is CallStructure ? access.Pre: null;
+            dynamic pre;
+            if (element.IsReferVeriant && !element.IsStoreCall)
+            {
+                pre = access;
+            }
+            else
+            {
+                pre = access is CallStructure ? access.Pre : null;
+            }
             var variant = RelayTranslate(element.ReferVariant);
             var isVariadic = element.CallRoutine.HasVariadicArguments();
             CallStructure ret;
@@ -496,6 +515,14 @@ namespace CliTranslate
             var exps = CollectList<ExpressionStructure>(element.Texts);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new StringStructure(rt, exps);
+            return ret;
+        }
+
+        private ArrayStructure Translate(ArrayLiteral element)
+        {
+            var exps = CollectList<ExpressionStructure>(element.Values);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new ArrayStructure(rt, exps);
             return ret;
         }
 
