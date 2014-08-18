@@ -53,7 +53,7 @@ namespace AbstractSyntax.Declaration
                 _DataType = Root.Unknown;
                 if (ExplicitType != null)
                 {
-                    _DataType = ExplicitType.OverLoad.FindDataType();
+                    _DataType = ExplicitType.OverLoad.FindDataType().Type;
                 }
                 else if (DefaultValue != null)
                 {

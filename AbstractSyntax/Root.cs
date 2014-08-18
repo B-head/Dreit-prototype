@@ -159,7 +159,7 @@ namespace AbstractSyntax
 
         private void CreateBuiltInMonadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitiveType> nt)
         {
-            var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
+            var bl = (ClassSymbol)NameResolution("Boolean").FindDataType().Type;
             var nbp = new MonadicOperatorSymbol(TokenType.Not, bl, bl);
             EmbedList.AppendChild(nbp);
             OpManager.Append(nbp);
@@ -184,7 +184,7 @@ namespace AbstractSyntax
 
         private void CreateBuiltInDyadicOperator(IReadOnlyDictionary<ClassSymbol, PrimitiveType> nt)
         {
-            var bl = (ClassSymbol)NameResolution("Boolean").FindDataType();
+            var bl = (ClassSymbol)NameResolution("Boolean").FindDataType().Type;
             foreach (var a in nt.Keys)
             {
                 foreach (var b in nt.Keys)
@@ -214,16 +214,16 @@ namespace AbstractSyntax
         private IReadOnlyDictionary<ClassSymbol, PrimitiveType> GetBuildInNumberType()
         {
             var ret = new Dictionary<ClassSymbol, PrimitiveType>();
-            ret.Add((ClassSymbol)NameResolution("SByte").FindDataType(), PrimitiveType.Integer8);
-            ret.Add((ClassSymbol)NameResolution("Int16").FindDataType(), PrimitiveType.Natural16);
-            ret.Add((ClassSymbol)NameResolution("Int32").FindDataType(), PrimitiveType.Integer32);
-            ret.Add((ClassSymbol)NameResolution("Int64").FindDataType(), PrimitiveType.Integer64);
-            ret.Add((ClassSymbol)NameResolution("Byte").FindDataType(), PrimitiveType.Natural8);
-            ret.Add((ClassSymbol)NameResolution("UInt16").FindDataType(), PrimitiveType.Natural16);
-            ret.Add((ClassSymbol)NameResolution("UInt32").FindDataType(), PrimitiveType.Natural32);
-            ret.Add((ClassSymbol)NameResolution("UInt64").FindDataType(), PrimitiveType.Natural64);
-            ret.Add((ClassSymbol)NameResolution("Single").FindDataType(), PrimitiveType.Binary32);
-            ret.Add((ClassSymbol)NameResolution("Double").FindDataType(), PrimitiveType.Binary64);
+            ret.Add((ClassSymbol)NameResolution("SByte").FindDataType().Type, PrimitiveType.Integer8);
+            ret.Add((ClassSymbol)NameResolution("Int16").FindDataType().Type, PrimitiveType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("Int32").FindDataType().Type, PrimitiveType.Integer32);
+            ret.Add((ClassSymbol)NameResolution("Int64").FindDataType().Type, PrimitiveType.Integer64);
+            ret.Add((ClassSymbol)NameResolution("Byte").FindDataType().Type, PrimitiveType.Natural8);
+            ret.Add((ClassSymbol)NameResolution("UInt16").FindDataType().Type, PrimitiveType.Natural16);
+            ret.Add((ClassSymbol)NameResolution("UInt32").FindDataType().Type, PrimitiveType.Natural32);
+            ret.Add((ClassSymbol)NameResolution("UInt64").FindDataType().Type, PrimitiveType.Natural64);
+            ret.Add((ClassSymbol)NameResolution("Single").FindDataType().Type, PrimitiveType.Binary32);
+            ret.Add((ClassSymbol)NameResolution("Double").FindDataType().Type, PrimitiveType.Binary64);
             return ret;
         }
     }

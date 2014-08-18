@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace AbstractSyntax
 {
     [Serializable]
-    public struct OverLoadMatch
+    public struct OverLoadCallMatch
     {
         public RoutineSymbol Call { get; private set; }
-        public TypeMatchResult Result { get; private set; }
+        public CallMatchResult Result { get; private set; }
         public IReadOnlyList<GenericSymbol> FormalGenerics { get; private set; }
         public IReadOnlyList<ParameterSymbol> FormalArguments { get; private set; }
         public IReadOnlyList<GenericsInstance> ScopeInstance { get; private set; }
@@ -27,25 +27,26 @@ namespace AbstractSyntax
             return string.Format("Result = {0}, Call = {{1}}", Result, Call);
         }
 
-        internal static OverLoadMatch MakeNotCallable(RoutineSymbol call)
+        internal static OverLoadCallMatch MakeNotCallable(RoutineSymbol call)
         {
-            return new OverLoadMatch { Call = call, Result = TypeMatchResult.NotCallable };
+            return new OverLoadCallMatch { Call = call, Result = CallMatchResult.NotCallable };
         }
 
-        internal static OverLoadMatch MakeUnknown(RoutineSymbol call)
+        internal static OverLoadCallMatch MakeUnknown(RoutineSymbol call)
         {
-            return new OverLoadMatch { Call = call, Result = TypeMatchResult.Unknown };
+            return new OverLoadCallMatch { Call = call, Result = CallMatchResult.Unknown };
         }
 
         //todo さらに詳しい順位付けをする。
         //todo デフォルト引数に対応する。
-        internal static OverLoadMatch MakeOverLoadMatch(Root root, RoutineSymbol call, IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
+        //todo 型制約に対応する。
+        internal static OverLoadCallMatch MakeMatch(Root root, RoutineSymbol call, IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
             IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
         {
             var ig = new List<TypeSymbol>();
             var ia = new List<TypeSymbol>();
             var convs = new List<RoutineSymbol>();
-            OverLoadMatch result = new OverLoadMatch()
+            var result = new OverLoadCallMatch()
             {
                 Call = call,
                 FormalGenerics = fg,
@@ -59,46 +60,42 @@ namespace AbstractSyntax
             };
             if (TypeSymbol.HasAnyErrorType(fg) || TypeSymbol.HasAnyErrorType(fa.GetDataTypes()))
             {
-                result.Result = TypeMatchResult.Unknown;
+                result.Result = CallMatchResult.Unknown;
                 return result;
             }
-            if (!ContainGenericCount(fg, ag))
+            if (!OverLoadTypeMatch.ContainGenericCount(fg, ag))
             {
-                result.Result = TypeMatchResult.UnmatchGenericCount;
+                result.Result = CallMatchResult.UnmatchGenericCount;
                 return result;
             }
             if (!ContainArgumentCount(fa, aa) || !ContainTupleCount(fg, fa, ag, aa))
             {
-                result.Result = TypeMatchResult.UnmatchArgumentCount;
+                result.Result = CallMatchResult.UnmatchArgumentCount;
                 return result;
             }
             InitInstance(fg, fa, ag, aa, ig, ia);
             var tgi = InferInstance(root, inst, ag, aa, ig, ia);
-            result.Call = GenericsInstance.MakeRoutineTemplateInstance(root, tgi, call);
+            if (TypeSymbol.HasAnyErrorType(tgi))
+            {
+                result.Result = CallMatchResult.UnmatchGenericType;
+                return result;
+            }
             for (int i = 0; i < ia.Count; i++)
             {
                 var c = root.ConvManager.Find(aa[i], ia[i]);
                 convs.Add(c);
             }
             result.Result = CheckConverterResult(convs);
+            if (HasMatch(result.Result))
+            {
+                result.Call = GenericsInstance.MakeRoutineTemplateInstance(root, tgi, call);
+            }
             return result;
         }
 
-        private static bool ContainGenericCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<TypeSymbol> ag)
+        internal static bool ContainArgumentCount(IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> aa)
         {
-            if (HasVariadic(fg))
-            {
-                return true;
-            }
-            else
-            {
-                return fg.Count >= ag.Count;
-            }
-        }
-
-        private static bool ContainArgumentCount(IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> aa)
-        {
-            if(HasVariadic(fa))
+            if (ParameterSymbol.HasVariadic(fa))
             {
                 return fa.Count - 1 <= aa.Count;
             }
@@ -108,9 +105,9 @@ namespace AbstractSyntax
             }
         }
 
-        private static bool ContainTupleCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
+        internal static bool ContainTupleCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
         {
-            if (!HasVariadic(fg) || fg.Count > ag.Count)
+            if (!ParameterSymbol.HasVariadic(fg) || fg.Count > ag.Count)
             {
                 return true;
             }
@@ -120,10 +117,10 @@ namespace AbstractSyntax
         private static void InitInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
             IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
         {
-            if (!HasVariadic(fg))
+            if (!ParameterSymbol.HasVariadic(fg))
             {
                 ig.AddRange(fg);
-                if (!HasVariadic(fa))
+                if (!ParameterSymbol.HasVariadic(fa))
                 {
                     ia.AddRange(fa.GetDataTypes());
                 }
@@ -140,9 +137,9 @@ namespace AbstractSyntax
                 ig.AddRange(fg);
                 ig.RemoveAt(ig.Count - 1);
                 var c = (fg.Count > ag.Count) ? (aa.Count - fa.Count + 1) : (ag.Count - fg.Count + 1);
-                var mg = MakeGeneric(c);
+                var mg = OverLoadTypeMatch.MakeGeneric(c);
                 ig.AddRange(mg);
-                if (!HasVariadic(fa))
+                if (!ParameterSymbol.HasVariadic(fa))
                 {
                     ia.AddRange(fa.GetDataTypes());
                 }
@@ -155,7 +152,8 @@ namespace AbstractSyntax
             }
         }
 
-        private static IReadOnlyList<GenericsInstance> InferInstance(Root root, IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
+        private static IReadOnlyList<GenericsInstance> InferInstance(Root root, IReadOnlyList<GenericsInstance> inst,
+            IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
         {
             var tgi = new List<GenericsInstance>();
             for (var i = 0; i < ig.Count; ++i)
@@ -178,6 +176,10 @@ namespace AbstractSyntax
                     continue;
                 }
                 var k = GenericsInstance.FindGenericIndex(tgi, g);
+                if(k == -1)
+                {
+                    continue;
+                }
                 var gi = tgi[k];
                 if (tgi[k].Type is UnknownSymbol)
                 {
@@ -200,36 +202,13 @@ namespace AbstractSyntax
             return tgi;
         }
 
-        private static bool HasVariadic(IReadOnlyList<Scope> f)
-        {
-            if(f.Count == 0)
-            {
-                return false;
-            }
-            return f.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
-        }
-
         private static TypeSymbol GetVariadicType(List<TypeSymbol> ia)
         {
             var t = (ClassTemplateInstance)ia.Last();
             return t.Parameters[0];
         }
 
-        private static IReadOnlyList<GenericSymbol> MakeGeneric(int count)
-        {
-            if(count < 0)
-            {
-                throw new ArgumentException("count");
-            }
-            var ret = new List<GenericSymbol>();
-            for(var i = 0; i < count; ++i)
-            {
-                ret.Add(new GenericSymbol("@@T" + (i + 1), new List<AttributeSymbol>(), new List<Scope>()));
-            }
-            return ret;
-        }
-
-        private static IReadOnlyList<TypeSymbol> MakeArgument(int count, TypeSymbol scope)
+        internal static IReadOnlyList<TypeSymbol> MakeArgument(int count, TypeSymbol scope)
         {
             if (count < 0)
             {
@@ -248,9 +227,9 @@ namespace AbstractSyntax
             return t1; //todo 処理の順序で結果が変わるバグに対処する。共通のサブタイプを返すようにする。
         }
 
-        private static TypeMatchResult CheckConverterResult(IReadOnlyList<RoutineSymbol> convs)
+        private static CallMatchResult CheckConverterResult(IReadOnlyList<RoutineSymbol> convs)
         {
-            var result = TypeMatchResult.PerfectMatch;
+            var result = CallMatchResult.PerfectMatch;
             foreach (var v in convs)
             {
                 if (v is DefaultSymbol)
@@ -259,42 +238,53 @@ namespace AbstractSyntax
                 }
                 else if (v is ErrorRoutineSymbol)
                 {
-                    result = TypeMatchResult.UnmatchArgumentType;
+                    result = CallMatchResult.UnmatchArgumentType;
                     break;
                 }
                 else
                 {
-                    result = TypeMatchResult.ConvertMatch;
+                    result = CallMatchResult.ConvertMatch;
                 }
             }
             return result;
         }
 
-        internal static int GetMatchPriority(TypeMatchResult r)
+        internal static int GetMatchPriority(CallMatchResult r)
         {
             switch (r)
             {
-                case TypeMatchResult.Unknown: return 10;
-                case TypeMatchResult.PerfectMatch: return 9;
-                case TypeMatchResult.ConvertMatch: return 8;
-                case TypeMatchResult.AmbiguityMatch: return 7;
-                case TypeMatchResult.UnmatchArgumentType: return 4;
-                case TypeMatchResult.UnmatchArgumentCount: return 3;
-                case TypeMatchResult.UnmatchGenericType: return 2;
-                case TypeMatchResult.UnmatchGenericCount: return 1;
-                case TypeMatchResult.NotCallable: return 0;
+                case CallMatchResult.Unknown: return 10;
+                case CallMatchResult.PerfectMatch: return 9;
+                case CallMatchResult.ConvertMatch: return 8;
+                case CallMatchResult.AmbiguityMatch: return 7;
+                case CallMatchResult.UnmatchArgumentType: return 4;
+                case CallMatchResult.UnmatchArgumentCount: return 3;
+                case CallMatchResult.UnmatchGenericType: return 2;
+                case CallMatchResult.UnmatchGenericCount: return 1;
+                case CallMatchResult.NotCallable: return 0;
                 default: throw new ArgumentException("r");
+            }
+        }
+
+        internal static bool HasMatch(CallMatchResult r)
+        {
+            switch (r)
+            {
+                case CallMatchResult.PerfectMatch: return true;
+                case CallMatchResult.ConvertMatch: return true;
+                case CallMatchResult.AmbiguityMatch: return true;
+                default: return false;
             }
         }
     }
 
-    public enum TypeMatchResult
+    public enum CallMatchResult
     {
         Unknown,
+        NotCallable,
         PerfectMatch,
         ConvertMatch,
         AmbiguityMatch,
-        NotCallable,
         UnmatchArgumentCount,
         UnmatchArgumentType,
         UnmatchGenericCount,

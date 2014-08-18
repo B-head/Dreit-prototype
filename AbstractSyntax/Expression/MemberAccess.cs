@@ -11,7 +11,7 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public string Member { get; private set; }
-        private OverLoadMatch? _Match;
+        private OverLoadCallMatch? _Match;
         private OverLoad _OverLoad;
 
         public MemberAccess(TextPosition tp, Element acs, string member)
@@ -52,7 +52,7 @@ namespace AbstractSyntax.Expression
             get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
         }
 
-        public OverLoadMatch Match
+        public OverLoadCallMatch Match
         {
             get
             {

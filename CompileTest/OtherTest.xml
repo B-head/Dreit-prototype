@@ -3,16 +3,6 @@
   <case>
     <code>
       <![CDATA[
-      [10, 20, 30, 40] =: var arr
-      loop i < arr.Count use i := 0 by i += 1 :: arr[i] =: stdout
-      ]]>
-    </code>
-    <output>10 20 30 40</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
       (10 + 20).ToString =: stdout
       ]]>
     </code>

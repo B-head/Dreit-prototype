@@ -15,7 +15,7 @@ namespace AbstractSyntax.Expression
         public string Value { get; private set; }
         public TokenType IdentType { get; private set; }
         private bool? _IsTacitThis;
-        private OverLoadMatch? _Match;
+        private OverLoadCallMatch? _Match;
         private OverLoad _OverLoad;
 
         public Identifier(TextPosition tp, string value, TokenType identType)
@@ -64,7 +64,7 @@ namespace AbstractSyntax.Expression
             get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
         }
 
-        public OverLoadMatch Match
+        public OverLoadCallMatch Match
         {
             get
             {
@@ -91,7 +91,7 @@ namespace AbstractSyntax.Expression
                 }
                 else if(IdentType == TokenType.Nullable)
                 {
-                    var type = CurrentScope.NameResolution(Value).FindDataType();
+                    var type = CurrentScope.NameResolution(Value).FindDataType().Type;
                     var nullable = Root.ClassManager.Issue(Root.Nullable, new TypeSymbol[] { type }, new TypeSymbol[0]);
                     _OverLoad = nullable.OverLoad;
                 }

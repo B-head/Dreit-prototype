@@ -119,12 +119,12 @@ namespace CliTranslate
 
         private CilStructure Translate(ErrorRoutineSymbol element)
         {
-            throw new ArgumentException("element");
+            throw new ArgumentException("error routine");
         }
 
         private CilStructure Translate(ErrorTypeSymbol element)
         {
-            throw new ArgumentException("element");
+            throw new ArgumentException("error type");
         }
 
         private CilStructure Translate(ErrorVariantSymbol element)
@@ -134,7 +134,7 @@ namespace CliTranslate
 
         private CilStructure Translate(UnknownSymbol element)
         {
-            throw new ArgumentException("element");
+            throw new ArgumentException("unknown");
         }
 
         private PureTypeStructure Translate(VoidSymbol element)
@@ -472,6 +472,15 @@ namespace CliTranslate
             }
         }
 
+        private CallStructure Translate(TemplateInstanceExpression element)
+        {
+            var call = RelayTranslate(element.CallRoutine);
+            var variant = RelayTranslate(element.ReferVariant);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new CallStructure(rt, call, null, variant);
+            return ret;
+        }
+
         private CallStructure Translate(MemberAccess element)
         {
             var call = RelayTranslate(element.CallRoutine);
@@ -494,6 +503,11 @@ namespace CliTranslate
             var rt = RelayTranslate(element.ReturnType);
             var ret = new MonadicOperationStructure(rt, exp, call);
             return ret;
+        }
+
+        private CilStructure Translate(GroupingExpression element)
+        {
+            return RelayTranslate(element.Exp);
         }
 
         private ValueStructure Translate(NumericLiteral element)
@@ -526,13 +540,13 @@ namespace CliTranslate
             return ret;
         }
 
-        private BranchStructure Translate(IfStatement element)
+        private IfStructure Translate(IfStatement element)
         {
             var cond = RelayTranslate(element.Condition);
             var then = RelayTranslate(element.Then);
             var els = RelayTranslate(element.Else);
             var rt = RelayTranslate(element.ReturnType);
-            var ret = new BranchStructure(rt, cond, then, els);
+            var ret = new IfStructure(rt, cond, then, els);
             return ret;
         }
 

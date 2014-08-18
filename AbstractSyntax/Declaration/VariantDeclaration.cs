@@ -62,7 +62,7 @@ namespace AbstractSyntax.Declaration
                 var caller = Parent as CallExpression;
                 if (ExplicitType != null)
                 {
-                    _DataType = ExplicitType.OverLoad.FindDataType();
+                    _DataType = ExplicitType.OverLoad.FindDataType().Type;
                 }
                 else if(caller != null && caller.HasCallTarget(this))
                 {

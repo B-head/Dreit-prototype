@@ -72,14 +72,14 @@ namespace AbstractSyntax.Symbol
             list.AddRange(Generics);
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            yield return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
         }
 
-        internal virtual IEnumerable<OverLoadMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal virtual IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            yield return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
         }
 
         internal virtual IEnumerable<TypeSymbol> EnumSubType()
@@ -96,10 +96,39 @@ namespace AbstractSyntax.Symbol
         {
             foreach (var v in scope)
             {
-                if (v is VoidSymbol || v is UnknownSymbol || v is ErrorTypeSymbol)
+                if(HasAnyErrorType(v))
                 {
                     return true;
                 }
+            }
+            return false;
+        }
+
+        internal static bool HasAnyErrorType(IReadOnlyList<GenericsInstance> gi)
+        {
+            foreach (var v in gi)
+            {
+                if (HasAnyErrorType(v.Generic, v.Type))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool HasAnyErrorType(TypeSymbol scope)
+        {
+            var cti = scope as ClassTemplateInstance;
+            if(cti != null)
+            {
+                if (HasAnyErrorType(cti.Parameters) || HasAnyErrorType(cti.TacitGeneric))
+                {
+                    return true;
+                }
+            }
+            else if (scope is VoidSymbol || scope is UnknownSymbol || scope is ErrorTypeSymbol)
+            {
+                return true;
             }
             return false;
         }

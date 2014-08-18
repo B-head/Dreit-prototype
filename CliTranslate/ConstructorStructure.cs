@@ -85,5 +85,12 @@ namespace CliTranslate
         {
             return Info;
         }
+
+        internal override BuilderStructure RenewInstance(TypeStructure type)
+        {
+            var ret = new ConstructorStructure();
+            ret.Info = type.RenewConstructor(this);
+            return ret;
+        }
     }
 }

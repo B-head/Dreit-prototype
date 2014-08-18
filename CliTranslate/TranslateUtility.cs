@@ -190,5 +190,26 @@ namespace CliTranslate
                 return tit.BaseType;
             }
         }
+
+        public static Type[] RenewTypes(this Type info, Type[] types)
+        {
+            var gtd = info.GetGenericTypeDefinition().GetTypeInfo();
+            var ga = info.GenericTypeArguments;
+            var gp = gtd.GenericTypeParameters;
+            var ret = new List<Type>();
+            foreach (var t in types)
+            {
+                var i = Array.FindIndex(gp, v => v == t);
+                if (i == -1)
+                {
+                    ret.Add(t);
+                }
+                else
+                {
+                    ret.Add(ga[i]);
+                }
+            }
+            return ret.ToArray();
+        }
     }
 }

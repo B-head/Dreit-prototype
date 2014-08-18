@@ -166,7 +166,7 @@ namespace AbstractSyntax.Symbol
         {
             get
             {
-                var obj = NameResolution("Object").FindDataType() as ClassSymbol;
+                var obj = NameResolution("Object").FindDataType().Type as ClassSymbol;
                 if (this == obj)
                 {
                     return null;
@@ -261,25 +261,27 @@ namespace AbstractSyntax.Symbol
             return ret;
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
+            var newinst = GenericsInstance.MakeGenericInstance(Generics, pars);
+            var newpars = new List<TypeSymbol>();
             foreach(var a in Initializers)
             {
-                foreach (var b in a.GetTypeMatch(inst, pars, args))
+                foreach (var b in a.GetTypeMatch(newinst, newpars, args))
                 {
                     yield return b;
                 }
             }
             foreach (var a in Root.ConvManager.GetAllInitializer(this))
             {
-                foreach (var b in a.GetTypeMatch(inst, pars, args))
+                foreach (var b in a.GetTypeMatch(newinst, newpars, args))
                 {
                     yield return b;
                 }
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             foreach (var a in AliasCalls)
             {

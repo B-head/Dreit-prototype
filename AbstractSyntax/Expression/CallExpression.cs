@@ -15,7 +15,7 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public TupleLiteral Arguments { get; private set; }
-        private OverLoadMatch? _Match;
+        private OverLoadCallMatch? _Match;
         private RoutineSymbol _CallRoutine;
         private RoutineSymbol _CalculateCallScope;
 
@@ -60,7 +60,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public OverLoadMatch Match
+        public OverLoadCallMatch Match
         {
             get
             {
@@ -214,12 +214,12 @@ namespace AbstractSyntax.Expression
         {
             switch (Match.Result)
             {
-                case TypeMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
-                case TypeMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
-                case TypeMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
-                case TypeMatchResult.UnmatchGenericCount: cmm.CompileError("unmatch-generic-count", this); break;
-                case TypeMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
-                case TypeMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
+                case CallMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
+                case CallMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
+                case CallMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
+                case CallMatchResult.UnmatchGenericCount: cmm.CompileError("unmatch-generic-count", this); break;
+                case CallMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
+                case CallMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
             }
             if (IsImmutableCall && !(Access is VariantDeclaration))
             {

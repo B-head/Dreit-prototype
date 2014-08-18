@@ -13,6 +13,7 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public TupleLiteral DecParameters { get; private set; }
+        private OverLoadCallMatch? _Match;
         private IReadOnlyList<TypeSymbol> _Parameter;
 
         public TemplateInstanceExpression(TextPosition tp, Element acs, TupleLiteral args)
@@ -26,7 +27,35 @@ namespace AbstractSyntax.Expression
 
         public override TypeSymbol ReturnType
         {
-            get { return OverLoad.FindDataType(); }
+            get { return OverLoad.FindDataType().Type; }
+        }
+
+        public VariantSymbol ReferVariant
+        {
+            get { return OverLoad.FindVariant(); }
+        }
+
+        public RoutineSymbol CallRoutine
+        {
+            get { return Match.Call; }
+        }
+
+        public Scope AccessSymbol
+        {
+            get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
+        }
+
+        public OverLoadCallMatch Match
+        {
+            get
+            {
+                if (_Match != null)
+                {
+                    return _Match.Value;
+                }
+                _Match = OverLoad.CallSelect();
+                return _Match.Value;
+            }
         }
 
         public override OverLoad OverLoad
@@ -50,7 +79,7 @@ namespace AbstractSyntax.Expression
                 var pt = new List<TypeSymbol>();
                 foreach (var v in DecParameters)
                 {
-                    var temp = v.OverLoad.FindDataType();
+                    var temp = v.OverLoad.FindDataType().Type;
                     pt.Add(temp);
                 }
                 _Parameter = pt;

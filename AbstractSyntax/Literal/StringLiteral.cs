@@ -26,7 +26,7 @@ namespace AbstractSyntax.Literal
             {
                 if (_ReturnType == null)
                 {
-                    _ReturnType = CurrentScope.NameResolution("String").FindDataType();
+                    _ReturnType = CurrentScope.NameResolution("String").FindDataType().Type;
                 }
                 return _ReturnType;
             }

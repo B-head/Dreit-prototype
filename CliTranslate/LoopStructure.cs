@@ -61,7 +61,7 @@ namespace CliTranslate
                 Condition.BuildCode();
                 cg.GenerateJump(OpCodes.Brfalse, BreakLabel);
             }
-            PopBuildCode(Block);
+            Block.BuildCode();
             cg.GenerateJump(OpCodes.Br, ContinueLabel);
             cg.MarkLabel(BreakLabel);
             cg.EndScope();

@@ -58,25 +58,58 @@ namespace CliTranslate
 
         internal MethodInfo RenewMethod(MethodStructure method)
         {
-            if(Info is TypeBuilder)
-            { 
+            if (Info is TypeBuilder)
+            {
                 return TypeBuilder.GetMethod(Info, method.GainMethod());
             }
             else
             {
                 var m = method.GainMethod();
-                return Info.GetMethod(m.Name, m.GetParameters().ToTypes());
+                var types = Info.RenewTypes(m.GetParameters().ToTypes());
+                var ret = Info.GetMethod(m.Name, types);
+                if (ret == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return ret;
             }
         }
 
         internal ConstructorInfo RenewConstructor(ConstructorStructure constructor)
         {
-            return TypeBuilder.GetConstructor(Info, constructor.GainConstructor());
+            if (Info is TypeBuilder)
+            {
+                return TypeBuilder.GetConstructor(Info, constructor.GainConstructor());
+            }
+            else
+            {
+                var c = constructor.GainConstructor();
+                var types = Info.RenewTypes(c.GetParameters().ToTypes());
+                var ret = Info.GetConstructor(types);
+                if (ret == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return ret;
+            }
         }
 
         internal FieldInfo RenewField(FieldStructure field)
         {
-            return TypeBuilder.GetField(Info, field.GainField());
+            if (Info is TypeBuilder)
+            {
+                return TypeBuilder.GetField(Info, field.GainField());
+            }
+            else
+            {
+                var f = field.GainField();
+                var ret = Info.GetField(f.Name);
+                if(ret == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return ret;
+            }
         }
     }
 }

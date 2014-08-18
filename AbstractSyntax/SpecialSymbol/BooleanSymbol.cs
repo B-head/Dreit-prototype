@@ -34,7 +34,7 @@ namespace AbstractSyntax.SpecialSymbol
                 {
                     return _DataType;
                 }
-                _DataType = CurrentScope.NameResolution("Boolean").FindDataType();
+                _DataType = CurrentScope.NameResolution("Boolean").FindDataType().Type;
                 return _DataType;
             }
         }

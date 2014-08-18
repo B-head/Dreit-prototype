@@ -85,6 +85,24 @@
 
   <case>
     <code>
+      <![CDATA[
+      var arr = 10
+      ]]>
+    </code>
+    <error key="require-type"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      var arr = List!Int32
+      ]]>
+    </code>
+    <error key="require-type"/>
+  </case>
+
+  <case>
+    <code>
       let a := 40
       stdout := a
     </code>

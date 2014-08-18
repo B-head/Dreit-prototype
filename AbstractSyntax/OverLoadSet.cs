@@ -90,7 +90,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
+        internal override IEnumerable<OverLoadTypeMatch> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
         {
             if(IsHoldAlias)
             {
@@ -102,12 +102,12 @@ namespace AbstractSyntax
                 var type = v as TypeSymbol;
                 if (type != null)
                 {
-                    yield return type;
+                    yield return OverLoadTypeMatch.MakeMatch(Root, type, type.Generics, inst, pars);
                 }
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             if (IsHoldAlias)
             {

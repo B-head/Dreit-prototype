@@ -16,6 +16,13 @@
 
   <case>
     <code>
+      stdout := (1 + 2) * 3
+    </code>
+    <output>9</output>
+  </case>
+
+  <case>
+    <code>
       stdout := 1 + 2.5
     </code>
     <output>3.5</output>

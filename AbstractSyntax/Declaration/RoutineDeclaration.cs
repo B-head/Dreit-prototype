@@ -100,7 +100,7 @@ namespace AbstractSyntax.Declaration
                 _CallReturnType = Root.Unknown;
                 if (ExplicitType != null)
                 {
-                    _CallReturnType = ExplicitType.OverLoad.FindDataType();
+                    _CallReturnType = ExplicitType.OverLoad.FindDataType().Type;
                 }
                 else if (Block.IsInline)
                 {

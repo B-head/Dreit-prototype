@@ -16,15 +16,19 @@ namespace AbstractSyntax
 
         public static IReadOnlyList<GenericsInstance> MakeGenericInstance(IReadOnlyList<GenericSymbol> generics, IReadOnlyList<TypeSymbol> types)
         {
-            if (generics.Count != types.Count)
-            {
-                throw new ArgumentException("count");
-            }
             var ret = new List<GenericsInstance>();
             for (var i = 0; i < generics.Count; ++i)
             {
-                var gi = new GenericsInstance { Generic = generics[i], Type = types[i] };
-                ret.Add(gi);
+                if (i < types.Count)
+                {
+                    var gi = new GenericsInstance { Generic = generics[i], Type = types[i] };
+                    ret.Add(gi);
+                }
+                else
+                {
+                    var gi = new GenericsInstance { Generic = generics[i], Type = generics[i] };
+                    ret.Add(gi);
+                }
             }
             return ret;
         }
@@ -38,7 +42,7 @@ namespace AbstractSyntax
                     return i;
                 }
             }
-            throw new ArgumentException("generic");
+            return -1;
         }
 
         public static IReadOnlyList<TypeSymbol> MakeClassTemplateInstanceList(Root root, IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> baseTypes)
@@ -70,6 +74,10 @@ namespace AbstractSyntax
             if(g != null)
             {
                 var i = FindGenericIndex(inst, g);
+                if (i == -1)
+                {
+                    return baseType;
+                }
                 return inst[i].Type;
             }
             else if (baseType.Generics.Count > 0 || baseType.TacitGeneric.Count > 0)

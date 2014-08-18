@@ -29,33 +29,33 @@ namespace AbstractSyntax
             throw new InvalidOperationException();
         }
 
-        public TypeSymbol FindDataType()
+        public OverLoadTypeMatch FindDataType()
         {
             var pars = new List<TypeSymbol>();
             foreach (var v in TraversalDataType(pars))
             {
-                return v; //todo 型の選択とインスタンス化をする。
+                return v; //todo 型の選択をする。
             }
-            return Root.ErrorType;
+            return OverLoadTypeMatch.MakeNotType(Root.ErrorType);
         }
 
-        public OverLoadMatch CallSelect()
+        public OverLoadCallMatch CallSelect()
         {
             return CallSelect(new List<TypeSymbol>());
         }
 
-        public OverLoadMatch CallSelect(IReadOnlyList<TypeSymbol> args)
+        public OverLoadCallMatch CallSelect(IReadOnlyList<TypeSymbol> args)
         {
-            var pars = new List<TypeSymbol>();
-            if (TypeSymbol.HasAnyErrorType(pars) || TypeSymbol.HasAnyErrorType(args))
+            if (TypeSymbol.HasAnyErrorType(args))
             {
-                return OverLoadMatch.MakeUnknown(Root.ErrorRoutine);
+                return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
             }
-            OverLoadMatch result = OverLoadMatch.MakeNotCallable(Root.ErrorRoutine);
+            var result = OverLoadCallMatch.MakeNotCallable(Root.ErrorRoutine);
+            var pars = new List<TypeSymbol>();
             foreach (var m in TraversalCall(pars, args))
             {
-                var a = OverLoadMatch.GetMatchPriority(result.Result);
-                var b = OverLoadMatch.GetMatchPriority(m.Result);
+                var a = OverLoadCallMatch.GetMatchPriority(result.Result);
+                var b = OverLoadCallMatch.GetMatchPriority(m.Result);
                 if (a < b)
                 {
                     result = m; //todo 優先順位が重複した場合の対処が必要。
@@ -69,7 +69,7 @@ namespace AbstractSyntax
         internal abstract IEnumerable<Scope> TraversalChilds();
         internal abstract IEnumerable<VariantSymbol> TraversalVariant();
         internal abstract IEnumerable<AttributeSymbol> TraversalAttribute();
-        internal abstract IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars);
-        internal abstract IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args);
+        internal abstract IEnumerable<OverLoadTypeMatch> TraversalDataType(IReadOnlyList<TypeSymbol> pars);
+        internal abstract IEnumerable<OverLoadCallMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args);
     }
 }

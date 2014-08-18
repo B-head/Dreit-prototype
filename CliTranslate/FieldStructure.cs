@@ -20,6 +20,11 @@ namespace CliTranslate
         [NonSerialized]
         private FieldInfo Info;
 
+        private FieldStructure()
+        {
+
+        }
+
         public FieldStructure(string name, FieldAttributes attr, TypeStructure dt, object constval, FieldInfo info = null)
         {
             Name = name;
@@ -67,7 +72,9 @@ namespace CliTranslate
 
         internal override BuilderStructure RenewInstance(TypeStructure type)
         {
-            return new FieldStructure(Name, Attributes, DataType, ConstantValue, type.RenewField(this));;
+            var ret = new FieldStructure();
+            ret.Info = type.RenewField(this);
+            return ret;
         }
     }
 }

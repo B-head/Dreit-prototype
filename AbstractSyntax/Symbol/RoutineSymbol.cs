@@ -179,9 +179,9 @@ namespace AbstractSyntax.Symbol
             list.AddRange(Generics);
         }
 
-        internal override IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            yield return OverLoadMatch.MakeOverLoadMatch(Root, this, Generics, Arguments, inst, pars, args);
+            yield return OverLoadCallMatch.MakeMatch(Root, this, Generics, Arguments, inst, pars, args);
         }
 
         public RoutineSymbol InheritInitializer

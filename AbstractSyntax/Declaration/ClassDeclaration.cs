@@ -80,7 +80,7 @@ namespace AbstractSyntax.Declaration
                 foreach (var v in InheritAccess)
                 {
                     var dt = v.OverLoad.FindDataType();
-                    i.Add(dt);
+                    i.Add(dt.Type);
                 }
                 _Inherit = i;
                 return _Inherit;
@@ -92,7 +92,7 @@ namespace AbstractSyntax.Declaration
             foreach (var v in InheritAccess)
             {
                 var dt = v.OverLoad.FindDataType();
-                if (!(dt is ClassSymbol))
+                if (!(dt.Type is ClassSymbol))
                 {
                     cmm.CompileError("not-datatype-inherit", this);
                 }

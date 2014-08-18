@@ -34,7 +34,7 @@ namespace AbstractSyntax.Symbol
             get { return CurrentScope is LoopStatement || CurrentScope is ForStatement; }
         }
 
-        public static IReadOnlyList<ParameterSymbol> MakeParameters(params TypeSymbol[] types)
+        internal static IReadOnlyList<ParameterSymbol> MakeParameters(params TypeSymbol[] types)
         {
             var ret = new List<ParameterSymbol>();
             for (var i = 0; i < types.Length; ++i)
@@ -44,6 +44,15 @@ namespace AbstractSyntax.Symbol
                 ret.Add(p);
             }
             return ret;
+        }
+
+        internal static bool HasVariadic(IReadOnlyList<Scope> f)
+        {
+            if (f.Count == 0)
+            {
+                return false;
+            }
+            return f.Last().Attribute.HasAnyAttribute(AttributeType.Variadic);
         }
     }
 }

@@ -1,2 +1,10 @@
-﻿[10, 20, 30, 40] =: var arr
-loop i < arr.Count use i := 0 by i += 1 :: arr[i] =: stdout
+﻿
+      routine foo(a:Boolean){
+        if a {
+          stdout := 10
+        } else {
+          stdout := 20
+        }
+      }
+      foo(true)
+      foo(false)

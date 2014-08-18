@@ -31,7 +31,7 @@ namespace AbstractSyntax.Literal
                 }
                 if(Values.Count == 0)
                 {
-                    _BaseType = CurrentScope.NameResolution("Object").FindDataType();
+                    _BaseType = CurrentScope.NameResolution("Object").FindDataType().Type;
                 }
                 else
                 {
@@ -49,7 +49,7 @@ namespace AbstractSyntax.Literal
                 {
                     return _ReturnType;
                 }
-                var list = CurrentScope.NameResolution("List").FindDataType();
+                var list = CurrentScope.NameResolution("List").FindDataType().Type;
                 _ReturnType = Root.ClassManager.Issue(list, new TypeSymbol[] { BaseType }, new TypeSymbol[0]);
                 return _ReturnType;
             }

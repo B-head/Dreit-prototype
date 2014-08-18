@@ -90,7 +90,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
+        internal override IEnumerable<OverLoadTypeMatch> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
         {
             foreach (var s in TraversalSets())
             {
@@ -101,7 +101,7 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             foreach (var s in TraversalSets())
             {

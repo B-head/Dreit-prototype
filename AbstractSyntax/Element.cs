@@ -45,7 +45,7 @@ namespace AbstractSyntax
             get { return Root.SimplexManager.Issue(this); }
         }
 
-        internal virtual IEnumerable<OverLoadMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal virtual IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             foreach (var v in ReturnType.GetInstanceMatch(inst, pars, args))
             {

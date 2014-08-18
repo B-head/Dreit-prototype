@@ -55,16 +55,17 @@ namespace AbstractSyntax
             }
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
+        internal override IEnumerable<OverLoadTypeMatch> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
         {
             var type = Symbol as TypeSymbol;
             if (type != null)
             {
-                yield return type;
+                var inst = new List<GenericsInstance>();
+                yield return OverLoadTypeMatch.MakeMatch(Root, type, type.Generics, inst, pars);
             }
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             var inst = new List<GenericsInstance>();
             foreach (var m in Symbol.GetTypeMatch(inst, pars, args))

@@ -28,4 +28,26 @@
     </code>
     <output>1 2 fizz 4 buzz fizz 7 8 fizz buzz 11 fizz 13 14 fizzbuzz</output>
   </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      let max := 50
+      var arr := List!Int32
+      var index := 0
+      loop i < max use i := 2 by i += 1 :: arr.Add(i)
+      loop index < arr.Count by index += 1 {
+	      var c := arr[index]
+	      loop k < arr.Count use k := index + 1 by k += 1 {
+		      if arr[k] % c == 0 {
+			      arr.RemoveAt[k]
+			      k -= 1
+		      }
+	      }
+      }
+      loop i < arr.Count use i := 0 by i += 1 :: arr[i] =: stdout
+      ]]>
+    </code>
+    <output>2 3 5 7 11 13 17 19 23 29 31 37 41 43 47</output>
+  </case>
 </compile-test>

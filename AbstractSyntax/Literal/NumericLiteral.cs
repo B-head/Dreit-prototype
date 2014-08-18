@@ -30,11 +30,11 @@ namespace AbstractSyntax.Literal
                 }
                 if (string.IsNullOrEmpty(Fraction))
                 {
-                    _ReturnType = CurrentScope.NameResolution("Int32").FindDataType();
+                    _ReturnType = CurrentScope.NameResolution("Int32").FindDataType().Type;
                 }
                 else
                 {
-                    _ReturnType = CurrentScope.NameResolution("Double").FindDataType();
+                    _ReturnType = CurrentScope.NameResolution("Double").FindDataType().Type;
                 }
                 return _ReturnType;
             }

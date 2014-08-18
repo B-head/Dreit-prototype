@@ -44,13 +44,13 @@ namespace AbstractSyntax.Symbol
             return Next.TraversalAttribute();
         }
 
-        internal override IEnumerable<TypeSymbol> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
+        internal override IEnumerable<OverLoadTypeMatch> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
         {
             var newpars = pars.Concat(Parameters).ToList();
             return Next.TraversalDataType(newpars);
         }
 
-        internal override IEnumerable<OverLoadMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        internal override IEnumerable<OverLoadCallMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
             var newpars = pars.Concat(Parameters).ToList();
             return Next.TraversalCall(newpars, args);

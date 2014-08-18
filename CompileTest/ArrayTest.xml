@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      <![CDATA[
+      [10, 20, 30, 40] =: var arr
+      loop i < arr.Count use i := 0 by i += 1 :: arr[i] =: stdout
+      ]]>
+    </code>
+    <output>10 20 30 40</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      var arr := List!Int32
+      loop i < 4 use i := 0 by i += 1 :: (i + 1) * 10 =: arr.Add
+      loop i < arr.Count use i := 0 by i += 1 :: arr[i] =: stdout
+      ]]>
+    </code>
+    <output>10 20 30 40</output>
+  </case>
+</compile-test>

@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="ArrayStructure.cs" />
     <Compile Include="BlockStructure.cs" />
-    <Compile Include="BranchStructure.cs" />
+    <Compile Include="IfStructure.cs" />
     <Compile Include="BuilderStructure.cs" />
     <Compile Include="CacheStructure.cs" />
     <Compile Include="CallStructure.cs" />
