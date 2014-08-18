@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DreitCompiler", "DreitCompi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompileTest", "CompileTest\CompileTest.csproj", "{AAC2414D-F807-4A18-B981-E6B2E7A0571A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLibrary", "CoreLibrary\CoreLibrary.csproj", "{97A80420-F612-42E7-95E1-BCE70ED5CB4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAC2414D-F807-4A18-B981-E6B2E7A0571A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97A80420-F612-42E7-95E1-BCE70ED5CB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97A80420-F612-42E7-95E1-BCE70ED5CB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97A80420-F612-42E7-95E1-BCE70ED5CB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97A80420-F612-42E7-95E1-BCE70ED5CB4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

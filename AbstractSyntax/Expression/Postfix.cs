@@ -16,11 +16,26 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {
-                return Root.TypeManager.IssueTypeQualify(Exp.ReturnType, Root.Typeof); //todo Refer版にも対応する。
+                if(Operator == TokenType.Refer)
+                {
+                    return Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { Exp.ReturnType }, new TypeSymbol[0]);
+                }
+                else if(Operator == TokenType.Typeof)
+                {
+                    return Root.ClassManager.Issue(Root.Typeof, new TypeSymbol[] { Exp.ReturnType }, new TypeSymbol[0]);
+                }
+                else if(Operator == TokenType.Reject)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
             }
         }
 

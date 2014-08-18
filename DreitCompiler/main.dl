@@ -1,6 +1,10 @@
-﻿loop i <= 15 on var i := 1 by i += 1 {
-	echo if i % 15 = 0 :: "fizzbuzz"
-	else if i % 3 = 0 :: "fizz"
-	else if i % 5 = 0 :: "buzz"
-	else "{ i }"
-}
+﻿
+      routine foo(a:Boolean){
+        if a {
+          stdout := 10
+        } else {
+          stdout := 20
+        }
+      }
+      foo(true)
+      foo(false)

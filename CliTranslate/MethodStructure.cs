@@ -54,7 +54,7 @@ namespace CliTranslate
 
         public bool IsVoidReturn
         {
-            get { return ReturnType == null || ReturnType.Name == "Void"; }
+            get { return ReturnType == null || ReturnType.IsVoid; }
         }
 
         public bool IsVirtual
@@ -88,6 +88,13 @@ namespace CliTranslate
         internal MethodInfo GainMethod()
         {
             return Info;
+        }
+
+        internal override BuilderStructure RenewInstance(TypeStructure type)
+        {
+            var ret = new MethodStructure();
+            ret.Info = type.RenewMethod(this);
+            return ret;
         }
     }
 }

@@ -22,6 +22,10 @@ namespace DlightTest
         public static void TestFixtureSetUp()
         {
             Directory.CreateDirectory("output");
+            if (!File.Exists(@"output/CoreLibrary.dll"))
+            {
+                File.Copy(@"CoreLibrary.dll", @"output\CoreLibrary.dll");
+            }
             Directory.SetCurrentDirectory("output");
         }
 
@@ -31,6 +35,7 @@ namespace DlightTest
             Root root = new Root();
             var import = new CilImport(root);
             import.ImportAssembly(Assembly.Load("mscorlib"));
+            import.ImportAssembly(Assembly.Load("CoreLibrary"));
             root.Append(CompileText(data.Name, data.Code));
             root.SemanticAnalysis();
             if (root.MessageManager.MessageCount > 0)

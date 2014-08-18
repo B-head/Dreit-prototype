@@ -13,7 +13,7 @@ namespace AbstractSyntax.SpecialSymbol
         public bool Value { get; private set; }
 
         public BooleanSymbol(bool value)
-            :base(true)
+            : base(VariantType.Const)
         {
             Value = value;
             if(value)
@@ -24,10 +24,9 @@ namespace AbstractSyntax.SpecialSymbol
             {
                 Name = "false";
             }
-            _Attribute = new List<Scope>();
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {
@@ -35,7 +34,7 @@ namespace AbstractSyntax.SpecialSymbol
                 {
                     return _DataType;
                 }
-                _DataType = CurrentScope.NameResolution("Boolean").FindDataType();
+                _DataType = CurrentScope.NameResolution("Boolean").FindDataType().Type;
                 return _DataType;
             }
         }

@@ -14,12 +14,12 @@ namespace AbstractSyntax.Expression
     public class CallExpression : Element
     {
         public Element Access { get; private set; }
-        public TupleList Arguments { get; private set; }
-        private TypeMatch? _Match;
-        private Scope _CallScope;
-        private Scope _CalculateCallScope;
+        public TupleLiteral Arguments { get; private set; }
+        private OverLoadCallMatch? _Match;
+        private RoutineSymbol _CallRoutine;
+        private RoutineSymbol _CalculateCallScope;
 
-        public CallExpression(TextPosition tp, Element acs, TupleList args)
+        public CallExpression(TextPosition tp, Element acs, TupleLiteral args)
             : base(tp)
         {
             Access = acs;
@@ -32,13 +32,13 @@ namespace AbstractSyntax.Expression
             :base(tp)
         {
             Access = acs;
-            if (arg is TupleList)
+            if (arg is TupleLiteral)
             {
-                Arguments = (TupleList)arg;
+                Arguments = (TupleLiteral)arg;
             }
             else
             {
-                Arguments = new TupleList(arg);
+                Arguments = new TupleLiteral(arg.Position, arg);
             }
             AppendChild(Access);
             AppendChild(Arguments);
@@ -60,7 +60,7 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        public TypeMatch Match
+        public OverLoadCallMatch Match
         {
             get
             {
@@ -68,46 +68,51 @@ namespace AbstractSyntax.Expression
                 {
                     return _Match.Value;
                 }
-                var tie = Access as TemplateInstanceExpression;
-                IReadOnlyList<Scope> pars;
-                if(tie == null)
-                {
-                    pars = new List<Scope>();
-                }
-                else
-                {
-                    pars = tie.Parameter;
-                }
-                _Match = Access.OverLoad.CallSelect(pars, Arguments.GetDataTypes());
+                _Match = Access.OverLoad.CallSelect(Arguments.GetDataTypes());
                 return _Match.Value;
             }
         }
 
-        public Scope CallScope
+        public VariantSymbol ReferVariant
+        {
+            get { return Access.OverLoad.FindVariant(); }
+        }
+
+        public RoutineSymbol CallRoutine
         {
             get
             {
-                if (_CallScope == null)
+                if (_CallRoutine == null)
                 {
-                    _CallScope = Match.Call;
+                    _CallRoutine = Match.Call;
                 }
-                return _CallScope;
+                return _CallRoutine;
             }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {
-                return CallScope.CallReturnType;
+                return CallRoutine.CallReturnType;
             }
+        }
+
+        public bool IsReferVeriant
+        {
+            get { return !(ReferVariant is ErrorVariantSymbol); }
+        }
+
+        public bool IsStoreCall
+        {
+            get { return RoutineSymbol.HasLoadStoreCall(CallRoutine); }
         }
 
         public override bool IsConstant
         {
             get 
             {
-                if (IsCalculate && !((RoutineSymbol)CalculateCallScope).IsFunction)
+                if (IsCalculate && !CalculateCallScope.IsFunction)
                 {
                     return false;
                 }
@@ -117,7 +122,7 @@ namespace AbstractSyntax.Expression
                 }
                 else
                 {
-                    return Access.IsConstant && Arguments.IsConstant && ((RoutineSymbol)CallScope).IsFunction;
+                    return Access.IsConstant && Arguments.IsConstant && CallRoutine.IsFunction;
                 }
             }
         }
@@ -147,18 +152,10 @@ namespace AbstractSyntax.Expression
 
         public bool IsImmutableCall
         {
-            get
-            {
-                var v = CallScope as PropertySymbol;
-                if(v == null)
-                {
-                    return false;
-                }
-                return v.Variant.IsLet;
-            }
+            get { return ReferVariant.IsImmtable; }
         }
 
-        public Scope CalculateCallScope
+        public RoutineSymbol CalculateCallScope
         {
             get
             {
@@ -170,7 +167,7 @@ namespace AbstractSyntax.Expression
                     }
                     else
                     {
-                        _CalculateCallScope = Root.Unknown;
+                        _CalculateCallScope = Root.ErrorRoutine;
                     }
                 }
                 return _CalculateCallScope;
@@ -187,13 +184,13 @@ namespace AbstractSyntax.Expression
             return Access == element;
         }
 
-        public Scope CallType //todo Tuple型も返せるようにする。
+        public TypeSymbol CallType //todo Tuple型も返せるようにする。
         {
             get
             {
                 if (Arguments.GetDataTypes().Count != 1)
                 {
-                    return Root.Unknown;
+                    return Root.ErrorType;
                 }
                 return Arguments.GetDataTypes()[0];
             }
@@ -217,19 +214,23 @@ namespace AbstractSyntax.Expression
         {
             switch (Match.Result)
             {
-                case TypeMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
-                case TypeMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
-                case TypeMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
+                case CallMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
+                case CallMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
+                case CallMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
+                case CallMatchResult.UnmatchGenericCount: cmm.CompileError("unmatch-generic-count", this); break;
+                case CallMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
+                case CallMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
             }
             if (IsImmutableCall && !(Access is VariantDeclaration))
             {
                 cmm.CompileError("not-mutable", this);
             }
-            if (IsFunctionLocation && CallScope is PropertySymbol)
+            //todo 副作用のある関数を呼べないようにする。
+            if (IsFunctionLocation && CallRoutine is PropertySymbol)
             {
                 cmm.CompileError("forbit-side-effect", this);
             }
-            if (CalculateCallScope is ErrorSymbol)
+            if (IsCalculate && CalculateCallScope is ErrorRoutineSymbol)
             {
                 cmm.CompileError("impossible-calculate", this);
             }

@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -11,12 +12,12 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class ClassDeclaration : ClassSymbol
     {
-        public TupleList AttributeAccess { get; private set; }
-        public TupleList DecGenerics { get; private set; }
-        public TupleList InheritAccess { get; private set; }
+        public TupleLiteral AttributeAccess { get; private set; }
+        public TupleLiteral DecGenerics { get; private set; }
+        public TupleLiteral InheritAccess { get; private set; }
 
-        public ClassDeclaration(TextPosition tp, string name, bool isTrait, TupleList attr, TupleList generic, TupleList inherit, ExpressionList block)
-            :base(tp, name, isTrait, block)
+        public ClassDeclaration(TextPosition tp, string name, ClassType type, TupleLiteral attr, TupleLiteral generic, TupleLiteral inherit, ProgramContext block)
+            :base(tp, name, type, block)
         {
             AttributeAccess = attr;
             DecGenerics = generic;
@@ -26,12 +27,7 @@ namespace AbstractSyntax.Declaration
             AppendChild(InheritAccess);
         }
 
-        public override bool IsConstant
-        {
-            get { return true; }
-        }
-
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -39,14 +35,14 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Attribute;
                 }
-                var a = new List<Scope>();
+                var a = new List<AttributeSymbol>();
                 foreach (var v in AttributeAccess)
                 {
-                    a.Add(v.OverLoad.FindDataType());
+                    a.Add(v.OverLoad.FindAttribute());
                 }
-                if (!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
-                    var p = NameResolution("public").FindDataType();
+                    var p = NameResolution("public").FindAttribute();
                     a.Add(p);
                 }
                 _Attribute = a;
@@ -72,7 +68,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override IReadOnlyList<Scope> Inherit 
+        public override IReadOnlyList<TypeSymbol> Inherit 
         {
             get
             {
@@ -80,11 +76,11 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Inherit;
                 }
-                var i = new List<Scope>();
+                var i = new List<TypeSymbol>();
                 foreach (var v in InheritAccess)
                 {
                     var dt = v.OverLoad.FindDataType();
-                    i.Add(dt);
+                    i.Add(dt.Type);
                 }
                 _Inherit = i;
                 return _Inherit;
@@ -96,7 +92,7 @@ namespace AbstractSyntax.Declaration
             foreach (var v in InheritAccess)
             {
                 var dt = v.OverLoad.FindDataType();
-                if (!(dt is ClassSymbol))
+                if (!(dt.Type is ClassSymbol))
                 {
                     cmm.CompileError("not-datatype-inherit", this);
                 }

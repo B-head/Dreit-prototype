@@ -34,15 +34,23 @@ namespace AbstractSyntax
             Child = new List<Element>();
             Position = tp;
         }
-        
-        public virtual Scope ReturnType
+
+        public virtual TypeSymbol ReturnType
         {
             get { return Root.Void; }
         }
 
-        public virtual OverLoadReference OverLoad
+        public virtual OverLoad OverLoad
         {
-            get { return Root.UndefinedOverLord; }
+            get { return Root.SimplexManager.Issue(this); }
+        }
+
+        internal virtual IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            foreach (var v in ReturnType.GetInstanceMatch(inst, pars, args))
+            {
+                yield return v;
+            }
         }
 
         public virtual bool IsConstant
@@ -61,7 +69,10 @@ namespace AbstractSyntax
             {
                 if (_Root == null)
                 {
-                    _Root = Parent.Root;
+                    if (Parent != null)
+                    {
+                        _Root = Parent.Root;
+                    }
                 }
                 return _Root;
             }
@@ -117,6 +128,10 @@ namespace AbstractSyntax
 
         private void RegisterParent(Element parent)
         {
+            if(Parent != null)
+            {
+                throw new InvalidOperationException();
+            }
             Parent = parent;
             var s = this as Scope;
             if(s == null)
@@ -150,23 +165,6 @@ namespace AbstractSyntax
             return false;
         }
 
-        internal static bool HasAnyAttribute(IReadOnlyList<Scope> attribute, params AttributeType[] type)
-        {
-            foreach (var v in attribute)
-            {
-                var a = v as AttributeSymbol;
-                if (a == null)
-                {
-                    continue;
-                }
-                if (type.Any(t => t == a.Attr))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         internal T GetParent<T>() where T : Scope
         {
             var current = CurrentScope;
@@ -183,7 +181,7 @@ namespace AbstractSyntax
 
         protected virtual string ElementInfo
         {
-            get { return null; }
+            get { return string.Format("Child = {0}", Count); }
         }
 
         public override string ToString()

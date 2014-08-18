@@ -2,8 +2,8 @@
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
-      routine foo():Int32 :: 10
-      echo foo()
+      routine foo() ->Int32 :: 10
+      stdout := foo()
     </code>
     <output>10</output>
   </case>
@@ -11,7 +11,7 @@
   <case>
     <code>
       routine foo() :: 100
-      echo foo()
+      stdout := foo()
     </code>
     <output>100</output>
   </case>
@@ -19,15 +19,15 @@
   <case>
     <code>
       routine foo :: 10
-      echo foo
+      stdout := foo
     </code>
     <output>10</output>
   </case>
 
   <case>
     <code>
-      routine foo(a:Int32):Int32 :: a + 10
-      echo foo(20)
+      routine foo(a:Int32) ->Int32 :: a + 10
+      stdout := foo(20)
     </code>
     <output>30</output>
   </case>
@@ -35,7 +35,7 @@
   <case>
     <code>
       routine foo(a:Int32) :: a + 10
-      echo foo := 20
+      stdout := foo := 20
     </code>
     <output>30</output>
   </case>
@@ -43,7 +43,7 @@
   <case>
     <code>
       routine foo(a:Double) :: a + 10.5
-      echo foo := 20
+      stdout := foo := 20
     </code>
     <output>30.5</output>
   </case>
@@ -51,7 +51,7 @@
   <case>
     <code>
       function foo(a:Int32) :: a + 10
-      echo foo := 20
+      stdout := foo := 20
     </code>
     <output>30</output>
   </case>
@@ -60,7 +60,7 @@
     <code>
       var x := 50
       function foo(a:Int32) :: x += a
-      echo foo := 20
+      stdout := foo := 20
     </code>
     <error key="forbit-side-effect"/>
   </case>
@@ -68,7 +68,7 @@
   <case>
     <code>
       routine foo(a:Int32, b:Int32) :: a % b
-      echo foo(23, 5)
+      stdout := foo(23, 5)
     </code>
     <output>3</output>
   </case>
@@ -76,7 +76,7 @@
   <case>
     <code>
       routine foo(a:Double, b:Double) :: a % b
-      echo foo(23, 5)
+      stdout := foo(23, 5)
     </code>
     <output>3</output>
   </case>
@@ -84,7 +84,7 @@
   <case>
     <code>
       routine foo(a:Int32, b:Double) :: a % b
-      echo foo(23, 5)
+      stdout := foo(23, 5)
     </code>
     <output>3</output>
   </case>
@@ -92,7 +92,7 @@
   <case>
     <code>
       routine foo(a:Int32, b:Int32) :: a % b
-      echo 23, 5 =: foo
+      23, 5 =: foo =: stdout
     </code>
     <output>3</output>
   </case>
@@ -100,7 +100,7 @@
   <case>
     <code>
       <![CDATA[
-      echo foo(23, 5)
+      stdout := foo(23, 5)
       routine foo(a:Int32, b:Int32) {
         return a % b
       }
@@ -109,23 +109,25 @@
     <output>3</output>
   </case>
 
-  <case ignore="true">
+  <case>
     <code>
       <![CDATA[
-      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
+      rout foo(a:String) { 
+	      a =: stdout
+      }
       
-      echo foo(10)
+      foo"hello world"
       ]]>
     </code>
-    <output>51</output>
+    <output>hello world</output>
   </case>
 
   <case>
     <code>
       routine foo(a:Int32) :: a + 20
       routine foo(b:Double) :: b + 55.5
-      echo foo(0)
-      echo foo(0.0)
+      stdout := foo(0)
+      stdout := foo(0.0)
     </code>
     <output>20 55.5</output>
   </case>
@@ -134,8 +136,8 @@
     <code>
       routine foo(a:Int32) :: a + 20
       routine foo(b:Int32, c:Int32) :: b + c + 55
-      echo foo := 10
-      echo foo := 20, 30
+      stdout := foo := 10
+      stdout := foo := 20, 30
     </code>
     <output>30 105</output>
   </case>
@@ -144,8 +146,8 @@
     <code>
       routine foo(a:Int32, x:Double) :: a + x + 20
       routine foo(b:Int32, c:Int32) :: b + c + 55
-      echo foo := 10, 55.55
-      echo foo := 20, 30
+      stdout := foo := 10, 55.55
+      stdout := foo := 20, 30
     </code>
     <output>85.55 105</output>
   </case>

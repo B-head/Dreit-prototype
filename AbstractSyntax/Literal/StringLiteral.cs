@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,26 +10,23 @@ namespace AbstractSyntax.Literal
     [Serializable]
     public class StringLiteral : Element
     {
-        private Scope _ReturnType;
+        public IReadOnlyList<Element> Texts { get; private set; }
+        private TypeSymbol _ReturnType;
 
-        public StringLiteral(TextPosition tp, List<Element> texts)
+        public StringLiteral(TextPosition tp, IReadOnlyList<Element> texts)
             :base(tp)
         {
-            AppendChild(texts);
+            Texts = texts;
+            AppendChild(Texts);
         }
 
-        public IReadOnlyList<Element> Texts
-        {
-            get { return this; }
-        }
-
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get
             {
                 if (_ReturnType == null)
                 {
-                    _ReturnType = CurrentScope.NameResolution("String").FindDataType();
+                    _ReturnType = CurrentScope.NameResolution("String").FindDataType().Type;
                 }
                 return _ReturnType;
             }

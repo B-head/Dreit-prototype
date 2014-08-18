@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace AbstractSyntax.Symbol
 {
     [Serializable]
-    public class GenericSymbol : Scope
+    public class GenericSymbol : TypeSymbol
     {
-        protected IReadOnlyList<Scope> _Attribute;
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected IReadOnlyList<Scope> _Constraint;
 
         protected GenericSymbol(TextPosition tp, string name)
@@ -18,16 +18,11 @@ namespace AbstractSyntax.Symbol
             Name = name;
         }
 
-        public GenericSymbol(string name, IReadOnlyList<Scope> attr, IReadOnlyList<Scope> constraint)
+        public GenericSymbol(string name, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<Scope> constraint)
         {
             Name = name;
             _Attribute = attr;
             _Constraint = constraint;
-        }
-
-        public override bool IsDataType
-        {
-            get { return true; }
         }
     }
 }

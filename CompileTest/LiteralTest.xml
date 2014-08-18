@@ -2,70 +2,62 @@
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
-      echo 10
+      stdout := 10
     </code>
     <output>10</output>
   </case>
   
   <case>
     <code>
-      echo { 30 }
-    </code>
-    <error key="error-token"/>
-    <error key="error-token"/>
-  </case>
-  
-  <case>
-    <code>
-      echo 00123
-      echo 4_5_6
-      echo 56.789
+      stdout := 00123
+      stdout := 4_5_6
+      stdout := 56.789
     </code>
     <output>123 456 56.789</output>
   </case>
 
   <case>
     <code>
-      echo 0b1111;
-      echo 0o77;
-      echo 0d999;
-      echo 0xFF.0xff;
+      stdout := 0b1111;
+      stdout := 0o77;
+      stdout := 0d999;
+      stdout := 0xFF.0xff;
     </code>
     <output>15 63 999 255.99609375</output>
   </case>
 
   <case>
     <code>
-      echo "Hello world!"
+      stdout := "Hello world!"
     </code>
     <output>Hello world!</output>
   </case>
 
   <case>
     <code>
-      echo 'Hello world!'
-      echo `Hello world!`
+      stdout := 'Hello world!'
+      stdout := `Hello world!`
     </code>
     <output>Hello world! Hello world!</output>
   </case>
   
   <case>
     <code>
-      echo "こんにちは"
+      stdout := "こんにちは"
     </code>
     <output>こんにちは</output>
   </case>
 
   <case>
     <code>
-      echo ""
+      stdout := ""
     </code>
     <output></output>
   </case>
 
   <case>
     <code>
-      echo "string\"output\""
+      stdout := "string\"output\""
     </code>
     <output>string"output"</output>
   </case>
@@ -73,7 +65,7 @@
   <case>
     <code>
       var a := 100
-      echo "{ a }"
+      stdout := "{ a }"
     </code>
     <output>100</output>
   </case>
@@ -81,14 +73,14 @@
   <case>
     <code>
       var a := 100
-      echo "a = { a };"
+      stdout := "a = { a };"
     </code>
     <output>a = 100;</output>
   </case>
 
   <case>
     <code>
-      echo "{ "こんばんは" }"
+      stdout := "{ "こんばんは" }"
     </code>
     <output>こんばんは</output>
   </case>
@@ -96,8 +88,15 @@
   <case>
     <code>
       var a := 100
-      echo "a { "= { a }" };"
+      stdout := "a { "= { a }" };"
     </code>
     <output>a = 100;</output>
+  </case>
+
+  <case>
+    <code>
+      10, "hello" =: stdout
+    </code>
+    <output>10 hello</output>
   </case>
 </compile-test>

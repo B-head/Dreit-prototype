@@ -1,6 +1,8 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Expression;
+using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
+using CoreLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,7 @@ namespace CliTranslate
         {
             Root = root;
             ImportDictionary = new Dictionary<object, Scope>();
+            ImportDictionary.Add(typeof(void), Root.Void);
         }
 
         private NameSpaceSymbol GetNameSpace(string name)
@@ -58,44 +61,49 @@ namespace CliTranslate
                     continue;
                 }
                 var ns = GetNameSpace(t.Namespace);
+                if (typeof(void) == t)
+                {
+                    continue;
+                }
                 ns.Append(ImportType(t));
             }
         }
 
-        private Scope ImportType(Type type)
+        private TypeSymbol ImportType(Type type)
         {
-            if (type.IsEnum)
+            if (type.HasElementType)
             {
-                return ImportEnum(type);
+                return ImportModifyType(type);
+            }
+            if (type.IsGenericType && !type.IsGenericTypeDefinition)
+            {
+                return ImportTemplateInstance(type);
             }
             if (type.IsGenericParameter)
             {
                 return ImportGenericType(type);
             }
-            if (type.IsArray || type.IsByRef || type.IsPointer)
+            if (type.IsEnum)
             {
-                return ImportQualifyType(type);
-            }
-            if (type.IsGenericType && !type.IsGenericTypeDefinition)
-            {
-                return ImportQualifyType(type);
+                return ImportEnum(type);
             }
             return ImportPureType(type);
         }
 
         private ClassSymbol ImportPureType(Type type)
         {
-            bool isTrait;
-            var attribute = CreateAttributeList(type.Attributes, out isTrait);
-            var generic = CreateGenericList(type.GetGenericArguments());
-            var inherit = CreateInheritList(type);
-            var block = new ExpressionList();
-            var elem = new ClassSymbol(TrimTypeNameMangling(type.Name), isTrait, block, attribute, generic, inherit);
+            var elem = new ClassSymbol();
             if (ImportDictionary.ContainsKey(type))
             {
                 return (ClassSymbol)ImportDictionary[type];
             }
             ImportDictionary.Add(type, elem);
+            ClassType classType;
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, type, out classType);
+            var generic = CreateGenericList(type.GetGenericArguments());
+            var inherit = CreateInheritList(type);
+            var block = new ProgramContext();
             var ctor = type.GetConstructors(Binding);
             foreach (var c in ctor)
             {
@@ -114,15 +122,16 @@ namespace CliTranslate
             var property = type.GetProperties(Binding);
             foreach (var p in property)
             {
+                var name = p.GetIndexParameters().Count() > 0 ? RoutineSymbol.AliasCallIdentifier : p.Name; 
                 var g = p.GetMethod;
                 if (g != null && !g.IsAssembly && !g.IsFamilyAndAssembly && !g.IsPrivate)
                 {
-                    block.Append(ImportProperty(p.GetMethod, p.Name));
+                    block.Append(ImportProperty(p.GetMethod, name));
                 }
                 var s = p.SetMethod;
                 if (s != null && !s.IsAssembly && !s.IsFamilyAndAssembly && !s.IsPrivate)
                 {
-                    block.Append(ImportProperty(p.SetMethod, p.Name));
+                    block.Append(ImportProperty(p.SetMethod, name));
                 }
             }
             var method = type.GetMethods(Binding);
@@ -156,17 +165,56 @@ namespace CliTranslate
                 }
                 block.Append(ImportType(n));
             }
+            elem.Initialize(TrimTypeNameMangling(type.Name), classType, block, attribute, generic, inherit);
             return elem;
         }
 
-        private QualifyTypeSymbol ImportQualifyType(Type type)
+        private ClassTemplateInstance ImportModifyType(Type type)
         {
-            return null;
+            var elementType = ImportType(type.GetElementType());
+            ClassTemplateInstance elem = null;
+            if(type.IsArray)
+            {
+                elem = Root.ClassManager.Issue(Root.EmbedArray, new TypeSymbol[] { elementType }, new TypeSymbol[0]);
+            }
+            else if(type.IsByRef)
+            {
+                elem = Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { elementType }, new TypeSymbol[0]);
+            }
+            else if(type.IsPointer)
+            {
+                elem = Root.ClassManager.Issue(Root.Pointer, new TypeSymbol[] { elementType }, new TypeSymbol[0]);
+            }
+            else
+            {
+                throw new ArgumentException("type");
+            }
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (ClassTemplateInstance)ImportDictionary[type];
+            }
+            ImportDictionary.Add(type, elem);
+            return elem;
+        }
+
+        private ClassTemplateInstance ImportTemplateInstance(Type type)
+        {
+            var definition = ImportType(type.GetGenericTypeDefinition());
+            var parameter = new List<TypeSymbol>();
+            AppendParameterType(parameter, type.GetGenericArguments());
+            var elem = Root.ClassManager.Issue(definition, parameter, new TypeSymbol[0]);
+            if (ImportDictionary.ContainsKey(type))
+            {
+                return (ClassTemplateInstance)ImportDictionary[type];
+            }
+            ImportDictionary.Add(type, elem);
+            return elem;
         }
 
         private GenericSymbol ImportGenericType(Type type)
         {
-            var attribute = CreateAttributeList(type.GenericParameterAttributes);
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, type);
             var constraint = CreateConstraintList(type.GetGenericParameterConstraints());
             var elem = new GenericSymbol(type.Name, attribute, constraint);
             if (ImportDictionary.ContainsKey(type))
@@ -179,10 +227,10 @@ namespace CliTranslate
 
         private EnumSymbol ImportEnum(Type type)
         {
-            bool isTrait;
-            var attribute = CreateAttributeList(type.Attributes, out isTrait);
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, type);
             var dt = ImportType(type.GetEnumUnderlyingType());
-            var block = new ExpressionList();
+            var block = new ProgramContext();
             var elem = new EnumSymbol(type.Name, block, attribute, dt);
             if (ImportDictionary.ContainsKey(type))
             {
@@ -191,7 +239,8 @@ namespace CliTranslate
             ImportDictionary.Add(type, elem);
             foreach(var v in type.GetEnumNames())
             {
-                var f = new VariantSymbol(v, true, new List<Scope>(), dt);
+                var f = new VariantSymbol();
+                f.Initialize(v, VariantType.Const, new List<AttributeSymbol>(), dt);
                 block.Append(f);
             }
             return elem;
@@ -199,73 +248,83 @@ namespace CliTranslate
 
         private RoutineSymbol ImportMethod(MethodInfo method)
         {
+            var elem = new RoutineSymbol();
             if (ImportDictionary.ContainsKey(method))
             {
                 return (RoutineSymbol)ImportDictionary[method];
             }
-            var attribute = CreateAttributeList(method.Attributes);
+            ImportDictionary.Add(method, elem);
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, method);
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
             var rt = ImportType(method.ReturnType);
-            var elem = new RoutineSymbol(method.Name, TokenType.Unknoun, attribute, generic, arguments, rt);
-            ImportDictionary.Add(method, elem);
+            elem.Initialize(method.Name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             return elem;
         }
 
         private RoutineSymbol ImportProperty(MethodInfo prop, string name)
         {
+            var elem = new RoutineSymbol();
             if (ImportDictionary.ContainsKey(prop))
             {
                 return (RoutineSymbol)ImportDictionary[prop];
             }
-            var attribute = CreateAttributeList(prop.Attributes);
+            ImportDictionary.Add(prop, elem);
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, prop);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(prop);
             var rt = ImportType(prop.ReturnType);
-            var elem = new RoutineSymbol(name, TokenType.Unknoun, attribute, generic, arguments, rt);
-            ImportDictionary.Add(prop, elem);
+            elem.Initialize(name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             return elem;
         }
 
         private RoutineSymbol ImportConstructor(ConstructorInfo ctor)
         {
+            var elem = new RoutineSymbol();
             if (ImportDictionary.ContainsKey(ctor))
             {
                 return (RoutineSymbol)ImportDictionary[ctor];
             }
-            var attribute = CreateAttributeList(ctor.Attributes);
+            ImportDictionary.Add(ctor, elem);
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, ctor);
             var generic = new List<GenericSymbol>();
             var arguments = CreateArgumentList(ctor);
             var rt = ImportType(ctor.DeclaringType);
-            var elem = new RoutineSymbol(RoutineSymbol.ConstructorIdentifier, TokenType.Unknoun, attribute, generic, arguments, rt);
-            ImportDictionary.Add(ctor, elem);
+            elem.Initialize(RoutineSymbol.ConstructorIdentifier, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
             return elem;
         }
 
-        private ArgumentSymbol ImportArgument(ParameterInfo prm)
+        private ParameterSymbol ImportArgument(ParameterInfo prm)
         {
+            var elem = new ParameterSymbol();
             if (ImportDictionary.ContainsKey(prm))
             {
-                return (ArgumentSymbol)ImportDictionary[prm];
+                return (ParameterSymbol)ImportDictionary[prm];
             }
-            var attribute = CreateAttributeList(prm.Attributes);
-            var dt = ImportType(prm.ParameterType);
-            var elem = new ArgumentSymbol(prm.Name, attribute, dt);
             ImportDictionary.Add(prm, elem);
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, prm);
+            var dt = ImportType(prm.ParameterType);
+            elem.Initialize(prm.Name, VariantType.Var, attribute, dt);
             return elem;
         }
 
         private VariantSymbol ImportField(FieldInfo field)
         {
+            var elem = new VariantSymbol();
             if (ImportDictionary.ContainsKey(field))
             {
                 return (VariantSymbol)ImportDictionary[field];
             }
-            bool isLet = false;
-            var attribute = CreateAttributeList(field.Attributes, out isLet);
-            var dt = ImportType(field.FieldType);
-            var elem = new VariantSymbol(field.Name, isLet, attribute, dt);
             ImportDictionary.Add(field, elem);
+            VariantType type;
+            var attribute = new List<AttributeSymbol>();
+            AppendEmbededAttribute(attribute, field, out type);
+            var dt = ImportType(field.FieldType);
+            elem.Initialize(field.Name, type, attribute, dt);
             return elem;
         }
 
@@ -279,62 +338,70 @@ namespace CliTranslate
             return name.Substring(0, i);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(TypeAttributes attr, out bool isTrait)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, Type type)
         {
-            isTrait = false;
-            var ret = new List<Scope>();
-            if (attr.HasFlag(TypeAttributes.Abstract)) ret.Add(Root.Abstract);
-            if (attr.HasFlag(TypeAttributes.Class)) isTrait = false;
-            if (attr.HasFlag(TypeAttributes.Interface)) isTrait = true;
-            if (attr.HasFlag(TypeAttributes.NestedFamily)) ret.Add(Root.Protected);
-            if (attr.HasFlag(TypeAttributes.NestedFamORAssem)) ret.Add(Root.Protected);
-            if (attr.HasFlag(TypeAttributes.NestedPublic)) ret.Add(Root.Public);
-            if (attr.HasFlag(TypeAttributes.Public)) ret.Add(Root.Public);
-            return ret;
+            ClassType classType;
+            AppendEmbededAttribute(list, type, out classType);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(GenericParameterAttributes attr)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, Type type, out ClassType classType)
         {
-            var ret = new List<Scope>();
-            if (attr.HasFlag(GenericParameterAttributes.Contravariant)) ret.Add(Root.Contravariant);
-            if (attr.HasFlag(GenericParameterAttributes.Covariant)) ret.Add(Root.Covariant);
-            if (attr.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint)) ret.Add(Root.ConstructorConstraint);
-            if (attr.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) ret.Add(Root.ValueConstraint);
-            if (attr.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) ret.Add(Root.ReferenceConstraint);
-            return ret;
+            classType = ClassType.Class;
+            if (type.GetCustomAttribute<GlobalScopeAttribute>() != null) list.Add(Root.GlobalScope);
+            if (type.IsAbstract) list.Add(Root.Abstract);
+            if (type.IsClass) classType = ClassType.Class;
+            if (type.IsInterface) classType = ClassType.Trait;
+            if (type.IsNestedFamily) list.Add(Root.Protected);
+            if (type.IsNestedFamORAssem) list.Add(Root.Protected);
+            if (type.IsNestedPublic) list.Add(Root.Public);
+            if (type.IsPublic) list.Add(Root.Public);
+            if (type.IsSealed) list.Add(Root.Final);
+            if (type.IsValueType) classType = ClassType.Class;
+            if (type.IsGenericParameter)
+            {
+                var gattr = type.GenericParameterAttributes;
+                if (gattr.HasFlag(GenericParameterAttributes.Contravariant)) list.Add(Root.Contravariant);
+                if (gattr.HasFlag(GenericParameterAttributes.Covariant)) list.Add(Root.Covariant);
+                if (gattr.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint)) list.Add(Root.ConstructorConstraint);
+                if (gattr.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) list.Add(Root.ValueConstraint);
+                if (gattr.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) list.Add(Root.ReferenceConstraint);
+            }
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(MethodAttributes attr)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, MethodBase method)
         {
-            var ret = new List<Scope>();
-            if (attr.HasFlag(MethodAttributes.Abstract)) ret.Add(Root.Abstract);
-            if (attr.HasFlag(MethodAttributes.Family)) ret.Add(Root.Protected);
-            if (attr.HasFlag(MethodAttributes.FamORAssem)) ret.Add(Root.Protected);
-            if (attr.HasFlag(MethodAttributes.Final)) ret.Add(Root.Final);
-            if (attr.HasFlag(MethodAttributes.Public)) ret.Add(Root.Public);
-            if (attr.HasFlag(MethodAttributes.Static)) ret.Add(Root.Static);
-            if (attr.HasFlag(MethodAttributes.Virtual)) ret.Add(Root.Virtual);
-            return ret;
+            if (method.IsAbstract) list.Add(Root.Abstract);
+            if (method.IsFamily) list.Add(Root.Protected);
+            if (method.IsFamilyOrAssembly) list.Add(Root.Protected);
+            if (method.IsFinal) list.Add(Root.Final);
+            if (method.IsPublic) list.Add(Root.Public);
+            if (method.IsStatic) list.Add(Root.Static);
+            if (method.IsVirtual) list.Add(Root.Virtual);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(FieldAttributes attr, out bool isLet)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, FieldInfo field, out VariantType type)
         {
-            isLet = false;
-            var ret = new List<Scope>();
-            if (attr.HasFlag(FieldAttributes.Family)) ret.Add(Root.Protected);
-            if (attr.HasFlag(FieldAttributes.FamORAssem)) ret.Add(Root.Protected);
-            if (attr.HasFlag(FieldAttributes.InitOnly)) isLet = true;
-            if (attr.HasFlag(FieldAttributes.Public)) ret.Add(Root.Public);
-            if (attr.HasFlag(FieldAttributes.Static)) ret.Add(Root.Static);
-            return ret;
+            type = VariantType.Var;
+            if (field.IsFamily) list.Add(Root.Protected);
+            if (field.IsFamilyOrAssembly) list.Add(Root.Protected);
+            if (field.IsInitOnly) type = VariantType.Let;
+            if (field.IsLiteral) type = VariantType.Const;
+            if (field.IsPublic) list.Add(Root.Public);
+            if (field.IsStatic) list.Add(Root.Static);
         }
 
-        private IReadOnlyList<Scope> CreateAttributeList(ParameterAttributes attr)
+        private void AppendEmbededAttribute(List<AttributeSymbol> list, ParameterInfo parameter)
         {
-            var ret = new List<Scope>();
-            if (attr.HasFlag(ParameterAttributes.HasDefault)) ret.Add(Root.Optional);
-            if (attr.HasFlag(ParameterAttributes.Optional)) ret.Add(Root.Optional);
-            return ret;
+            if (parameter.GetCustomAttribute<ParamArrayAttribute>() != null) list.Add(Root.Variadic);
+            if (parameter.IsOptional) list.Add(Root.Optional);
+        }
+
+        private void AppendParameterType(List<TypeSymbol> list, Type[] prm)
+        {
+            foreach (var v in prm)
+            {
+                list.Add(ImportType(v));
+            }
         }
 
         private IReadOnlyList<GenericSymbol> CreateGenericList(Type[] gnr)
@@ -347,9 +414,9 @@ namespace CliTranslate
             return ret;
         }
 
-        private IReadOnlyList<Scope> CreateInheritList(Type type)
+        private IReadOnlyList<TypeSymbol> CreateInheritList(Type type)
         {
-            var ret = new List<Scope>();
+            var ret = new List<TypeSymbol>();
             if (type.BaseType != null)
             {
                 ret.Add(ImportType(type.BaseType));
@@ -360,7 +427,11 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                ret.Add(ImportType(v));
+                var t = ImportType(v);
+                if (t != null)
+                {
+                    ret.Add(t);
+                }
             }
             return ret;
         }
@@ -375,9 +446,9 @@ namespace CliTranslate
             return ret;
         }
 
-        private IReadOnlyList<ArgumentSymbol> CreateArgumentList(MethodBase method)
+        private IReadOnlyList<ParameterSymbol> CreateArgumentList(MethodBase method)
         {
-            var ret = new List<ArgumentSymbol>();
+            var ret = new List<ParameterSymbol>();
             foreach (var v in method.GetParameters())
             {
                 ret.Add(ImportArgument(v));

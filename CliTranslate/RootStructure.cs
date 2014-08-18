@@ -73,10 +73,9 @@ namespace CliTranslate
 
         public void Run()
         {
-            var entry = Assembly.EntryPoint;
-            var type = Assembly.GetType(entry.DeclaringType.FullName);
-            entry = type.GetMethod(entry.Name, BindingFlags.NonPublic | BindingFlags.Static);
-            entry.Invoke(null, null);
+            //var entry = Assembly;
+            //entry = Module.GetMethod(entry.Name);
+            //entry.Invoke(null, null);
         }
 
         internal override void PostBuild()

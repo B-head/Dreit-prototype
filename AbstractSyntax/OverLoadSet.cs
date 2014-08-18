@@ -7,15 +7,15 @@ using System.Linq;
 namespace AbstractSyntax
 {
     [Serializable]
-    public class OverLoadSet
+    public class OverLoadSet : OverLoad
     {
-        private Scope CurrentScope;
+        public Scope ThisScope { get; private set; }
         private List<Scope> Symbols;
         private bool IsHoldAlias;
 
-        internal OverLoadSet(Scope current)
+        internal OverLoadSet(Scope scope)
         {
-            CurrentScope = current;
+            ThisScope = scope;
             Symbols = new List<Scope>();
         }
 
@@ -28,30 +28,95 @@ namespace AbstractSyntax
             Symbols.Add(scope);
         }
 
-        internal IEnumerable<Scope> TraversalDataType()
+        internal OverLoadSet Clone(Scope thisScope)
         {
-            if(IsHoldAlias)
-            {
-                SpreadAlias();
-            }
-            foreach(var v in Symbols)
-            {
-                if(v.IsDataType)
-                {
-                    yield return v;
-                }
-            }
+            var ret = new OverLoadSet(thisScope);
+            ret.Symbols = Symbols;
+            ret.IsHoldAlias = IsHoldAlias;
+            return ret;
         }
 
-        internal IEnumerable<TypeMatch> TraversalCall(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        public override bool IsUndefined
+        {
+            get { return Symbols.Count == 0; }
+        }
+
+        internal override Root Root
+        {
+            get { return ThisScope.Root; }
+        }
+
+        internal override IEnumerable<Scope> TraversalChilds()
         {
             if (IsHoldAlias)
             {
                 SpreadAlias();
             }
+            foreach (var v in Symbols)
+            {
+                yield return v;
+            }
+        }
+
+        internal override IEnumerable<VariantSymbol> TraversalVariant()
+        {
+            if (IsHoldAlias)
+            {
+                SpreadAlias();
+            }
+            foreach (var v in Symbols)
+            {
+                var variant = v as VariantSymbol;
+                if (variant != null)
+                {
+                    yield return variant;
+                }
+            }
+        }
+
+        internal override IEnumerable<AttributeSymbol> TraversalAttribute()
+        {
+            if (IsHoldAlias)
+            {
+                SpreadAlias();
+            }
+            foreach (var v in Symbols)
+            {
+                var attr = v as AttributeSymbol;
+                if (attr != null)
+                {
+                    yield return attr;
+                }
+            }
+        }
+
+        internal override IEnumerable<OverLoadTypeMatch> TraversalDataType(IReadOnlyList<TypeSymbol> pars)
+        {
+            if(IsHoldAlias)
+            {
+                SpreadAlias();
+            }
+            var inst = GetGenericInstance();
+            foreach(var v in Symbols)
+            {
+                var type = v as TypeSymbol;
+                if (type != null)
+                {
+                    yield return OverLoadTypeMatch.MakeMatch(Root, type, type.Generics, inst, pars);
+                }
+            }
+        }
+
+        internal override IEnumerable<OverLoadCallMatch> TraversalCall(IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            if (IsHoldAlias)
+            {
+                SpreadAlias();
+            }
+            var inst = GetGenericInstance();
             foreach (var s in Symbols)
             {
-                foreach (var m in s.GetTypeMatch(pars, args))
+                foreach (var m in s.GetTypeMatch(inst, pars, args))
                 {
                     yield return m;
                 }
@@ -65,14 +130,31 @@ namespace AbstractSyntax
             foreach(var v in alias)
             {
                 var ol = v.OverLoad;
-                foreach (var t in ol.TraversalSets(true, true))
+                foreach (var s in ol.TraversalChilds())
                 {
-                    foreach (var s in t.Symbols)
-                    {
-                        Append(s);
-                    }
+                    Append(s);
                 }
             }
+        }
+
+        private IReadOnlyList<GenericsInstance> GetGenericInstance()
+        {
+            var cti = ThisScope as ClassTemplateInstance;
+            if (cti != null)
+            {
+                return cti.GetGenericInstance();
+            }
+            var rti = ThisScope as RoutineTemplateInstance;
+            if (rti != null)
+            {
+                return rti.GetGenericInstance();
+            }
+            return new List<GenericsInstance>();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Symbols = {0}, This = {{{1}}}", Symbols.Count, ThisScope);
         }
     }
 }

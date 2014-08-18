@@ -24,16 +24,16 @@ namespace CliTranslate
                 }
                 if (isNested)
                 {
-                    switch (a.Attr)
+                    switch (a.AttributeType)
                     {
-                        case AttributeType.Public: ret |= TypeAttributes.Public | TypeAttributes.NestedAssembly; break;
+                        case AttributeType.Public: ret |= TypeAttributes.Public | TypeAttributes.NestedPublic; break;
                         case AttributeType.Protected: ret |= TypeAttributes.NotPublic | TypeAttributes.NestedFamily; break;
                         case AttributeType.Private: ret |= TypeAttributes.NotPublic | TypeAttributes.NestedPrivate; break;
                     }
                 }
                 else
                 {
-                    switch (a.Attr)
+                    switch (a.AttributeType)
                     {
                         case AttributeType.Public: ret |= TypeAttributes.Public; break;
                         case AttributeType.Protected: ret |= TypeAttributes.NotPublic; break;
@@ -62,10 +62,10 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                switch (a.Attr)
+                switch (a.AttributeType)
                 {
                     case AttributeType.Static: ret |= MethodAttributes.Static; break;
-                    case AttributeType.Public: ret |= MethodAttributes.Assembly; break;
+                    case AttributeType.Public: ret |= MethodAttributes.Public; break;
                     case AttributeType.Protected: ret |= MethodAttributes.Family; break;
                     case AttributeType.Private: ret |= MethodAttributes.Private; break;
                 }
@@ -87,10 +87,10 @@ namespace CliTranslate
                 {
                     continue;
                 }
-                switch (a.Attr)
+                switch (a.AttributeType)
                 {
                     case AttributeType.Static: ret |= FieldAttributes.Static; break;
-                    case AttributeType.Public: ret |= FieldAttributes.Assembly; break;
+                    case AttributeType.Public: ret |= FieldAttributes.Public; break;
                     case AttributeType.Protected: ret |= FieldAttributes.Family; break;
                     case AttributeType.Private: ret |= FieldAttributes.Private; break;
                 }
@@ -134,6 +134,26 @@ namespace CliTranslate
             return ret;
         }
 
+        public static Type[] ToTypes(this ParameterInfo[] prm)
+        {
+            var ret = new Type[prm.Length];
+            for (var i = 0; i < prm.Length; ++i)
+            {
+                ret[i] = prm[i].ParameterType;
+            }
+            return ret;
+        }
+
+        public static Type[] GainTypes(this IReadOnlyList<TypeStructure> types)
+        {
+            var ret = new Type[types.Count];
+            for (var i = 0; i < types.Count; ++i)
+            {
+                ret[i] = types[i].GainType();
+            }
+            return ret;
+        }
+
         public static void RegisterBuilders(this IReadOnlyList<ParameterStructure> prm, MethodBuilder builder, bool isInstance)
         {
             for (var i = 0; i < prm.Count; ++i)
@@ -152,6 +172,44 @@ namespace CliTranslate
                 var pb = builder.DefineParameter(i + 1, p.Attributes, p.Name);
                 p.RegisterBuilder(pb, isInstance);
             }
+        }
+
+        public static TypeStructure GetBaseType(this TypeStructure type)
+        {
+            var tit = type as GenericTypeStructure;
+            if(tit == null)
+            {
+                return type;
+            }
+            if (tit.BaseType is ModifyTypeStructure)
+            {
+                return tit.GenericParameter[0];
+            }
+            else
+            {
+                return tit.BaseType;
+            }
+        }
+
+        public static Type[] RenewTypes(this Type info, Type[] types)
+        {
+            var gtd = info.GetGenericTypeDefinition().GetTypeInfo();
+            var ga = info.GenericTypeArguments;
+            var gp = gtd.GenericTypeParameters;
+            var ret = new List<Type>();
+            foreach (var t in types)
+            {
+                var i = Array.FindIndex(gp, v => v == t);
+                if (i == -1)
+                {
+                    ret.Add(t);
+                }
+                else
+                {
+                    ret.Add(ga[i]);
+                }
+            }
+            return ret.ToArray();
         }
     }
 }

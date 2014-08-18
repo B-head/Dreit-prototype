@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,12 +11,23 @@ namespace CliTranslate
     public class BlockStructure : ExpressionStructure
     {
         public IReadOnlyList<CilStructure> Expressions { get; private set; }
+        public bool IsInline { get; private set; }
 
         public BlockStructure(TypeStructure rt, IReadOnlyList<CilStructure> exps)
             :base(rt)
         {
             Expressions = exps;
             AppendChild(exps);
+        }
+
+        internal override void BuildCode()
+        {
+            ChildBuildCode(this);
+            if (!ResultType.IsVoid && !CurrentContainer.IsDataTypeContext)
+            {
+                var cg = CurrentContainer.GainGenerator();
+                cg.GenerateControl(OpCodes.Pop);
+            }
         }
 
         public bool IsValueReturn
@@ -31,7 +43,7 @@ namespace CliTranslate
                 {
                     return false;
                 }
-                return exp.ResultType.Name != "Void";
+                return !exp.ResultType.IsVoid;
             }
         }
     }

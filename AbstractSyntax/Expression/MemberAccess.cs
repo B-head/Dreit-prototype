@@ -1,4 +1,5 @@
-﻿using AbstractSyntax.Symbol;
+﻿using AbstractSyntax.SpecialSymbol;
+using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
 using System.Diagnostics;
@@ -10,7 +11,8 @@ namespace AbstractSyntax.Expression
     {
         public Element Access { get; private set; }
         public string Member { get; private set; }
-        private OverLoadReference _Reference;
+        private OverLoadCallMatch? _Match;
+        private OverLoad _OverLoad;
 
         public MemberAccess(TextPosition tp, Element acs, string member)
             :base(tp)
@@ -25,72 +27,95 @@ namespace AbstractSyntax.Expression
             get { return Member; }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
-            get { return CallScope.CallReturnType; }
+            get { return CallRoutine.CallReturnType; }
         }
 
         public override bool IsConstant
         {
-            get { return Access.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+            get { return Access.IsConstant && CallRoutine.IsFunction; }
         }
 
-        public Scope CallScope
+        public VariantSymbol ReferVariant
         {
-            get { return OverLoad.CallSelect().Call; }
+            get { return OverLoad.FindVariant(); }
         }
 
-        public override OverLoadReference OverLoad
+        public RoutineSymbol CallRoutine
+        {
+            get { return Match.Call; }
+        }
+
+        public Scope AccessSymbol
+        {
+            get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
+        }
+
+        public OverLoadCallMatch Match
         {
             get
             {
-                if(_Reference == null)
+                if (_Match != null)
                 {
-                    var scope = (Scope)Access.ReturnType;
-                    _Reference = scope.NameResolution(Member);
+                    return _Match.Value;
                 }
-                return _Reference;
+                _Match = OverLoad.CallSelect();
+                return _Match.Value;
+            }
+        }
+
+        public override OverLoad OverLoad
+        {
+            get
+            {
+                if(_OverLoad == null)
+                {
+                    _OverLoad = Access.ReturnType.NameResolution(Member);
+                }
+                return _OverLoad;
             }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
+            //todo より適切なエラーメッセージを出す。
             if (OverLoad.IsUndefined)
             {
                 cmm.CompileError("undefined-identifier", this);
             }
-            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
-            {
-                cmm.CompileError("not-accessable", this);
-            }
-            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Protected) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
-            {
-                cmm.CompileError("not-accessable", this);
-            }
-            if (CallScope.IsInstanceMember && QualifyTypeSymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
-            {
-                cmm.CompileError("not-accessable", this);
-            }
-            if (CallScope.IsStaticMember && !QualifyTypeSymbol.HasContainQualify(Access.ReturnType, Root.Typeof))
-            {
-                cmm.CompileError("not-accessable", this);
-            }
-            if (CallScope.IsStaticMember && !ContainClass(CallScope.GetParent<ClassSymbol>(), Access.ReturnType))
+            if (AccessSymbol.IsStaticMember && !ContainClass(AccessSymbol.GetParent<ClassSymbol>(), Access.ReturnType))
             {
                 cmm.CompileError("undefined-identifier", this);
+            }
+            if (AccessSymbol.Attribute.HasAnyAttribute(AttributeType.Private) && !HasCurrentAccess(AccessSymbol.GetParent<ClassSymbol>()))
+            {
+                cmm.CompileError("not-accessable", this);
+            }
+            if (AccessSymbol.Attribute.HasAnyAttribute(AttributeType.Protected) && !HasCurrentAccess(AccessSymbol.GetParent<ClassSymbol>()))
+            {
+                cmm.CompileError("not-accessable", this);
+            }
+            if (AccessSymbol.IsInstanceMember && ModifyTypeSymbol.HasContainModify(Access.ReturnType, ModifyType.Typeof))
+            {
+                cmm.CompileError("not-accessable", this);
+            }
+            if (AccessSymbol.IsStaticMember && !ModifyTypeSymbol.HasContainModify(Access.ReturnType, ModifyType.Typeof))
+            {
+                cmm.CompileError("not-accessable", this);
             }
         }
 
         private static bool ContainClass(ClassSymbol cls, Scope type)
         {
-            if(type is ClassSymbol)
+            if(type is ClassTemplateInstance)
+            {
+                var tis = (ClassTemplateInstance)type;
+                return tis.ContainClass(cls);
+            }
+            else if(type is ClassSymbol)
             {
                 return cls == type;
-            }
-            else if(type is QualifyTypeSymbol)
-            {
-                var tq = (QualifyTypeSymbol)type;
-                return cls == tq.BaseType;
             }
             else
             {

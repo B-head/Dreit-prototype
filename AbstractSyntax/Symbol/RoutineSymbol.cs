@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax.Declaration;
 using AbstractSyntax.Expression;
+using AbstractSyntax.SpecialSymbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,45 +9,68 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    public enum RoutineType
+    {
+        Unknown,
+        Routine,
+        Function,
+        RoutineOperator,
+        FunctionOperator,
+        RoutineConverter,
+        FunctionConverter,
+    }
+
     [Serializable]
     public class RoutineSymbol : Scope
     {
-        public TokenType Operator { get; private set; }
-        public bool IsFunction { get; private set; }
-        public ExpressionList Block { get; private set; }
-        protected IReadOnlyList<Scope> _Attribute;
+        public RoutineType RoutineType { get; private set; }
+        public TokenType OperatorType { get; private set; }
+        public ProgramContext Block { get; private set; }
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
-        protected IReadOnlyList<ArgumentSymbol> _Arguments;
-        protected IReadOnlyList<Scope> _ArgumentTypes;
-        protected Scope _CallReturnType;
+        protected IReadOnlyList<ParameterSymbol> _Arguments;
+        protected TypeSymbol _CallReturnType;
+        private IReadOnlyList<GenericSymbol> _TacitGeneric;
+        private bool IsInitialize;
         public const string ConstructorIdentifier = "new";
         public const string DestructorIdentifier = "free";
+        public const string AliasCallIdentifier = "call";
 
-        protected RoutineSymbol(TokenType op, bool isFunc)
+        public RoutineSymbol()
         {
-            Operator = op;
-            Block = new ExpressionList();
-            _Attribute = new List<Scope>();
-            _Generics = new List<GenericSymbol>();
-            _Arguments = new List<ArgumentSymbol>();
-            AppendChild(Block);
         }
 
-        protected RoutineSymbol(TextPosition tp, string name, TokenType op, bool isFunc, ExpressionList block)
+        protected RoutineSymbol(RoutineType type, TokenType opType)
+        {
+            RoutineType = type;
+            OperatorType = opType;
+            Block = new ProgramContext();
+            AppendChild(Block);
+            IsInitialize = true;
+        }
+
+        protected RoutineSymbol(TextPosition tp, string name, RoutineType type, TokenType opType, ProgramContext block)
             : base(tp)
         {
             Name = name;
-            Operator = op;
-            IsFunction = isFunc;
+            RoutineType = type;
+            OperatorType = opType;
             Block = block;
             AppendChild(Block);
+            IsInitialize = true;
         }
 
-        public RoutineSymbol(string name, TokenType op, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ArgumentSymbol> arg, Scope rt)
+        public void Initialize(string name, RoutineType type, TokenType opType, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ParameterSymbol> arg, TypeSymbol rt)
         {
+            if (IsInitialize)
+            {
+                throw new InvalidOperationException();
+            }
+            IsInitialize = true;
             Name = name;
-            Operator = op;
-            Block = new ExpressionList();
+            RoutineType = type;
+            OperatorType = opType;
+            Block = new ProgramContext();
             _Attribute = attr;
             _Generics = gnr;
             _Arguments = arg;
@@ -54,58 +78,110 @@ namespace AbstractSyntax.Symbol
             AppendChild(Block);
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
-            get { return _Attribute; }
+            get { return _Attribute ?? new List<AttributeSymbol>(); }
         }
 
         public virtual IReadOnlyList<GenericSymbol> Generics
         {
-            get { return _Generics; }
+            get { return _Generics ?? new List<GenericSymbol>();; }
         }
 
-        public virtual IReadOnlyList<ArgumentSymbol> Arguments
+        public virtual IReadOnlyList<ParameterSymbol> Arguments
         {
-            get { return _Arguments; }
+            get { return _Arguments ?? new List<ParameterSymbol>();; }
         }
 
-        public virtual IReadOnlyList<Scope> ArgumentTypes
+        public IReadOnlyList<GenericSymbol> TacitGeneric
         {
             get
             {
-                if (_ArgumentTypes != null)
+                if(_TacitGeneric != null)
                 {
-                    return _ArgumentTypes;
+                    return _TacitGeneric;
                 }
-                var a = new List<Scope>();
-                foreach (var v in Arguments)
-                {
-                    var temp = v.ReturnType;
-                    a.Add(temp);
-                }
-                _ArgumentTypes = a;
-                return _ArgumentTypes;
+                var list = new List<GenericSymbol>();
+                CurrentScope.BuildTacitGeneric(list);
+                _TacitGeneric = list;
+                return _TacitGeneric;
             }
         }
 
-        public override Scope CallReturnType
+        public override TypeSymbol ReturnType
         {
-            get { return _CallReturnType; }
+            get { return Root.ErrorType; } //todo デリゲート型を返すようにする。
         }
 
-        public virtual bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
+        public override OverLoad OverLoad
         {
-            get { return HasAnyAttribute(Attribute, AttributeType.Virtual); }
+            get { return Root.SimplexManager.Issue(this); }
         }
 
-        public virtual bool IsAbstract
+        public virtual TypeSymbol CallReturnType
         {
-            get { return HasAnyAttribute(Attribute, AttributeType.Abstract); }
+            get { return _CallReturnType ?? Root.ErrorType; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        public override bool IsConstant
         {
-            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, Generics, args, ArgumentTypes);
+            get { return true; }
+        }
+
+        public bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
+        {
+            get
+            {
+                if(Attribute.HasAnyAttribute(AttributeType.Virtual))
+                {
+                    return true;
+                }
+                var cls = GetParent<ClassSymbol>();
+                if (cls == null)
+                {
+                    return false;
+                }
+                return IsInstanceMember;
+            }
+        }
+
+        public bool IsAbstract
+        {
+            get { return Attribute.HasAnyAttribute(AttributeType.Abstract); }
+        }
+
+        public bool IsFunction
+        {
+            get { return RoutineType == RoutineType.Function || RoutineType == RoutineType.FunctionConverter || RoutineType == RoutineType.FunctionOperator; }
+        }
+
+        protected override string ElementInfo
+        {
+            get
+            {
+                if (Generics.Count == 0)
+                {
+                    return string.Format("{0}", Name);
+                }
+                else
+                {
+                    return string.Format("{0}!({1})", Name, Generics.ToNames());
+                }
+            }
+        }
+
+        internal override void BuildTacitGeneric(List<GenericSymbol> list)
+        {
+            if (CurrentScope != null)
+            {
+                CurrentScope.BuildTacitGeneric(list);
+            }
+            list.AddRange(Generics);
+        }
+
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            yield return OverLoadCallMatch.MakeMatch(Root, this, Generics, Arguments, inst, pars, args);
         }
 
         public RoutineSymbol InheritInitializer
@@ -122,7 +198,7 @@ namespace AbstractSyntax.Symbol
                     return null;
                 }
                 var i = cls.InheritClass as ClassSymbol;
-                return i.ZeroArgInitializer; //todo インポートされたコンストラクターも返すようにする。
+                return i.ZeroArgInitializer;
             }
         }
 
@@ -156,6 +232,32 @@ namespace AbstractSyntax.Symbol
                 }
                 return true;
             }
+        }
+
+        public bool IsAliasCall
+        {
+            get
+            {
+                if (!(CurrentScope is ClassSymbol))
+                {
+                    return false;
+                }
+                if (Name != AliasCallIdentifier)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public static bool HasLoadStoreCall(RoutineSymbol routine)
+        {
+            var rti = routine as RoutineTemplateInstance;
+            if(rti != null)
+            {
+                return HasLoadStoreCall(rti.Routine);
+            }
+            return routine is PropertySymbol;
         }
     }
 }

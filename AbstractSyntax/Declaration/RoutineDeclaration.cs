@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Statement;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
@@ -11,31 +12,25 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class RoutineDeclaration : RoutineSymbol
     {
-        public TupleList AttributeAccess { get; private set; }
-        public TupleList DecGenerics { get; private set; }
-        public TupleList DecArguments { get; private set; }
+        public TupleLiteral AttributeAccess { get; private set; }
+        public TupleLiteral DecGenerics { get; private set; }
+        public TupleLiteral DecArguments { get; private set; }
         public Element ExplicitType { get; private set; }
-        public bool IsDefaultThisReturn { get; private set; }
 
-        public RoutineDeclaration(TextPosition tp, string name, TokenType op, bool isFunc, TupleList attr, TupleList generic, TupleList args, Element expl, ExpressionList block)
-            : base(tp, name, op, isFunc, block)
+        public RoutineDeclaration(TextPosition tp, string name, RoutineType type, TokenType opType, TupleLiteral attr, TupleLiteral generic, TupleLiteral args, Element expli, ProgramContext block)
+            : base(tp, name, type, opType, block)
         {
             AttributeAccess = attr;
             DecGenerics = generic;
             DecArguments = args;
-            ExplicitType = expl;
+            ExplicitType = expli;
             AppendChild(AttributeAccess);
             AppendChild(DecGenerics);
             AppendChild(DecArguments);
             AppendChild(ExplicitType);
         }
 
-        public override bool IsConstant
-        {
-            get { return true; }
-        }
-
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -43,14 +38,14 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Attribute;
                 }
-                var a = new List<Scope>();
+                var a = new List<AttributeSymbol>();
                 foreach (var v in AttributeAccess)
                 {
-                    a.Add(v.OverLoad.FindDataType());
+                    a.Add(v.OverLoad.FindAttribute());
                 }
-                if(!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
-                    var p = NameResolution("public").FindDataType();
+                    var p = NameResolution("public").FindAttribute();
                     a.Add(p);
                 }
                 _Attribute = a;
@@ -76,7 +71,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override IReadOnlyList<ArgumentSymbol> Arguments
+        public override IReadOnlyList<ParameterSymbol> Arguments
         {
             get
             {
@@ -84,17 +79,17 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Arguments;
                 }
-                var a = new List<ArgumentSymbol>();
+                var a = new List<ParameterSymbol>();
                 foreach (var v in DecArguments)
                 {
-                    a.Add((ArgumentSymbol)v);
+                    a.Add((ParameterSymbol)v);
                 }
                 _Arguments = a;
                 return _Arguments;
             }
         }
 
-        public override Scope CallReturnType
+        public override TypeSymbol CallReturnType
         {
             get
             {
@@ -102,9 +97,10 @@ namespace AbstractSyntax.Declaration
                 {
                     return _CallReturnType;
                 }
+                _CallReturnType = Root.Unknown;
                 if (ExplicitType != null)
                 {
-                    _CallReturnType = ExplicitType.OverLoad.FindDataType();
+                    _CallReturnType = ExplicitType.OverLoad.FindDataType().Type;
                 }
                 else if (Block.IsInline)
                 {
@@ -128,7 +124,6 @@ namespace AbstractSyntax.Declaration
                     else if(CurrentScope is ClassDeclaration)
                     {
                         _CallReturnType = (ClassDeclaration)CurrentScope;
-                        IsDefaultThisReturn = true;
                     }
                     else
                     {
@@ -137,24 +132,6 @@ namespace AbstractSyntax.Declaration
                 }
                 return _CallReturnType;
             }
-        }
-
-        public override bool IsVirtual //todo オーバーライドされる可能性が無ければnon-virtualにする。
-        {
-            get
-            {
-                var cls = GetParent<ClassSymbol>();
-                if (cls == null)
-                {
-                    return false;
-                }
-                return IsInstanceMember;
-            }
-        }
-
-        public override bool IsAbstract
-        {
-            get { return Block == null; }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

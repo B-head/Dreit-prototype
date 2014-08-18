@@ -45,7 +45,7 @@ namespace CliTranslate
         {
             foreach(var v in import.ImportDictionary)
             {
-                ImportDictionary.Add(v.Value, v.Key);
+                ImportDictionary[v.Value] = v.Key;
             }
         }
 
@@ -117,6 +117,26 @@ namespace CliTranslate
             return null;
         }
 
+        private CilStructure Translate(ErrorRoutineSymbol element)
+        {
+            throw new ArgumentException("error routine");
+        }
+
+        private CilStructure Translate(ErrorTypeSymbol element)
+        {
+            throw new ArgumentException("error type");
+        }
+
+        private CilStructure Translate(ErrorVariantSymbol element)
+        {
+            return null;
+        }
+
+        private CilStructure Translate(UnknownSymbol element)
+        {
+            throw new ArgumentException("unknown");
+        }
+
         private PureTypeStructure Translate(VoidSymbol element)
         {
             var gnr = new List<GenericParameterStructure>();
@@ -143,15 +163,14 @@ namespace CliTranslate
 
         private ParameterStructure Translate(ThisSymbol element)
         {
-            var dt = RelayTranslate(element.CallReturnType);
+            var dt = RelayTranslate(element.DataType);
             var ret = new ParameterStructure(dt); 
             return ret;
         }
 
         private LoadStoreStructure Translate(PropertySymbol element)
         {
-            var variant = RelayTranslate(element.Variant);
-            var ret = new LoadStoreStructure(variant, element.IsSet);
+            var ret = new LoadStoreStructure(element.IsSet);
             return ret;
         }
 
@@ -173,6 +192,12 @@ namespace CliTranslate
             return ret;
         }
 
+        private ModifyTypeStructure Translate(ModifyTypeSymbol element)
+        {
+            var ret = new ModifyTypeStructure(element.ModifyType);
+            return ret;
+        }
+
         private GlobalContextStructure Translate(ModuleDeclaration element)
         {
             var block = RelayTranslate(element.Directives);
@@ -190,11 +215,27 @@ namespace CliTranslate
             var imp = CollectList<TypeStructure>(element.InheritTraits);
             var block = RelayTranslate(element.Block);
             ret.Initialize(element.FullName, attr, gnr, bt, imp, block, info);
-            if (element.IsDefaultConstructor)
-            {
-                var def = RelayTranslate(element.Default);
-                ret.RegisterDefault(def);
-            }
+            return ret;
+        }
+
+        private GenericTypeStructure Translate(ClassTemplateInstance element, Type info = null)
+        {
+            var ret = new GenericTypeStructure();
+            TransDictionary.Add(element, ret);
+            var bt = RelayTranslate(element.Type);
+            var gnr = CollectList<TypeStructure>(element.Parameters);
+            ret.Initialize(bt, gnr);
+            return ret;
+        }
+
+        private CilStructure Translate(RoutineTemplateInstance element, MethodBase info = null)
+        {
+            var ret = new GenericMethodStructure();
+            TransDictionary.Add(element, ret);
+            var br = RelayTranslate(element.Routine);
+            var gnr = CollectList<TypeStructure>(element.Parameters);
+            var di = RelayTranslate(element.DeclaringInstance);
+            ret.Initialize(br, gnr, di);
             return ret;
         }
 
@@ -211,6 +252,18 @@ namespace CliTranslate
                 ret.Initialize(attr, arg, block, (ConstructorInfo)info);
                 var super = RelayTranslate(element.InheritInitializer);
                 ret.RegisterSuperConstructor(super);
+                return ret;
+            }
+            else if(element.IsDestructor)
+            {
+                var ret = new MethodStructure();
+                TransDictionary.Add(element, ret);
+                var attr = MethodAttributes.Family | MethodAttributes.RTSpecialName | MethodAttributes.Virtual;
+                var gnr = new List<GenericParameterStructure>();
+                var arg = new List<ParameterStructure>();
+                var block = RelayTranslate(element.Block);
+                var crt = RelayTranslate(element.CallReturnType);
+                ret.Initialize("Finalize", element.IsInstanceMember, attr, gnr, arg, crt, block, (MethodInfo)info);
                 return ret;
             }
             else
@@ -236,7 +289,7 @@ namespace CliTranslate
         private CilStructure Translate(VariantSymbol element, FieldInfo info = null)
         {
             var attr = element.Attribute.MakeFieldAttributes(element.IsDefinedConstantValue);
-            var dt = RelayTranslate(element.CallReturnType);
+            var dt = RelayTranslate(element.DataType);
             if (element.IsField || element.IsGlobal)
             {
                 var constval = element.GenerateConstantValue();
@@ -250,12 +303,24 @@ namespace CliTranslate
             }
         }
 
-        private ParameterStructure Translate(ArgumentSymbol element, ParameterInfo info = null)
+        private CilStructure Translate(ParameterSymbol element, ParameterInfo info = null)
         {
-            var attr = ParameterAttributes.None;
-            var pt = RelayTranslate(element.CallReturnType);
-            var ret = new ParameterStructure(element.Name, attr, pt, null);
-            return ret;
+            if (element.IsLoopParameter)
+            {
+                var dt = RelayTranslate(element.DataType);
+                var def = RelayTranslate(element.DefaultValue);
+                var ret = new LoopParameterStructure(element.Name, dt, def);
+                return ret;
+            }
+            else
+            {
+                var attr = ParameterAttributes.None;
+                var pt = RelayTranslate(element.DataType);
+                //todo 無限再帰に対処する。
+                //var def = RelayTranslate(element.DefaultValue);
+                var ret = new ParameterStructure(element.Name, attr, pt, null);
+                return ret;
+            }
         }
 
         private GenericParameterStructure Translate(GenericSymbol element, Type info = null)
@@ -286,19 +351,11 @@ namespace CliTranslate
             return ret;
         }
 
-        private BlockStructure Translate(ExpressionList element)
+        private BlockStructure Translate(ProgramContext element)
         {
             var exps = CollectList<CilStructure>(element);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new BlockStructure(rt, exps);
-            return ret;
-        }
-
-        private WriteLineStructure Translate(EchoStatement element)
-        {
-            var exp = RelayTranslate(element.Exp);
-            var rt = RelayTranslate(element.ReturnType);
-            var ret = new WriteLineStructure(rt, exp);
             return ret;
         }
 
@@ -312,9 +369,19 @@ namespace CliTranslate
 
         private CallStructure Translate(CallExpression element)
         {
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var access = RelayTranslate(element.Access);
-            var pre = access is CallStructure ? access.Pre: null;
+            dynamic pre;
+            if (element.IsReferVeriant && !element.IsStoreCall)
+            {
+                pre = access;
+            }
+            else
+            {
+                pre = access is CallStructure ? access.Pre : null;
+            }
+            var variant = RelayTranslate(element.ReferVariant);
+            var isVariadic = element.CallRoutine.HasVariadicArguments();
             CallStructure ret;
             if (element.IsCalculate)
             {
@@ -326,13 +393,13 @@ namespace CliTranslate
                 var args = new List<ExpressionStructure>();
                 args.Add(cal);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, null, args);
+                ret = new CallStructure(rt, call, pre, null, variant, args, isVariadic);
             }
             else
             {
                 var args = CollectList<ExpressionStructure>(element.Arguments);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, access, args);
+                ret = new CallStructure(rt, call, pre, access, variant, args, isVariadic);
             }
             return ret;
         }
@@ -341,7 +408,7 @@ namespace CliTranslate
         {
             var left = RelayTranslate(element.Left);
             var right = RelayTranslate(element.Right);
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new DyadicOperationStructure(rt, left, right, call);
             return ret;
@@ -369,7 +436,7 @@ namespace CliTranslate
             {
                 right = RelayTranslate(element.VirtualRight);
             }
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new DyadicOperationStructure(rt, left, right, call, next);
             return ret;
@@ -386,29 +453,41 @@ namespace CliTranslate
 
         private CallStructure Translate(Identifier element)
         {
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
+            var variant = RelayTranslate(element.ReferVariant);
             var rt = RelayTranslate(element.ReturnType);
             if (element.IsTacitThis)
             {
-                var thiscall = RelayTranslate(element.ThisReference.Getter);
-                var thisrt = RelayTranslate(element.ThisReference.CallReturnType);
-                var pre = new CallStructure(thisrt, thiscall, null);
-                var ret = new CallStructure(rt, call, pre);
+                var thiscall = RelayTranslate(element.ThisCallRoutine);
+                var thisrt = RelayTranslate(element.ThisReference.DataType);
+                var thisvar = RelayTranslate(element.ThisReference);
+                var pre = new CallStructure(thisrt, thiscall, null, thisvar);
+                var ret = new CallStructure(rt, call, pre, variant);
                 return ret;
             }
             else
             {
-                var ret = new CallStructure(rt, call, null);
+                var ret = new CallStructure(rt, call, null, variant);
                 return ret;
             }
         }
 
+        private CallStructure Translate(TemplateInstanceExpression element)
+        {
+            var call = RelayTranslate(element.CallRoutine);
+            var variant = RelayTranslate(element.ReferVariant);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new CallStructure(rt, call, null, variant);
+            return ret;
+        }
+
         private CallStructure Translate(MemberAccess element)
         {
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var pre = RelayTranslate(element.Access);
+            var variant = RelayTranslate(element.ReferVariant);
             var rt = RelayTranslate(element.ReturnType);
-            var ret = new CallStructure(rt, call, pre);
+            var ret = new CallStructure(rt, call, pre, variant);
             return ret;
         }
 
@@ -420,10 +499,15 @@ namespace CliTranslate
         private MonadicOperationStructure Translate(Prefix element)
         {
             var exp = RelayTranslate(element.Exp);
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new MonadicOperationStructure(rt, exp, call);
             return ret;
+        }
+
+        private CilStructure Translate(GroupingExpression element)
+        {
+            return RelayTranslate(element.Exp);
         }
 
         private ValueStructure Translate(NumericLiteral element)
@@ -448,13 +532,21 @@ namespace CliTranslate
             return ret;
         }
 
-        private BranchStructure Translate(IfStatement element)
+        private ArrayStructure Translate(ArrayLiteral element)
+        {
+            var exps = CollectList<ExpressionStructure>(element.Values);
+            var rt = RelayTranslate(element.ReturnType);
+            var ret = new ArrayStructure(rt, exps);
+            return ret;
+        }
+
+        private IfStructure Translate(IfStatement element)
         {
             var cond = RelayTranslate(element.Condition);
             var then = RelayTranslate(element.Then);
             var els = RelayTranslate(element.Else);
             var rt = RelayTranslate(element.ReturnType);
-            var ret = new BranchStructure(rt, cond, then, els);
+            var ret = new IfStructure(rt, cond, then, els);
             return ret;
         }
 
@@ -464,17 +556,17 @@ namespace CliTranslate
             var ret = new LoopStructure(rt);
             TransDictionary.Add(element, ret);
             var cond = RelayTranslate(element.Condition);
-            var on = RelayTranslate(element.On);
+            var use = RelayTranslate(element.Use);
             var by = RelayTranslate(element.By);
             var block = RelayTranslate(element.Block);
-            ret.Initialize(cond, on, by, block);
+            ret.Initialize(cond, use, by, block);
             return ret;
         }
 
         private MonadicOperationStructure Translate(UnStatement element)
         {
             var exp = RelayTranslate(element.Exp);
-            var call = RelayTranslate(element.CallScope);
+            var call = RelayTranslate(element.CallRoutine);
             var rt = RelayTranslate(element.ReturnType);
             var ret = new MonadicOperationStructure(rt, exp, call);
             return ret;

@@ -35,10 +35,81 @@ namespace CliTranslate
             Info = info;
         }
 
-        internal Type GainType()
+        internal virtual Type GainType()
         {
             RelayPreBuild();
             return Info;
+        }
+
+        internal bool IsReferType
+        {
+            get { return Info.IsClass || Info.IsInterface; }
+        }
+
+        internal bool IsValueType
+        {
+            get { return Info.IsValueType; }
+        }
+
+        internal bool IsVoid
+        {
+            get { return Info == typeof(void); }
+        }
+
+        internal MethodInfo RenewMethod(MethodStructure method)
+        {
+            if (Info is TypeBuilder)
+            {
+                return TypeBuilder.GetMethod(Info, method.GainMethod());
+            }
+            else
+            {
+                var m = method.GainMethod();
+                var types = Info.RenewTypes(m.GetParameters().ToTypes());
+                var ret = Info.GetMethod(m.Name, types);
+                if (ret == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return ret;
+            }
+        }
+
+        internal ConstructorInfo RenewConstructor(ConstructorStructure constructor)
+        {
+            if (Info is TypeBuilder)
+            {
+                return TypeBuilder.GetConstructor(Info, constructor.GainConstructor());
+            }
+            else
+            {
+                var c = constructor.GainConstructor();
+                var types = Info.RenewTypes(c.GetParameters().ToTypes());
+                var ret = Info.GetConstructor(types);
+                if (ret == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return ret;
+            }
+        }
+
+        internal FieldInfo RenewField(FieldStructure field)
+        {
+            if (Info is TypeBuilder)
+            {
+                return TypeBuilder.GetField(Info, field.GainField());
+            }
+            else
+            {
+                var f = field.GainField();
+                var ret = Info.GetField(f.Name);
+                if(ret == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return ret;
+            }
         }
     }
 }

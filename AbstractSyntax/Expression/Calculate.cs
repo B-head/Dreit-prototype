@@ -10,7 +10,7 @@ namespace AbstractSyntax.Expression
     [Serializable]
     public class Calculate : DyadicExpression
     {
-        private Scope _CallScope;
+        private RoutineSymbol _CallRoutine;
 
         public Calculate(TextPosition tp, TokenType op, Element left, Element right)
             :base(tp, op, left, right)
@@ -18,31 +18,31 @@ namespace AbstractSyntax.Expression
 
         }
 
-        public Scope CallScope
+        public RoutineSymbol CallRoutine
         {
             get
             {
-                if (_CallScope == null)
+                if (_CallRoutine == null)
                 {
-                    _CallScope = Root.OpManager.FindDyadic(Operator, Left.ReturnType, Right.ReturnType);
+                    _CallRoutine = Root.OpManager.FindDyadic(Operator, Left.ReturnType, Right.ReturnType);
                 }
-                return _CallScope;
+                return _CallRoutine;
             }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
-            get { return CallScope.CallReturnType; }
+            get { return CallRoutine.CallReturnType; }
         }
 
         public override bool IsConstant
         {
-            get { return Left.IsConstant && Right.IsConstant && ((RoutineSymbol)CallScope).IsFunction; }
+            get { return Left.IsConstant && Right.IsConstant && CallRoutine.IsFunction; }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            if (CallScope is ErrorSymbol)
+            if (CallRoutine is ErrorRoutineSymbol && !TypeSymbol.HasAnyErrorType(Left.ReturnType, Right.ReturnType))
             {
                 cmm.CompileError("impossible-calculate", this);
             }

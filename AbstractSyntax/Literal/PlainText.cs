@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbstractSyntax.Symbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace AbstractSyntax.Literal
     public class PlainText : Element
     {
         public string Value { get; private set; }
-        private Scope _ReturnType;
+        private TypeSymbol _ReturnType;
 
         public PlainText(TextPosition tp, string value)
             :base(tp)
@@ -19,13 +20,13 @@ namespace AbstractSyntax.Literal
             Value = value;
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get 
             {
                 if(_ReturnType == null)
                 {
-                    _ReturnType = CurrentScope.NameResolution("String").FindDataType();
+                    _ReturnType = CurrentScope.NameResolution("String").FindDataType().Type;
                 }
                 return _ReturnType; 
             }

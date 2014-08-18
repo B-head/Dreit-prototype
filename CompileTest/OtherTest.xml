@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<compile-test xmlns="CompileTestSchema.xsd">
+  <case>
+    <code>
+      <![CDATA[
+      (10 + 20).ToString =: stdout
+      ]]>
+    </code>
+    <output>hello</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32) { 
+	      return a + 20
+      }
+      
+      10.foo =: stdout
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      var e:Double := 25.5
+      stdout := e.Int32
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+        if 5 < 10.55 :: 25 =: stdout
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      var a := a + 10
+      stdout := a
+      ]]>
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
+      
+      stdout := foo(10)
+      ]]>
+    </code>
+    <output>51</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32) { 
+	      return 20
+      }
+      
+      foo
+      (10) =: stdout
+      ]]>
+    </code>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32) { 
+	      return 20
+      }
+      
+      foo\
+      (10) =: stdout
+      ]]>
+    </code>
+    <output>20</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+	      a =: stdout
+	      return "world"
+      }
+      
+      foo"hello" =: stdout
+      ]]>
+    </code>
+    <output>hello world</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo a:String :: a =: stdout
+      
+      foo := "hello"
+      ]]>
+    </code>
+    <output>hello</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A {
+        var x := 11
+        var y := 22
+      }
+        
+      operator +(a:A, b:A) {
+        var ret := A
+        ret.x := a.x + b.x
+        ret.y := a.y + b.y
+        return ret
+      }
+      
+      var a := A
+      var b := A
+      var c := a + b
+      stdout := c.x
+      stdout := c.y
+      ]]>
+    </code>
+    <output>22 44</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class A
+      {
+        var value := 11
+      }
+
+      class B
+      {
+        var value := 22
+      }
+      
+      operator B(a:A)
+      {
+        var ret := B
+        ret.value := a.value
+        return ret
+      }
+
+      var a := A()
+      var b:B := a
+      stdout := b.value
+      ]]>
+    </code>
+    <output>11</output>
+  </case>
+</compile-test>

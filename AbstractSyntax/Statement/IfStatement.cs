@@ -12,11 +12,11 @@ namespace AbstractSyntax.Statement
     public class IfStatement : Scope
     {
         public Element Condition { get; private set; }
-        public ExpressionList Then { get; private set; }
-        public ExpressionList Else { get; private set; }
-        private Scope _ReturnType;
+        public ProgramContext Then { get; private set; }
+        public ProgramContext Else { get; private set; }
+        private TypeSymbol _ReturnType;
 
-        public IfStatement(TextPosition tp, Element cond, ExpressionList than, ExpressionList els)
+        public IfStatement(TextPosition tp, Element cond, ProgramContext than, ProgramContext els)
             :base(tp)
         {
             Condition = cond;
@@ -32,7 +32,7 @@ namespace AbstractSyntax.Statement
             get { return Else != null; }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
             get 
             {
@@ -48,13 +48,13 @@ namespace AbstractSyntax.Statement
                 }
                 else
                 {
-                    _ReturnType = Root.Unknown;
+                    _ReturnType = Root.ErrorType;
                 }
                 return _ReturnType; 
             }
-        } 
+        }
 
-        private Scope BlockReturnType(ExpressionList block)
+        private TypeSymbol BlockReturnType(ProgramContext block)
         {
             if(block == null)
             {

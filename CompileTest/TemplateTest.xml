@@ -6,7 +6,7 @@
       routine foo!(T)(a:T):T {
         return a * a
       }
-      echo foo!(Int32)(6)
+      stdout := foo!(Int32)(6)
       ]]>
     </code>
     <output>36</output>
@@ -18,7 +18,7 @@
       routine foo!(A, B, R)(a:A, b:B):R {
         return a * b
       }
-      echo foo!(Int32, Binary64, Binary64)(3, 5.5)
+      stdout := foo!(Int32, Binary64, Binary64)(3, 5.5)
       ]]>
     </code>
     <output>16.5</output>
@@ -31,7 +31,7 @@
         var a:T := v
         var b:T := v
         loop i < 10 on var i := 0 by i += 1 {
-          echo a
+          stdout := a
           var c:T := a
           a += b
           b := c
@@ -49,7 +49,7 @@
       routine foo(a) {
         return a * a
       }
-      echo foo(6)
+      stdout := foo(6)
       ]]>
     </code>
     <output>36</output>
@@ -61,7 +61,7 @@
       routine foo(a, b) {
         return a * b
       }
-      echo foo(3, 5.5)
+      stdout := foo(3, 5.5)
       ]]>
     </code>
     <output>16.5</output>
@@ -74,7 +74,7 @@
         var a := v
         var b := v
         loop i < 10 on var i := 0 by i += 1 {
-          echo a
+          stdout := a
           var c := a
           a += b
           b := c
@@ -98,7 +98,7 @@
       }
       var o := O!Int32
       o.v := 3
-      echo o.foo(6)
+      stdout := o.foo(6)
       ]]>
     </code>
     <output>18</output>
@@ -119,7 +119,7 @@
         }
       }
       var o := O(3)
-      echo o.foo(6)
+      stdout := o.foo(6)
       ]]>
     </code>
     <output>18</output>
@@ -140,7 +140,7 @@
         }
       }
       var o := O(3)
-      echo o.foo(5.5)
+      stdout := o.foo(5.5)
       ]]>
     </code>
     <output>16.5</output>
@@ -161,7 +161,7 @@
         }
       }
       var o := O(3)
-      echo o.foo(5.5)
+      stdout := o.foo(5.5)
       ]]>
     </code>
     <output>16.5</output>

@@ -52,6 +52,10 @@ namespace AbstractSyntax.Visualizer
             var prop = new Dictionary<string, object>();
             foreach (var v in type.GetProperties(showMenber))
             {
+                if(!v.CanRead || v.GetIndexParameters().Length > 0)
+                {
+                    continue;
+                }
                 object obj;
                 try
                 {

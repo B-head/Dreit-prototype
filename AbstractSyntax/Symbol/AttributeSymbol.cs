@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AbstractSyntax.Expression;
+using AbstractSyntax.SpecialSymbol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,41 +11,32 @@ namespace AbstractSyntax.Symbol
     [Serializable]
     public class AttributeSymbol : Scope
     {
-        public AttributeType Attr { get; private set; }
+        public AttributeType AttributeType { get; private set; }
+        public AttributeTargets ValidOn { get; private set; }
+        public bool IsAllowMultiple { get; private set; }
+        public bool IsInheritable { get; private set; }
 
-        public AttributeSymbol(AttributeType attr)
-        {
-            Attr = attr;
-        }
-
-        public AttributeSymbol(string name, AttributeType attr)
+        public AttributeSymbol(AttributeType type, string name = null)
         {
             Name = name;
-            Attr = attr;
-        }
-
-        public override bool IsDataType
-        {
-            get { return true; }
-        }
-
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
-        {
-            yield return TypeMatch.MakeTypeMatch(Root.ConvManager, this, pars, new GenericSymbol[] { }, args, new Scope[] { });
+            AttributeType = type;
+            ValidOn = AttributeTargets.All;
         }
     }
 
+    //todo 単純なフラグ管理で属性を扱うようにリファクタリングする。
     public enum AttributeType
     {
-        None,
-        Refer,
-        Tyoeof,
+        Unknown,
+        Custom,
         Contravariant,
         Covariant,
         ConstructorConstraint,
         ValueConstraint,
         ReferenceConstraint,
+        Variadic,
         Optional,
+        GlobalScope,
         Abstract,
         Virtual,
         Final,

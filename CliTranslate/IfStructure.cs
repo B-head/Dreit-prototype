@@ -8,15 +8,17 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class BranchStructure : ExpressionStructure
+    public class IfStructure : ExpressionStructure
     {
         public ExpressionStructure Condition { get; private set; }
         public BlockStructure Then { get; private set; }
         public BlockStructure Else { get; private set; }
+        public bool IsInlineThen { get; private set; }
+        public bool IsInlineElse { get; private set; }
         public LabelStructure ElseLabel { get; private set; }
         public LabelStructure ExitLabel { get; private set; }
 
-        public BranchStructure(TypeStructure rt, ExpressionStructure cond, BlockStructure then, BlockStructure els)
+        public IfStructure(TypeStructure rt, ExpressionStructure cond, BlockStructure then, BlockStructure els)
             :base(rt)
         {
             Condition = cond;

@@ -13,11 +13,11 @@ namespace AbstractSyntax.SpecialSymbol
         public TokenType CalculateType { get; private set; }
 
         public MonadicOperatorSymbol(TokenType type, ClassSymbol expt, ClassSymbol ret)
-            :base(type, true)
+            :base(RoutineType.FunctionOperator, type)
         {
             Name = GetOperatorName(type);
             CalculateType = type;
-            _ArgumentTypes = new Scope[] { expt };
+            _Arguments = ParameterSymbol.MakeParameters(expt);
             _CallReturnType = ret;
         }
 

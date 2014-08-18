@@ -8,59 +8,70 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
+    public enum VariantType
+    {
+        Unknown,
+        Var,
+        Let,
+        Const,
+    }
+
     [Serializable]
     public class VariantSymbol : Scope
     {
-        public bool IsLet { get; private set; }
-        public PropertySymbol Getter { get; private set; }
-        public PropertySymbol Setter { get; private set; }
-        protected IReadOnlyList<Scope> _Attribute;
-        protected Scope _DataType;
+        public VariantType VariantType { get; private set; }
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
+        protected TypeSymbol _DataType;
+        private bool IsInitialize;
 
-        protected VariantSymbol(bool isLet)
+        public VariantSymbol()
         {
-            IsLet = isLet;
-            Getter = new PropertySymbol(this, false);
-            Setter = new PropertySymbol(this, true);
-            AppendChild(Getter);
-            AppendChild(Setter);
         }
 
-        protected VariantSymbol(TextPosition tp, bool isLet)
+        protected VariantSymbol(VariantType type)
+        {
+            VariantType = type;
+            IsInitialize = true;
+        }
+
+        protected VariantSymbol(TextPosition tp, VariantType type)
             : base(tp)
         {
-            IsLet = isLet;
-            Getter = new PropertySymbol(this, false);
-            Setter = new PropertySymbol(this, true);
-            AppendChild(Getter);
-            AppendChild(Setter);
+            VariantType = type;
+            IsInitialize = true;
         }
 
-        public VariantSymbol(string name, bool isLet, IReadOnlyList<Scope> attr, Scope dt)
+        public void Initialize(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
         {
+            if(IsInitialize)
+            {
+                throw new InvalidOperationException();
+            }
+            IsInitialize = true;
             Name = name;
-            IsLet = isLet;
+            VariantType = type;
             _Attribute = attr;
             _DataType = dt;
-            Getter = new PropertySymbol(this, false);
-            Setter = new PropertySymbol(this, true);
-            AppendChild(Getter);
-            AppendChild(Setter);
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
-            get { return _Attribute; }
+            get { return _Attribute ?? new List<AttributeSymbol>(); }
         }
 
-        public override Scope ReturnType
+        public override TypeSymbol ReturnType
         {
-            get { return CallReturnType; }
+            get { return DataType; }
         }
 
-        public override Scope CallReturnType
+        public virtual TypeSymbol DataType
         {
-            get { return _DataType; }
+            get { return _DataType ?? Root.ErrorType; }
+        }
+
+        public override bool IsConstant
+        {
+            get { return true; }
         }
 
         public bool IsField
@@ -83,6 +94,11 @@ namespace AbstractSyntax.Symbol
             get { return Parent is CallExpression && CurrentScope is ClassSymbol; }
         }
 
+        public bool IsImmtable
+        {
+            get { return VariantType == VariantType.Let || VariantType == VariantType.Const; }
+        }
+
         public object GenerateConstantValue()
         {
             var caller = Parent as CallExpression;
@@ -91,18 +107,6 @@ namespace AbstractSyntax.Symbol
                 return null;
             }
             return caller.GenelateConstantValue();
-        }
-
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
-        {
-            foreach (var v in Getter.GetTypeMatch(pars, args))
-            {
-                yield return v;
-            }
-            foreach (var v in Setter.GetTypeMatch(pars, args))
-            {
-                yield return v;
-            }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

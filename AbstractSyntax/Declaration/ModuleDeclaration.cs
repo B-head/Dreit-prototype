@@ -10,11 +10,11 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class ModuleDeclaration : NameSpaceSymbol
     {
-        public ExpressionList Directives { get; private set; }
+        public ProgramContext Directives { get; private set; }
         public string SourceText { get; private set; }
         public IReadOnlyList<Token> ErrorToken { get; private set; }
 
-        public ModuleDeclaration(TextPosition tp, ExpressionList drcs, string name, string source, IReadOnlyList<Token> error)
+        public ModuleDeclaration(TextPosition tp, ProgramContext drcs, string name, string source, IReadOnlyList<Token> error)
             :base(tp)
         {
             Directives = drcs;

@@ -52,7 +52,6 @@ namespace AbstractSyntax.SyntacticAnalysis
 
         public T End<T>(MakeElement<T> make) where T : Element
         {
-            var tp = beginPosition.AlterLength(endPosition);
             if (failure)
             {
                 return null;
@@ -60,7 +59,19 @@ namespace AbstractSyntax.SyntacticAnalysis
             else
             {
                 parent.index = index;
+                parent.endPosition = endPosition;
+                var tp = beginPosition.AlterLength(endPosition);
                 return make(tp);
+            }
+        }
+
+        public void End()
+        {
+            parent.failure = failure;
+            if (!failure)
+            {
+                parent.index = index;
+                parent.endPosition = endPosition;
             }
         }
 
@@ -80,10 +91,25 @@ namespace AbstractSyntax.SyntacticAnalysis
             return ret;
         }
 
+        private void PostProcess()
+        {
+            if (phaseNot)
+            {
+                failure = !failure;
+            }
+            else if (phaseOpt)
+            {
+                failure = false;
+            }
+            phaseNot = false;
+            phaseOpt = false;
+        }
+
         public SlimChainParser Not
         {
             get
             {
+                if (failure) return this;
                 phaseNot = true;
                 return this;
             }
@@ -93,6 +119,7 @@ namespace AbstractSyntax.SyntacticAnalysis
         {
             get
             {
+                if (failure) return this;
                 phaseOpt = true;
                 return this;
             }
@@ -155,14 +182,18 @@ namespace AbstractSyntax.SyntacticAnalysis
             if (failure) return this;
             foreach(var f in insides)
             {
-                f(this);
+                var child = Begin;
+                f(child);
+                child.End();
                 if(!failure)
                 {
+                    PostProcess();
                     return this;
                 }
                 failure = false;
             }
-            failure = true;
+            failure = true; 
+            PostProcess();
             return this;
         }
 
@@ -175,13 +206,17 @@ namespace AbstractSyntax.SyntacticAnalysis
                 {
                     continue;
                 }
-                block(this);
+                var child = Begin;
+                block(child);
+                child.End();
                 if(failure)
                 {
+                    PostProcess();
                     return this;
                 }
             }
             failure = false;
+            PostProcess();
             return this;
         }
 
@@ -264,6 +299,37 @@ namespace AbstractSyntax.SyntacticAnalysis
             return this;
         }
 
+        public SlimChainParser Call<T>(Action<T> action, Func<SlimChainParser, T> func) where T : class
+        {
+            if (failure) return this;
+            var child = Begin;
+            T result = func(child); 
+            if (result != null && action != null)
+            {
+                action(result);
+            }
+            child.End(); 
+            PostProcess();
+            return this;
+        }
+
+        public SlimChainParser Call(Action<SlimChainParser> func)
+        {
+            if (failure) return this;
+            var child = Begin;
+            func(child);
+            child.End();
+            PostProcess();
+            return this;
+        }
+
+        public SlimChainParser Self(Action func)
+        {
+            if (failure) return this;
+            func();
+            return this;
+        }
+
         public SlimChainParser Readable()
         {
             if (failure) return this;
@@ -281,6 +347,7 @@ namespace AbstractSyntax.SyntacticAnalysis
 
         public SlimChainParser Ignore(params TokenType[] type)
         {
+            if (failure) return this;
             while (collection.CheckToken(index, type))
             {
                 ++index;

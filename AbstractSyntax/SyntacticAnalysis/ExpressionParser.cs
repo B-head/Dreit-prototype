@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax;
 using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using System;
 using System.Collections.Generic;
 
@@ -7,73 +8,14 @@ namespace AbstractSyntax.SyntacticAnalysis
 {
     public partial class Parser
     {
-        private static ExpressionList RootExpressionList(SlimChainParser cp)
-        {
-            var child = new List<Element>();
-            var result = cp.Begin
-                .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .Loop(icp => icp.Readable(), icp =>
-                {
-                    icp.Any(
-                        iicp => iicp.Transfer(e => child.Add(e), Expression),
-                        iicp => iicp.AddError()
-                    )
-                    .Ignore(TokenType.EndExpression, TokenType.LineTerminator);
-                })
-                .End(tp => new ExpressionList(tp, child, false));
-            if (result == null)
-            {
-                throw new InvalidOperationException();
-            }
-            return result;
-        }
-
-        private static ExpressionList BlockExpressionList(SlimChainParser cp)
-        {
-            var child = new List<Element>();
-            var result = cp.Begin
-                .Type(TokenType.LeftBrace)
-                .Ignore(TokenType.EndExpression, TokenType.LineTerminator)
-                .Loop(icp => icp.Not.Type(TokenType.RightBrace), icp =>
-                {
-                    icp.Any(
-                        iicp => iicp.Transfer(e => child.Add(e), Expression),
-                        iicp => iicp.AddError()
-                    )
-                    .Ignore(TokenType.EndExpression, TokenType.LineTerminator);
-                })
-                .End(tp => new ExpressionList(tp, child, false));
-            if (result == null)
-            {
-                result = new ExpressionList();
-            }
-            return result;
-        }
-
-        private static ExpressionList InlineExpressionList(SlimChainParser cp, bool separator)
-        {
-            var child = new List<Element>();
-            return cp.Begin
-                .If(icp => icp.Is(separator))
-                .Than(icp =>
-                {
-                    icp.Any(
-                        iicp => iicp.Type(TokenType.Separator),
-                        iicp => iicp.Text("then")
-                    ).Lt();
-                })
-                .Transfer(e => child.Add(e), Expression)
-                .End(tp => new ExpressionList(tp, child, true));
-        }
-
-        private static ExpressionList Block(SlimChainParser cp, bool separator)
-        {
-            return CoalesceParser<ExpressionList>(cp, icp => InlineExpressionList(icp, separator), BlockExpressionList);
-        }
-
         private static Element Expression(SlimChainParser cp)
         {
-            return LeftPipeline(cp);
+            return SwapExpression(cp);
+        }
+
+        private static Element SwapExpression(SlimChainParser cp)
+        {
+            return RightAssociative(cp, (tp, op, l, r) => new SwapExpression(tp, op, l, r), LeftPipeline, TokenType.Swap);
         }
 
         private static Element LeftPipeline(SlimChainParser cp)
@@ -83,33 +25,22 @@ namespace AbstractSyntax.SyntacticAnalysis
 
         private static Element RightPipeline(SlimChainParser cp)
         {
-            return LeftAssociative(cp, (tp, op, l, r) => new RightPipeline(tp, op, l, r), TupleList, TokenType.RightPipeline);
+            return LeftAssociative(cp, (tp, op, l, r) => new RightPipeline(tp, op, l, r), TupleExpression, TokenType.RightPipeline);
         }
 
-        private static Element TupleList(SlimChainParser cp)
+        private static Element LeftCompose(SlimChainParser cp)
         {
-            var tuple = ParseTuple(cp, NonTupleExpression);
-            if (tuple.Count > 1)
-            {
-                return tuple;
-            }
-            else if (tuple.Count > 0)
-            {
-                return (Element)tuple[0];
-            }
-            else
-            {
-                return null;
-            }
+            return RightAssociative(cp, (tp, op, l, r) => new Compose(tp, op, l, r), RightCompose, TokenType.LeftCompose);
         }
-        private static Element NonTupleExpression(SlimChainParser cp)
+
+        private static Element RightCompose(SlimChainParser cp)
         {
-            return Logical(cp);
+            return LeftAssociative(cp, (tp, op, l, r) => new Compose(tp, op, l, r), Logical, TokenType.RightCompose);
         }
 
         private static Element Logical(SlimChainParser cp)
         {
-            return RightAssociative(cp, (tp, op, l, r) => new Logical(tp, op, l, r), Compare, TokenType.And, TokenType.Or);
+            return LeftAssociative(cp, (tp, op, l, r) => new Logical(tp, op, l, r), Compare, TokenType.And, TokenType.Or);
         }
 
         private static Element Compare(SlimChainParser cp)
@@ -161,48 +92,73 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Type(TokenType.Access).Lt()
                 .Take(t => member = t.Text).Lt()
                 .End(tp => new MemberAccess(tp, current, member));
-            return ret == null ? TemplateInstance(current, cp) : Postfix(ret, cp);
+            return ret == null ? WithExpression(current, cp) : Postfix(ret, cp);
         }
 
-        private static Element TemplateInstance(Element current, SlimChainParser cp)
+        private static Element WithExpression(Element current, SlimChainParser cp)
         {
-            TupleList args = null;
+            ProgramContext block = null;
             var ret = cp.Begin
-                .Type(TokenType.Template)
-                .If(icp => icp.Type(TokenType.LeftParenthesis).Lt())
-                .Than(icp =>
-                {
-                    icp.Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
-                    .Type(TokenType.RightParenthesis).Lt();
-                })
-                .ElseIf(icp => icp.Type(TokenType.LeftBracket).Lt())
-                .Than(icp =>
-                {
-                    icp.Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
-                    .Type(TokenType.RightBracket).Lt();
-                })
-                .Else(icp => icp.Transfer(e => args = new TupleList(e), Identifier))
-                .End(tp => new TemplateInstanceExpression(tp, current, args));
-            return ret == null ? CallRoutine(current, cp) : Postfix(ret, cp);
+                .Type(TokenType.Access).Lt()
+                .Transfer(e => block = e, BlockContext)
+                .End(tp => new WithExpression(tp, current, block));
+            return ret == null ? CallExpression(current, cp) : Postfix(ret, cp);
         }
 
-        private static Element CallRoutine(Element current, SlimChainParser cp)
+        private static Element CallExpression(Element current, SlimChainParser cp)
         {
-            TupleList args = null;
+            TupleLiteral args = null;
             var ret = cp.Begin
-                .If(icp => icp.Type(TokenType.LeftParenthesis).Lt())
+                .If(icp => icp.Transfer(e => args = e, NakedArgument).Lt())
+                .ElseIf(icp => icp.Type(TokenType.LeftParenthesis).Lt())
                 .Than(icp => 
                 {
-                    icp.Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
+                    icp.Transfer(e => args = e, TupleLiteral)
                     .Type(TokenType.RightParenthesis).Lt();
                 })
                 .Else(icp => 
                 {
                     icp.Type(TokenType.LeftBracket).Lt()
-                    .Transfer(e => args = e, c => ParseTuple(c, NonTupleExpression))
+                    .Transfer(e => args = e, TupleLiteral)
                     .Type(TokenType.RightBracket).Lt();
                 })
                 .End(tp => new CallExpression(tp, current, args));
+            return ret == null ? TemplateInstance(current, cp) : Postfix(ret, cp);
+        }
+
+        private static TupleLiteral NakedArgument(SlimChainParser cp)
+        {
+            Element literal = null;
+            return cp.Begin
+                .Any(
+                    icp => icp.Transfer(e => literal = e, StringLiteral),
+                    icp => icp.Transfer(e => literal = e, HereDocument),
+                    icp => icp.Transfer(e => literal = e, RangeLiteral),
+                    icp => icp.Transfer(e => literal = e, LambdaLiteral)
+                )
+                .End(tp => new TupleLiteral(tp, literal));
+        }
+
+        private static Element TemplateInstance(Element current, SlimChainParser cp)
+        {
+            TupleLiteral args = null;
+            var ret = cp.Begin
+                .Type(TokenType.Template)
+                .Not.Transfer(null, RangeLiteral)
+                .If(icp => icp.Type(TokenType.LeftParenthesis).Lt())
+                .Than(icp =>
+                {
+                    icp.Transfer(e => args = e, TupleLiteral)
+                    .Type(TokenType.RightParenthesis).Lt();
+                })
+                .ElseIf(icp => icp.Type(TokenType.LeftBracket).Lt())
+                .Than(icp =>
+                {
+                    icp.Transfer(e => args = e, TupleLiteral)
+                    .Type(TokenType.RightBracket).Lt();
+                })
+                .Else(icp => icp.Transfer(e => args = new TupleLiteral(e.Position, e), Identifier))
+                .End(tp => new TemplateInstanceExpression(tp, current, args));
             return ret == null ? current : Postfix(ret, cp);
         }
     }

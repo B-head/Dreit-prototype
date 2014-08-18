@@ -13,7 +13,7 @@ namespace AbstractSyntax
 
         public override string ToString()
         {
-            return Position + ": " + Enum.GetName(typeof(TokenType), TokenType) + " => " + Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20');
+            return string.Format("{0}: {1} => {2}", Position, TokenType, Text.Replace('\x0A', '\x20').Replace('\x0D', '\x20'));
         }
 
         public static implicit operator bool(Token token)
@@ -37,7 +37,8 @@ namespace AbstractSyntax
         OtherString,
 
         EndExpression,
-        Peir,
+        ReturnArrow,
+        Pair,
         Separator,
         List,
         Access,
@@ -78,6 +79,7 @@ namespace AbstractSyntax
         RightBracket,
         LeftBrace,
         RightBrace,
+        Swap,
         LeftPipeline = 0x10000,
         RightPipeline = 0x20000,
     }

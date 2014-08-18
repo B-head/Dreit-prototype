@@ -25,35 +25,36 @@ namespace AbstractSyntax
             ConvList.Add(symbol);
         }
 
-        public Scope Find(Scope from, Scope to)
+        public IEnumerable<RoutineSymbol> GetAllInitializer(TypeSymbol type)
         {
-            if (from is UnknownSymbol || to is UnknownSymbol || from is GenericSymbol || to is GenericSymbol)
-            {
-                return Root.Unknown;
-            }
-            var s = ConvList.FindAll(v => v.CallReturnType == to && v.ArgumentTypes[0] == from);
+            return ConvList.FindAll(v => v.CallReturnType == type);
+        }
+
+        public RoutineSymbol Find(TypeSymbol from, TypeSymbol to)
+        {
+            var s = ConvList.FindAll(v => v.CallReturnType == to && v.Arguments[0].ReturnType == from);
             if(s.Count == 1)
             {
                 return s[0];
             }
             else if(s.Count > 1)
             {
-                return Root.Error;
+                return Root.ErrorRoutine;
             }
             else
             {
                 if (ContainSubType(from, to))
                 {
-                    return Root.Void;
+                    return Root.Default;
                 }
                 else
                 {
-                    return Root.Error;
+                    return Root.ErrorRoutine;
                 }
             }
         }
 
-        private static bool ContainSubType(Scope from, Scope to)
+        private static bool ContainSubType(TypeSymbol from, TypeSymbol to)
         {
             var f = from as ClassSymbol;
             if(f == null)

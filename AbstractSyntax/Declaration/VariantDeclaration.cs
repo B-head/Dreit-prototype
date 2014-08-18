@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.Literal;
 using AbstractSyntax.Symbol;
 using AbstractSyntax.Visualizer;
 using System;
@@ -10,28 +11,23 @@ namespace AbstractSyntax.Declaration
     [Serializable]
     public class VariantDeclaration : VariantSymbol
     {
-        public TupleList AttributeAccess { get; private set; }
+        public TupleLiteral AttributeAccess { get; private set; }
         public Identifier Ident { get; private set; }
         public Identifier ExplicitType { get; private set; }
 
-        public VariantDeclaration(TextPosition tp, TupleList attr, Identifier ident, Identifier expl, bool isLet)
-            :base(tp, isLet)
+        public VariantDeclaration(TextPosition tp, VariantType type, TupleLiteral attr, Identifier ident, Identifier expli)
+            : base(tp, type)
         {
             AttributeAccess = attr;
             Ident = ident;
-            ExplicitType = expl;
+            ExplicitType = expli;
             Name = Ident == null ? string.Empty : Ident.Value;
             AppendChild(AttributeAccess);
             AppendChild(Ident);
             AppendChild(ExplicitType);
         }
 
-        public override bool IsConstant
-        {
-            get { return true; }
-        }
-
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
@@ -39,14 +35,14 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Attribute;
                 }
-                var a = new List<Scope>();
+                var a = new List<AttributeSymbol>();
                 foreach (var v in AttributeAccess)
                 {
-                    a.Add(v.OverLoad.FindDataType());
+                    a.Add(v.OverLoad.FindAttribute());
                 }
-                if (!HasAnyAttribute(a, AttributeType.Public, AttributeType.Protected, AttributeType.Private))
+                if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
-                    var p = NameResolution("public").FindDataType();
+                    var p = NameResolution("public").FindAttribute();
                     a.Add(p);
                 }
                 _Attribute = a;
@@ -54,7 +50,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override Scope CallReturnType
+        public override TypeSymbol DataType
         {
             get
             {
@@ -62,26 +58,18 @@ namespace AbstractSyntax.Declaration
                 {
                     return _DataType;
                 }
+                _DataType = Root.Unknown;
                 var caller = Parent as CallExpression;
                 if (ExplicitType != null)
                 {
-                    _DataType = ExplicitType.OverLoad.FindDataType();
+                    _DataType = ExplicitType.OverLoad.FindDataType().Type;
                 }
                 else if(caller != null && caller.HasCallTarget(this))
                 {
                     _DataType = caller.CallType;
                 }
-                else
-                {
-                    _DataType = Root.Unknown;
-                }
                 return _DataType;
             }
-        }
-
-        public override OverLoadReference OverLoad
-        {
-            get { return Ident.OverLoad; }
         }
     }
 }

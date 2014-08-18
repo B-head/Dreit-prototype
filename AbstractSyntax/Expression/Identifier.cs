@@ -13,15 +13,94 @@ namespace AbstractSyntax.Expression
     public class Identifier : Element
     {
         public string Value { get; private set; }
-        public bool IsPragmaAccess { get; private set; }
+        public TokenType IdentType { get; private set; }
         private bool? _IsTacitThis;
-        private OverLoadReference _Reference;
+        private OverLoadCallMatch? _Match;
+        private OverLoad _OverLoad;
 
-        public Identifier(TextPosition tp, string value, bool isPragma)
+        public Identifier(TextPosition tp, string value, TokenType identType)
             :base(tp)
         {
             Value = value;
-            IsPragmaAccess = isPragma;
+            IdentType = identType;
+        }
+
+        protected override string ElementInfo
+        {
+            get
+            {
+                switch(IdentType)
+                {
+                    case TokenType.Pragma: return "@@" + Value;
+                    case TokenType.Macro: return "##" + Value;
+                    case TokenType.Nullable: return "??" + Value;
+                    default: return Value;
+                }
+            }
+        }
+
+        public override TypeSymbol ReturnType
+        {
+            get { return CallRoutine.CallReturnType; }
+        }
+
+        public override bool IsConstant
+        {
+            get { return CallRoutine.IsFunction; }
+        }
+
+        public VariantSymbol ReferVariant
+        {
+            get { return OverLoad.FindVariant(); }
+        }
+
+        public RoutineSymbol CallRoutine
+        {
+            get { return Match.Call; }
+        }
+
+        public Scope AccessSymbol
+        {
+            get { return CallRoutine.IsAliasCall ? (Scope)ReferVariant : (Scope)CallRoutine; }
+        }
+
+        public OverLoadCallMatch Match
+        {
+            get
+            {
+                if (_Match != null)
+                {
+                    return _Match.Value;
+                }
+                _Match = OverLoad.CallSelect();
+                return _Match.Value;
+            }
+        }
+
+        public override OverLoad OverLoad
+        {
+            get
+            {
+                if(_OverLoad != null)
+                {
+                    return _OverLoad;
+                }
+                if (IdentType == TokenType.Pragma)
+                {
+                    _OverLoad = CurrentScope.NameResolution("@@" + Value);
+                }
+                else if(IdentType == TokenType.Nullable)
+                {
+                    var type = CurrentScope.NameResolution(Value).FindDataType().Type;
+                    var nullable = Root.ClassManager.Issue(Root.Nullable, new TypeSymbol[] { type }, new TypeSymbol[0]);
+                    _OverLoad = nullable.OverLoad;
+                }
+                else
+                {
+                    _OverLoad = CurrentScope.NameResolution(Value);
+                }
+                return _OverLoad;
+            }
         }
 
         public bool IsTacitThis
@@ -32,18 +111,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _IsTacitThis.Value;
                 }
-                if (!HasThisMember(CallScope))
-                {
-                    _IsTacitThis = false;
-                }
-                else if (!(CurrentScope is RoutineDeclaration)) //todo この条件が必要な理由を調べる。（忘れたｗ）
-                {
-                    _IsTacitThis = false;
-                }
-                else
-                {
-                    _IsTacitThis = true;
-                }
+                _IsTacitThis = HasThisMember(AccessSymbol);
                 return _IsTacitThis.Value;
             }
         }
@@ -57,53 +125,12 @@ namespace AbstractSyntax.Expression
             }
         }
 
-        protected override string ElementInfo
+        public RoutineSymbol ThisCallRoutine
         {
             get
             {
-                if (IsPragmaAccess)
-                {
-                    return "@@" + Value;
-                }
-                else
-                {
-                    return Value;
-                }
-            }
-        }
-
-        public override Scope ReturnType
-        {
-            get { return CallScope.CallReturnType; }
-        }
-
-        public override bool IsConstant
-        {
-            get { return ((RoutineSymbol)CallScope).IsFunction; }
-        }
-
-        public Scope CallScope
-        {
-            get { return OverLoad.CallSelect().Call; }
-        }
-
-        public override OverLoadReference OverLoad
-        {
-            get
-            {
-                if(_Reference != null)
-                {
-                    return _Reference;
-                }
-                if (IsPragmaAccess)
-                {
-                    _Reference = CurrentScope.NameResolution("@@" + Value);
-                }
-                else
-                {
-                    _Reference = CurrentScope.NameResolution(Value);
-                }
-                return _Reference;
+                var c = GetParent<ClassSymbol>();
+                return c.This.OverLoad.CallSelect().Call;
             }
         }
 
@@ -119,7 +146,7 @@ namespace AbstractSyntax.Expression
 
         private bool HasThisMember(Scope scope)
         {
-            if (scope.IsStaticMember || scope.IsThisCall)
+            if (scope.IsStaticMember || scope is ThisSymbol)
             {
                 return false;
             }
@@ -139,20 +166,14 @@ namespace AbstractSyntax.Expression
         {
             if (OverLoad.IsUndefined)
             {
-                if (IsPragmaAccess)
-                {
-                    cmm.CompileError("undefined-pragma", this);
-                }
-                else
-                {
-                    cmm.CompileError("undefined-identifier", this);
-                }
+                cmm.CompileError("undefined-identifier", this);
             }
-            if (HasAnyAttribute(CallScope.Attribute, AttributeType.Private) && !HasCurrentAccess(CallScope.GetParent<ClassSymbol>()))
+            //todo より適切なエラーメッセージを出す。
+            if (AccessSymbol.Attribute.HasAnyAttribute(AttributeType.Private) && !HasCurrentAccess(AccessSymbol.GetParent<ClassSymbol>()))
             {
                 cmm.CompileError("not-accessable", this);
             }
-            if (CallScope.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
+            if (AccessSymbol.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
             {
                 cmm.CompileError("not-accessable", this);
             }

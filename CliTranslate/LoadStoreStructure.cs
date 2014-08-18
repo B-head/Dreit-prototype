@@ -10,18 +10,22 @@ namespace CliTranslate
     [Serializable]
     public class LoadStoreStructure : BuilderStructure
     {
-        public CilStructure Variant { get; private set; }
         public bool IsStore { get; private set; }
+        public TypeStructure BaseInstance { get; private set; }
 
-        public LoadStoreStructure(CilStructure variant, bool isStore)
+        public LoadStoreStructure(bool isStore)
         {
-            Variant = variant;
             IsStore = isStore;
         }
 
-        internal override void BuildCall(CodeGenerator cg)
+        internal void BuildCall(CilStructure variant, CodeGenerator cg)
         {
-            var f = Variant as FieldStructure;
+            var b = variant as BuilderStructure;
+            if(b != null && BaseInstance != null)
+            {
+                variant = b.RenewInstance(BaseInstance);
+            }
+            var f = variant as FieldStructure;
             if(f != null)
             {
                 if (IsStore)
@@ -46,7 +50,7 @@ namespace CliTranslate
                 }
                 return;
             }
-            var l = Variant as LocalStructure;
+            var l = variant as LocalStructure;
             if (l != null)
             {
                 if (IsStore)
@@ -56,7 +60,7 @@ namespace CliTranslate
                 cg.GenerateLoad(l);
                 return;
             }
-            var p = Variant as ParameterStructure;
+            var p = variant as ParameterStructure;
             if(p != null)
             {
                 if (IsStore)
@@ -66,13 +70,30 @@ namespace CliTranslate
                 cg.GenerateLoad(p);
                 return;
             }
-            var v = Variant as ValueStructure;
+            var lo = variant as LoopParameterStructure;
+            if (lo != null)
+            {
+                if (IsStore)
+                {
+                    cg.GenerateStore(lo.Local);
+                }
+                cg.GenerateLoad(lo.Local);
+                return;
+            }
+            var v = variant as ValueStructure;
             if(v != null)
             {
                 cg.GeneratePrimitive(v.Value);
                 return;
             }
             throw new InvalidOperationException();
+        }
+
+        internal override BuilderStructure RenewInstance(TypeStructure type)
+        {
+            var ret = new LoadStoreStructure(IsStore);
+            ret.BaseInstance = type;
+            return this;
         }
     }
 }

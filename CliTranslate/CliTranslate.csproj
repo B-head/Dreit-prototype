@@ -43,8 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayStructure.cs" />
     <Compile Include="BlockStructure.cs" />
-    <Compile Include="BranchStructure.cs" />
+    <Compile Include="IfStructure.cs" />
     <Compile Include="BuilderStructure.cs" />
     <Compile Include="CacheStructure.cs" />
     <Compile Include="CallStructure.cs" />
@@ -58,16 +59,20 @@
     <Compile Include="EventStructure.cs" />
     <Compile Include="ExpressionStructure.cs" />
     <Compile Include="FieldStructure.cs" />
+    <Compile Include="GenericMethodStructure.cs" />
     <Compile Include="GenericParameterStructure.cs" />
+    <Compile Include="GenericTypeStructure.cs" />
     <Compile Include="GlobalContextStructure.cs" />
     <Compile Include="GotoStructure.cs" />
     <Compile Include="LabelStructure.cs" />
     <Compile Include="LoadStoreStructure.cs" />
     <Compile Include="LocalStructure.cs" />
     <Compile Include="LogicalStructure.cs" />
+    <Compile Include="LoopParameterStructure.cs" />
     <Compile Include="LoopStructure.cs" />
     <Compile Include="MethodBaseStructure.cs" />
     <Compile Include="MethodStructure.cs" />
+    <Compile Include="ModifyTypeStructure.cs" />
     <Compile Include="MonadicOperationStructure.cs" />
     <Compile Include="OperationStructure.cs" />
     <Compile Include="TypeStructure.cs" />
@@ -82,12 +87,15 @@
     <Compile Include="SyntaxTranslator.cs" />
     <Compile Include="TranslateUtility.cs" />
     <Compile Include="PureTypeStructure.cs" />
-    <Compile Include="WriteLineStructure.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbstractSyntax\AbstractSyntax.csproj">
       <Project>{c1681d7b-c0fa-4c9c-8d4a-2a432b2ce764}</Project>
       <Name>AbstractSyntax</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj">
+      <Project>{97a80420-f612-42e7-95e1-bce70ed5cb4d}</Project>
+      <Name>CoreLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

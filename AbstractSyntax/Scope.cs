@@ -14,19 +14,21 @@ namespace AbstractSyntax
     {
         public string Name { get; protected set; }
         internal Dictionary<string, OverLoadSet> ChildSymbols { get; set; }
-        protected Dictionary<string, OverLoadReference> ReferenceCache { get; set; }
+        protected Dictionary<string, OverLoadChain> ReferenceCache { get; set; }
 
         protected Scope()
         {
+            Name = string.Empty;
             ChildSymbols = new Dictionary<string, OverLoadSet>();
-            ReferenceCache = new Dictionary<string, OverLoadReference>();
+            ReferenceCache = new Dictionary<string, OverLoadChain>();
         }
 
         protected Scope(TextPosition tp)
             : base(tp)
         {
+            Name = string.Empty;
             ChildSymbols = new Dictionary<string, OverLoadSet>();
-            ReferenceCache = new Dictionary<string, OverLoadReference>();
+            ReferenceCache = new Dictionary<string, OverLoadChain>();
         }
 
         internal void SpreadChildScope(Element child)
@@ -51,13 +53,13 @@ namespace AbstractSyntax
             }
             if (!ChildSymbols.ContainsKey(scope.Name))
             {
-                var ol = new OverLoadSet(CurrentScope);
+                var ol = new OverLoadSet(this);
                 ChildSymbols.Add(scope.Name, ol);
             }
             ChildSymbols[scope.Name].Append(scope);
         }
 
-        internal virtual OverLoadReference NameResolution(string name)
+        internal virtual OverLoadChain NameResolution(string name)
         {
             if(ReferenceCache.ContainsKey(name))
             {
@@ -67,7 +69,7 @@ namespace AbstractSyntax
             if(ChildSymbols.ContainsKey(name))
             {
                 var s = ChildSymbols[name];
-                n = new OverLoadReference(Root, n, s);
+                n = new OverLoadChain(this, n, s);
             }
             ReferenceCache.Add(name, n);
             return n;
@@ -85,7 +87,7 @@ namespace AbstractSyntax
 
         private void BuildFullName(StringBuilder builder)
         {
-            if(CurrentScope != null && !(CurrentScope is Root))
+            if(CurrentScope != null)
             {
                 CurrentScope.BuildFullName(builder);
                 builder.Append(".");
@@ -110,51 +112,47 @@ namespace AbstractSyntax
             return null;
         }
 
+        internal virtual void BuildTacitGeneric(List<GenericSymbol> list)
+        {
+            if (CurrentScope != null)
+            {
+                CurrentScope.BuildTacitGeneric(list);
+            }
+        }
+
         protected override string ElementInfo
         {
-            get { return Name; }
+            get { return string.Format("{0}, Child = {1}", string.IsNullOrWhiteSpace(Name) ? "<no-name>" : Name, Count); }
         }
 
-        internal virtual IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        public virtual IReadOnlyList<AttributeSymbol> Attribute
         {
-            yield return TypeMatch.MakeNotCallable(Root.Unknown);
-        }
-
-        public virtual bool IsDataType
-        {
-            get { return false; }
-        }
-
-        public virtual Scope CallReturnType
-        {
-            get { return Root.Unknown; }
-        }
-
-        public virtual IReadOnlyList<Scope> Attribute
-        {
-            get { return new List<Scope>(); }
+            get { return new List<AttributeSymbol>(); }
         }
 
         public bool IsStaticMember
         {
-            get { return GetParent<ClassSymbol>() != null && HasAnyAttribute(Attribute, AttributeType.Static); }
+            get 
+            {
+                var rout = this as RoutineSymbol;
+                if(rout != null && rout.IsConstructor)
+                {
+                    return false;
+                }
+                return GetParent<ClassSymbol>() != null && Attribute.HasAnyAttribute(AttributeType.Static); 
+            }
         }
 
         public bool IsInstanceMember
         {
-            get { return GetParent<ClassSymbol>() != null && !HasAnyAttribute(Attribute, AttributeType.Static); }
-        }
-
-        public bool IsThisCall
-        {
-            get 
+            get
             {
-                var pp = this as PropertySymbol;
-                if(pp == null)
+                var rout = this as RoutineSymbol;
+                if (rout != null && rout.IsConstructor)
                 {
                     return false;
                 }
-                return pp.Variant is ThisSymbol; 
+                return GetParent<ClassSymbol>() != null && !Attribute.HasAnyAttribute(AttributeType.Static); 
             }
         }
     }

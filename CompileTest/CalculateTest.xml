@@ -2,21 +2,28 @@
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
-      echo 10 + 10
+      stdout := 10 + 10
     </code>
     <output>20</output>
   </case>
 
   <case>
     <code>
-      echo 1 + 2 * 3
+      stdout := 1 + 2 * 3
     </code>
     <output>7</output>
   </case>
 
   <case>
     <code>
-      echo 1 + 2.5
+      stdout := (1 + 2) * 3
+    </code>
+    <output>9</output>
+  </case>
+
+  <case>
+    <code>
+      stdout := 1 + 2.5
     </code>
     <output>3.5</output>
   </case>
@@ -25,7 +32,7 @@
     <code>
       var a := 3
       a := a + 4
-      echo a
+      stdout := a
     </code>
     <output>7</output>
   </case>
@@ -34,7 +41,7 @@
     <code>
       var a := 3
       a += 4
-      echo a
+      stdout := a
     </code>
     <output>7</output>
   </case>
@@ -43,7 +50,7 @@
     <code>
       var a := 5
       a -= 3
-      echo a
+      stdout := a
     </code>
     <output>2</output>
   </case>
@@ -52,7 +59,7 @@
     <code>
       var a := 5
       3 =- a
-      echo a
+      stdout := a
     </code>
     <output>-2</output>
   </case>
@@ -61,7 +68,7 @@
     <code>
       var a := 3
       a += 4 * 5
-      echo a
+      stdout := a
     </code>
     <output>23</output>
   </case>

@@ -11,7 +11,7 @@ namespace CliTranslate
     public class LoopStructure : ExpressionStructure
     {
         public ExpressionStructure Condition { get; private set; }
-        public ExpressionStructure On { get; private set; }
+        public ExpressionStructure Use { get; private set; }
         public ExpressionStructure By { get; private set; }
         public BlockStructure Block { get; private set; }
         public LabelStructure BreakLabel { get; private set; }
@@ -29,14 +29,14 @@ namespace CliTranslate
             AppendChild(PlungeLabel);
         }
 
-        public void Initialize(ExpressionStructure cond, ExpressionStructure on, ExpressionStructure by, BlockStructure block)
+        public void Initialize(ExpressionStructure cond, ExpressionStructure use, ExpressionStructure by, BlockStructure block)
         {
             Condition = cond;
-            On = on;
+            Use = use;
             By = by;
             Block = block;
             AppendChild(Condition);
-            AppendChild(On);
+            AppendChild(Use);
             AppendChild(By);
             AppendChild(Block);
         }
@@ -45,9 +45,9 @@ namespace CliTranslate
         {
             var cg = CurrentContainer.GainGenerator();
             cg.BeginScope();
-            if (On != null)
+            if (Use != null)
             {
-                PopBuildCode(On);
+                PopBuildCode(Use);
             }
             cg.GenerateJump(OpCodes.Br, PlungeLabel);
             cg.MarkLabel(ContinueLabel);
@@ -61,7 +61,7 @@ namespace CliTranslate
                 Condition.BuildCode();
                 cg.GenerateJump(OpCodes.Brfalse, BreakLabel);
             }
-            PopBuildCode(Block);
+            Block.BuildCode();
             cg.GenerateJump(OpCodes.Br, ContinueLabel);
             cg.MarkLabel(BreakLabel);
             cg.EndScope();

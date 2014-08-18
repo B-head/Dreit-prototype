@@ -19,11 +19,11 @@ namespace AbstractSyntax
         {
             if (string.IsNullOrEmpty(File))
             {
-                return "<empty>()";
+                return string.Format("<empty>()");
             }
             else
             {
-                return File + "(" + Line + "," + Row + ")";
+                return string.Format("{0}({1}, {2})", File, Line, Row);
             }
         }
 

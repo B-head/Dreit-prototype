@@ -10,67 +10,53 @@ namespace AbstractSyntax.SpecialSymbol
     [Serializable]
     public class PropertySymbol : RoutineSymbol
     {
-        public VariantSymbol Variant { get; private set; }
+        public ClassSymbol Type { get; private set; }
         public bool IsSet { get; private set; }
 
-        public PropertySymbol(VariantSymbol variant, bool isSet)
-            : base(TokenType.Unknoun, false)
+        public PropertySymbol(string name, ClassSymbol type, bool isSet)
+            : base(RoutineType.Routine, TokenType.Unknoun)
         {
-            if(isSet)
-            {
-                Name = "@@set";
-            }
-            else
-            {
-                Name = "@@get";
-            }
-            Variant = variant;
+            Name = name;
+            Type = type;
             IsSet = isSet;
             _Attribute = null;
-            _ArgumentTypes = null;
+            _Arguments = null;
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
             {
                 if (_Attribute == null)
                 {
-                    _Attribute = Variant.Attribute;
+                    _Attribute = Type.Attribute;
                 }
                 return _Attribute;
             }
         }
 
-        public override IReadOnlyList<Scope> ArgumentTypes
+        public override IReadOnlyList<ParameterSymbol> Arguments
         {
             get
             {
-                if (_ArgumentTypes == null)
+                if (_Arguments == null)
                 {
                     if (IsSet)
                     {
-                        _ArgumentTypes = new Scope[] { Variant.CallReturnType };
+                        _Arguments = ParameterSymbol.MakeParameters(Type);
                     }
                     else
                     {
-                        _ArgumentTypes = new Scope[] { };
+                        _Arguments = new ParameterSymbol[] { };
                     }
                 }
-                return _ArgumentTypes;
+                return _Arguments;
             }
         }
 
-        public override Scope CallReturnType
+        public override TypeSymbol CallReturnType
         {
-            get
-            {
-                if (_CallReturnType == null)
-                {
-                    _CallReturnType = Variant.CallReturnType;
-                }
-                return _CallReturnType;
-            }
+            get { return Type; }
         }
     }
 }

@@ -10,12 +10,15 @@ namespace AbstractSyntax.SpecialSymbol
     [Serializable]
     public class DefaultSymbol : RoutineSymbol
     {
+        public DefaultSymbol()
+            : base(RoutineType.Function, TokenType.Unknoun)
+        {
+        }
+
         public DefaultSymbol(string name, ClassSymbol parent)
-            :base(TokenType.Unknoun, false)
+            :base(RoutineType.Routine, TokenType.Unknoun)
         {
             Name = name;
-            _Attribute = new List<Scope>();
-            _ArgumentTypes = new List<Scope>();
             _CallReturnType = parent;
         }
     }

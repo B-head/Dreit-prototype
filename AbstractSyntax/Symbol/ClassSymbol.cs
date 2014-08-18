@@ -9,120 +9,164 @@ using System.Threading.Tasks;
 
 namespace AbstractSyntax.Symbol
 {
-    [Serializable]
-    public class ClassSymbol : Scope
+    public enum ClassType
     {
-        public DefaultSymbol Default { get; private set; }
-        public ThisSymbol This { get; private set; }
-        public bool IsTrait { get; private set; }
-        public ExpressionList Block { get; private set; }
-        protected IReadOnlyList<Scope> _Attribute;
-        protected IReadOnlyList<GenericSymbol> _Generics;
-        protected IReadOnlyList<Scope> _Inherit;
-        private IReadOnlyList<RoutineSymbol> _Initializer;
+        Unknown,
+        Class,
+        Trait,
+        Extend,
+    }
 
-        protected ClassSymbol()
+    [Serializable]
+    public class ClassSymbol : TypeSymbol
+    {
+        public ThisSymbol This { get; private set; }
+        public ClassType ClassType { get; private set; }
+        public ProgramContext Block { get; private set; }
+        protected IReadOnlyList<AttributeSymbol> _Attribute;
+        protected IReadOnlyList<GenericSymbol> _Generics;
+        protected IReadOnlyList<TypeSymbol> _Inherit;
+        public IReadOnlyList<RoutineSymbol> Initializers { get; private set; }
+        public IReadOnlyList<RoutineSymbol> AliasCalls { get; private set; }
+        private bool DisguiseScopeMode;
+        private bool IsInitialize;
+
+        public ClassSymbol()
         {
-            Block = new ExpressionList();
-            Default = new DefaultSymbol("new", this);
-            This = new ThisSymbol(this);
-            AppendChild(Block);
-            AppendChild(Default);
-            AppendChild(This);
-            _Attribute = new List<Scope>();
-            _Generics = new List<GenericSymbol>();
-            _Inherit = new List<Scope>();
         }
 
-        protected ClassSymbol(TextPosition tp, string name, bool isTrait, ExpressionList block)
+        protected ClassSymbol(ClassType type)
+        {
+            ClassType = type;
+            Block = new ProgramContext();
+            This = new ThisSymbol(this);
+            Block.Append(This);
+            AppendChild(Block);
+            InitInitializers();
+            InitAliasCalls();
+            IsInitialize = true;
+        }
+
+        protected ClassSymbol(TextPosition tp, string name, ClassType type, ProgramContext block)
             :base(tp)
         {
             Name = name;
-            IsTrait = isTrait;
+            ClassType = type;
             Block = block;
-            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
+            Block.Append(This);
             AppendChild(Block);
-            AppendChild(Default);
-            AppendChild(This);
+            InitInitializers();
+            InitAliasCalls();
+            IsInitialize = true;
         }
 
-        public ClassSymbol(string name, bool isTrait, ExpressionList block, IReadOnlyList<Scope> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<Scope> inherit)
+        public void Initialize(string name, ClassType type, ProgramContext block, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<TypeSymbol> inherit)
         {
+            if (IsInitialize)
+            {
+                throw new InvalidOperationException();
+            }
+            IsInitialize = true;
             Name = name;
-            IsTrait = isTrait;
+            ClassType = type;
             Block = block;
-            Default = new DefaultSymbol("new", this);
             This = new ThisSymbol(this);
+            Block.Append(This);
             AppendChild(Block);
-            AppendChild(Default);
-            AppendChild(This);
             _Attribute = attr;
             _Generics = gnr;
             _Inherit = inherit;
+            InitInitializers();
+            InitAliasCalls();
         }
 
-        public override IReadOnlyList<Scope> Attribute
+        private void InitInitializers()
         {
-            get { return _Attribute; }
-        }
-
-        public virtual IReadOnlyList<GenericSymbol> Generics
-        {
-            get { return _Generics; }
-        }
-
-        public virtual IReadOnlyList<Scope> Inherit
-        {
-            get { return _Inherit; }
-        }
-
-        public IReadOnlyList<RoutineSymbol> Initializer
-        {
-            get
+            var i = new List<RoutineSymbol>();
+            var newFlag = false;
+            foreach (var e in Block)
             {
-                if (_Initializer != null)
+                var r = e as RoutineSymbol;
+                if (r == null)
                 {
-                    return _Initializer;
+                    continue;
                 }
-                var i = new List<RoutineSymbol>();
-                var newFlag = false;
-                foreach (var e in Block)
+                if (r.IsConstructor)
                 {
-                    var r = e as RoutineSymbol;
-                    if (r == null)
-                    {
-                        continue;
-                    }
-                    if (r.IsConstructor)
-                    {
-                        i.Add(r);
-                        newFlag = true;
-                    }
-                    //else if (r.IsConvertor)
-                    //{
-                    //    Root.ConvManager.Append(r);
-                    //    i.Add(r);
-                    //}
-                    //else if (r.Operator != TokenType.Unknoun)
-                    //{
-                    //    Root.OpManager.Append(r);
-                    //}
+                    i.Add(r);
+                    newFlag = true;
                 }
-                if (!newFlag)
-                {
-                    i.Add(Default);
-                }
-                _Initializer = i;
-                return _Initializer;
             }
+            if (!newFlag)
+            {
+                var def = new DefaultSymbol(RoutineSymbol.ConstructorIdentifier, this);
+                Block.Append(def);
+                i.Add(def);
+            }
+            Initializers = i;
+        }
+
+        private void InitAliasCalls()
+        {
+            var i = new List<RoutineSymbol>();
+            var getFlag = false;
+            var serFlag = false;
+            foreach (var e in Block)
+            {
+                var r = e as RoutineSymbol;
+                if (r == null)
+                {
+                    continue;
+                }
+                if (r.IsAliasCall)
+                {
+                    i.Add(r);
+                    //if ()
+                    //{
+                    //    getFlag = true;
+                    //}
+                    //if ()
+                    //{
+                    //    serFlag = true;
+                    //}
+                }
+            }
+            if (!getFlag)
+            {
+                var def = new PropertySymbol(RoutineSymbol.AliasCallIdentifier, this, false);
+                Block.Append(def);
+                i.Add(def);
+            }
+            if (!serFlag)
+            {
+                var def = new PropertySymbol(RoutineSymbol.AliasCallIdentifier, this, true);
+                Block.Append(def);
+                i.Add(def);
+            }
+            AliasCalls = i;
+        }
+
+        public override IReadOnlyList<AttributeSymbol> Attribute
+        {
+            get { return _Attribute ?? new List<AttributeSymbol>(); }
+        }
+
+        public override IReadOnlyList<GenericSymbol> Generics
+        {
+            get { return _Generics ?? new List<GenericSymbol>(); }
+        }
+
+        public override IReadOnlyList<TypeSymbol> Inherit
+        {
+            get { return _Inherit ?? new List<TypeSymbol>(); }
         }
 
         public Scope InheritClass
         {
             get
             {
-                var obj = NameResolution("Object").FindDataType() as ClassSymbol;
+                var obj = NameResolution("Object").FindDataType().Type as ClassSymbol;
                 if (this == obj)
                 {
                     return null;
@@ -141,79 +185,119 @@ namespace AbstractSyntax.Symbol
             var c = scope as ClassSymbol;
             if(c != null)
             {
-                return c.IsTrait;
+                return c.ClassType == ClassType.Trait;
             }
             return false;
         }
 
+        protected override string ElementInfo
+        {
+            get 
+            { 
+                if(Generics.Count == 0)
+                {
+                    return string.Format("{0}", Name);
+                }
+                else
+                {
+                    return string.Format("{0}!({1})", Name, Generics.ToNames());
+                }
+            }
+        }
+
         public bool IsDefaultConstructor
         {
-            get { return Initializer.Any(v => v is DefaultSymbol); }
+            get { return Initializers.Any(v => v is DefaultSymbol); }
         }
 
         public RoutineSymbol ZeroArgInitializer
         {
-            get { return Initializer.FirstOrDefault(v => v.Arguments.Count == 0); }
+            get { return Initializers.FirstOrDefault(v => v.Arguments.Count == 0); }
         }
 
-        public override bool IsDataType
+        public bool IsTrait
         {
-            get { return true; }
+            get { return ClassType == ClassType.Trait; }
         }
 
-        internal override IEnumerable<TypeMatch> GetTypeMatch(IReadOnlyList<Scope> pars, IReadOnlyList<Scope> args)
+        internal override OverLoadChain NameResolution(string name)
         {
-            foreach(var a in Initializer)
+            if (DisguiseScopeMode)
             {
-                foreach (var b in a.GetTypeMatch(pars, args))
+                return CurrentScope.NameResolution(name);
+            }
+            if (ReferenceCache.ContainsKey(name))
+            {
+                return ReferenceCache[name];
+            }
+            var n = CurrentScope.NameResolution(name);
+            var i = InheritNameResolution(name);
+            if (ChildSymbols.ContainsKey(name))
+            {
+                var s = ChildSymbols[name];
+                n = new OverLoadChain(this, n, i, s);
+            }
+            else
+            {
+                n = new OverLoadChain(this, n, i);
+            }
+            ReferenceCache.Add(name, n);
+            return n;
+        }
+
+        private IReadOnlyList<OverLoadChain> InheritNameResolution(string name)
+        {
+            var ret = new List<OverLoadChain>();
+            DisguiseScopeMode = true;
+            foreach(var v in Inherit)
+            {
+                var ol = v.NameResolution(name) as OverLoadChain;
+                if(ol != null)
+                {
+                    ret.Add(ol);
+                }
+            }
+            DisguiseScopeMode = false;
+            return ret;
+        }
+
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            var newinst = GenericsInstance.MakeGenericInstance(Generics, pars);
+            var newpars = new List<TypeSymbol>();
+            foreach(var a in Initializers)
+            {
+                foreach (var b in a.GetTypeMatch(newinst, newpars, args))
+                {
+                    yield return b;
+                }
+            }
+            foreach (var a in Root.ConvManager.GetAllInitializer(this))
+            {
+                foreach (var b in a.GetTypeMatch(newinst, newpars, args))
                 {
                     yield return b;
                 }
             }
         }
 
-        internal override OverLoadReference NameResolution(string name)
+        internal override IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            if (ReferenceCache.ContainsKey(name))
+            foreach (var a in AliasCalls)
             {
-                return ReferenceCache[name];
-            }
-            var n = CurrentScope.NameResolution(name);
-            InitInherits i = () => InheritNameResolution(name);
-            if (ChildSymbols.ContainsKey(name))
-            {
-                var s = ChildSymbols[name];
-                n = new OverLoadReference(Root, n, i, s);
-            }
-            else
-            {
-                n = new OverLoadReference(Root, n, i);
-            }
-            ReferenceCache.Add(name, n);
-            return n;
-        }
-
-        private IReadOnlyList<OverLoadReference> InheritNameResolution(string name)
-        {
-            var ret = new List<OverLoadReference>();
-            foreach(var v in Inherit)
-            {
-                var ol = v.NameResolution(name);
-                if(ol != null)
+                foreach (var b in a.GetTypeMatch(inst, pars, args))
                 {
-                    ret.Add(ol);
+                    yield return b;
                 }
             }
-            return ret;
         }
 
-        public IEnumerable<Scope> EnumSubType()
+        internal override IEnumerable<TypeSymbol> EnumSubType()
         {
             yield return this;
             foreach(var a in Inherit)
             {
-                ClassSymbol c = a as ClassSymbol;
-                foreach(var b in c.EnumSubType())
+                foreach (var b in a.EnumSubType())
                 {
                     yield return b;
                 }

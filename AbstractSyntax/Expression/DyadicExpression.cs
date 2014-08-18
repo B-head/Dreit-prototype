@@ -28,13 +28,13 @@ namespace AbstractSyntax.Expression
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            foreach (Element v in this)
+            if (Left == null)
             {
-                if (v == null)
-                {
-                    cmm.CompileError("require-expression", this);
-                    continue;
-                }
+                cmm.CompileError("require-expression", this);
+            }
+            if (Right == null)
+            {
+                cmm.CompileError("require-expression", this);
             }
         }
     }
