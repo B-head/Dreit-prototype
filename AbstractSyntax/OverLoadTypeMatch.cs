@@ -63,7 +63,7 @@ namespace AbstractSyntax
 
         internal static bool ContainGenericCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<TypeSymbol> ag)
         {
-            if (ParameterSymbol.HasVariadic(fg))
+            if (ArgumentSymbol.HasVariadic(fg))
             {
                 return true;
             }
@@ -75,7 +75,7 @@ namespace AbstractSyntax
 
         private static void InitInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<TypeSymbol> ag, List<TypeSymbol> ig)
         {
-            if (!ParameterSymbol.HasVariadic(fg))
+            if (!ArgumentSymbol.HasVariadic(fg))
             {
                 ig.AddRange(fg);
             }

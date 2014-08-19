@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace CliTranslate
 {
     [Serializable]
-    public class LoopParameterStructure : ExpressionStructure
+    public class LoopLocalStructure : ExpressionStructure
     {
         public string Name { get; private set; }
         public TypeStructure DataType { get; private set; }
         public CilStructure DefaultValue { get; private set; }
         public LocalStructure Local { get; private set; }
 
-        public LoopParameterStructure(string name, TypeStructure dt, CilStructure def)
+        public LoopLocalStructure(string name, TypeStructure dt, CilStructure def)
             :base(dt)
         {
             Name = name;

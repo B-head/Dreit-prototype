@@ -14,7 +14,7 @@ namespace AbstractSyntax
         public RoutineSymbol Call { get; private set; }
         public CallMatchResult Result { get; private set; }
         public IReadOnlyList<GenericSymbol> FormalGenerics { get; private set; }
-        public IReadOnlyList<ParameterSymbol> FormalArguments { get; private set; }
+        public IReadOnlyList<ArgumentSymbol> FormalArguments { get; private set; }
         public IReadOnlyList<GenericsInstance> ScopeInstance { get; private set; }
         public IReadOnlyList<TypeSymbol> ActualGenerics { get; private set; }
         public IReadOnlyList<TypeSymbol> ActualArguments { get; private set; }
@@ -40,7 +40,7 @@ namespace AbstractSyntax
         //todo さらに詳しい順位付けをする。
         //todo デフォルト引数に対応する。
         //todo 型制約に対応する。
-        internal static OverLoadCallMatch MakeMatch(Root root, RoutineSymbol call, IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
+        internal static OverLoadCallMatch MakeMatch(Root root, RoutineSymbol call, IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ArgumentSymbol> fa,
             IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
         {
             var ig = new List<TypeSymbol>();
@@ -93,9 +93,9 @@ namespace AbstractSyntax
             return result;
         }
 
-        internal static bool ContainArgumentCount(IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> aa)
+        internal static bool ContainArgumentCount(IReadOnlyList<ArgumentSymbol> fa, IReadOnlyList<TypeSymbol> aa)
         {
-            if (ParameterSymbol.HasVariadic(fa))
+            if (ArgumentSymbol.HasVariadic(fa))
             {
                 return fa.Count - 1 <= aa.Count;
             }
@@ -105,22 +105,22 @@ namespace AbstractSyntax
             }
         }
 
-        internal static bool ContainTupleCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
+        internal static bool ContainTupleCount(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ArgumentSymbol> fa, IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa)
         {
-            if (!ParameterSymbol.HasVariadic(fg) || fg.Count > ag.Count)
+            if (!ArgumentSymbol.HasVariadic(fg) || fg.Count > ag.Count)
             {
                 return true;
             }
             return ag.Count - fg.Count == aa.Count - fa.Count;
         }
 
-        private static void InitInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ParameterSymbol> fa,
+        private static void InitInstance(IReadOnlyList<GenericSymbol> fg, IReadOnlyList<ArgumentSymbol> fa,
             IReadOnlyList<TypeSymbol> ag, IReadOnlyList<TypeSymbol> aa, List<TypeSymbol> ig, List<TypeSymbol> ia)
         {
-            if (!ParameterSymbol.HasVariadic(fg))
+            if (!ArgumentSymbol.HasVariadic(fg))
             {
                 ig.AddRange(fg);
-                if (!ParameterSymbol.HasVariadic(fa))
+                if (!ArgumentSymbol.HasVariadic(fa))
                 {
                     ia.AddRange(fa.GetDataTypes());
                 }
@@ -139,7 +139,7 @@ namespace AbstractSyntax
                 var c = (fg.Count > ag.Count) ? (aa.Count - fa.Count + 1) : (ag.Count - fg.Count + 1);
                 var mg = OverLoadTypeMatch.MakeGeneric(c);
                 ig.AddRange(mg);
-                if (!ParameterSymbol.HasVariadic(fa))
+                if (!ArgumentSymbol.HasVariadic(fa))
                 {
                     ia.AddRange(fa.GetDataTypes());
                 }

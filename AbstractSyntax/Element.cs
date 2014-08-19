@@ -146,6 +146,11 @@ namespace AbstractSyntax
             cs.AppendChildScope(s);
         }
 
+        internal virtual void Prepare()
+        {
+            return;
+        }
+
         internal virtual void CheckSemantic(CompileMessageManager cmm)
         {
             return;

@@ -24,5 +24,15 @@ namespace AbstractSyntax.Symbol
             _Attribute = attr;
             _Constraint = constraint;
         }
+
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+        }
+
+        internal override IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+        }
     }
 }

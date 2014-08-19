@@ -71,7 +71,7 @@ namespace AbstractSyntax.Declaration
             }
         }
 
-        public override IReadOnlyList<ParameterSymbol> Arguments
+        public override IReadOnlyList<ArgumentSymbol> Arguments
         {
             get
             {
@@ -79,10 +79,10 @@ namespace AbstractSyntax.Declaration
                 {
                     return _Arguments;
                 }
-                var a = new List<ParameterSymbol>();
+                var a = new List<ArgumentSymbol>();
                 foreach (var v in DecArguments)
                 {
-                    a.Add((ParameterSymbol)v);
+                    a.Add((ArgumentSymbol)v);
                 }
                 _Arguments = a;
                 return _Arguments;
@@ -124,6 +124,7 @@ namespace AbstractSyntax.Declaration
                     else if(CurrentScope is ClassDeclaration)
                     {
                         _CallReturnType = (ClassDeclaration)CurrentScope;
+                        IsDefaultThisReturn = true;
                     }
                     else
                     {

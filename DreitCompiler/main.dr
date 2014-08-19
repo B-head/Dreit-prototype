@@ -1,0 +1,18 @@
+﻿class BlockField {
+	private var field:List!ConsoleColor
+	let width:Int32
+	let height:Int32
+
+	rout new(w:Int32, h:Int32) {
+		field := List!ConsoleColor(w * h)
+		width := w
+		height := h
+	}
+
+	rout call(x:Int32, y:Int32) :: field[x * width + y]
+	rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x * width + y] := value
+}
+
+var bf := BlockField(10, 24)
+bf[5, 5] := ConsoleColor.White
+stdout := bf[5, 5]

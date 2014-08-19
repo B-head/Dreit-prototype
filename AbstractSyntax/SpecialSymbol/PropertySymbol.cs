@@ -35,7 +35,7 @@ namespace AbstractSyntax.SpecialSymbol
             }
         }
 
-        public override IReadOnlyList<ParameterSymbol> Arguments
+        public override IReadOnlyList<ArgumentSymbol> Arguments
         {
             get
             {
@@ -43,11 +43,11 @@ namespace AbstractSyntax.SpecialSymbol
                 {
                     if (IsSet)
                     {
-                        _Arguments = ParameterSymbol.MakeParameters(Type);
+                        _Arguments = ArgumentSymbol.MakeParameters(Type);
                     }
                     else
                     {
-                        _Arguments = new ParameterSymbol[] { };
+                        _Arguments = new ArgumentSymbol[] { };
                     }
                 }
                 return _Arguments;

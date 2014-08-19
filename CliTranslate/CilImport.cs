@@ -229,18 +229,28 @@ namespace CliTranslate
         {
             var attribute = new List<AttributeSymbol>();
             AppendEmbededAttribute(attribute, type);
-            var dt = ImportType(type.GetEnumUnderlyingType());
+            var ut = ImportType(type.GetEnumUnderlyingType());
             var block = new ProgramContext();
-            var elem = new EnumSymbol(type.Name, block, attribute, dt);
+            var elem = new EnumSymbol(type.Name, block, attribute, ut);
             if (ImportDictionary.ContainsKey(type))
             {
                 return (EnumSymbol)ImportDictionary[type];
             }
             ImportDictionary.Add(type, elem);
-            foreach(var v in type.GetEnumNames())
+            foreach(var v in type.GetFields())
             {
+                if(!v.IsLiteral)
+                {
+                    continue;
+                }
                 var f = new VariantSymbol();
-                f.Initialize(v, VariantType.Const, new List<AttributeSymbol>(), dt);
+                ImportDictionary.Add(v, f);
+                VariantType t;
+                var a = new List<AttributeSymbol>();
+                AppendEmbededAttribute(a, v, out t);
+                var dt = ImportType(v.FieldType);
+                var def = new ValueSymbol(v.GetRawConstantValue());
+                f.Initialize(v.Name, t, a, dt, def);
                 block.Append(f);
             }
             return elem;
@@ -297,12 +307,12 @@ namespace CliTranslate
             return elem;
         }
 
-        private ParameterSymbol ImportArgument(ParameterInfo prm)
+        private ArgumentSymbol ImportArgument(ParameterInfo prm)
         {
-            var elem = new ParameterSymbol();
+            var elem = new ArgumentSymbol();
             if (ImportDictionary.ContainsKey(prm))
             {
-                return (ParameterSymbol)ImportDictionary[prm];
+                return (ArgumentSymbol)ImportDictionary[prm];
             }
             ImportDictionary.Add(prm, elem);
             var attribute = new List<AttributeSymbol>();
@@ -446,9 +456,9 @@ namespace CliTranslate
             return ret;
         }
 
-        private IReadOnlyList<ParameterSymbol> CreateArgumentList(MethodBase method)
+        private IReadOnlyList<ArgumentSymbol> CreateArgumentList(MethodBase method)
         {
-            var ret = new List<ParameterSymbol>();
+            var ret = new List<ArgumentSymbol>();
             foreach (var v in method.GetParameters())
             {
                 ret.Add(ImportArgument(v));

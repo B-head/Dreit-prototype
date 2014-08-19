@@ -72,6 +72,15 @@
   <case>
     <code>
       <![CDATA[
+        if 5 < 10.55 :: 25 =: stdout
+      ]]>
+    </code>
+    <output>25</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
         if 2 <= 5 <= 8 :: stdout := 10
         if un 8 <= 5 <= 2 :: stdout := 20
       ]]>

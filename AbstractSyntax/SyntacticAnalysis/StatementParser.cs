@@ -63,7 +63,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             cp.Text("loop").Lt()
                 .Opt.Transfer(e => c = e, Expression)
                 .If(icp => icp.Text("use").Lt())
-                .Than(icp => icp.Transfer(e => u = e, ArgumentDeclaration))
+                .Than(icp => icp.Transfer(e => u = e, DefaultValueVariantDeclaration))
                 .If(icp => icp.Text("by").Lt())
                 .Than(icp => icp.Transfer(e => b = e, Expression));
             cond = c;
@@ -81,9 +81,9 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Text("for").Lt()
                 .Opt.Transfer(e => cond = e, Expression)
                 .If(icp => icp.Text("of").Lt())
-                .Than(icp => icp.Transfer(e => of = e, ArgumentDeclaration))
+                .Than(icp => icp.Transfer(e => of = e, DefaultValueVariantDeclaration))
                 .If(icp => icp.Text("at").Lt())
-                .Than(icp => icp.Transfer(e => at = e, ArgumentDeclaration))
+                .Than(icp => icp.Transfer(e => at = e, DefaultValueVariantDeclaration))
                 .Transfer(e => block = e, InlineContext)
                 .End(tp => new ForStatement(tp, cond, of, at, block));
         }

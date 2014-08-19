@@ -26,9 +26,10 @@ namespace AbstractSyntax.Symbol
         public RoutineType RoutineType { get; private set; }
         public TokenType OperatorType { get; private set; }
         public ProgramContext Block { get; private set; }
+        public bool IsDefaultThisReturn { get; protected set; }
         protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected IReadOnlyList<GenericSymbol> _Generics;
-        protected IReadOnlyList<ParameterSymbol> _Arguments;
+        protected IReadOnlyList<ArgumentSymbol> _Arguments;
         protected TypeSymbol _CallReturnType;
         private IReadOnlyList<GenericSymbol> _TacitGeneric;
         private bool IsInitialize;
@@ -60,7 +61,7 @@ namespace AbstractSyntax.Symbol
             IsInitialize = true;
         }
 
-        public void Initialize(string name, RoutineType type, TokenType opType, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ParameterSymbol> arg, TypeSymbol rt)
+        public void Initialize(string name, RoutineType type, TokenType opType, IReadOnlyList<AttributeSymbol> attr, IReadOnlyList<GenericSymbol> gnr, IReadOnlyList<ArgumentSymbol> arg, TypeSymbol rt)
         {
             if (IsInitialize)
             {
@@ -88,9 +89,9 @@ namespace AbstractSyntax.Symbol
             get { return _Generics ?? new List<GenericSymbol>();; }
         }
 
-        public virtual IReadOnlyList<ParameterSymbol> Arguments
+        public virtual IReadOnlyList<ArgumentSymbol> Arguments
         {
-            get { return _Arguments ?? new List<ParameterSymbol>();; }
+            get { return _Arguments ?? new List<ArgumentSymbol>();; }
         }
 
         public IReadOnlyList<GenericSymbol> TacitGeneric
@@ -170,6 +171,18 @@ namespace AbstractSyntax.Symbol
             }
         }
 
+        internal override void Prepare()
+        {
+            if(IsOperator)
+            {
+                Root.OpManager.Append(this);
+            }
+            else if(IsConverter)
+            {
+                Root.ConvManager.Append(this);
+            }
+        }
+
         internal override void BuildTacitGeneric(List<GenericSymbol> list)
         {
             if (CurrentScope != null)
@@ -200,6 +213,16 @@ namespace AbstractSyntax.Symbol
                 var i = cls.InheritClass as ClassSymbol;
                 return i.ZeroArgInitializer;
             }
+        }
+
+        public bool IsOperator
+        {
+            get { return RoutineType == RoutineType.FunctionOperator || RoutineType == RoutineType.RoutineOperator; }
+        }
+
+        public bool IsConverter
+        {
+            get { return RoutineType == RoutineType.FunctionConverter || RoutineType == RoutineType.RoutineConverter; }
         }
 
         public bool IsConstructor

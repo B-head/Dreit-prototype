@@ -146,14 +146,15 @@ namespace AbstractSyntax.Expression
 
         private bool HasThisMember(Scope scope)
         {
-            if (scope.IsStaticMember || scope is ThisSymbol)
+            if (!scope.IsInstanceMember || scope is ThisSymbol)
             {
                 return false;
             }
+            var pcls = scope.GetParent<ClassSymbol>();
             var cls = GetParent<ClassSymbol>();
             while (cls != null)
             {
-                if (scope.GetParent<ClassSymbol>() == cls)
+                if (cls == pcls)
                 {
                     return true;
                 }

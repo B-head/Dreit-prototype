@@ -10,5 +10,14 @@ namespace AbstractSyntax.SpecialSymbol
     [Serializable]
     public class UnknownSymbol : TypeSymbol
     {
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+        }
+
+        internal override IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+        }
     }
 }

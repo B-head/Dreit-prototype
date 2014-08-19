@@ -139,7 +139,7 @@ namespace AbstractSyntax
                 {
                     return false;
                 }
-                return GetParent<ClassSymbol>() != null && Attribute.HasAnyAttribute(AttributeType.Static); 
+                return CurrentScope is ClassSymbol && Attribute.HasAnyAttribute(AttributeType.Static); 
             }
         }
 
@@ -152,7 +152,7 @@ namespace AbstractSyntax
                 {
                     return false;
                 }
-                return GetParent<ClassSymbol>() != null && !Attribute.HasAnyAttribute(AttributeType.Static); 
+                return CurrentScope is ClassSymbol && !Attribute.HasAnyAttribute(AttributeType.Static); 
             }
         }
     }

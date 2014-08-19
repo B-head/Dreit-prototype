@@ -3,6 +3,16 @@
   <case>
     <code>
       <![CDATA[
+      var a := ConsoleColor|.Red
+      stdout := a
+      ]]>
+    </code>
+    <output>12</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
       (10 + 20).ToString =: stdout
       ]]>
     </code>
@@ -31,16 +41,7 @@
     </code>
     <output>25</output>
   </case>
-
-  <case>
-    <code>
-      <![CDATA[
-        if 5 < 10.55 :: 25 =: stdout
-      ]]>
-    </code>
-    <output>25</output>
-  </case>
-
+  
   <case>
     <code>
       <![CDATA[
@@ -113,58 +114,5 @@
       ]]>
     </code>
     <output>hello</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      class A {
-        var x := 11
-        var y := 22
-      }
-        
-      operator +(a:A, b:A) {
-        var ret := A
-        ret.x := a.x + b.x
-        ret.y := a.y + b.y
-        return ret
-      }
-      
-      var a := A
-      var b := A
-      var c := a + b
-      stdout := c.x
-      stdout := c.y
-      ]]>
-    </code>
-    <output>22 44</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      class A
-      {
-        var value := 11
-      }
-
-      class B
-      {
-        var value := 22
-      }
-      
-      operator B(a:A)
-      {
-        var ret := B
-        ret.value := a.value
-        return ret
-      }
-
-      var a := A()
-      var b:B := a
-      stdout := b.value
-      ]]>
-    </code>
-    <output>11</output>
   </case>
 </compile-test>

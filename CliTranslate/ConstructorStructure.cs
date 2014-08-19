@@ -64,10 +64,6 @@ namespace CliTranslate
             {
                 return;
             }
-            if (Block != null && Block.IsValueReturn)
-            {
-                Generator.GenerateControl(OpCodes.Pop);
-            }
             Generator.GenerateControl(OpCodes.Ret);
         }
 

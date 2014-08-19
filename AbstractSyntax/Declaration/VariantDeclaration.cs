@@ -15,8 +15,8 @@ namespace AbstractSyntax.Declaration
         public Identifier Ident { get; private set; }
         public Identifier ExplicitType { get; private set; }
 
-        public VariantDeclaration(TextPosition tp, VariantType type, TupleLiteral attr, Identifier ident, Identifier expli)
-            : base(tp, type)
+        public VariantDeclaration(TextPosition tp, VariantType type, TupleLiteral attr, Identifier ident, Identifier expli, Element def = null)
+            : base(tp, type, def)
         {
             AttributeAccess = attr;
             Ident = ident;
@@ -67,6 +67,10 @@ namespace AbstractSyntax.Declaration
                 else if(caller != null && caller.HasCallTarget(this))
                 {
                     _DataType = caller.CallType;
+                }
+                else if (DefaultValue != null)
+                {
+                    _DataType = DefaultValue.ReturnType;
                 }
                 return _DataType;
             }

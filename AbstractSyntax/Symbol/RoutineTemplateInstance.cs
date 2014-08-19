@@ -53,7 +53,7 @@ namespace AbstractSyntax.Symbol
             get { return Routine.Generics; }
         }
 
-        public override IReadOnlyList<ParameterSymbol> Arguments
+        public override IReadOnlyList<ArgumentSymbol> Arguments
         {
             get { return GenericsInstance.MakeArgumentTemplateInstanceList(Root, GetGenericInstance(), Routine.Arguments); }
         }

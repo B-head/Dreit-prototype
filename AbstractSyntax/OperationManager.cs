@@ -61,7 +61,7 @@ namespace AbstractSyntax
         public RoutineSymbol FindDyadic(TokenType op, Scope left, Scope right)
         {
             var s = OpList[op].FindAll(v => v.Arguments[0].ReturnType == left && v.Arguments[1].ReturnType == right);
-            if (s.Count == 1)
+            if (s.Count > 0)
             {
                 return s[0];
             }

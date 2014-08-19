@@ -13,20 +13,31 @@ namespace CliTranslate
         public IReadOnlyList<CilStructure> Expressions { get; private set; }
         public bool IsInline { get; private set; }
 
-        public BlockStructure(TypeStructure rt, IReadOnlyList<CilStructure> exps)
+        public BlockStructure(TypeStructure rt, IReadOnlyList<CilStructure> exps, bool isInline)
             :base(rt)
         {
             Expressions = exps;
+            IsInline = isInline;
             AppendChild(exps);
         }
 
         internal override void BuildCode()
         {
-            ChildBuildCode(this);
-            if (!ResultType.IsVoid && !CurrentContainer.IsDataTypeContext)
+            ChildBuildCode(this, IsInline);
+        }
+
+        internal void ChildBuildCode(CilStructure stru, bool isRet)
+        {
+            for (var i = 0; i < this.Count; ++i)
             {
-                var cg = CurrentContainer.GainGenerator();
-                cg.GenerateControl(OpCodes.Pop);
+                if (i == this.Count - 1 && isRet)
+                {
+                    this[i].BuildCode();
+                }
+                else
+                {
+                    PopBuildCode(this[i]);
+                }
             }
         }
 

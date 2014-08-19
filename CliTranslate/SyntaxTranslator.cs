@@ -263,7 +263,7 @@ namespace CliTranslate
                 var arg = new List<ParameterStructure>();
                 var block = RelayTranslate(element.Block);
                 var crt = RelayTranslate(element.CallReturnType);
-                ret.Initialize("Finalize", element.IsInstanceMember, attr, gnr, arg, crt, block, (MethodInfo)info);
+                ret.Initialize("Finalize", element.IsInstanceMember, attr, gnr, arg, crt, block, element.IsDefaultThisReturn, (MethodInfo)info);
                 return ret;
             }
             else
@@ -275,7 +275,7 @@ namespace CliTranslate
                 var arg = CollectList<ParameterStructure>(element.Arguments);
                 var block = RelayTranslate(element.Block);
                 var crt = RelayTranslate(element.CallReturnType);
-                ret.Initialize(element.Name, element.IsInstanceMember, attr, gnr, arg, crt, block, (MethodInfo)info);
+                ret.Initialize(element.Name, element.IsInstanceMember, attr, gnr, arg, crt, block, element.IsDefaultThisReturn, (MethodInfo)info);
                 return ret;
             }
         }
@@ -290,10 +290,22 @@ namespace CliTranslate
         {
             var attr = element.Attribute.MakeFieldAttributes(element.IsDefinedConstantValue);
             var dt = RelayTranslate(element.DataType);
-            if (element.IsField || element.IsGlobal)
+            if (element.IsClassField || element.IsGlobal)
             {
                 var constval = element.GenerateConstantValue();
-                var ret = new FieldStructure(element.Name, attr, dt, constval, info);
+                var ret = new FieldStructure(element.Name, attr, dt, constval, false, info);
+                return ret;
+            }
+            else if (element.IsEnumField)
+            {
+                var def = element.GenerateConstantValue();
+                var ret = new FieldStructure(element.Name, attr, dt, def, true, info);
+                return ret;
+            }
+            else if (element.IsLoopVariant)
+            {
+                var def = RelayTranslate(element.DefaultValue);
+                var ret = new LoopLocalStructure(element.Name, dt, def);
                 return ret;
             }
             else
@@ -303,24 +315,14 @@ namespace CliTranslate
             }
         }
 
-        private CilStructure Translate(ParameterSymbol element, ParameterInfo info = null)
+        private ParameterStructure Translate(ArgumentSymbol element, ParameterInfo info = null)
         {
-            if (element.IsLoopParameter)
-            {
-                var dt = RelayTranslate(element.DataType);
-                var def = RelayTranslate(element.DefaultValue);
-                var ret = new LoopParameterStructure(element.Name, dt, def);
-                return ret;
-            }
-            else
-            {
-                var attr = ParameterAttributes.None;
-                var pt = RelayTranslate(element.DataType);
-                //todo 無限再帰に対処する。
-                //var def = RelayTranslate(element.DefaultValue);
-                var ret = new ParameterStructure(element.Name, attr, pt, null);
-                return ret;
-            }
+            var attr = ParameterAttributes.None;
+            var pt = RelayTranslate(element.DataType);
+            //todo 無限再帰に対処する。
+            //var def = RelayTranslate(element.DefaultValue);
+            var ret = new ParameterStructure(element.Name, attr, pt, null);
+            return ret;
         }
 
         private GenericParameterStructure Translate(GenericSymbol element, Type info = null)
@@ -355,7 +357,7 @@ namespace CliTranslate
         {
             var exps = CollectList<CilStructure>(element);
             var rt = RelayTranslate(element.ReturnType);
-            var ret = new BlockStructure(rt, exps);
+            var ret = new BlockStructure(rt, exps, element.IsInline);
             return ret;
         }
 

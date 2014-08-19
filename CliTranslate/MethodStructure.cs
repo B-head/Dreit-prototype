@@ -14,16 +14,18 @@ namespace CliTranslate
         public string Name { get; private set; }
         public IReadOnlyList<GenericParameterStructure> Generics { get; private set; }
         public TypeStructure ReturnType { get; private set; }
+        public bool IsDefaultThisReturn { get; private set; }
         [NonSerialized]
         private MethodBuilder Builder;
         [NonSerialized]
         private MethodInfo Info;
 
-        public void Initialize(string name, bool isInstance, MethodAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, BlockStructure block = null, MethodInfo info = null)
+        public void Initialize(string name, bool isInstance, MethodAttributes attr, IReadOnlyList<GenericParameterStructure> gnr, IReadOnlyList<ParameterStructure> arg, TypeStructure ret, BlockStructure block = null, bool isDtr = false, MethodInfo info = null)
         {
             Name = name;
             Generics = gnr;
             ReturnType = ret;
+            IsDefaultThisReturn = isDtr;
             AppendChild(Generics);
             Info = info;
             base.Initialize(isInstance, attr, arg, block);
@@ -68,9 +70,9 @@ namespace CliTranslate
             {
                 return;
             }
-            if (Block != null && Block.IsValueReturn && IsVoidReturn)
+            if (IsDefaultThisReturn)
             {
-                Generator.GenerateControl(OpCodes.Pop);
+                Generator.GenerateControl(OpCodes.Ldarg_0);
             }
             Generator.GenerateControl(OpCodes.Ret);
         }

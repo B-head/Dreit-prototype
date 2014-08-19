@@ -22,11 +22,11 @@ namespace AbstractSyntax.Expression
             {
                 if(Operator == TokenType.Refer)
                 {
-                    return Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { Exp.ReturnType }, new TypeSymbol[0]);
+                    return Root.ClassManager.Issue(Root.Refer, new TypeSymbol[] { Exp.OverLoad.FindDataType().Type }, new TypeSymbol[0]);
                 }
                 else if(Operator == TokenType.Typeof)
                 {
-                    return Root.ClassManager.Issue(Root.Typeof, new TypeSymbol[] { Exp.ReturnType }, new TypeSymbol[0]);
+                    return Root.ClassManager.Issue(Root.Typeof, new TypeSymbol[] { Exp.OverLoad.FindDataType().Type }, new TypeSymbol[0]);
                 }
                 else if(Operator == TokenType.Reject)
                 {

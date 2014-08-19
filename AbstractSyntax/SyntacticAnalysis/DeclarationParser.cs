@@ -112,8 +112,8 @@ namespace AbstractSyntax.SyntacticAnalysis
                 ).Lt()
                 .Text("operator")
                 .Any(
-                    icp => icp.Take(t => { oty = t.TokenType; n = t.Text; }),
-                    icp => icp.Type(t => n = t.Text, TokenType.LetterStartString)
+                    icp => icp.Type(t => n = t.Text, TokenType.LetterStartString),
+                    icp => icp.Take(t => { oty = t.TokenType; n = t.Text; })
                 ).Lt();
             if(oty != TokenType.Unknoun)
             {
@@ -265,7 +265,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             return ret ?? new TupleLiteral();
         }
 
-        private static ParameterDeclaration ArgumentDeclaration(SlimChainParser cp)
+        private static ArgumentDeclaration ArgumentDeclaration(SlimChainParser cp)
         {
             var type = VariantType.Unknown;
             var name = string.Empty;
@@ -278,7 +278,23 @@ namespace AbstractSyntax.SyntacticAnalysis
                     icp => icp.Transfer(e => def = e, NakedRangeLiteral).Type(TokenType.RightPipeline).Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli)),
                     icp => icp.Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli))
                 )
-                .End(tp => new ParameterDeclaration(tp, type, name, attr, expli, def));
+                .End(tp => new ArgumentDeclaration(tp, type, name, attr, expli, def));
+        }
+
+        private static VariantDeclaration DefaultValueVariantDeclaration(SlimChainParser cp)
+        {
+            var type = VariantType.Unknown;
+            var name = string.Empty;
+            TupleLiteral attr = null;
+            Identifier expli = null;
+            Element def = null;
+            return cp.Begin
+                .Any(
+                    icp => icp.Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli)).Type(TokenType.LeftPipeline).Transfer(e => def = e, NakedRangeLiteral),
+                    icp => icp.Transfer(e => def = e, NakedRangeLiteral).Type(TokenType.RightPipeline).Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli)),
+                    icp => icp.Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli))
+                )
+                .End(tp => new VariantDeclaration(tp, type, attr, new Identifier(new TextPosition(), name, TokenType.LetterStartString), expli, def));
         }
 
         private static void ArgumentPart(SlimChainParser cp, out VariantType type, out string name, out TupleLiteral attr, out Identifier expli)
@@ -302,7 +318,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             expli = ex;
         }
 
-        private static ParameterDeclaration EnumField(SlimChainParser cp)
+        private static ArgumentDeclaration EnumField(SlimChainParser cp)
         {
             var name = string.Empty;
             TupleLiteral attr = null;
@@ -313,7 +329,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                     icp => icp.Transfer(e => def = e, NakedRangeLiteral).Type(TokenType.RightPipeline).Call(iicp => EnumFieldPart(iicp, out name, out attr)),
                     icp => icp.Call(iicp => EnumFieldPart(iicp, out name, out attr))
                 )
-                .End(tp => new ParameterDeclaration(tp, VariantType.Const, name, attr, null, def));
+                .End(tp => new ArgumentDeclaration(tp, VariantType.Const, name, attr, null, def));
         }
 
         private static void EnumFieldPart(SlimChainParser cp, out string name, out TupleLiteral attr)

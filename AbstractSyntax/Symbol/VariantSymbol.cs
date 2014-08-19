@@ -1,5 +1,6 @@
 ﻿using AbstractSyntax.Expression;
 using AbstractSyntax.SpecialSymbol;
+using AbstractSyntax.Statement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public VariantType VariantType { get; private set; }
+        public Element DefaultValue { get; private set; }
         protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected TypeSymbol _DataType;
         private bool IsInitialize;
@@ -28,20 +30,24 @@ namespace AbstractSyntax.Symbol
         {
         }
 
-        protected VariantSymbol(VariantType type)
+        protected VariantSymbol(VariantType type, Element def = null)
         {
             VariantType = type;
+            DefaultValue = def;
+            AppendChild(DefaultValue);
             IsInitialize = true;
         }
 
-        protected VariantSymbol(TextPosition tp, VariantType type)
+        protected VariantSymbol(TextPosition tp, VariantType type, Element def = null)
             : base(tp)
         {
             VariantType = type;
+            DefaultValue = def;
+            AppendChild(DefaultValue);
             IsInitialize = true;
         }
 
-        public void Initialize(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt)
+        public void Initialize(string name, VariantType type, IReadOnlyList<AttributeSymbol> attr, TypeSymbol dt, Element def = null)
         {
             if(IsInitialize)
             {
@@ -50,6 +56,8 @@ namespace AbstractSyntax.Symbol
             IsInitialize = true;
             Name = name;
             VariantType = type;
+            DefaultValue = def;
+            AppendChild(DefaultValue);
             _Attribute = attr;
             _DataType = dt;
         }
@@ -74,9 +82,14 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
-        public bool IsField
+        public bool IsClassField
         {
             get { return CurrentScope is ClassSymbol; }
+        }
+
+        public bool IsEnumField
+        {
+            get { return CurrentScope is EnumSymbol; }
         }
 
         public bool IsLocal
@@ -87,6 +100,11 @@ namespace AbstractSyntax.Symbol
         public bool IsGlobal
         {
             get { return CurrentScope is NameSpaceSymbol; }
+        }
+
+        public bool IsLoopVariant
+        {
+            get { return CurrentScope is LoopStatement || CurrentScope is ForStatement; }
         }
 
         public bool IsDefinedConstantValue
@@ -101,6 +119,11 @@ namespace AbstractSyntax.Symbol
 
         public object GenerateConstantValue()
         {
+            var v = DefaultValue as ValueSymbol;
+            if(v != null)
+            {
+                return v.Value;
+            }
             var caller = Parent as CallExpression;
             if (caller == null)
             {
