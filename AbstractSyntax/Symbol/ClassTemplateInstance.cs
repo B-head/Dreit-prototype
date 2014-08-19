@@ -15,6 +15,7 @@ namespace AbstractSyntax.Symbol
         public IReadOnlyList<TypeSymbol> TacitParameters { get; private set; }
 
         public ClassTemplateInstance(TypeSymbol type, IReadOnlyList<TypeSymbol> parameters, IReadOnlyList<TypeSymbol> tacitParameters)
+            :base(ClassType.Unknown)
         {
             //if (type.Generics.Count != parameters.Count || type.TacitGeneric.Count != tacitParameters.Count)
             //{
@@ -117,6 +118,21 @@ namespace AbstractSyntax.Symbol
         public override IReadOnlyList<TypeSymbol> Inherit
         {
             get { return GenericsInstance.MakeClassTemplateInstanceList(Root, GetGenericInstance(), Type.Inherit); }
+        }
+
+        public override TypeSymbol DeclaringType
+        {
+            get { return Type.DeclaringType; }
+        }
+
+        public override bool IsInstanceMember
+        {
+            get { return Type.IsInstanceMember; }
+        }
+
+        public override bool IsStaticMember
+        {
+            get { return Type.IsStaticMember; }
         }
     }
 }

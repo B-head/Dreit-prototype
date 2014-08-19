@@ -12,18 +12,15 @@ namespace AbstractSyntax.Declaration
     public class VariantDeclaration : VariantSymbol
     {
         public TupleLiteral AttributeAccess { get; private set; }
-        public Identifier Ident { get; private set; }
-        public Identifier ExplicitType { get; private set; }
+        public Element ExplicitType { get; private set; }
 
-        public VariantDeclaration(TextPosition tp, VariantType type, TupleLiteral attr, Identifier ident, Identifier expli, Element def = null)
+        public VariantDeclaration(TextPosition tp, VariantType type, string name, TupleLiteral attr, Element expli, Element def = null)
             : base(tp, type, def)
         {
+            Name = name;
             AttributeAccess = attr;
-            Ident = ident;
             ExplicitType = expli;
-            Name = Ident == null ? string.Empty : Ident.Value;
             AppendChild(AttributeAccess);
-            AppendChild(Ident);
             AppendChild(ExplicitType);
         }
 

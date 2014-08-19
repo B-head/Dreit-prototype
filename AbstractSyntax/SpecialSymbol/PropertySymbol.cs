@@ -10,10 +10,10 @@ namespace AbstractSyntax.SpecialSymbol
     [Serializable]
     public class PropertySymbol : RoutineSymbol
     {
-        public ClassSymbol Type { get; private set; }
+        public TypeSymbol Type { get; private set; }
         public bool IsSet { get; private set; }
 
-        public PropertySymbol(string name, ClassSymbol type, bool isSet)
+        public PropertySymbol(string name, TypeSymbol type, bool isSet)
             : base(RoutineType.Routine, TokenType.Unknoun)
         {
             Name = name;

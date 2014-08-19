@@ -1,4 +1,5 @@
 ﻿using AbstractSyntax.Expression;
+using AbstractSyntax.SpecialSymbol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace AbstractSyntax.Symbol
         public ProgramContext Block { get; private set; }
         protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected TypeSymbol _BaseType;
+        public IReadOnlyList<RoutineSymbol> Initializers { get; private set; }
+        public IReadOnlyList<RoutineSymbol> AliasCalls { get; private set; }
 
         protected EnumSymbol(TextPosition tp, string name, ProgramContext block)
             : base(tp)
@@ -46,14 +49,74 @@ namespace AbstractSyntax.Symbol
             get { return _BaseType; }
         }
 
+        internal override void Prepare()
+        {
+            InitInitializers();
+            InitAliasCalls();
+        }
+
+        private void InitInitializers()
+        {
+            var i = new List<RoutineSymbol>();
+            var def = new DefaultSymbol(RoutineSymbol.ConstructorIdentifier, this);
+            Block.Append(def);
+            i.Add(def);
+            Initializers = i;
+        }
+
+        private void InitAliasCalls()
+        {
+            var i = new List<RoutineSymbol>();
+            var g = new PropertySymbol(RoutineSymbol.AliasCallIdentifier, this, false);
+            Block.Append(g);
+            i.Add(g);
+            var s = new PropertySymbol(RoutineSymbol.AliasCallIdentifier, this, true);
+            Block.Append(s);
+            i.Add(s);
+            AliasCalls = i;
+        }
+
         internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            return BaseType.GetTypeMatch(inst, pars, args);
+            var newinst = GenericsInstance.MakeGenericInstance(Generics, pars);
+            var newpars = new List<TypeSymbol>();
+            foreach (var a in Initializers)
+            {
+                foreach (var b in a.GetTypeMatch(newinst, newpars, args))
+                {
+                    yield return b;
+                }
+            }
+            foreach (var a in Root.ConvManager.GetAllInitializer(this))
+            {
+                foreach (var b in a.GetTypeMatch(newinst, newpars, args))
+                {
+                    yield return b;
+                }
+            }
         }
 
         internal override IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            return BaseType.GetInstanceMatch(inst, pars, args);
+            foreach (var a in AliasCalls)
+            {
+                foreach (var b in a.GetTypeMatch(inst, pars, args))
+                {
+                    yield return b;
+                }
+            }
+        }
+
+        internal override IEnumerable<TypeSymbol> EnumSubType()
+        {
+            yield return this;
+            foreach (var a in Inherit)
+            {
+                foreach (var b in a.EnumSubType())
+                {
+                    yield return b;
+                }
+            }
         }
     }
 }

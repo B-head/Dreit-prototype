@@ -10,9 +10,9 @@ namespace CliTranslate
     [Serializable]
     public class EnumStructure : TypeStructure
     {
-        public void Initialize()
+        public void Initialize(string name, TypeAttributes attr, BlockStructure block = null, Type info = null)
         {
-            base.Initialize(null, TypeAttributes.Class);
+            base.Initialize(name, attr, block, info);
         }
     }
 }

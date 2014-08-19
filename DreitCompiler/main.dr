@@ -4,7 +4,8 @@
 	let height:Int32
 
 	rout new(w:Int32, h:Int32) {
-		field := List!ConsoleColor(w * h)
+		field := List!ConsoleColor
+		loop i < w * h use i := 0 by i += 1 :: field.Add(ConsoleColor|.White)
 		width := w
 		height := h
 	}
@@ -14,5 +15,5 @@
 }
 
 var bf := BlockField(10, 24)
-bf[5, 5] := ConsoleColor.White
+bf[5, 5] := ConsoleColor|.Red
 stdout := bf[5, 5]

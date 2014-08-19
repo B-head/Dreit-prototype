@@ -7,7 +7,27 @@
       stdout := a
       ]]>
     </code>
-    <output>12</output>
+    <output>Red</output>
+  </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      5 := 5
+      ]]>
+    </code>
+    <error key="not-mutable"/>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32, b:Int32) :: a + b =: stdout
+      
+      foo[10] := 20
+      ]]>
+    </code>
+    <output>30</output>
   </case>
 
   <case>

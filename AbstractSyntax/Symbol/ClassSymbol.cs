@@ -38,11 +38,7 @@ namespace AbstractSyntax.Symbol
         {
             ClassType = type;
             Block = new ProgramContext();
-            This = new ThisSymbol(this);
-            Block.Append(This);
             AppendChild(Block);
-            InitInitializers();
-            InitAliasCalls();
             IsInitialize = true;
         }
 
@@ -55,8 +51,6 @@ namespace AbstractSyntax.Symbol
             This = new ThisSymbol(this);
             Block.Append(This);
             AppendChild(Block);
-            InitInitializers();
-            InitAliasCalls();
             IsInitialize = true;
         }
 
@@ -76,6 +70,10 @@ namespace AbstractSyntax.Symbol
             _Attribute = attr;
             _Generics = gnr;
             _Inherit = inherit;
+        }
+
+        internal override void Prepare()
+        {
             InitInitializers();
             InitAliasCalls();
         }

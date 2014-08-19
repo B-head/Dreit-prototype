@@ -283,6 +283,10 @@ namespace CliTranslate
         private EnumStructure Translate(EnumSymbol element, Type info = null)
         {
             var ret = new EnumStructure();
+            TransDictionary.Add(element, ret);
+            var attr = element.Attribute.MakeTypeAttributes(false);
+            var block = RelayTranslate(element.Block);
+            ret.Initialize(element.FullName, attr, block, info);
             return ret;
         }
 
@@ -399,9 +403,16 @@ namespace CliTranslate
             }
             else
             {
-                var args = CollectList<ExpressionStructure>(element.Arguments);
+                var args = CollectList<ExpressionStructure>(element.VirtualArgument);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, access, variant, args, isVariadic);
+                if (element.IsConnectPipeline)
+                {
+                    ret = new CallStructure(rt, null, pre, access, variant, null, isVariadic);
+                }
+                else
+                {
+                    ret = new CallStructure(rt, call, pre, access, variant, args, isVariadic);
+                }
             }
             return ret;
         }

@@ -215,6 +215,16 @@ namespace AbstractSyntax.Symbol
             }
         }
 
+        public override bool IsInstanceMember
+        {
+            get { return base.IsInstanceMember && !IsConstructor; }
+        }
+
+        public override bool IsStaticMember
+        {
+            get { return base.IsStaticMember && !IsConstructor; }
+        }
+
         public bool IsOperator
         {
             get { return RoutineType == RoutineType.FunctionOperator || RoutineType == RoutineType.RoutineOperator; }
@@ -225,7 +235,7 @@ namespace AbstractSyntax.Symbol
             get { return RoutineType == RoutineType.FunctionConverter || RoutineType == RoutineType.RoutineConverter; }
         }
 
-        public bool IsConstructor
+        public virtual bool IsConstructor
         {
             get
             {
@@ -241,7 +251,7 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        public bool IsDestructor
+        public virtual bool IsDestructor
         {
             get
             {
@@ -257,7 +267,7 @@ namespace AbstractSyntax.Symbol
             }
         }
 
-        public bool IsAliasCall
+        public virtual bool IsAliasCall
         {
             get
             {

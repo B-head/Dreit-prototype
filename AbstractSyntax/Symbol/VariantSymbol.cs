@@ -114,7 +114,7 @@ namespace AbstractSyntax.Symbol
 
         public bool IsImmtable
         {
-            get { return VariantType == VariantType.Let || VariantType == VariantType.Const; }
+            get { return VariantType == VariantType.Let || VariantType == VariantType.Const || VariantType == VariantType.Unknown; }
         }
 
         public object GenerateConstantValue()

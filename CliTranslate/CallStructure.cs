@@ -29,7 +29,10 @@ namespace CliTranslate
             {
                 AppendChild(Access);
             }
-            AppendChild(Arguments);
+            if (Arguments != null)
+            {
+                AppendChild(Arguments);
+            }
         }
 
         public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure access, CilStructure variant, IReadOnlyList<ExpressionStructure> args, bool isVariadic = false)
@@ -45,7 +48,10 @@ namespace CliTranslate
             {
                 AppendChild(Access);
             }
-            AppendChild(Arguments);
+            if (Arguments != null)
+            {
+                AppendChild(Arguments);
+            }
         }
 
         internal override void BuildCode()
@@ -58,6 +64,10 @@ namespace CliTranslate
             if (Pre != null)
             {
                 Pre.BuildCode();
+            }
+            if (Call == null)
+            {
+                return;
             }
             if (IsVariadic)
             {

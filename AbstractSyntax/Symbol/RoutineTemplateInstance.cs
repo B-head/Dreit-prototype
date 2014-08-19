@@ -74,5 +74,35 @@ namespace AbstractSyntax.Symbol
         {
             get { return GenericsInstance.MakeClassTemplateInstance(Root, GetGenericInstance(), Routine.GetParent<TypeSymbol>()); }
         }
+
+        public override bool IsConstructor
+        {
+            get { return Routine.IsConstructor; }
+        }
+
+        public override bool IsDestructor
+        {
+            get { return Routine.IsDestructor; }
+        }
+
+        public override bool IsAliasCall
+        {
+            get { return Routine.IsAliasCall; }
+        }
+
+        public override TypeSymbol DeclaringType
+        {
+            get { return Routine.DeclaringType; }
+        }
+
+        public override bool IsInstanceMember
+        {
+            get { return Routine.IsInstanceMember; }
+        }
+
+        public override bool IsStaticMember
+        {
+            get { return Routine.IsStaticMember; }
+        }
     }
 }

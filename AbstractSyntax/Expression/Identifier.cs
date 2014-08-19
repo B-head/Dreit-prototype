@@ -107,12 +107,21 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (_IsTacitThis != null)
+                if (!AccessSymbol.IsInstanceMember || AccessSymbol is ThisSymbol)
                 {
-                    return _IsTacitThis.Value;
+                    return false;
                 }
-                _IsTacitThis = HasThisMember(AccessSymbol);
-                return _IsTacitThis.Value;
+                var pcls = AccessSymbol.DeclaringType;
+                var cls = GetParent<ClassSymbol>();
+                while (cls != null)
+                {
+                    if (cls == pcls)
+                    {
+                        return true;
+                    }
+                    cls = cls.InheritClass as ClassSymbol;
+                }
+                return false;
             }
         }
 
@@ -142,25 +151,6 @@ namespace AbstractSyntax.Expression
                 return false;
             }
             return r.IsStaticMember;
-        }
-
-        private bool HasThisMember(Scope scope)
-        {
-            if (!scope.IsInstanceMember || scope is ThisSymbol)
-            {
-                return false;
-            }
-            var pcls = scope.GetParent<ClassSymbol>();
-            var cls = GetParent<ClassSymbol>();
-            while (cls != null)
-            {
-                if (cls == pcls)
-                {
-                    return true;
-                }
-                cls = cls.InheritClass as ClassSymbol;
-            }
-            return false;
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

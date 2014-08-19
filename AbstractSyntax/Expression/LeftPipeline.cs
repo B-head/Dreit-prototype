@@ -43,6 +43,11 @@ namespace AbstractSyntax.Expression
             get { return Operator.ToString(); }
         }
 
+        public override bool IsPipeline
+        {
+            get { return true; }
+        }
+
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
             if(Right != null && Right is RightPipeline)

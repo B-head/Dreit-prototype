@@ -42,5 +42,10 @@ namespace AbstractSyntax.Expression
         {
             get { return Operator.ToString(); }
         }
+
+        public override bool IsPipeline
+        {
+            get { return true; }
+        }
     }
 }
