@@ -37,6 +37,11 @@ namespace AbstractSyntax.Literal
             get { return true; }
         }
 
+        public override dynamic GenerateConstantValue()
+        {
+            return ShowValue;
+        }
+
         public string ShowValue
         {
             get { return Regex.Replace(Value, @"\\.", TrimEscape); }

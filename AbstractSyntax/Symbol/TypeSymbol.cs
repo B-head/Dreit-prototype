@@ -11,6 +11,7 @@ namespace AbstractSyntax.Symbol
     public abstract class TypeSymbol : Scope
     {
         private IReadOnlyList<GenericSymbol> _TacitGeneric;
+        private bool DisguiseScopeMode;
 
         protected TypeSymbol()
         {
@@ -36,6 +37,11 @@ namespace AbstractSyntax.Symbol
         public override bool IsConstant
         {
             get { return true; }
+        }
+
+        public override bool IsExecutionContext
+        {
+            get { return false; }
         }
 
         public virtual IReadOnlyList<GenericSymbol> Generics
@@ -72,19 +78,60 @@ namespace AbstractSyntax.Symbol
             list.AddRange(Generics);
         }
 
+        internal override OverLoadChain NameResolution(string name)
+        {
+            if (DisguiseScopeMode)
+            {
+                return CurrentScope.NameResolution(name);
+            }
+            if (ReferenceCache.ContainsKey(name))
+            {
+                return ReferenceCache[name];
+            }
+            var n = CurrentScope.NameResolution(name);
+            var i = InheritNameResolution(name);
+            if (ChildSymbols.ContainsKey(name))
+            {
+                var s = ChildSymbols[name];
+                n = new OverLoadChain(this, n, i, s);
+            }
+            else
+            {
+                n = new OverLoadChain(this, n, i);
+            }
+            ReferenceCache.Add(name, n);
+            return n;
+        }
+
+        private IReadOnlyList<OverLoadChain> InheritNameResolution(string name)
+        {
+            var ret = new List<OverLoadChain>();
+            DisguiseScopeMode = true;
+            foreach (var v in Inherit)
+            {
+                var ol = v.NameResolution(name) as OverLoadChain;
+                if (ol != null)
+                {
+                    ret.Add(ol);
+                }
+            }
+            DisguiseScopeMode = false;
+            return ret;
+        }
+
         internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+            throw new NotImplementedException();
         }
 
         internal virtual IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
         {
-            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+            throw new NotImplementedException();
         }
 
         internal virtual IEnumerable<TypeSymbol> EnumSubType()
         {
-            yield break;
+            throw new NotImplementedException();
         }
 
         internal static bool HasAnyErrorType(params TypeSymbol[] scope)

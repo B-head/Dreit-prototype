@@ -130,30 +130,24 @@ namespace AbstractSyntax
             get { return new List<AttributeSymbol>(); }
         }
 
-        public bool IsStaticMember
+        public virtual TypeSymbol DeclaringType
         {
-            get 
-            {
-                var rout = this as RoutineSymbol;
-                if(rout != null && rout.IsConstructor)
-                {
-                    return false;
-                }
-                return GetParent<ClassSymbol>() != null && Attribute.HasAnyAttribute(AttributeType.Static); 
-            }
+            get { return GetParent<TypeSymbol>(); }
         }
 
-        public bool IsInstanceMember
+        public virtual bool IsExecutionContext
         {
-            get
-            {
-                var rout = this as RoutineSymbol;
-                if (rout != null && rout.IsConstructor)
-                {
-                    return false;
-                }
-                return GetParent<ClassSymbol>() != null && !Attribute.HasAnyAttribute(AttributeType.Static); 
-            }
+            get { return true; }
+        }
+
+        public virtual bool IsStaticMember
+        {
+            get { return CurrentScope is ClassSymbol && Attribute.HasAnyAttribute(AttributeType.Static); }
+        }
+
+        public virtual bool IsInstanceMember
+        {
+            get { return CurrentScope is ClassSymbol && !Attribute.HasAnyAttribute(AttributeType.Static); }
         }
     }
 }

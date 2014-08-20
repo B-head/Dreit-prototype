@@ -156,9 +156,18 @@ namespace CliTranslate
 
         private ConstructorStructure Translate(DefaultSymbol element)
         {
-            var ret = new ConstructorStructure();
-            ret.InitializeDefault();
-            return ret;
+            if (element.IsConstructor)
+            {
+                var ret = new ConstructorStructure();
+                ret.InitializeDefault();
+                var super = RelayTranslate(element.InheritInitializer);
+                ret.RegisterSuperConstructor(super);
+                return ret;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private ParameterStructure Translate(ThisSymbol element)
@@ -263,7 +272,7 @@ namespace CliTranslate
                 var arg = new List<ParameterStructure>();
                 var block = RelayTranslate(element.Block);
                 var crt = RelayTranslate(element.CallReturnType);
-                ret.Initialize("Finalize", element.IsInstanceMember, attr, gnr, arg, crt, block, (MethodInfo)info);
+                ret.Initialize("Finalize", element.IsInstanceMember, attr, gnr, arg, crt, block, element.IsDefaultThisReturn, (MethodInfo)info);
                 return ret;
             }
             else
@@ -275,7 +284,7 @@ namespace CliTranslate
                 var arg = CollectList<ParameterStructure>(element.Arguments);
                 var block = RelayTranslate(element.Block);
                 var crt = RelayTranslate(element.CallReturnType);
-                ret.Initialize(element.Name, element.IsInstanceMember, attr, gnr, arg, crt, block, (MethodInfo)info);
+                ret.Initialize(element.Name, element.IsInstanceMember, attr, gnr, arg, crt, block, element.IsDefaultThisReturn, (MethodInfo)info);
                 return ret;
             }
         }
@@ -283,6 +292,10 @@ namespace CliTranslate
         private EnumStructure Translate(EnumSymbol element, Type info = null)
         {
             var ret = new EnumStructure();
+            TransDictionary.Add(element, ret);
+            var attr = element.Attribute.MakeTypeAttributes(false);
+            var block = RelayTranslate(element.Block);
+            ret.Initialize(element.FullName, attr, block, info);
             return ret;
         }
 
@@ -290,10 +303,22 @@ namespace CliTranslate
         {
             var attr = element.Attribute.MakeFieldAttributes(element.IsDefinedConstantValue);
             var dt = RelayTranslate(element.DataType);
-            if (element.IsField || element.IsGlobal)
+            if (element.IsClassField || element.IsGlobal)
             {
-                var constval = element.GenerateConstantValue();
-                var ret = new FieldStructure(element.Name, attr, dt, constval, info);
+                var def = element.IsClassField ? element.GenerateConstantValue() : null;
+                var ret = new FieldStructure(element.Name, attr, dt, def, false, info);
+                return ret;
+            }
+            else if (element.IsEnumField)
+            {
+                var def = element.GenerateConstantValue();
+                var ret = new FieldStructure(element.Name, attr, dt, def, true, info);
+                return ret;
+            }
+            else if (element.IsLoopVariant)
+            {
+                var def = RelayTranslate(element.DefaultValue);
+                var ret = new LoopLocalStructure(element.Name, dt, def);
                 return ret;
             }
             else
@@ -303,24 +328,14 @@ namespace CliTranslate
             }
         }
 
-        private CilStructure Translate(ParameterSymbol element, ParameterInfo info = null)
+        private ParameterStructure Translate(ArgumentSymbol element, ParameterInfo info = null)
         {
-            if (element.IsLoopParameter)
-            {
-                var dt = RelayTranslate(element.DataType);
-                var def = RelayTranslate(element.DefaultValue);
-                var ret = new LoopParameterStructure(element.Name, dt, def);
-                return ret;
-            }
-            else
-            {
-                var attr = ParameterAttributes.None;
-                var pt = RelayTranslate(element.DataType);
-                //todo 無限再帰に対処する。
-                //var def = RelayTranslate(element.DefaultValue);
-                var ret = new ParameterStructure(element.Name, attr, pt, null);
-                return ret;
-            }
+            var attr = ParameterAttributes.None;
+            var pt = RelayTranslate(element.DataType);
+            //todo 無限再帰に対処する。
+            //var def = RelayTranslate(element.DefaultValue);
+            var ret = new ParameterStructure(element.Name, attr, pt, null);
+            return ret;
         }
 
         private GenericParameterStructure Translate(GenericSymbol element, Type info = null)
@@ -355,7 +370,7 @@ namespace CliTranslate
         {
             var exps = CollectList<CilStructure>(element);
             var rt = RelayTranslate(element.ReturnType);
-            var ret = new BlockStructure(rt, exps);
+            var ret = new BlockStructure(rt, exps, element.IsInline);
             return ret;
         }
 
@@ -392,14 +407,24 @@ namespace CliTranslate
                 var cal = new DyadicOperationStructure(crt, left, right, calcall);
                 var args = new List<ExpressionStructure>();
                 args.Add(cal);
+                var convs = new List<BuilderStructure>();
+                convs.Add(null);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, null, variant, args, isVariadic);
+                ret = new CallStructure(rt, call, pre, null, variant, args, convs, isVariadic);
             }
             else
             {
-                var args = CollectList<ExpressionStructure>(element.Arguments);
+                var args = CollectList<ExpressionStructure>(element.VirtualArgument);
+                var convs = CollectList<BuilderStructure>(element.CallConverter);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, access, variant, args, isVariadic);
+                if (element.IsConnectPipeline)
+                {
+                    ret = new CallStructure(null, null, pre, access, variant, null, null, isVariadic);
+                }
+                else
+                {
+                    ret = new CallStructure(rt, call, pre, access, variant, args, convs, isVariadic);
+                }
             }
             return ret;
         }

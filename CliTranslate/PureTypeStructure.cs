@@ -28,6 +28,10 @@ namespace CliTranslate
 
         internal IEnumerable<FieldStructure> GetFields()
         {
+            if(Block == null)
+            {
+                yield break;
+            }
             foreach(var v in GetFields(Block))
             {
                 yield return v;
@@ -87,6 +91,17 @@ namespace CliTranslate
             {
                 Root.TraversalPostBuild(BaseType);
             }
+            var cctor = Builder.DefineTypeInitializer();
+            var cg = new CodeGenerator(cctor.GetILGenerator());
+            foreach (var f in GetFields())
+            {
+                if (!f.IsStatic)
+                {
+                    continue;
+                }
+                f.BuildInitValue(cg);
+            }
+            cg.GenerateCode(OpCodes.Ret);
             Builder.CreateType();
         }
 

@@ -55,13 +55,13 @@ namespace AbstractSyntax
             return ret;
         }
 
-        public static IReadOnlyList<ParameterSymbol> MakeArgumentTemplateInstanceList(Root root, IReadOnlyList<GenericsInstance> inst, IReadOnlyList<ParameterSymbol> args)
+        public static IReadOnlyList<ArgumentSymbol> MakeArgumentTemplateInstanceList(Root root, IReadOnlyList<GenericsInstance> inst, IReadOnlyList<ArgumentSymbol> args)
         {
-            var ret = new List<ParameterSymbol>();
+            var ret = new List<ArgumentSymbol>();
             foreach (var v in args)
             {
                 var t = MakeClassTemplateInstance(root, inst, v.DataType);
-                var p = new ParameterSymbol();
+                var p = new ArgumentSymbol();
                 p.Initialize(v.Name, v.VariantType, v.Attribute, t);
                 ret.Add(p);
             }

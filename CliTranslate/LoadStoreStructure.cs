@@ -28,7 +28,11 @@ namespace CliTranslate
             var f = variant as FieldStructure;
             if(f != null)
             {
-                if (IsStore)
+                if(f.IsEnumField)
+                {
+                    cg.GeneratePrimitive((dynamic)f.DefaultValue);
+                }
+                else if (IsStore)
                 {
                     if(f.IsStatic)
                     {
@@ -37,7 +41,7 @@ namespace CliTranslate
                     }
                     else
                     {
-                        cg.GenerateControl(OpCodes.Dup);
+                        cg.GenerateCode(OpCodes.Dup);
                         var temp = new LocalStructure(f.DataType, cg);
                         cg.GenerateStore(temp);
                         cg.GenerateStore(f);
@@ -70,7 +74,7 @@ namespace CliTranslate
                 cg.GenerateLoad(p);
                 return;
             }
-            var lo = variant as LoopParameterStructure;
+            var lo = variant as LoopLocalStructure;
             if (lo != null)
             {
                 if (IsStore)

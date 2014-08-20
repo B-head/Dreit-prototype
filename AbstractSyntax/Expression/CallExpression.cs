@@ -16,7 +16,6 @@ namespace AbstractSyntax.Expression
         public Element Access { get; private set; }
         public TupleLiteral Arguments { get; private set; }
         private OverLoadCallMatch? _Match;
-        private RoutineSymbol _CallRoutine;
         private RoutineSymbol _CalculateCallScope;
 
         public CallExpression(TextPosition tp, Element acs, TupleLiteral args)
@@ -60,6 +59,22 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public IReadOnlyList<Element> VirtualArgument
+        {
+            get
+            {
+                if(IsConnectCall)
+                {
+                    var call = (CallExpression)Access;
+                    return call.Arguments.Concat(Arguments).ToList();
+                }
+                else
+                {
+                    return Arguments;
+                }
+            }
+        }
+
         public OverLoadCallMatch Match
         {
             get
@@ -68,7 +83,7 @@ namespace AbstractSyntax.Expression
                 {
                     return _Match.Value;
                 }
-                _Match = Access.OverLoad.CallSelect(Arguments.GetDataTypes());
+                _Match = Access.OverLoad.CallSelect(VirtualArgument.GetDataTypes());
                 return _Match.Value;
             }
         }
@@ -80,14 +95,12 @@ namespace AbstractSyntax.Expression
 
         public RoutineSymbol CallRoutine
         {
-            get
-            {
-                if (_CallRoutine == null)
-                {
-                    _CallRoutine = Match.Call;
-                }
-                return _CallRoutine;
-            }
+            get { return Match.Call; }
+        }
+
+        public IReadOnlyList<RoutineSymbol> CallConverter
+        {
+            get { return Match.Converters; }
         }
 
         public override TypeSymbol ReturnType
@@ -95,6 +108,21 @@ namespace AbstractSyntax.Expression
             get
             {
                 return CallRoutine.CallReturnType;
+            }
+        }
+
+        public override OverLoad OverLoad
+        {
+            get
+            {
+                if(IsConnectPipeline)
+                {
+                    return Access.OverLoad;
+                }
+                else
+                {
+                    return Root.SimplexManager.Issue(this);
+                }
             }
         }
 
@@ -145,6 +173,19 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        public bool IsConstructorLocation
+        {
+            get
+            {
+                var f = GetParent<RoutineSymbol>();
+                if (f == null)
+                {
+                    return false;
+                }
+                return f.IsConstructor;
+            }
+        }
+
         public bool IsDataTypeLocation
         {
             get { return CurrentScope is ClassDeclaration; }
@@ -152,7 +193,22 @@ namespace AbstractSyntax.Expression
 
         public bool IsImmutableCall
         {
-            get { return ReferVariant.IsImmtable; }
+            get { return CallRoutine is PropertySymbol && ReferVariant.IsImmtable; }
+        }
+
+        public virtual bool IsPipeline
+        {
+            get { return false; }
+        }
+
+        public bool IsConnectCall
+        {
+            get { return IsPipeline && Access is CallExpression; }
+        }
+
+        public bool IsConnectPipeline
+        {
+            get { return !IsPipeline && (Parent is LeftPipeline || Parent is RightPipeline); }
         }
 
         public RoutineSymbol CalculateCallScope
@@ -188,30 +244,32 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (Arguments.GetDataTypes().Count != 1)
+                if (Arguments.Count != 1)
                 {
                     return Root.ErrorType;
                 }
-                return Arguments.GetDataTypes()[0];
+                return Arguments[0].ReturnType;
             }
         }
 
-        public object GenelateConstantValue()
+        public Element CallValue
         {
-            if (Arguments.Count != 1)
+            get
             {
-                return null;
+                if (Arguments.Count != 1)
+                {
+                    return Root.ErrorVariant;
+                }
+                return Arguments[0];
             }
-            var exp = Arguments[0] as NumericLiteral;
-            if(exp == null)
-            {
-                return null;
-            }
-            return exp.Parse();
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
+            if(IsConnectPipeline)
+            {
+                return;
+            }
             switch (Match.Result)
             {
                 case CallMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
@@ -221,7 +279,7 @@ namespace AbstractSyntax.Expression
                 case CallMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
                 case CallMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
             }
-            if (IsImmutableCall && !(Access is VariantDeclaration))
+            if (IsImmutableCall && !IsConstructorLocation && !(Access is VariantDeclaration))
             {
                 cmm.CompileError("not-mutable", this);
             }

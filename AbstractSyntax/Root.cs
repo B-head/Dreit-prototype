@@ -57,16 +57,25 @@ namespace AbstractSyntax
             ConvManager = new ConversionManager(this);
             OpManager = new OperationManager(this); 
             UndefinedOverLord = new OverLoadChain(this, null);
-            CreateEmbedIdentifier();
             AppendChild(EmbedList);
             AppendChild(ClassManager);
             AppendChild(RoutineManager);
+            CreateEmbedIdentifier();
         }
 
         public void SemanticAnalysis()
         {
-            CreateEmbedOperator();
+            TraversalPrepare(this);
             TraversalCheckSemantic(this);
+        }
+
+        private void TraversalPrepare(Element element)
+        {
+            element.Prepare();
+            foreach (var v in element)
+            {
+                TraversalPrepare(v);
+            }
         }
 
         private void TraversalCheckSemantic(Element element)
@@ -76,6 +85,14 @@ namespace AbstractSyntax
             {
                 TraversalCheckSemantic(v);
             }
+        }
+
+        internal override void Prepare()
+        {
+            var nt = GetBuildInNumberType();
+            CreateEmbedCast(nt);
+            CreateBuiltInMonadicOperator(nt);
+            CreateBuiltInDyadicOperator(nt);
         }
 
         private void CreateEmbedIdentifier()
@@ -132,14 +149,6 @@ namespace AbstractSyntax
             EmbedList.AppendChild(new BooleanSymbol(true));
         }
 
-        private void CreateEmbedOperator()
-        {
-            var nt = GetBuildInNumberType();
-            CreateEmbedCast(nt);
-            CreateBuiltInMonadicOperator(nt);
-            CreateBuiltInDyadicOperator(nt);
-        }
-
         private void CreateEmbedCast(IReadOnlyDictionary<ClassSymbol, PrimitiveType> nt)
         {
             foreach(var a in nt.Keys)
@@ -152,7 +161,6 @@ namespace AbstractSyntax
                     }
                     var p = new CastSymbol(nt[b], a, b);
                     EmbedList.AppendChild(p);
-                    ConvManager.Append(p);
                 }
             }
         }
@@ -162,7 +170,6 @@ namespace AbstractSyntax
             var bl = (ClassSymbol)NameResolution("Boolean").FindDataType().Type;
             var nbp = new MonadicOperatorSymbol(TokenType.Not, bl, bl);
             EmbedList.AppendChild(nbp);
-            OpManager.Append(nbp);
             foreach (var a in nt.Keys)
             {
                 foreach (TokenType t in MonadicOperatorSymbol.EnumOperator())
@@ -177,7 +184,6 @@ namespace AbstractSyntax
                         p = new MonadicOperatorSymbol(t, a, a);
                     }
                     EmbedList.AppendChild(p);
-                    OpManager.Append(p);
                 }
             }
         }
@@ -205,7 +211,6 @@ namespace AbstractSyntax
                             p = new DyadicOperatorSymbol(t, a, b, b);
                         }
                         EmbedList.AppendChild(p);
-                        OpManager.Append(p);
                     }
                 }
             }

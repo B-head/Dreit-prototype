@@ -13,8 +13,6 @@ namespace CliTranslate
         public ExpressionStructure Condition { get; private set; }
         public BlockStructure Then { get; private set; }
         public BlockStructure Else { get; private set; }
-        public bool IsInlineThen { get; private set; }
-        public bool IsInlineElse { get; private set; }
         public LabelStructure ElseLabel { get; private set; }
         public LabelStructure ExitLabel { get; private set; }
 
@@ -45,6 +43,18 @@ namespace CliTranslate
             if (Else != null)
             {
                 Else.BuildCode();
+            }
+            else if (Then.IsInline && !ResultType.IsVoid)
+            {
+                if (ResultType.IsValueType)
+                {
+                    var loc = new LocalStructure(ResultType, cg);
+                    cg.GenerateLoad(loc);
+                }
+                else
+                {
+                    cg.GenerateCode(OpCodes.Ldnull);
+                }
             }
             cg.MarkLabel(ExitLabel);
             cg.EndScope();

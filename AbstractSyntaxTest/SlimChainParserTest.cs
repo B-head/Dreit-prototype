@@ -108,7 +108,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var ret = cp.Begin.Text("test")
                 .If(icp => icp.Type(TokenType.LeftParenthesis))
-                .Than(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
+                .Then(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
                 .End(tp => new TupleLiteral(tp, (Element)null));
             if (expected == 0)
             {
@@ -135,7 +135,7 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var ret = cp.Begin.Text("test")
                 .If(icp => icp.Type(TokenType.LeftParenthesis))
-                .Than(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
+                .Then(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
                 .Else(icp => icp.Type(TokenType.LeftBracket).Type(TokenType.LetterStartString).Type(TokenType.RightBracket))
                 .End(tp => new TupleLiteral(tp, (Element)null));
             if (expected == 0)
@@ -163,9 +163,9 @@ namespace AbstractSyntaxTest
             var cp = new SlimChainParser(tc);
             var ret = cp.Begin.Text("test")
                 .If(icp => icp.Type(TokenType.LeftParenthesis))
-                .Than(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
+                .Then(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightParenthesis))
                 .ElseIf(icp => icp.Type(TokenType.LeftBracket))
-                .Than(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightBracket))
+                .Then(icp => icp.Type(TokenType.LetterStartString).Type(TokenType.RightBracket))
                 .Else(icp => icp.Type(TokenType.LetterStartString))
                 .End(tp => new TupleLiteral(tp, (Element)null));
             if (expected == 0)

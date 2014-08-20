@@ -12,19 +12,30 @@ namespace AbstractSyntax.Declaration
     public class VariantDeclaration : VariantSymbol
     {
         public TupleLiteral AttributeAccess { get; private set; }
-        public Identifier Ident { get; private set; }
-        public Identifier ExplicitType { get; private set; }
+        public Element ExplicitType { get; private set; }
 
-        public VariantDeclaration(TextPosition tp, VariantType type, TupleLiteral attr, Identifier ident, Identifier expli)
-            : base(tp, type)
+        public VariantDeclaration(TextPosition tp, VariantType type, string name, TupleLiteral attr, Element expli, Element def = null)
+            : base(tp, type, def)
         {
+            Name = name;
             AttributeAccess = attr;
-            Ident = ident;
             ExplicitType = expli;
-            Name = Ident == null ? string.Empty : Ident.Value;
             AppendChild(AttributeAccess);
-            AppendChild(Ident);
             AppendChild(ExplicitType);
+        }
+
+        internal override void Prepare()
+        {
+            if (DefaultValue != null)
+            {
+                return;
+            }
+            var caller = Parent as CallExpression;
+            if (caller == null)
+            {
+                return;
+            }
+            DefaultValue = caller.CallValue;
         }
 
         public override IReadOnlyList<AttributeSymbol> Attribute
@@ -39,6 +50,11 @@ namespace AbstractSyntax.Declaration
                 foreach (var v in AttributeAccess)
                 {
                     a.Add(v.OverLoad.FindAttribute());
+                }
+                if (VariantType == VariantType.Const)
+                {
+                    var p = NameResolution("static").FindAttribute();
+                    a.Add(p);
                 }
                 if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {
@@ -67,6 +83,10 @@ namespace AbstractSyntax.Declaration
                 else if(caller != null && caller.HasCallTarget(this))
                 {
                     _DataType = caller.CallType;
+                }
+                else if (DefaultValue != null)
+                {
+                    _DataType = DefaultValue.ReturnType;
                 }
                 return _DataType;
             }

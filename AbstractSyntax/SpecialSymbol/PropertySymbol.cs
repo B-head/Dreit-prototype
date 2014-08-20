@@ -10,10 +10,10 @@ namespace AbstractSyntax.SpecialSymbol
     [Serializable]
     public class PropertySymbol : RoutineSymbol
     {
-        public ClassSymbol Type { get; private set; }
+        public TypeSymbol Type { get; private set; }
         public bool IsSet { get; private set; }
 
-        public PropertySymbol(string name, ClassSymbol type, bool isSet)
+        public PropertySymbol(string name, TypeSymbol type, bool isSet)
             : base(RoutineType.Routine, TokenType.Unknoun)
         {
             Name = name;
@@ -35,7 +35,7 @@ namespace AbstractSyntax.SpecialSymbol
             }
         }
 
-        public override IReadOnlyList<ParameterSymbol> Arguments
+        public override IReadOnlyList<ArgumentSymbol> Arguments
         {
             get
             {
@@ -43,11 +43,11 @@ namespace AbstractSyntax.SpecialSymbol
                 {
                     if (IsSet)
                     {
-                        _Arguments = ParameterSymbol.MakeParameters(Type);
+                        _Arguments = ArgumentSymbol.MakeParameters(Type);
                     }
                     else
                     {
-                        _Arguments = new ParameterSymbol[] { };
+                        _Arguments = new ArgumentSymbol[] { };
                     }
                 }
                 return _Arguments;

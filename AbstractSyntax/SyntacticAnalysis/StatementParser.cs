@@ -14,15 +14,15 @@ namespace AbstractSyntax.SyntacticAnalysis
         private static IfStatement IfStatement(SlimChainParser cp)
         {
             Element cond = null;
-            ProgramContext than = null;
+            ProgramContext then = null;
             ProgramContext els = null;
             return cp.Begin
                 .Text("if").Lt()
                 .Transfer(e => cond = e, Expression)
-                .Transfer(e => than = e, ThanContext)
+                .Transfer(e => then = e, ThanContext)
                 .If(icp => icp.Text("else").Lt())
-                .Than(icp => icp.Transfer(e => els = e, DirectContext))
-                .End(tp => new IfStatement(tp, cond, than, els));
+                .Then(icp => icp.Transfer(e => els = e, DirectContext))
+                .End(tp => new IfStatement(tp, cond, then, els));
         }
 
         private static PatternMatchStatement PatternMatchStatement(SlimChainParser cp)
@@ -63,9 +63,9 @@ namespace AbstractSyntax.SyntacticAnalysis
             cp.Text("loop").Lt()
                 .Opt.Transfer(e => c = e, Expression)
                 .If(icp => icp.Text("use").Lt())
-                .Than(icp => icp.Transfer(e => u = e, ArgumentDeclaration))
+                .Then(icp => icp.Transfer(e => u = e, DefaultValueVariantDeclaration))
                 .If(icp => icp.Text("by").Lt())
-                .Than(icp => icp.Transfer(e => b = e, Expression));
+                .Then(icp => icp.Transfer(e => b = e, Expression));
             cond = c;
             use = u;
             by = b;
@@ -81,9 +81,9 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Text("for").Lt()
                 .Opt.Transfer(e => cond = e, Expression)
                 .If(icp => icp.Text("of").Lt())
-                .Than(icp => icp.Transfer(e => of = e, ArgumentDeclaration))
+                .Then(icp => icp.Transfer(e => of = e, DefaultValueVariantDeclaration))
                 .If(icp => icp.Text("at").Lt())
-                .Than(icp => icp.Transfer(e => at = e, ArgumentDeclaration))
+                .Then(icp => icp.Transfer(e => at = e, DefaultValueVariantDeclaration))
                 .Transfer(e => block = e, InlineContext)
                 .End(tp => new ForStatement(tp, cond, of, at, block));
         }
@@ -206,7 +206,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             return cp.Begin
                 .Text("ensure")
                 .If(icp => icp.Transfer(e => use = e, Expression))
-                .Than(icp => icp.Transfer(e => block = e, InlineContext))
+                .Then(icp => icp.Transfer(e => block = e, InlineContext))
                 .Else(icp => icp.Transfer(e => block = e, DirectContext))
                 .End(tp => new EnsureStatement(tp, use, block));
         }

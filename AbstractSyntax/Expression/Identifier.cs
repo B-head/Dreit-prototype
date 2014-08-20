@@ -14,7 +14,6 @@ namespace AbstractSyntax.Expression
     {
         public string Value { get; private set; }
         public TokenType IdentType { get; private set; }
-        private bool? _IsTacitThis;
         private OverLoadCallMatch? _Match;
         private OverLoad _OverLoad;
 
@@ -46,7 +45,12 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return CallRoutine.IsFunction; }
+            get { return ReferVariant.VariantType == VariantType.Const; }
+        }
+
+        public override dynamic GenerateConstantValue()
+        {
+            return ReferVariant.GenerateConstantValue();
         }
 
         public VariantSymbol ReferVariant
@@ -107,12 +111,21 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (_IsTacitThis != null)
+                if (!AccessSymbol.IsInstanceMember || AccessSymbol is ThisSymbol)
                 {
-                    return _IsTacitThis.Value;
+                    return false;
                 }
-                _IsTacitThis = HasThisMember(AccessSymbol);
-                return _IsTacitThis.Value;
+                var pcls = AccessSymbol.DeclaringType;
+                var cls = GetParent<ClassSymbol>();
+                while (cls != null)
+                {
+                    if (cls == pcls)
+                    {
+                        return true;
+                    }
+                    cls = cls.InheritClass as ClassSymbol;
+                }
+                return false;
             }
         }
 
@@ -144,22 +157,15 @@ namespace AbstractSyntax.Expression
             return r.IsStaticMember;
         }
 
-        private bool HasThisMember(Scope scope)
+        //todo 重複コードをリファクタリングする。
+        private bool IsConnectCalls 
         {
-            if (scope.IsStaticMember || scope is ThisSymbol)
-            {
-                return false;
-            }
-            var cls = GetParent<ClassSymbol>();
-            while (cls != null)
-            {
-                if (scope.GetParent<ClassSymbol>() == cls)
-                {
-                    return true;
-                }
-                cls = cls.InheritClass as ClassSymbol;
-            }
-            return false;
+            get { return Parent is CallExpression || Parent is Postfix || Parent is TemplateInstanceExpression || Parent.Parent is TemplateInstanceExpression; }
+        }
+
+        private bool IsExecutionLocation
+        {
+            get { return CurrentScope.IsExecutionContext; }
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)
@@ -167,6 +173,20 @@ namespace AbstractSyntax.Expression
             if (OverLoad.IsUndefined)
             {
                 cmm.CompileError("undefined-identifier", this);
+                return;
+            }
+            if(IsConnectCalls || !IsExecutionLocation)
+            {
+                return;
+            }
+            switch (Match.Result)
+            {
+                case CallMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
+                case CallMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
+                case CallMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
+                case CallMatchResult.UnmatchGenericCount: cmm.CompileError("unmatch-generic-count", this); break;
+                case CallMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
+                case CallMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
             }
             //todo より適切なエラーメッセージを出す。
             if (AccessSymbol.Attribute.HasAnyAttribute(AttributeType.Private) && !HasCurrentAccess(AccessSymbol.GetParent<ClassSymbol>()))

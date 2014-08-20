@@ -40,6 +40,22 @@ namespace AbstractSyntax.Expression
             get { return Left.IsConstant && Right.IsConstant && CallRoutine.IsFunction; }
         }
 
+        public override dynamic GenerateConstantValue()
+        {
+            var l = Left.GenerateConstantValue();
+            var r = Right.GenerateConstantValue();
+            switch(Operator)
+            {
+                case TokenType.Add: return l + r;
+                case TokenType.Subtract: return l - r;
+                case TokenType.Combine: return l + r;
+                case TokenType.Multiply: return l * r;
+                case TokenType.Divide: return l / r;
+                case TokenType.Modulo: return l % r;
+                default: throw new InvalidOperationException();
+            }
+        }
+
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
             if (CallRoutine is ErrorRoutineSymbol && !TypeSymbol.HasAnyErrorType(Left.ReturnType, Right.ReturnType))

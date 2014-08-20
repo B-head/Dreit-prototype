@@ -27,7 +27,7 @@ namespace Dlight
             {
                 return;
             }
-            var trans = SyntaxTranslator.ToStructure(root, import, fileName.Replace(".dl", ""));
+            var trans = SyntaxTranslator.ToStructure(root, import, fileName.Replace(".dr", ""));
             trans.Save();
         }
 
@@ -35,7 +35,7 @@ namespace Dlight
         {
             string text = File.ReadAllText(fileName);
             var collection = Lexer.Lex(text, fileName);
-            string name = fileName.Replace(".dl", "").Split('/').Last();
+            string name = fileName.Replace(".dr", "").Split('/').Last();
             return Parser.Parse(collection);
         }
     }

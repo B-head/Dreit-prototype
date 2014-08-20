@@ -9,12 +9,12 @@ using System.Diagnostics;
 namespace AbstractSyntax.Declaration
 {
     [Serializable]
-    public class ParameterDeclaration : ParameterSymbol
+    public class ArgumentDeclaration : ArgumentSymbol
     {
         public TupleLiteral AttributeAccess { get; private set; }
-        public Identifier ExplicitType { get; private set; }
+        public Element ExplicitType { get; private set; }
 
-        public ParameterDeclaration(TextPosition tp, VariantType type, string name, TupleLiteral attr, Identifier expli, Element def)
+        public ArgumentDeclaration(TextPosition tp, VariantType type, string name, TupleLiteral attr, Element expli, Element def)
             : base(tp, type, def)
         {
             Name = name;

@@ -23,7 +23,7 @@ namespace CliTranslate
         {
             var cg = CurrentContainer.GainGenerator();
             Expression.BuildCode();
-            cg.GenerateControl(OpCodes.Ret);
+            cg.GenerateCode(OpCodes.Ret);
         }
     }
 }

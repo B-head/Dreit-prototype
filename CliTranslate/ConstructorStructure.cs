@@ -47,15 +47,25 @@ namespace CliTranslate
             Info = Builder;
             Arguments.RegisterBuilders(Builder, IsInstance);
             SpreadGenerator();
+        }
+
+        internal override void BuildCode()
+        {
+            var pt = CurrentContainer as PureTypeStructure;
             foreach(var f in pt.GetFields())
             {
+                if(f.IsStatic)
+                {
+                    continue;
+                }
                 f.BuildInitValue(Generator);
             }
             if(SuperConstructor != null)
             {
-                Generator.GenerateControl(OpCodes.Ldarg_0);
+                Generator.GenerateCode(OpCodes.Ldarg_0);
                 Generator.GenerateCall(SuperConstructor);
             }
+            ChildBuildCode(this);
         }
 
         internal override void PostBuild()
@@ -64,11 +74,10 @@ namespace CliTranslate
             {
                 return;
             }
-            if (Block != null && Block.IsValueReturn)
+            if (Block == null || !(Block.Last() is ReturnStructure))
             {
-                Generator.GenerateControl(OpCodes.Pop);
+                Generator.GenerateCode(OpCodes.Ret);
             }
-            Generator.GenerateControl(OpCodes.Ret);
         }
 
         internal override void BuildCall(CodeGenerator cg)

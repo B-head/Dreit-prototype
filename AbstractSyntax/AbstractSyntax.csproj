@@ -90,7 +90,7 @@
     <Compile Include="OverLoadChain.cs" />
     <Compile Include="OverLoadSet.cs" />
     <Compile Include="SpecialSymbol\DyadicOperatorSymbol.cs" />
-    <Compile Include="Declaration\ParameterDeclaration.cs" />
+    <Compile Include="Declaration\ArgumentDeclaration.cs" />
     <Compile Include="Declaration\ClassDeclaration.cs" />
     <Compile Include="Declaration\EnumDeclaration.cs" />
     <Compile Include="Declaration\GenericDeclaration.cs" />
@@ -121,7 +121,7 @@
     <Compile Include="Statement\YieldStatement.cs" />
     <Compile Include="Symbol\AlgebraSymbol.cs" />
     <Compile Include="Symbol\ClassTemplateInstance.cs" />
-    <Compile Include="Symbol\ParameterSymbol.cs" />
+    <Compile Include="Symbol\ArgumentSymbol.cs" />
     <Compile Include="Symbol\NameSpaceSymbol.cs" />
     <Compile Include="Expression\MonadicExpression.cs" />
     <Compile Include="Literal\NumericLiteral.cs" />
@@ -143,6 +143,7 @@
     <Compile Include="SpecialSymbol\UnknownSymbol.cs" />
     <Compile Include="Symbol\RoutineTemplateInstance.cs" />
     <Compile Include="Symbol\TypeSymbol.cs" />
+    <Compile Include="Symbol\ValueSymbol.cs" />
     <Compile Include="Symbol\VariantSymbol.cs" />
     <Compile Include="SpecialSymbol\ErrorRoutineSymbol.cs" />
     <Compile Include="SyntacticAnalysis\ContextParser.cs" />

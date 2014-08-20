@@ -14,7 +14,8 @@ namespace CliTranslate
         public string Name { get; private set; }
         public FieldAttributes Attributes { get; private set; }
         public TypeStructure DataType { get; private set; }
-        public object ConstantValue { get; private set; }
+        public object DefaultValue { get; private set; }
+        public bool IsEnumField { get; private set; }
         [NonSerialized]
         private FieldBuilder Builder;
         [NonSerialized]
@@ -25,12 +26,13 @@ namespace CliTranslate
 
         }
 
-        public FieldStructure(string name, FieldAttributes attr, TypeStructure dt, object constval, FieldInfo info = null)
+        public FieldStructure(string name, FieldAttributes attr, TypeStructure dt, object def, bool isEnumField, FieldInfo info = null)
         {
             Name = name;
             Attributes = attr;
             DataType = dt;
-            ConstantValue = constval;
+            DefaultValue = def;
+            IsEnumField = isEnumField;
             Info = info;
         }
 
@@ -41,12 +43,15 @@ namespace CliTranslate
 
         internal void BuildInitValue(CodeGenerator cg)
         {
-            if(ConstantValue == null)
+            if(DefaultValue == null)
             {
                 return;
             }
-            cg.GenerateControl(OpCodes.Ldarg_0);
-            cg.GeneratePrimitive((dynamic)ConstantValue);
+            if (!IsStatic)
+            {
+                cg.GenerateCode(OpCodes.Ldarg_0);
+            }
+            cg.GeneratePrimitive((dynamic)DefaultValue);
             cg.GenerateStore(this);
         }
 
@@ -59,9 +64,9 @@ namespace CliTranslate
             var cont = CurrentContainer;
             Builder = cont.CreateField(Name, DataType.GainType(), Attributes);
             Info = Builder;
-            if (ConstantValue != null)
+            if (DefaultValue != null)
             {
-                Builder.SetConstant(ConstantValue);
+                Builder.SetConstant(DefaultValue);
             }
         }
 

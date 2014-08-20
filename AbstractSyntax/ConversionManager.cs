@@ -56,12 +56,7 @@ namespace AbstractSyntax
 
         private static bool ContainSubType(TypeSymbol from, TypeSymbol to)
         {
-            var f = from as ClassSymbol;
-            if(f == null)
-            {
-                return from == to;
-            }
-            foreach(var v in f.EnumSubType())
+            foreach(var v in from.EnumSubType())
             {
                 if(v == to)
                 {

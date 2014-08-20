@@ -15,7 +15,7 @@ namespace AbstractSyntax.SpecialSymbol
         {
         }
 
-        public DefaultSymbol(string name, ClassSymbol parent)
+        public DefaultSymbol(string name, TypeSymbol parent)
             :base(RoutineType.Routine, TokenType.Unknoun)
         {
             Name = name;

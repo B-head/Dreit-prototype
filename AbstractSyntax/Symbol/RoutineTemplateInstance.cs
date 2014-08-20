@@ -53,7 +53,7 @@ namespace AbstractSyntax.Symbol
             get { return Routine.Generics; }
         }
 
-        public override IReadOnlyList<ParameterSymbol> Arguments
+        public override IReadOnlyList<ArgumentSymbol> Arguments
         {
             get { return GenericsInstance.MakeArgumentTemplateInstanceList(Root, GetGenericInstance(), Routine.Arguments); }
         }
@@ -73,6 +73,36 @@ namespace AbstractSyntax.Symbol
         public TypeSymbol DeclaringInstance
         {
             get { return GenericsInstance.MakeClassTemplateInstance(Root, GetGenericInstance(), Routine.GetParent<TypeSymbol>()); }
+        }
+
+        public override bool IsConstructor
+        {
+            get { return Routine.IsConstructor; }
+        }
+
+        public override bool IsDestructor
+        {
+            get { return Routine.IsDestructor; }
+        }
+
+        public override bool IsAliasCall
+        {
+            get { return Routine.IsAliasCall; }
+        }
+
+        public override TypeSymbol DeclaringType
+        {
+            get { return Routine.DeclaringType; }
+        }
+
+        public override bool IsInstanceMember
+        {
+            get { return Routine.IsInstanceMember; }
+        }
+
+        public override bool IsStaticMember
+        {
+            get { return Routine.IsStaticMember; }
         }
     }
 }

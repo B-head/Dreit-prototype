@@ -28,7 +28,6 @@ namespace AbstractSyntax.Symbol
         protected IReadOnlyList<TypeSymbol> _Inherit;
         public IReadOnlyList<RoutineSymbol> Initializers { get; private set; }
         public IReadOnlyList<RoutineSymbol> AliasCalls { get; private set; }
-        private bool DisguiseScopeMode;
         private bool IsInitialize;
 
         public ClassSymbol()
@@ -39,11 +38,7 @@ namespace AbstractSyntax.Symbol
         {
             ClassType = type;
             Block = new ProgramContext();
-            This = new ThisSymbol(this);
-            Block.Append(This);
             AppendChild(Block);
-            InitInitializers();
-            InitAliasCalls();
             IsInitialize = true;
         }
 
@@ -56,8 +51,6 @@ namespace AbstractSyntax.Symbol
             This = new ThisSymbol(this);
             Block.Append(This);
             AppendChild(Block);
-            InitInitializers();
-            InitAliasCalls();
             IsInitialize = true;
         }
 
@@ -77,6 +70,10 @@ namespace AbstractSyntax.Symbol
             _Attribute = attr;
             _Generics = gnr;
             _Inherit = inherit;
+        }
+
+        internal override void Prepare()
+        {
             InitInitializers();
             InitAliasCalls();
         }
@@ -218,47 +215,6 @@ namespace AbstractSyntax.Symbol
         public bool IsTrait
         {
             get { return ClassType == ClassType.Trait; }
-        }
-
-        internal override OverLoadChain NameResolution(string name)
-        {
-            if (DisguiseScopeMode)
-            {
-                return CurrentScope.NameResolution(name);
-            }
-            if (ReferenceCache.ContainsKey(name))
-            {
-                return ReferenceCache[name];
-            }
-            var n = CurrentScope.NameResolution(name);
-            var i = InheritNameResolution(name);
-            if (ChildSymbols.ContainsKey(name))
-            {
-                var s = ChildSymbols[name];
-                n = new OverLoadChain(this, n, i, s);
-            }
-            else
-            {
-                n = new OverLoadChain(this, n, i);
-            }
-            ReferenceCache.Add(name, n);
-            return n;
-        }
-
-        private IReadOnlyList<OverLoadChain> InheritNameResolution(string name)
-        {
-            var ret = new List<OverLoadChain>();
-            DisguiseScopeMode = true;
-            foreach(var v in Inherit)
-            {
-                var ol = v.NameResolution(name) as OverLoadChain;
-                if(ol != null)
-                {
-                    ret.Add(ol);
-                }
-            }
-            DisguiseScopeMode = false;
-            return ret;
         }
 
         internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)

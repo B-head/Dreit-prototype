@@ -36,5 +36,15 @@ namespace AbstractSyntax.Literal
         {
             get { return true; }
         }
+
+        public override dynamic GenerateConstantValue()
+        {
+            var build = new StringBuilder();
+            foreach(var v in Texts)
+            {
+                build.Append(v.GenerateConstantValue());
+            }
+            return build.ToString();
+        }
     }
 }

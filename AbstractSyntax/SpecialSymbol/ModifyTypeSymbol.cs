@@ -43,6 +43,16 @@ namespace AbstractSyntax.SpecialSymbol
             get { return _Inherit; }
         }
 
+        internal override IEnumerable<OverLoadCallMatch> GetTypeMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+        }
+
+        internal override IEnumerable<OverLoadCallMatch> GetInstanceMatch(IReadOnlyList<GenericsInstance> inst, IReadOnlyList<TypeSymbol> pars, IReadOnlyList<TypeSymbol> args)
+        {
+            yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
+        }
+
         public static bool HasContainModify(Scope type, ModifyType modify)
         {
             var t = type as ClassTemplateInstance;

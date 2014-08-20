@@ -56,16 +56,9 @@ namespace CliTranslate
 
         internal void ChildBuildCode(CilStructure stru)
         {
-            for (var i = 0; i < Child.Count; ++i)
+            foreach(var v in this)
             {
-                if(i == Child.Count - 1)
-                {
-                    Child[i].BuildCode();
-                }
-                else
-                {
-                    PopBuildCode(Child[i]);
-                }
+                v.BuildCode();
             }
         }
 
@@ -80,7 +73,7 @@ namespace CliTranslate
             if(!exp.ResultType.IsVoid && !CurrentContainer.IsDataTypeContext)
             {
                 var cg = exp.CurrentContainer.GainGenerator();
-                cg.GenerateControl(OpCodes.Pop);
+                cg.GenerateCode(OpCodes.Pop);
             }
         }
 

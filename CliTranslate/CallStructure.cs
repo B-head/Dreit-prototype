@@ -15,6 +15,7 @@ namespace CliTranslate
         public CilStructure Access { get; private set; }
         public CilStructure Variant { get; private set; }
         public IReadOnlyList<ExpressionStructure> Arguments { get; private set; }
+        public IReadOnlyList<BuilderStructure> Converters { get; private set; }
         public bool IsVariadic { get; private set; }
 
         public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure variant)
@@ -25,14 +26,18 @@ namespace CliTranslate
             Access = pre;
             Variant = variant;
             Arguments = new List<ExpressionStructure>();
+            Converters = new List<BuilderStructure>();
             if (Access != null)
             {
                 AppendChild(Access);
             }
-            AppendChild(Arguments);
+            if (Arguments != null)
+            {
+                AppendChild(Arguments);
+            }
         }
 
-        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure access, CilStructure variant, IReadOnlyList<ExpressionStructure> args, bool isVariadic = false)
+        public CallStructure(TypeStructure rt, BuilderStructure call, ExpressionStructure pre, CilStructure access, CilStructure variant, IReadOnlyList<ExpressionStructure> args, IReadOnlyList<BuilderStructure> convs, bool isVariadic = false)
             :base(rt)
         {
             Call = call;
@@ -40,12 +45,16 @@ namespace CliTranslate
             Access = access;
             Variant = variant;
             Arguments = args;
+            Converters = convs;
             IsVariadic = isVariadic;
             if (Access != null)
             {
                 AppendChild(Access);
             }
-            AppendChild(Arguments);
+            if (Arguments != null)
+            {
+                AppendChild(Arguments);
+            }
         }
 
         internal override void BuildCode()
@@ -58,6 +67,14 @@ namespace CliTranslate
             if (Pre != null)
             {
                 Pre.BuildCode();
+                if (Call is MethodStructure && Pre.ResultType != null)
+                {
+                    cg.GenerateToAddress(Pre.ResultType);
+                }
+            }
+            if (Call == null)
+            {
+                return;
             }
             if (IsVariadic)
             {
@@ -70,13 +87,21 @@ namespace CliTranslate
                     if (i < vi)
                     {
                         Arguments[i].BuildCode();
+                        if (Converters[i] != null)
+                        {
+                            Converters[i].BuildCall(cg);
+                        }
                     }
                     else
                     {
                         cg.GenerateLoad(arr);
                         cg.GeneratePrimitive(i - vi);
                         Arguments[i].BuildCode();
-                        cg.GenerateBoxing(Arguments[i].ResultType, arr.DataType.GetBaseType());
+                        if (Converters[i] != null)
+                        {
+                            Converters[i].BuildCall(cg);
+                        }
+                        cg.GenerateToAddress(Arguments[i].ResultType, arr.DataType.GetBaseType());
                         cg.GenerateStoreElement(arr.DataType.GetBaseType());
                     }
                 }
@@ -84,9 +109,13 @@ namespace CliTranslate
             }
             else
             {
-                foreach (var v in Arguments)
+                for (var i = 0; i < Arguments.Count; ++i)
                 {
-                    v.BuildCode();
+                    Arguments[i].BuildCode();
+                    if(Converters[i] != null)
+                    {
+                        Converters[i].BuildCall(cg);
+                    }
                 }
             }
             var lss = Call as LoadStoreStructure;

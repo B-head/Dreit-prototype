@@ -45,7 +45,7 @@ namespace AbstractSyntax
             OpList[symbol.OperatorType].Add(symbol);
         }
 
-        public RoutineSymbol FindMonadic(TokenType op, Scope expt)
+        public RoutineSymbol FindMonadic(TokenType op, TypeSymbol expt)
         {
             var s = OpList[op].FindAll(v => v.Arguments[0].ReturnType == expt);
             if (s.Count == 1)
@@ -58,12 +58,16 @@ namespace AbstractSyntax
             }
         }
 
-        public RoutineSymbol FindDyadic(TokenType op, Scope left, Scope right)
+        public RoutineSymbol FindDyadic(TokenType op, TypeSymbol left, TypeSymbol right)
         {
             var s = OpList[op].FindAll(v => v.Arguments[0].ReturnType == left && v.Arguments[1].ReturnType == right);
-            if (s.Count == 1)
+            if (s.Count > 0)
             {
                 return s[0];
+            }
+            else if(left == right)
+            {
+                return new DyadicOperatorSymbol(op, left, right, left);
             }
             else
             {

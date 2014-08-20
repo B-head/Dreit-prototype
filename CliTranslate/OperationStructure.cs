@@ -23,26 +23,26 @@ namespace CliTranslate
             switch (CalculateType)
             {
                 case TokenType.Plus: break;
-                case TokenType.Minus: cg.GenerateControl(OpCodes.Neg); break;
+                case TokenType.Minus: cg.GenerateCode(OpCodes.Neg); break;
                 case TokenType.Not: BuildNot(cg); break;
-                case TokenType.Add: cg.GenerateControl(OpCodes.Add); break;
-                case TokenType.Subtract: cg.GenerateControl(OpCodes.Sub); break;
-                case TokenType.Multiply: cg.GenerateControl(OpCodes.Mul); break;
-                case TokenType.Divide: cg.GenerateControl(OpCodes.Div); break;
-                case TokenType.Modulo: cg.GenerateControl(OpCodes.Rem); break;
-                case TokenType.Equal: cg.GenerateControl(OpCodes.Ceq); break;
-                case TokenType.NotEqual: cg.GenerateControl(OpCodes.Ceq); BuildNot(cg); break;
-                case TokenType.LessThan: cg.GenerateControl(OpCodes.Clt); break;
-                case TokenType.LessThanOrEqual: cg.GenerateControl(OpCodes.Cgt); BuildNot(cg); break;
-                case TokenType.GreaterThan: cg.GenerateControl(OpCodes.Cgt); break;
-                case TokenType.GreaterThanOrEqual: cg.GenerateControl(OpCodes.Clt); BuildNot(cg); break;
+                case TokenType.Add: cg.GenerateCode(OpCodes.Add); break;
+                case TokenType.Subtract: cg.GenerateCode(OpCodes.Sub); break;
+                case TokenType.Multiply: cg.GenerateCode(OpCodes.Mul); break;
+                case TokenType.Divide: cg.GenerateCode(OpCodes.Div); break;
+                case TokenType.Modulo: cg.GenerateCode(OpCodes.Rem); break;
+                case TokenType.Equal: cg.GenerateCode(OpCodes.Ceq); break;
+                case TokenType.NotEqual: cg.GenerateCode(OpCodes.Ceq); BuildNot(cg); break;
+                case TokenType.LessThan: cg.GenerateCode(OpCodes.Clt); break;
+                case TokenType.LessThanOrEqual: cg.GenerateCode(OpCodes.Cgt); BuildNot(cg); break;
+                case TokenType.GreaterThan: cg.GenerateCode(OpCodes.Cgt); break;
+                case TokenType.GreaterThanOrEqual: cg.GenerateCode(OpCodes.Clt); BuildNot(cg); break;
                 default: throw new ArgumentException();
             }
         }
 
         private void BuildNot(CodeGenerator cg)
         {
-            cg.GenerateControl(OpCodes.Ldc_I4_0); cg.GenerateControl(OpCodes.Ceq);
+            cg.GenerateCode(OpCodes.Ldc_I4_0); cg.GenerateCode(OpCodes.Ceq);
         }
     }
 }

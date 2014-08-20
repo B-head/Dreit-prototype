@@ -50,4 +50,31 @@
     </code>
     <output>2 3 5 7 11 13 17 19 23 29 31 37 41 43 47</output>
   </case>
+  
+  <case>
+    <code>
+      <![CDATA[
+      class BlockField {
+	      private var field:List!ConsoleColor
+	      let width:Int32
+	      let height:Int32
+
+	      rout new(w:Int32, h:Int32) {
+		      field := List!ConsoleColor()
+		      loop i < w * h use i := 0 by i += 1 :: field.Add(ConsoleColor|.White)
+		      width := w
+		      height := h
+	      }
+
+	      rout call(x:Int32, y:Int32) :: field[x + y * width]
+	      rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x + y * width] := value
+      }
+
+      var bf := BlockField(10, 24)
+      bf[5, 5] := ConsoleColor|.Red
+      stdout := bf[5, 5]
+      ]]>
+    </code>
+    <output>Red</output>
+  </case>
 </compile-test>

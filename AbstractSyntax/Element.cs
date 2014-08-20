@@ -53,6 +53,11 @@ namespace AbstractSyntax
             }
         }
 
+        public virtual dynamic GenerateConstantValue()
+        {
+            return null;
+        }
+
         public virtual bool IsConstant
         {
             get { return false; }
@@ -144,6 +149,11 @@ namespace AbstractSyntax
                 return;
             }
             cs.AppendChildScope(s);
+        }
+
+        internal virtual void Prepare()
+        {
+            return;
         }
 
         internal virtual void CheckSemantic(CompileMessageManager cmm)
