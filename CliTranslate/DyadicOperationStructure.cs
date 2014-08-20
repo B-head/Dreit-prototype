@@ -43,7 +43,7 @@ namespace CliTranslate
             if(Next != null)
             {
                 Next.BuildCode();
-                cg.GenerateControl(OpCodes.And);
+                cg.GenerateCode(OpCodes.And);
             }
         }
     }

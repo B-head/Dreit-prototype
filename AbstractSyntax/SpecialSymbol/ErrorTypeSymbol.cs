@@ -19,5 +19,15 @@ namespace AbstractSyntax.SpecialSymbol
         {
             yield return OverLoadCallMatch.MakeUnknown(Root.ErrorRoutine);
         }
+
+        public override IReadOnlyList<GenericSymbol> Generics
+        {
+            get { return new List<GenericSymbol>(); }
+        }
+
+        public override IReadOnlyList<TypeSymbol> Inherit
+        {
+            get { return new List<TypeSymbol>(); }
+        }
     }
 }

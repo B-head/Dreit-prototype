@@ -142,7 +142,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             }
         }
 
-        public SlimChainParser Than(InsideParser inside)
+        public SlimChainParser Then(InsideParser inside)
         {
             if (failure) return this;
             if (!ifSkip && ifResult)

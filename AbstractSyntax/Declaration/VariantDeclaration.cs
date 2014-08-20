@@ -24,6 +24,20 @@ namespace AbstractSyntax.Declaration
             AppendChild(ExplicitType);
         }
 
+        internal override void Prepare()
+        {
+            if (DefaultValue != null)
+            {
+                return;
+            }
+            var caller = Parent as CallExpression;
+            if (caller == null)
+            {
+                return;
+            }
+            DefaultValue = caller.CallValue;
+        }
+
         public override IReadOnlyList<AttributeSymbol> Attribute
         {
             get
@@ -36,6 +50,11 @@ namespace AbstractSyntax.Declaration
                 foreach (var v in AttributeAccess)
                 {
                     a.Add(v.OverLoad.FindAttribute());
+                }
+                if (VariantType == VariantType.Const)
+                {
+                    var p = NameResolution("static").FindAttribute();
+                    a.Add(p);
                 }
                 if (!a.HasAnyAttribute(AttributeType.Public, AttributeType.Protected, AttributeType.Private))
                 {

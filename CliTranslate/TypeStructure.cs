@@ -58,7 +58,7 @@ namespace CliTranslate
 
         internal MethodInfo RenewMethod(MethodStructure method)
         {
-            if (Info is TypeBuilder)
+            if (Info.GetType().Name == "TypeBuilderInstantiation")
             {
                 return TypeBuilder.GetMethod(Info, method.GainMethod());
             }
@@ -77,7 +77,7 @@ namespace CliTranslate
 
         internal ConstructorInfo RenewConstructor(ConstructorStructure constructor)
         {
-            if (Info is TypeBuilder)
+            if (Info.GetType().Name == "TypeBuilderInstantiation")
             {
                 return TypeBuilder.GetConstructor(Info, constructor.GainConstructor());
             }
@@ -96,7 +96,7 @@ namespace CliTranslate
 
         internal FieldInfo RenewField(FieldStructure field)
         {
-            if (Info is TypeBuilder)
+            if (Info.GetType().Name == "TypeBuilderInstantiation")
             {
                 return TypeBuilder.GetField(Info, field.GainField());
             }

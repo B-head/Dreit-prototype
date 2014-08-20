@@ -135,6 +135,11 @@ namespace AbstractSyntax
             get { return GetParent<TypeSymbol>(); }
         }
 
+        public virtual bool IsExecutionContext
+        {
+            get { return true; }
+        }
+
         public virtual bool IsStaticMember
         {
             get { return CurrentScope is ClassSymbol && Attribute.HasAnyAttribute(AttributeType.Static); }

@@ -41,7 +41,7 @@ namespace CliTranslate
                     }
                     else
                     {
-                        cg.GenerateControl(OpCodes.Dup);
+                        cg.GenerateCode(OpCodes.Dup);
                         var temp = new LocalStructure(f.DataType, cg);
                         cg.GenerateStore(temp);
                         cg.GenerateStore(f);

@@ -33,10 +33,34 @@
   <case>
     <code>
       <![CDATA[
+      rout foo(a:Int32, b:Int32) :: return a + b
+      
+      stdout := foo := 10, 20
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32, b:Int32) { 
+        return a + b
+      }
+      
+      stdout := foo := 10, 20
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
       (10 + 20).ToString =: stdout
       ]]>
     </code>
-    <output>hello</output>
+    <output>30</output>
   </case>
 
   <case>

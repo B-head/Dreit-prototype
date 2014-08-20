@@ -45,6 +45,11 @@ namespace AbstractSyntax.Literal
             get { return true; }
         }
 
+        public override dynamic GenerateConstantValue()
+        {
+            return Parse();
+        }
+
         protected override string ElementInfo
         {
             get

@@ -4,15 +4,72 @@
 	let height:Int32
 
 	rout new(w:Int32, h:Int32) {
-		field := List!ConsoleColor(w * h)
+		field := List!ConsoleColor
+		loop i < w * h use i := 0 by i += 1 :: field.Add(ConsoleColor|.Black)
 		width := w
 		height := h
 	}
 
-	rout call(x:Int32, y:Int32) :: field[x * width + y]
-	rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x * width + y] := value
+	rout call(x:Int32, y:Int32) :: field[x + y * width]
+	rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x + y * width] := value
 }
 
-var bf := BlockField(10, 24)
-bf[5, 5] := ConsoleColor.White
-stdout := bf[5, 5]
+class FieldView {
+	var offset_x:Int32
+	var offset_y:Int32
+	
+	rout new(x:Int32, y:Int32) {
+		offset_x := x
+		offset_y := y
+	}
+
+	rout write(field:BlockField) {
+		Console|.BackgroundColor := ConsoleColor|.Black
+		Console|.ForegroundColor := ConsoleColor|.White
+		Console|.Clear
+		loop x < field.width use x := 0 by x += 1 {
+			loop y < field.height use y := 0 by y += 1 {
+				Console|.SetCursorPosition(x * 2 + offset_x, y + offset_y)
+				Console|.BackgroundColor := field[x, y]
+				Console|.Write("  ")
+			}
+		}
+	}
+}
+
+class Tetris {
+	private var field:BlockField
+	private var mino:BlockField
+	const play_width := 10
+	const play_height := 20
+	const mino_size := 4
+	const sentinel := ConsoleColor|.DarkGray
+	const empty := ConsoleColor|.Black
+
+	rout new {
+		let w := play_width + 2
+		let h := play_height + mino_size + 1
+		field := BlockField(w, h)
+		mino := BlockField(mino_size, mino_size)
+		field_init(w, h)
+	}
+
+	rout field_init(w:Int32, h:Int32) {
+		loop x < w use x := 0 by x += 1 {
+			field[x, h - 1] := sentinel
+		}
+		loop y < h use y := 0 by y += 1 {
+			field[0, y] := sentinel
+			field[w - 1, y] := sentinel
+		}
+	}
+
+	rout write(field_view:FieldView) {
+		field_view.write := field
+	}
+}
+
+var tetris := Tetris
+var fv := FieldView(26, 0)
+tetris.write := fv
+Console|.ResetColor

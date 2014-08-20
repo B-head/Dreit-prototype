@@ -66,8 +66,8 @@
 		      height := h
 	      }
 
-	      rout call(x:Int32, y:Int32) :: field[x * width + y]
-	      rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x * width + y] := value
+	      rout call(x:Int32, y:Int32) :: field[x + y * width]
+	      rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x + y * width] := value
       }
 
       var bf := BlockField(10, 24)

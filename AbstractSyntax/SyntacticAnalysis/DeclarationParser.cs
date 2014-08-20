@@ -60,7 +60,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 ).Lt()
                 .Type(t => name = t.Text, TokenType.LetterStartString)
                 .If(icp => icp.Type(TokenType.Pair).Lt())
-                .Than(icp => icp.Transfer(e => expli = e, Prefix))
+                .Then(icp => icp.Transfer(e => expli = e, Prefix))
                 .End(tp => new VariantDeclaration(tp, type, name, attr, expli));
         }
 
@@ -83,7 +83,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Transfer(e => generic = e, GenericList)
                 .Transfer(e => args = e, ArgumentList)
                 .If(icp => icp.Type(TokenType.ReturnArrow).Lt())
-                .Than(icp => icp.Transfer(e => expli = e, Prefix))
+                .Then(icp => icp.Transfer(e => expli = e, Prefix))
                 .Transfer(e => block = e, InlineContext)
                 .End(tp => new RoutineDeclaration(tp, name, type, opType, attr, generic, args, expli, block));
         }
@@ -156,7 +156,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Type(t => name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer(e => generic = e, GenericList)
                 .If(icp => icp.Type(TokenType.Pair).Lt())
-                .Than(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, Identifier)))
+                .Then(icp => icp.Transfer(e => inherit = e, c => ParseTuple(c, Identifier)))
                 .Transfer(e => block = e, InlineContext)
                 .End(tp => new ClassDeclaration(tp, name, type, attr, generic, inherit, block));
         }
@@ -174,7 +174,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Type(t => name = t.Text, TokenType.LetterStartString).Lt()
                 .Transfer(e => generic = e, GenericList)
                 .If(icp => icp.Type(TokenType.Pair).Lt())
-                .Than(icp => icp.Transfer(e => expli = e, Prefix))
+                .Then(icp => icp.Transfer(e => expli = e, Prefix))
                 .Transfer(e => block = e, EnumContext)
                 .End(tp => new EnumDeclaration(tp, name, attr, generic, expli, block));
         }
@@ -212,9 +212,9 @@ namespace AbstractSyntax.SyntacticAnalysis
                 {
                     icp
                     .If(iicp => iicp.Type(TokenType.Attribute).Lt())
-                    .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), Identifier); })
+                    .Then(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), Identifier); })
                     .ElseIf(iicp => iicp.Is(atFlag).Type(TokenType.List).Lt())
-                    .Than(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), Identifier); })
+                    .Then(iicp => { atFlag = true; iicp.Transfer(e => child.Add(e), Identifier); })
                     .Else(iicp => { atFlag = false; iicp.Transfer(e => child.Add(e), iiicp => IdentifierMatch(iiicp, attribute)); });
                 })
                 .End(tp => new TupleLiteral(tp, child));
@@ -245,7 +245,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             return cp.Begin
                 .Type(t => name = t.Text, TokenType.LetterStartString)
                 .If(icp => icp.Type(TokenType.Pair).Lt())
-                .Than(icp => icp.Transfer(e => special = e, NakedRangeLiteral))
+                .Then(icp => icp.Transfer(e => special = e, NakedRangeLiteral))
                 .End(tp => new GenericDeclaration(tp, name, special));
         }
 
@@ -292,7 +292,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Any(
                     icp => icp.Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli)).Type(TokenType.LeftPipeline).Transfer(e => def = e, NakedRangeLiteral),
                     icp => icp.Transfer(e => def = e, NakedRangeLiteral).Type(TokenType.RightPipeline).Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli)),
-                    icp => icp.Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli))
+                    icp => icp.Call(iicp => ArgumentPart(iicp, out type, out name, out attr, out expli)).Self(() => def = null)
                 )
                 .End(tp => new VariantDeclaration(tp, type, name, attr, expli, def));
         }
@@ -311,7 +311,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 ).Lt()
                 .Type(t => n = t.Text, TokenType.LetterStartString).Lt()
                 .If(icp => icp.Type(TokenType.Pair).Lt())
-                .Than(icp => icp.Transfer(e => ex = e, Prefix));
+                .Then(icp => icp.Transfer(e => ex = e, Prefix));
             type = ty;
             name = n;
             attr = a;

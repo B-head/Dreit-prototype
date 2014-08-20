@@ -62,6 +62,10 @@ namespace CliTranslate
                 cg.GenerateJump(OpCodes.Brfalse, BreakLabel);
             }
             Block.BuildCode();
+            if(Block.IsValueReturn)
+            {
+                cg.GenerateCode(OpCodes.Pop);
+            }
             cg.GenerateJump(OpCodes.Br, ContinueLabel);
             cg.MarkLabel(BreakLabel);
             cg.EndScope();

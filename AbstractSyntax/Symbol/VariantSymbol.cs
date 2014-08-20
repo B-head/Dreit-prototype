@@ -21,7 +21,7 @@ namespace AbstractSyntax.Symbol
     public class VariantSymbol : Scope
     {
         public VariantType VariantType { get; private set; }
-        public Element DefaultValue { get; private set; }
+        public Element DefaultValue { get; protected set; }
         protected IReadOnlyList<AttributeSymbol> _Attribute;
         protected TypeSymbol _DataType;
         private bool IsInitialize;
@@ -82,6 +82,16 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
+        public override dynamic GenerateConstantValue()
+        {
+            return DefaultValue == null ? null : DefaultValue.GenerateConstantValue();
+        }
+
+        public override bool IsExecutionContext
+        {
+            get { return false; }
+        }
+
         public bool IsClassField
         {
             get { return CurrentScope is ClassSymbol; }
@@ -104,7 +114,7 @@ namespace AbstractSyntax.Symbol
 
         public bool IsLoopVariant
         {
-            get { return CurrentScope is LoopStatement || CurrentScope is ForStatement; }
+            get { return Parent is LoopStatement || Parent is ForStatement; }
         }
 
         public bool IsDefinedConstantValue
@@ -115,21 +125,6 @@ namespace AbstractSyntax.Symbol
         public bool IsImmtable
         {
             get { return VariantType == VariantType.Let || VariantType == VariantType.Const || VariantType == VariantType.Unknown; }
-        }
-
-        public object GenerateConstantValue()
-        {
-            var v = DefaultValue as ValueSymbol;
-            if(v != null)
-            {
-                return v.Value;
-            }
-            var caller = Parent as CallExpression;
-            if (caller == null)
-            {
-                return null;
-            }
-            return caller.GenelateConstantValue();
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

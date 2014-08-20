@@ -33,18 +33,18 @@ namespace CliTranslate
             if (IsOr)
             {
                 Left.BuildCode();
-                cg.GenerateControl(OpCodes.Dup);
+                cg.GenerateCode(OpCodes.Dup);
                 cg.GenerateJump(OpCodes.Brtrue, Exit);
-                cg.GenerateControl(OpCodes.Pop);
+                cg.GenerateCode(OpCodes.Pop);
                 Right.BuildCode();
                 cg.MarkLabel(Exit);
             }
             else
             {
                 Left.BuildCode();
-                cg.GenerateControl(OpCodes.Dup);
+                cg.GenerateCode(OpCodes.Dup);
                 cg.GenerateJump(OpCodes.Brfalse, Exit);
-                cg.GenerateControl(OpCodes.Pop);
+                cg.GenerateCode(OpCodes.Pop);
                 Right.BuildCode();
                 cg.MarkLabel(Exit);
             }

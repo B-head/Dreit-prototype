@@ -15,5 +15,15 @@ namespace AbstractSyntax.Symbol
         {
             Value = value;
         }
+
+        public override bool IsConstant
+        {
+            get { return true; }
+        }
+
+        public override dynamic GenerateConstantValue()
+        {
+            return Value;
+        }
     }
 }

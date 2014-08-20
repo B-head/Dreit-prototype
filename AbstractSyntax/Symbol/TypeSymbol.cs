@@ -39,6 +39,11 @@ namespace AbstractSyntax.Symbol
             get { return true; }
         }
 
+        public override bool IsExecutionContext
+        {
+            get { return false; }
+        }
+
         public virtual IReadOnlyList<GenericSymbol> Generics
         {
             get { throw new NotImplementedException(); }

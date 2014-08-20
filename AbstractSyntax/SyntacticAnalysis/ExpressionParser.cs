@@ -111,7 +111,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             var ret = cp.Begin
                 .If(icp => icp.Transfer(e => args = e, NakedArgument).Lt())
                 .ElseIf(icp => icp.Type(TokenType.LeftParenthesis).Lt())
-                .Than(icp => 
+                .Then(icp => 
                 {
                     icp.Transfer(e => args = e, TupleLiteral)
                     .Type(TokenType.RightParenthesis).Lt();
@@ -146,13 +146,13 @@ namespace AbstractSyntax.SyntacticAnalysis
                 .Type(TokenType.Template)
                 .Not.Transfer(null, RangeLiteral)
                 .If(icp => icp.Type(TokenType.LeftParenthesis).Lt())
-                .Than(icp =>
+                .Then(icp =>
                 {
                     icp.Transfer(e => args = e, TupleLiteral)
                     .Type(TokenType.RightParenthesis).Lt();
                 })
                 .ElseIf(icp => icp.Type(TokenType.LeftBracket).Lt())
-                .Than(icp =>
+                .Then(icp =>
                 {
                     icp.Transfer(e => args = e, TupleLiteral)
                     .Type(TokenType.RightBracket).Lt();

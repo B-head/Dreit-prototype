@@ -12,7 +12,7 @@ namespace AbstractSyntax.SpecialSymbol
     {
         public TokenType CalculateType { get; private set; }
 
-        public DyadicOperatorSymbol(TokenType type, ClassSymbol left, ClassSymbol right, ClassSymbol ret)
+        public DyadicOperatorSymbol(TokenType type, TypeSymbol left, TypeSymbol right, TypeSymbol ret)
             : base(RoutineType.FunctionOperator, type)
         {
             Name = GetOperatorName(type);

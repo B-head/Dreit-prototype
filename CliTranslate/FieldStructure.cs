@@ -47,7 +47,10 @@ namespace CliTranslate
             {
                 return;
             }
-            cg.GenerateControl(OpCodes.Ldarg_0);
+            if (!IsStatic)
+            {
+                cg.GenerateCode(OpCodes.Ldarg_0);
+            }
             cg.GeneratePrimitive((dynamic)DefaultValue);
             cg.GenerateStore(this);
         }

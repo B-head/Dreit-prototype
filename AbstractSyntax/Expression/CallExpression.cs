@@ -16,7 +16,6 @@ namespace AbstractSyntax.Expression
         public Element Access { get; private set; }
         public TupleLiteral Arguments { get; private set; }
         private OverLoadCallMatch? _Match;
-        private RoutineSymbol _CallRoutine;
         private RoutineSymbol _CalculateCallScope;
 
         public CallExpression(TextPosition tp, Element acs, TupleLiteral args)
@@ -96,14 +95,12 @@ namespace AbstractSyntax.Expression
 
         public RoutineSymbol CallRoutine
         {
-            get
-            {
-                if (_CallRoutine == null)
-                {
-                    _CallRoutine = Match.Call;
-                }
-                return _CallRoutine;
-            }
+            get { return Match.Call; }
+        }
+
+        public IReadOnlyList<RoutineSymbol> CallConverter
+        {
+            get { return Match.Converters; }
         }
 
         public override TypeSymbol ReturnType
@@ -247,26 +244,24 @@ namespace AbstractSyntax.Expression
         {
             get
             {
-                if (Arguments.GetDataTypes().Count != 1)
+                if (Arguments.Count != 1)
                 {
                     return Root.ErrorType;
                 }
-                return Arguments.GetDataTypes()[0];
+                return Arguments[0].ReturnType;
             }
         }
 
-        public object GenelateConstantValue()
+        public Element CallValue
         {
-            if (Arguments.Count != 1)
+            get
             {
-                return null;
+                if (Arguments.Count != 1)
+                {
+                    return Root.ErrorVariant;
+                }
+                return Arguments[0];
             }
-            var exp = Arguments[0] as NumericLiteral;
-            if(exp == null)
-            {
-                return null;
-            }
-            return exp.Parse();
         }
 
         internal override void CheckSemantic(CompileMessageManager cmm)

@@ -27,7 +27,7 @@ namespace AbstractSyntax.Expression
 
         public override TypeSymbol ReturnType
         {
-            get { return OverLoad.FindDataType().Type; }
+            get { return CallRoutine.CallReturnType; }
         }
 
         public VariantSymbol ReferVariant
@@ -65,7 +65,32 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return Access.IsConstant; }
+            get { return Access.IsConstant && ReferVariant.VariantType == VariantType.Const; }
+        }
+
+        public override dynamic GenerateConstantValue()
+        {
+            return ReferVariant.GenerateConstantValue();
+        }
+
+        private bool IsConnectCalls
+        {
+            get { return Parent is CallExpression || Parent is Postfix || Parent is TemplateInstanceExpression; }
+        }
+
+        private bool IsExecutionLocation
+        {
+            get { return CurrentScope.IsExecutionContext; }
+        }
+
+        private bool IsStaticLocation()
+        {
+            var r = GetParent<RoutineSymbol>();
+            if (r == null)
+            {
+                return false;
+            }
+            return r.IsStaticMember;
         }
 
         public IReadOnlyList<TypeSymbol> Parameter
@@ -84,6 +109,36 @@ namespace AbstractSyntax.Expression
                 }
                 _Parameter = pt;
                 return _Parameter;
+            }
+        }
+
+        internal override void CheckSemantic(CompileMessageManager cmm)
+        {
+            if (OverLoad.IsUndefined)
+            {
+                cmm.CompileError("undefined-identifier", this);
+            }
+            if (IsConnectCalls || !IsExecutionLocation)
+            {
+                return;
+            }
+            switch (Match.Result)
+            {
+                case CallMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
+                case CallMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
+                case CallMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
+                case CallMatchResult.UnmatchGenericCount: cmm.CompileError("unmatch-generic-count", this); break;
+                case CallMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
+                case CallMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
+            }
+            //todo より適切なエラーメッセージを出す。
+            if (AccessSymbol.Attribute.HasAnyAttribute(AttributeType.Private) && !HasCurrentAccess(AccessSymbol.GetParent<ClassSymbol>()))
+            {
+                cmm.CompileError("not-accessable", this);
+            }
+            if (AccessSymbol.IsInstanceMember && IsStaticLocation() && !(Parent is Postfix)) //todo Postfixだけではなく包括的な例外処理をする。
+            {
+                cmm.CompileError("not-accessable", this);
             }
         }
 

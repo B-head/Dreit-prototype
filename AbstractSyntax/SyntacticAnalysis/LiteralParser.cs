@@ -17,7 +17,7 @@ namespace AbstractSyntax.SyntacticAnalysis
             return cp.Begin
                 .Type(t => integral = t.Text, TokenType.DigitStartString).Lt()
                 .If(icp => icp.Type(TokenType.Access).Lt())
-                .Than(icp => icp.Type(t => fraction = t.Text, TokenType.DigitStartString).Lt())
+                .Then(icp => icp.Type(t => fraction = t.Text, TokenType.DigitStartString).Lt())
                 .End(tp => new NumericLiteral(tp, integral, fraction));
         }
 
@@ -30,7 +30,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 {
                     icp
                     .If(iicp => iicp.Type(TokenType.LeftBrace))
-                    .Than(iicp => iicp.Transfer(e => texts.Add(e), Expression).Type(TokenType.RightBrace))
+                    .Then(iicp => iicp.Transfer(e => texts.Add(e), Expression).Type(TokenType.RightBrace))
                     .Else(iicp => iicp.Transfer(e => texts.Add(e), PlainText));
                 })
                 .End(tp => new StringLiteral(tp, texts));

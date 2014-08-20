@@ -45,7 +45,7 @@ namespace CliTranslate
         {
             get 
             { 
-                if(Expressions.Count == 0)
+                if(Expressions.Count == 0 || !IsInline)
                 {
                     return false;
                 }

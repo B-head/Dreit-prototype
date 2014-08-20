@@ -41,7 +41,7 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return Exp.IsConstant; }
+            get { return true; }
         }
     }
 }

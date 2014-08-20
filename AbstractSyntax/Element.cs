@@ -53,6 +53,11 @@ namespace AbstractSyntax
             }
         }
 
+        public virtual dynamic GenerateConstantValue()
+        {
+            return null;
+        }
+
         public virtual bool IsConstant
         {
             get { return false; }

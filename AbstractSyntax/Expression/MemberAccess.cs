@@ -34,7 +34,12 @@ namespace AbstractSyntax.Expression
 
         public override bool IsConstant
         {
-            get { return Access.IsConstant && CallRoutine.IsFunction; }
+            get { return Access.IsConstant && ReferVariant.VariantType == VariantType.Const; }
+        }
+
+        public override dynamic GenerateConstantValue()
+        {
+            return ReferVariant.GenerateConstantValue();
         }
 
         public VariantSymbol ReferVariant
@@ -77,16 +82,41 @@ namespace AbstractSyntax.Expression
             }
         }
 
+        private bool IsConnectCalls
+        {
+            get { return Parent is CallExpression || Parent is Postfix || Parent is TemplateInstanceExpression; }
+        }
+
+        private bool IsExecutionLocation
+        {
+            get { return CurrentScope.IsExecutionContext; }
+        }
+
         internal override void CheckSemantic(CompileMessageManager cmm)
         {
-            //todo より適切なエラーメッセージを出す。
             if (OverLoad.IsUndefined)
             {
                 cmm.CompileError("undefined-identifier", this);
+                return;
             }
             if (AccessSymbol.IsStaticMember && !ContainClass(AccessSymbol.GetParent<ClassSymbol>(), Access.ReturnType))
             {
                 cmm.CompileError("undefined-identifier", this);
+                return;
+            }
+            if (IsConnectCalls || !IsExecutionLocation)
+            {
+                return;
+            }
+            //todo より適切なエラーメッセージを出す。
+            switch (Match.Result)
+            {
+                case CallMatchResult.NotCallable: cmm.CompileError("not-callable", this); break;
+                case CallMatchResult.UnmatchArgumentCount: cmm.CompileError("unmatch-overload-count", this); break;
+                case CallMatchResult.UnmatchArgumentType: cmm.CompileError("unmatch-overload-type", this); break;
+                case CallMatchResult.UnmatchGenericCount: cmm.CompileError("unmatch-generic-count", this); break;
+                case CallMatchResult.UnmatchGenericType: cmm.CompileError("unmatch-generic-type", this); break;
+                case CallMatchResult.AmbiguityMatch: cmm.CompileError("ambiguity-match", this); break;
             }
             if (AccessSymbol.Attribute.HasAnyAttribute(AttributeType.Private) && !HasCurrentAccess(AccessSymbol.GetParent<ClassSymbol>()))
             {

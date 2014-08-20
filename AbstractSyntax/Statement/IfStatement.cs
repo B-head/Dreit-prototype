@@ -16,11 +16,11 @@ namespace AbstractSyntax.Statement
         public ProgramContext Else { get; private set; }
         private TypeSymbol _ReturnType;
 
-        public IfStatement(TextPosition tp, Element cond, ProgramContext than, ProgramContext els)
+        public IfStatement(TextPosition tp, Element cond, ProgramContext then, ProgramContext els)
             :base(tp)
         {
             Condition = cond;
-            Then = than;
+            Then = then;
             Else = els;
             AppendChild(Condition);
             AppendChild(Then);
@@ -42,7 +42,7 @@ namespace AbstractSyntax.Statement
                 }
                 var a = BlockReturnType(Then);
                 var b = BlockReturnType(Else);
-                if (a == b)
+                if (a == b || Else == null)
                 {
                     _ReturnType = a;
                 }

@@ -156,9 +156,18 @@ namespace CliTranslate
 
         private ConstructorStructure Translate(DefaultSymbol element)
         {
-            var ret = new ConstructorStructure();
-            ret.InitializeDefault();
-            return ret;
+            if (element.IsConstructor)
+            {
+                var ret = new ConstructorStructure();
+                ret.InitializeDefault();
+                var super = RelayTranslate(element.InheritInitializer);
+                ret.RegisterSuperConstructor(super);
+                return ret;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private ParameterStructure Translate(ThisSymbol element)
@@ -296,8 +305,8 @@ namespace CliTranslate
             var dt = RelayTranslate(element.DataType);
             if (element.IsClassField || element.IsGlobal)
             {
-                var constval = element.GenerateConstantValue();
-                var ret = new FieldStructure(element.Name, attr, dt, constval, false, info);
+                var def = element.IsClassField ? element.GenerateConstantValue() : null;
+                var ret = new FieldStructure(element.Name, attr, dt, def, false, info);
                 return ret;
             }
             else if (element.IsEnumField)
@@ -398,20 +407,23 @@ namespace CliTranslate
                 var cal = new DyadicOperationStructure(crt, left, right, calcall);
                 var args = new List<ExpressionStructure>();
                 args.Add(cal);
+                var convs = new List<BuilderStructure>();
+                convs.Add(null);
                 var rt = RelayTranslate(element.ReturnType);
-                ret = new CallStructure(rt, call, pre, null, variant, args, isVariadic);
+                ret = new CallStructure(rt, call, pre, null, variant, args, convs, isVariadic);
             }
             else
             {
                 var args = CollectList<ExpressionStructure>(element.VirtualArgument);
+                var convs = CollectList<BuilderStructure>(element.CallConverter);
                 var rt = RelayTranslate(element.ReturnType);
                 if (element.IsConnectPipeline)
                 {
-                    ret = new CallStructure(rt, null, pre, access, variant, null, isVariadic);
+                    ret = new CallStructure(null, null, pre, access, variant, null, null, isVariadic);
                 }
                 else
                 {
-                    ret = new CallStructure(rt, call, pre, access, variant, args, isVariadic);
+                    ret = new CallStructure(rt, call, pre, access, variant, args, convs, isVariadic);
                 }
             }
             return ret;

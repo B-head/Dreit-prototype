@@ -70,11 +70,14 @@ namespace CliTranslate
             {
                 return;
             }
-            if (IsDefaultThisReturn)
+            if (Block == null || !(Block.Last() is ReturnStructure))
             {
-                Generator.GenerateControl(OpCodes.Ldarg_0);
+                if (IsDefaultThisReturn)
+                {
+                    Generator.GenerateCode(OpCodes.Ldarg_0);
+                }
+                Generator.GenerateCode(OpCodes.Ret);
             }
-            Generator.GenerateControl(OpCodes.Ret);
         }
 
         internal override void BuildCall(CodeGenerator cg)

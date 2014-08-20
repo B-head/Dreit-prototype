@@ -49,7 +49,7 @@ namespace CliTranslate
             Generator.Emit(type, label.GainLabel());
         }
 
-        internal void GenerateControl(OpCode type)
+        internal void GenerateCode(OpCode type)
         {
             Generator.Emit(type);
         }
@@ -138,7 +138,17 @@ namespace CliTranslate
             Generator.Emit(OpCodes.Ldloc, local);
         }
 
-        internal void GenerateBoxing(TypeStructure from, TypeStructure to)
+        internal void GenerateToAddress(TypeStructure from)
+        {
+            if (from.IsValueType)
+            {
+                var loc = new LocalStructure(from, this);
+                GenerateStore(loc);
+                GenerateLoadAddress(loc);
+            }
+        }
+
+        internal void GenerateToAddress(TypeStructure from, TypeStructure to)
         {
             if(from.IsValueType && to.IsReferType)
             {
