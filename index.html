@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+
+<!-- #BeginTemplate "master.dwt" -->
+
+<head>
+<meta charset="utf-8" />
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href="normalize.css" rel="stylesheet" type="text/css" />
+<link href="layout.css" rel="stylesheet" type="text/css" />
+<link href="base.css" rel="stylesheet" type="text/css" />
+<!-- #BeginEditable "doctitle" -->
+<title>プログラミング言語 Dreit</title>
+<!-- #EndEditable -->
+</head>
+
+<body>
+<div class="header">
+	<h1>プログラミング言語 Dreit</h1>
+</div>
+<div class="main_container">
+	<div class="left-nav-back"></div>
+	<div class="page-content-back"></div>
+	<div class="left-nav">
+		<ul>
+			<li><a href="index.html">ホーム</a></li>
+			<li>
+				<a href="lang-spec.html">言語仕様</a>
+				<ul>
+					<li><a href="lang-struct.html">言語構造</a></li>
+					<li><a href="literal.html">リテラル</a></li>
+					<li><a href="expression.html">式</a></li>
+					<li><a href="statement.html">制御文</a></li>
+					<li><a href="declaration.html">宣言</a></li>
+					<li><a href="routine.html">ルーチン</a></li>
+					<li><a href="class.html">クラス</a></li>
+					<li><a href="template.html">テンプレート</a></li>
+				</ul>
+			</li>
+			<li><a href="https://github.com/B-head/Dreit-prototype">GitHub</a></li>
+		</ul>
+	</div>
+	<!-- #BeginEditable "content" -->
+	<div class="page-content">
+		<h2>引きこもりで発達障害者の俺言語</h2>
+		<p>Dreitは、「初心者でも簡単に扱えるD言語ベースの言語」として構想していたプログラミング言語です。</p>
+		<p>初心者が簡単に学習でき、現代的なプログラミングの手法を学べ、実用するのにも十分な機能を備えた言語を目指して開発中です。</p>
+		<hr>
+		<p>
+			以下、大層な文句や言語仕様が羅列されますが、<strong>現状のコンパイラの実装はとてもしょぼいです。</strong>
+			実際、制御構文やルーチンの機能はあまり実装されていませんし、テンプレートに至っては殆ど実装されていません。
+		</p>
+		<p>
+			一応.NETのジェネリクス型をインスタンス化して使用することはできますが、動作確認をしているのはList&lt;T&gt;型の一部だけで、他のクラスを使える保証はありません。 
+			というか、構文エラーのコードをコンパイルするだけで落ちたりするくらい実装が甘いです。 はっきり言って<strong>ゴミ</strong>です。
+			<small>でも、ジェネリクスのオーバーロード解決を実装できているのは誇ってもいいよね・・・？</small>
+		</p>
+		<p>
+			こんな酷い状態でファーストリリースすることになりましたが、コンパイラの実装は今後改善されて行きますので、どうか温かい目で見守って下さると喜びます。
+		</p>
+		<h3>開発目標</h3>
+		<ul>
+			<li>プログラミング初心者でも比較的簡単に学習できること。教師・講師の確保のため、C系の文法を基にした文法であること。</li>
+			<li>スクリプト言語のような簡潔な記述と、大規模開発のための厳密な記述の両方に対応すること。</li>
+			<li>ライブラリ・フレームワークの使用の際に、言語との親和性が高く、冗長性のない記述を可能にする十分な機能を提供すること。</li>
+			<li>可能な限りパフォーマンスの良いプログラムが書けること。そのために必要な追加の記述が可能な限り少なくなること。</li>
+		</ul>
+		<h3>主な採用パラダイム</h3>
+		<ul>
+			<li>手続き型</li>
+			<li>関数型</li>
+			<li>構造化プログラミング</li>
+			<li>契約プログラミング</li>
+			<li>純粋オブジェクト指向</li>
+			<li>属性指向</li>
+			<li>ジェネリックプログラミング</li>
+			<li>メタプログラミング</li>
+		</ul>
+		<h3>サンプルコード</h3>
+		<h4>コンソールテトリス</h4>
+<pre><code class="dreit">var tetris := Tetris
+later {
+	Thread|.Sleep(16)
+	if Console|.KeyAvailable { 
+		Console|.ReadKey(true) =: ki
+		if ki.Key = ConsoleKey|.UpArrow :: tetris.move_earth_fix
+		if ki.Key = ConsoleKey|.DownArrow :: tetris.move_fall
+		if ki.Key = ConsoleKey|.LeftArrow :: tetris.move_left
+		if ki.Key = ConsoleKey|.RightArrow :: tetris.move_right
+		if ki.Key = ConsoleKey|.Z :: tetris.rotation_left
+		if ki.Key = ConsoleKey|.X :: tetris.rotation_right
+	}
+	tetris.forward_game
+} loop ki.Key &lt;&gt; ConsoleKey|.Escape use ki:ConsoleKeyInfo
+Console|.ResetColor
+
+rout clear_view {
+	Console|.BackgroundColor := ConsoleColor|.Black
+	Console|.ForegroundColor := ConsoleColor|.White
+	Console|.Clear
+}
+
+class Tetris {
+	private var random:Random
+	private var field_view:FieldView
+	private var field:BlockField
+	private var embed_mino:List!BlockField
+	private var next_mino:List!BlockField
+	private var play_mino:BlockField
+	private var play_x:Int32
+	private var play_y:Int32
+	private var last_mino:BlockField
+	private var last_x:Int32
+	private var last_y:Int32
+	private var fall_time:Int32
+	private var fall_limit:Int32
+	const width := play_width + 2
+	const height := play_height + mino_size + 1
+	const play_width := 10
+	const play_height := 20
+	const mino_size := 4
+	const next_max := 6
+	const earth_limit := 60
+	const move_fail_limit := 15
+	const sentinel := ConsoleColor|.DarkGray
+	const empty := ConsoleColor|.Black
+
+	rout new {
+		next_mino := List!BlockField
+		random := Random := DateTime|.Now.Ticks
+		field_view := FieldView
+		fall_limit := 30
+		field_init
+		embed_mino_init
+		fill_next
+		write
+	}
+
+	rout embed_mino_init {
+		embed_mino := List!BlockField
+		embed_mino.Add := create_mino := ConsoleColor|.Cyan, [0b1111, 0b0000, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Yellow, [0b1100, 0b1100, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Magenta, [0b0100, 0b1110, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Green, [0b0110, 0b1100, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Red, [0b1100, 0b0110, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Blue, [0b1000, 0b1110, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.White, [0b0010, 0b1110, 0b0000, 0b0000]
+	}
+
+	rout create_mino :: BlockField(mino_size, mino_size)
+
+	rout create_mino(color:ConsoleColor, pos:List!Int32) {
+		var bf := create_mino
+		loop y &lt; mino_size use y := 0 by y += 1 {
+			var v := pos[y]
+			loop x &lt; mino_size use x := 0 by x += 1 {
+				if v % 2 = 1 :: bf[mino_size - x - 1, y] := color
+				v /= 2
+			}
+		}
+		return bf
+	}
+
+	rout field_init {
+		field := BlockField(width, height)
+		loop x &lt; width use x := 0 by x += 1 {
+			field[x, height - 1] := sentinel
+		}
+		loop y &lt; height use y := 0 by y += 1 {
+			field[0, y] := sentinel
+			field[width - 1, y] := sentinel
+		}
+	}
+
+	rout forward_game {
+		fall_time += 1
+		if fall_time &gt;= fall_limit {
+			if !!fall &amp;&amp; fall_time &gt;= earth_limit {
+				fix_play_mino
+				break_line
+				fill_next
+				write
+			}
+		}
+		write_play_mino
+	}
+
+	rout random_take_embed :: embed_mino[random.Next(7)]
+	rout fix_play_mino :: field.copy(play_mino, play_x, play_y)
+
+	rout fill_next {
+		if next_mino.Count = 0 {
+			random_take_embed =: BlockField =: play_mino
+		} else {
+			next_mino[0] =: BlockField =: play_mino
+			next_mino.RemoveAt[0]
+		}
+		let r := play_mino.rect_size
+		play_x := (width + r.width) / 2 - r.right - 1
+		play_y := mino_size - r.bottom - 1
+		last_mino := play_mino
+		last_x := play_x
+		last_y := play_y
+		loop next_mino.Count &lt; next_max :: next_mino.Add := random_take_embed
+	}
+
+	rout break_line {
+		loop y &lt; height - 1 use y := 0 by y += 1 {
+			if field.is_buried_line(y) :: field.delete_line(y)
+		}
+	}
+
+	rout fall {
+		field.has_overlap(play_mino, play_x, play_y + 1) =: var ret
+		if un ret {
+			play_y += 1
+			fall_time := 0
+		}
+		return un ret
+	}
+
+	rout move_fall {
+		if un fall {
+			fall_time := Math|.Max(fall_time, earth_limit - move_fail_limit)
+		} 
+	}
+
+	rout move_earth_fix {
+		loop fall ::;
+		fall_time := earth_limit
+	}
+
+	rout move_left {
+		field.has_overlap(play_mino, play_x - 1, play_y) =: var ret
+		if un ret :: play_x -= 1
+		return un ret
+	}
+
+	rout move_right {
+		field.has_overlap(play_mino, play_x + 1, play_y) =: var ret
+		if un ret :: play_x += 1
+		return un ret
+	}
+
+	rout rotation_left {
+		var alter := play_mino.rotation_left
+		var pr := play_mino.rect_size
+		var ar := alter.rect_size
+		var ax := play_x + (pr.right - ar.right + pr.left - ar.left) / 2;
+		var ay := play_y + pr.bottom - ar.bottom;
+		field.has_overlap(alter, ax, ay) =: var ret
+		if un ret {
+			play_mino := alter
+			play_x := ax
+			play_y := ay
+		}
+		return un ret
+	}
+
+	rout rotation_right {
+		var alter := play_mino.rotation_right
+		var pr := play_mino.rect_size
+		var ar := alter.rect_size
+		var ax := play_x + (pr.right - ar.right + pr.left - ar.left) / 2;
+		var ay := play_y + pr.bottom - ar.bottom;
+		field.has_overlap(alter, ax, ay) =: var ret
+		if un ret {
+			play_mino := alter
+			play_x := ax
+			play_y := ay
+		}
+		return un ret
+	}
+
+	rout write {
+		clear_view
+		field_view.offset(28, 0).write(field) 
+		loop i &lt; next_max use i := 0 by i += 1 
+			:: field_view.offset(54, i * 3 + 4).write(next_mino[i])
+	}
+
+	rout write_play_mino {
+		field_view.offset(28 + last_x * 2, last_y).write_clear(last_mino)
+		field_view.offset(28 + play_x * 2, play_y).write(play_mino)
+		last_mino := play_mino
+		last_x := play_x
+		last_y := play_y
+	}
+}
+
+class BlockField {
+	private var field:List!ConsoleColor
+	let width:Int32
+	let height:Int32
+
+	rout new(w:Int32, h:Int32) {
+		field := List!ConsoleColor
+		loop i &lt; w * h use i := 0 by i += 1 :: field.Add(ConsoleColor|.Black)
+		width := w
+		height := h
+	}
+
+	rout new(other:BlockField) {
+		field := other.field.GetRange(0, other.field.Count)
+		width := other.width
+		height := other.height
+	}
+
+	rout call(x:Int32, y:Int32) :: field[x + y * width]
+	rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x + y * width] := value
+
+	rout rect_size {
+		var ret := rect
+		ret.top := height; ret.left := width
+		loop x &lt; width use x := 0 by x += 1 {
+			loop y &lt; height use y := 0 by y += 1 {
+				if this[x, y] &lt;&gt; Tetris|.empty {
+					ret.top := Math|.Min(ret.top, y)
+					ret.bottom := Math|.Max(ret.bottom, y)
+					ret.left := Math|.Min(ret.left, x)
+					ret.right := Math|.Max(ret.right, x)
+				}
+			}
+		}
+		return ret
+	}
+
+	rout has_in_range(x:Int32, y:Int32) :: 0 &lt;= x &lt; width &amp;&amp; 0 &lt;= y &lt; height
+
+	rout copy(other:BlockField, offset_x:Int32, offset_y:Int32) {
+		loop x &lt; other.width use x := 0 by x += 1 {
+			loop y &lt; other.height use y := 0 by y += 1 {
+				if other[x, y] = Tetris|.empty :: continue
+				var ox := x + offset_x
+				var oy := y + offset_y
+				if un has_in_range(ox, oy) :: continue
+				this[ox, oy] := other[x, y]
+			}
+		}
+	}
+
+	rout has_overlap(other:BlockField, offset_x:Int32, offset_y:Int32) {
+		loop x &lt; other.width use x := 0 by x += 1 {
+			loop y &lt; other.height use y := 0 by y += 1 {
+				if other[x, y] = Tetris|.empty :: continue
+				var ox := x + offset_x
+				var oy := y + offset_y
+				if un has_in_range(ox, oy) :: continue
+				if this[ox, oy] <> Tetris|.empty :: return true 
+			}
+		}
+		return false
+	}
+
+	rout is_buried_line(y:Int32) {
+		loop x &lt; width use x := 0 by x += 1 {
+			if this[x, y] = Tetris|.empty :: return false
+		}
+		return true
+	}
+
+	rout delete_line(y:Int32) {
+		y -= 1
+		loop y &gt;= 0 by y -= 1 {
+			loop x &lt; width use x := 0 by x += 1 {
+				this[x, y + 1] := this[x, y]
+			}
+		}
+	}
+
+	rout rotation_left {
+		var ret := BlockField(height, width)
+		loop x &lt; width use x := 0 by x += 1 {
+			loop y &lt; height use y := 0 by y += 1 {
+				ret[y, height - 1 - x] := this[x, y]
+			}
+		}
+		return ret
+	}
+
+	rout rotation_right {
+		var ret := BlockField(height, width)
+		loop x &lt; width use x := 0 by x += 1 {
+			loop y &lt; height use y := 0 by y += 1 {
+				ret[width - 1 - y, x] := this[x, y]
+			}
+		}
+		return ret
+	}
+}
+
+class rect {
+	var top:Int32
+	var bottom:Int32
+	var left:Int32
+	var right:Int32
+
+	func width :: right - left + 1
+	func height :: bottom - top + 1
+}
+
+class FieldView {
+	var offset_x:Int32
+	var offset_y:Int32
+	
+	rout offset(x:Int32, y:Int32) {
+		offset_x := x
+		offset_y := y
+	}
+
+	rout write(field:BlockField) {
+		loop x &lt; field.width use x := 0 by x += 1 {
+			loop y &lt; field.height use y := 0 by y += 1 {
+				if field[x, y] = Tetris|.empty :: continue
+				Console|.BackgroundColor := field[x, y]
+				Console|.SetCursorPosition(x * 2 + offset_x, y + offset_y)
+				Console|.Write("  ")
+			}
+		}
+	}
+
+	rout write_clear(field:BlockField) {
+		loop x &lt; field.width use x := 0 by x += 1 {
+			loop y &lt; field.height use y := 0 by y += 1 {
+				if field[x, y] = Tetris|.empty :: continue
+				Console|.BackgroundColor := Tetris|.empty
+				Console|.SetCursorPosition(x * 2 + offset_x, y + offset_y)
+				Console|.Write("  ")
+			}
+		}
+	}
+}</code></pre>
+		<p>このほかのコード例は、<a href="https://github.com/B-head/Dlight-prototype/tree/master/CompileTest">Dreitのテストケース</a>を御覧ください。</p>
+	</div>
+	<!-- #EndEditable -->
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	Copyright © 2014 by B_head, All Rights Reserved.
+</div>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>
