@@ -1,0 +1,71 @@
+﻿* {
+	position: relative;
+	vertical-align: top;
+	box-sizing: border-box;
+}
+body {
+	margin: 0px;
+	padding: 0px;
+}
+div {
+	margin: 0px;
+	padding: 0px;
+	overflow: auto;
+}
+h1, h2, h3, h4, h5, h6, p {
+	margin: 1ex 0ex;
+	padding: 0ex;
+}
+ul, ol {
+	margin-left: 0ex;
+	padding-left: 3ex;
+}
+pre {
+	margin: 1ex;
+	padding: 1ex;
+	overflow: auto;
+	white-space: pre;
+}
+table {
+	margin: 0px;
+	padding: 0px;
+	white-space: nowrap;
+}
+
+.header {
+	white-space: nowrap;
+}
+.main_container {
+	max-width: 1024px;
+	margin: 0px auto;
+}
+.left-nav-back {
+	position: absolute;
+	width: 200px;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+}
+.page-content-back {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 200px;
+	right: 0px;
+}
+.left-nav {
+	padding: 1px;
+	z-index: 1;
+	float: left;
+	width: 200px;
+}
+.page-content {
+	padding: 1px 1em 1px 1em;
+	z-index: 1;
+	margin-left: 200px;
+}
+.clear {
+	clear: both;
+}
+.footer {
+}

@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+
+<!-- #BeginTemplate "master.dwt" -->
+
+<head>
+<meta charset="utf-8" />
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href="normalize.css" rel="stylesheet" type="text/css" />
+<link href="layout.css" rel="stylesheet" type="text/css" />
+<link href="base.css" rel="stylesheet" type="text/css" />
+<!-- #BeginEditable "doctitle" -->
+<title>言語構造 - プログラミング言語 Dreit</title>
+<!-- #EndEditable -->
+</head>
+
+<body>
+<div class="header">
+	<h1>プログラミング言語 Dreit</h1>
+</div>
+<div class="main_container">
+	<div class="left-nav-back"></div>
+	<div class="page-content-back"></div>
+	<div class="left-nav">
+		<ul>
+			<li><a href="index.html">ホーム</a></li>
+			<li>
+				<a href="lang-spec.html">言語仕様</a>
+				<ul>
+					<li><a href="lang-struct.html">言語構造</a></li>
+					<li><a href="literal.html">リテラル</a></li>
+					<li><a href="expression.html">式</a></li>
+					<li><a href="statement.html">制御文</a></li>
+					<li><a href="declaration.html">宣言</a></li>
+					<li><a href="routine.html">ルーチン</a></li>
+					<li><a href="class.html">クラス</a></li>
+					<li><a href="template.html">テンプレート</a></li>
+				</ul>
+			</li>
+			<li><a href="https://github.com/B-head/Dreit-prototype">GitHub</a></li>
+		</ul>
+	</div>
+	<!-- #BeginEditable "content" -->
+	<div class="page-content">
+		<h2>言語構造</h2>
+		<p>			
+			Dreitの<b>プログラム</b>は、コンピューターへの命令を抽象化した文字列を記述した、1つ以上の<b>ソースファイル</b>によって構成されます。
+			ソースファイルの文字列は、Dreitの<b>コンパイラ</b>などによって解析され、コンピューターで実行可能な命令コードへの変換を行います。
+		</p>
+		<h3>プログラムコンテキスト</h3>
+<pre><code class="ebnf">GlobalContext:
+	ExpressionList
+
+BlockContext:
+	"{" ExpressionList "}"
+
+DirectContext:
+	";"
+	Expression (,";")?
+	BlockContext
+
+InlineContext:
+	("::",)? ";"
+	"::", Expression (,";")?
+	("::",)? BlockContext
+
+ExpressionList:
+	;? Expression (;Expression)* ;?
+	;?
+
+ExpressionSeparators:
+	(.ExpressionSeparator)+
+
+ExpressionTerminator:
+	";"
+	PureLineSeparator</code></pre>
+		<p>
+			1つのソースファイルには、Dreitプログラムの概念的な構成要素である、複数の<b>プログラムコンテキスト</b>が含まれます。
+			全てのプログラムコンテキストは、実行可能な複数の命令と、複数の<b>子コンテキスト</b>を持つことができます。
+		</p>
+		<h4>グローバルコンテキスト</h4>
+		<p>
+			グローバルコンテキストは、Dreitプログラムにおける最上位のルートコンテキストです。
+			これは、生成規則のGlobalContextにあたるもので、Dreitプログラムの解析において最初に解析されます。
+			このコンテキストは実行可能であり、Dreitプログラムの実行時には、後述する起動時のコンテキストの実行順に従って自動的に実行を開始します。
+		</p>
+		<h4>ルーチンコンテキスト</h4>
+		<p>
+			ルーチンコンテキストは、生成規則CallExpressionなどから呼び出される、任意のタイミングで実行可能なコンテキストです。
+			このコンテキストは、生成規則RoutineDaclarationかOperatorDaclarationによって定義されます。
+		</p>
+		<h4>データタイプコンテキスト</h4>
+		<p>
+			データタイプコンテキストは、Dreitにおけるデータ型の定義に使用される、静的なコンテキストです。
+			このコンテキストに含まれる命令は、コンパイル時に実行可能である必要があり、実行時にのみ実行可能な命令を含むことはできません。
+			生成規則ClassDaclarationなどの型宣言の規則によって定義されます。
+		</p>
+		<h4>起動時のコンテキストの実行順</h4>
+		<p>
+			
+		</p>
+		<h3>空白<span class="partial-inp">部分的実装</span></h3>
+<pre><code class="ebnf">SpaceSeparators:
+	SpaceSeparator*
+
+SpaceSeparator:
+	WhiteSpace
+	EscapeLineTarminator
+	EscapeLineComment
+	SingleLineBlockComment
+
+WhiteSpace:
+	[#00-#09]
+	[#0B-#0C]
+	[#0E-#20]
+	#7F</code></pre>
+		<p>
+			空白は、式や識別子を区切るのに使用されます。
+			改行文字を除く空白類は構文の解釈に影響を及ぼさないため、ソースコードを整形し可読性を向上させるのに利用することができます。
+		</p>
+		<h4>改行<span class="partial-inp">部分的実装</span></h4>
+<pre><code class="ebnf">LineSeparators:
+	LineSeparator*
+
+LineSeparator:
+	SpaceSeparator
+	PureLineSeparator
+
+PureLineSeparator:
+	LineTerminator
+	LineComment
+	BlockComment ^ SingleLineBlockComment
+
+LineTerminator:
+	#0A #0D
+	#0D #0A
+	#0A
+	#0D
+
+EscapeLineTarminator:
+	"\" WhiteSpace* LineTerminator</code></pre>
+		<p>
+			改行は、式の区切りとして認識される文字種です。
+			Dreitには、生成規則CallExpressionのように、途中の改行の有無によって解釈の変わる構文要素があります。
+			これは、構文の解釈の曖昧さによって起こる事故を防止するための仕様です。
+		</p>
+		<p>
+			以下の式は、fooを引数なしで呼び出し、aに文字列"hello"を割り当てる事を意図したものです。
+			しかし、改行による区切りを認識しない場合は、fooを引数"hello"で呼び出し、その結果をaに割り当てるという意味になってしまいます。
+		</p>
+<pre><code class="dreit">foo
+"hello" =: a</code></pre>
+		<p>
+			長い式を可読性向上のために複数行に分割する場合、この仕様によって式の解釈が変わる場合があります。
+			これは、行の末尾に\記号を記述し、改行を無視するものとして扱うことを明示することで解決できます。
+			以下の式は、前述の式に\記号を追加し、fooを引数"hello"で呼び出す意味に変更したものです。
+		</p>
+<pre><code class="dreit">foo\
+"hello" =: a</code></pre>
+		<h4>コメント</h4>
+		<p>
+			コメントは、ソースコード中にルーチンの説明などのメモを残しておくために利用できる要素です。
+			コメントは、記述した内容に関わらず全て空白であるものとして扱われ、プログラム中で意味を持つことはありません。
+		</p>
+		<h5>行コメント<span class="partial-inp">部分的実装</span></h5>
+<pre><code class="ebnf">LineComment:
+	StartLineComment LineCommentCharacter* LineTerminator
+
+EscapeLineComment:
+	StartLineComment LineCommentCharacter* EscapeLineTerminator
+
+StartLineComment:
+	"//"
+	"#!"
+
+SingleLineCommentCharacter:
+	WhiteSpace
+	[#21-#10FFFF]</code></pre>
+		<p>
+			行コメントは、改行を終端とする簡潔なコメントです。
+			以下は、行コメントを使用した例です。
+		</p>
+<pre><code class="dreit">//行コメント
+foo(10) //式の直後の行コメント</code></pre>
+		<h5>ブロックコメント<span class="partial-inp">部分的実装</span></h5>		
+<pre><code class="ebnf">BlockComment:
+	"/*" BlockCommentString* "*/"
+
+BlockCommentString:
+	BlockComment
+	NonEndBlockCommentString
+	
+NonEndBlockCommentString:
+	"*" NonEndBlockCommentString ^ "/"
+	AllCharacter
+
+SingleLineBlockComment:
+	"/*" SingleLineBlockCommentString* "*/"
+
+SingleLineBlockCommentString:
+	SingleLineBlockComment
+	NonEndSingleLineBlockCommentString
+
+NonEndSingleLineBlockCommentString:
+	"*" NonEndSingleLineBlockCommentString ^ "/"
+	SingleLineCommentCharacter
+
+AllCharacter:
+	[#00-#10FFFF]</code></pre>
+		<p>
+			ブロックコメントは、複数行での記述が可能なコメントです。
+			以下は、ブロックコメントを使用した例です。
+		</p>
+<pre><code class="dreit">/* ブロックコメント */
+
+/*
+	複数行の
+	ブロック
+	コメント
+*/</code></pre>
+		<p>
+			ブロックコメントは、ネストすることが可能です。
+			以下は、ブロックコメントをネストして使用した例です。
+		</p>
+<pre><code class="dreit">/*
+	ここからコメント
+	/*
+		ネストしたコメント
+	*/
+	ここまでコメント
+*/</code></pre>
+	</div>
+	<!-- #EndEditable -->
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	Copyright © 2014 by B_head, All Rights Reserved.
+</div>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>

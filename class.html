@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+
+<!-- #BeginTemplate "master.dwt" -->
+
+<head>
+<meta charset="utf-8" />
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href="normalize.css" rel="stylesheet" type="text/css" />
+<link href="layout.css" rel="stylesheet" type="text/css" />
+<link href="base.css" rel="stylesheet" type="text/css" />
+<!-- #BeginEditable "doctitle" -->
+<title>プログラミング言語 Dreit</title>
+<!-- #EndEditable -->
+</head>
+
+<body>
+<div class="header">
+	<h1>プログラミング言語 Dreit</h1>
+</div>
+<div class="main_container">
+	<div class="left-nav-back"></div>
+	<div class="page-content-back"></div>
+	<div class="left-nav">
+		<ul>
+			<li><a href="index.html">ホーム</a></li>
+			<li>
+				<a href="lang-spec.html">言語仕様</a>
+				<ul>
+					<li><a href="lang-struct.html">言語構造</a></li>
+					<li><a href="literal.html">リテラル</a></li>
+					<li><a href="expression.html">式</a></li>
+					<li><a href="statement.html">制御文</a></li>
+					<li><a href="declaration.html">宣言</a></li>
+					<li><a href="routine.html">ルーチン</a></li>
+					<li><a href="class.html">クラス</a></li>
+					<li><a href="template.html">テンプレート</a></li>
+				</ul>
+			</li>
+			<li><a href="https://github.com/B-head/Dreit-prototype">GitHub</a></li>
+		</ul>
+	</div>
+	<!-- #BeginEditable "content" -->
+	<div class="page-content">
+		<h2>クラス<span class="partial-inp">部分的実装</span></h2>
+<pre><code class="ebnf">ClassDaclaration:
+	(AttributeSignature,)? ClassPrefix (,Identifier)? ClassSignature (,InlineContext)?
+
+ClassPrefix:
+	"class"
+	"trait"
+	"extend"
+
+ClassSignature:
+	(,TemplateSignature)? (,InheritSignature)?
+
+InheritSignature:
+	":", TupleLiteral</code></pre>
+		<h3>トレイト<span class="not-inp">未実装</span></h3>
+		<p>
+			
+		</p>
+		<h3>インターフェース拡張<span class="not-inp">未実装</span></h3>
+		<p>
+			
+		</p>
+		<h3>静的メンバ</h3>
+		<p>
+			
+		</p>
+		<h3>コンストラクタとデストラクタ</h3>
+		<p>
+			
+		</p>
+		<h3>関数オブジェクト<span class="not-inp">未実装</span></h3>
+		<p>
+			
+		</p>
+		<h3>継承</h3>
+		<p>
+			
+		</p>
+	</div>
+	<!-- #EndEditable -->
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	Copyright © 2014 by B_head, All Rights Reserved.
+</div>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>

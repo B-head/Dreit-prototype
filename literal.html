@@ -1,0 +1,306 @@
+﻿<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+
+<!-- #BeginTemplate "master.dwt" -->
+
+<head>
+<meta charset="utf-8" />
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href="normalize.css" rel="stylesheet" type="text/css" />
+<link href="layout.css" rel="stylesheet" type="text/css" />
+<link href="base.css" rel="stylesheet" type="text/css" />
+<!-- #BeginEditable "doctitle" -->
+<title>プログラミング言語 Dreit</title>
+<!-- #EndEditable -->
+</head>
+
+<body>
+<div class="header">
+	<h1>プログラミング言語 Dreit</h1>
+</div>
+<div class="main_container">
+	<div class="left-nav-back"></div>
+	<div class="page-content-back"></div>
+	<div class="left-nav">
+		<ul>
+			<li><a href="index.html">ホーム</a></li>
+			<li>
+				<a href="lang-spec.html">言語仕様</a>
+				<ul>
+					<li><a href="lang-struct.html">言語構造</a></li>
+					<li><a href="literal.html">リテラル</a></li>
+					<li><a href="expression.html">式</a></li>
+					<li><a href="statement.html">制御文</a></li>
+					<li><a href="declaration.html">宣言</a></li>
+					<li><a href="routine.html">ルーチン</a></li>
+					<li><a href="class.html">クラス</a></li>
+					<li><a href="template.html">テンプレート</a></li>
+				</ul>
+			</li>
+			<li><a href="https://github.com/B-head/Dreit-prototype">GitHub</a></li>
+		</ul>
+	</div>
+	<!-- #BeginEditable "content" -->
+	<div class="page-content">
+		<h2>リテラル</h2>
+<pre><code class="ebnf">Literal:
+	NumericLiteral
+	StringLiteral
+	HereDocument
+	RangeLiteral
+	ArrayLiteral
+	DictionaryLiteral
+	Lambda</code></pre>
+		<p>
+			リテラルは、値を言語上で表現したものです。
+			リテラルが評価されると、表現された値が生成されます。
+		</p>
+		<h3>数値リテラル</h3>
+<pre><code class="ebnf">NumericLiteral:
+	NumericString (,".", NumericString)?
+	
+NumericString:
+	NumericPrefix NumericLiteralCharacter*
+	DigitCharacter NumericLiteralCharacter*
+
+NumericPrefix:
+	"0b"
+	"0B"
+	"0o"
+	"0O"
+	"0d"
+	"0D"
+	"0h"
+	"0H"
+	"0x"
+	"0X"
+
+NumericLiteralCharacter:
+	[a-z]
+	[A-Z]
+	"_"
+	DigitCharactor
+
+DigitCharacter:
+	[0-9]</code></pre>
+		<p>
+			数値リテラルは、整数型か浮動小数点数型の値を表現するものです。
+			小数点のない値は整数型、小数点のある値は浮動小数点数型になります。
+			また、アンダーバー_を数値の区切りとして含むことができます。
+		</p>
+<pre><code class="dreit">123 //整数
+123.456 //浮動小数点数
+
+012_345_678 //整数12345678と同じ</code></pre>
+		<p>
+			特定のプレフィックスを付けることで、2進数・8進数・16進数で数値を記述することができます。
+			浮動小数点数表記でこの表記を使用する場合は、小数点の後にもプレフィックスを付ける必要があります。
+			以下に、プレフィックスの一覧と使用例を示します。
+		</p>
+		<div>
+			<table>
+				<tr>
+					<th>進数</th>
+					<th>プレフィックス</th>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>0b 0B</td>
+				</tr>
+				<tr>
+					<td>8</td>
+					<td>0o 0O</td>
+				</tr>
+				<tr>
+					<td>10</td>
+					<td>0d 0D</td>
+				</tr>
+				<tr>
+					<td>16</td>
+					<td>0x 0X 0h 0H</td>
+				</tr>
+			</table>
+		</div>
+<pre><code class="dreit">0b1100 //2進表記
+0o7654 //8進表記
+0xFFFF //16進表記
+
+0x12ab.0x34cd //16進浮動小数点数表記 </code></pre>
+		<h3>文字列リテラル</h3>
+<pre><code class="ebnf">StringLiteral:
+	#22 NonDoubleQuoteCharacter* #22
+	#27 NonSingleQuoteCharacter* #27
+	#60 NonBackQuoteCharacter* #60
+	"#", #22 NonDoubleQuoteFunctionalCharacter* #22
+	"#", #27 NonSingleQuoteFunctionalCharacter* #27
+	"#", #60 NonBackQuoteFunctionalCharacter* #60
+
+NonDoubleQuoteCharacter:
+	[#00-#10FFFF] ^ #22
+
+NonSingleQuoteCharacter:
+	[#00-#10FFFF] ^ #27
+
+NonBackQuoteCharacter:
+	[#00-#10FFFF] ^ #60
+
+NonDoubleQuoteFunctionalCharacter:
+	EscapeSequence
+	BuiltInExpression
+	NonDoubleQuoteCharacter
+
+NonSingleQuoteFunctionalCharacter:
+	EscapeSequence
+	BuiltInExpression
+	NonSingleQuoteCharacter
+
+NonBackQuoteFunctionalCharacter:
+	EscapeSequence
+	BuiltInExpression
+	NonBackQuoteCharacter
+
+EscapeSequence:
+	"\" [#21-#7F]
+
+BuiltInExpression:
+	"{" Expression ."}"</code></pre>
+		<p>
+			文字列リテラルは、文字列型の値である文字列を表現したものです。
+			シングルクォート'・ダブルクォート"・バッククォート`のいずれかで文字列を囲むことで文字列リテラルとなります。
+		</p>
+<pre><code class="dreit">'シングルクォートで囲んだ文字列リテラル'
+"ダブルクォートで囲んだ文字列リテラル"
+`バッククォートで囲んだ文字列リテラル`</code></pre>
+		<p>
+			文字列リテラルの前にシャープ#を付けると、リテラル中で任意の式の埋め込みやエスケープシーケンスを使用することができます。
+			式の埋め込みを使用する場合は、文字列中で左波括弧{を置き、任意の式を記述した後に右波括弧}で閉じます。
+			エスケープシーケンスは、\記号に続くいくつかの文字で構成される文字列で、通常直接表記できない文字を表現するために使われます。
+			これは、\記号自体を表現したい場合や、リテラルを囲んでいるクォートを文字列に含めたい場合、左波括弧{を式の埋め込みの始まりとして認識させたくない場合にも利用できます。
+			以下に、エスケープシーケンスの一覧表と、式の埋め込みを含めた使用例を示します。
+		</p>
+		<div>
+			<table>
+				<tr>
+					<th>シーケンス</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>\{</td>
+					<td>左波括弧{</td>
+				</tr>
+			</table>
+		</div>
+<pre>#"<code class="dreit">123 + 456 = { 123 + 456 }" //123 + 456 = 579
+#"123 + 456 = \{ 123 + 456 }" //123 + 456 = { 123 + 456 }</code></pre>
+		<h3>ヒアドキュメント<span class="not-inp">未実装</span></h3>
+			<p>StartDelimiterとEndDelimiterは特別な方法で定義されます</p>
+<pre><code class="ebnf">HereDocument:
+	"{" StartDelimiter "{" HereText "}" EndDelimiter "}" 
+
+HereText:
+	(AllCharacter*) ^ AppearEndDelimiterText
+
+AppearEndDelimiterText:
+	AllCharacter* (EndDelimiter AllCharacter*)+</code></pre>
+		<p>
+			ヒアドキュメントは、複数行に渡るテキストをソースコード中に埋め込むのに適したリテラルです。
+			2つの左波括弧{{で始まり、複数行のテキストを記述した後に2つの右波括弧}}で終了します。
+			2つの左波括弧{{から最初の改行までと、最後の改行から2つの右波括弧}}の間に空白文字しかない場合は、該当する空白と改行が生成されるテキストから除外されます。
+		</p>
+<pre><code class="dreit">{{
+これは通常のヒアドキュメントの例です。
+最初と最後の行が空白文字だけの場合は、該当の空白文字と改行は取り除かれます。
+}}</code></pre>
+		<p>
+			ヒアドキュメントには、丸括弧()・角括弧[]・山括弧&lt;&gt;を使用したデリミタを記述することができます。
+			デリミタは、2つの左波括弧{の間に任意の種類と個数の左括弧を記述し、2つの右波括弧}の間に対応する右括弧を記述して使用します。
+			デリミタを使用することで、テキスト中に2つの右波括弧}}が出現した場合に、ヒアドキュメントが終了しないようにすることができます。
+		</p>
+<pre><code class="dreit">{([&lt;{
+これはデリミタを使用したヒアドキュメントの例です。
+通常のヒアドキュメントには記述できない、2つ続いた右波括弧}}も記述することができます。
+}&gt;])}</code></pre>
+		<h3>範囲リテラル<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">RangeLiteral:
+	StartRange, ComposeExpression, "..", ComposeExpression, EndRange
+
+NakedRangeLiteral:
+	ComposeExpression, "..", ComposeExpression
+	ComposeExpression
+
+StartRange:
+	"("
+	"["
+
+EndRange:
+	")"
+	"]"</code></pre>
+		<p>
+			範囲リテラルは、数値や配列などの範囲を表現した範囲型のリテラルです。
+			範囲指定には、端点の閉・開の指定が可能で、記述した括弧が角括弧[]で閉、丸括弧()で開を指定できます。
+			構文上曖昧にならない場所では、閉・開の指定を省略することができ、省略した場合は両端点とも閉であるとして解釈されます。
+		</p>
+<pre><code class="dreit">[0..10] //0から10までの閉区間
+(0..10) //0から10までの開区間
+[0..10) //0から10までの左閉右開区間
+0..10 //0から10までの閉区間</code></pre>
+		<h3>配列リテラル<span class="partial-inp">部分的実装</span></h3>
+<pre><code class="ebnf">ArrayLiteral:
+	"[", ArrayContent ^ NakedRangeLiteral, "]"
+
+ArrayContent:
+	NakedRangeLiteral (,",", NakedRangeLiteral)* (,",")?
+
+DictionaryLiteral:
+	"[", AssociatePair (,"," AssociatePair)* (,",")? ,"]"
+
+AssociatePair:
+	NakedRangeLiteral, ":", NakedRangeLiteral</code></pre>
+		<p>
+			配列リテラルは、動的配列型か連想配列型を生成するリテラルです。
+			単体の値で構成されたものは動的配列、コロン:で区切った2つの値で構成されたものは連想配列を生成します。
+		</p>
+<pre><code class="dreit">["abc", "def", "ghi"] //Array!String型の動的配列を生成
+["a": 123, "b": 456, "c": 789] //Dictionary!(String, Int32)型の連想配列を生成</code></pre>
+		<h3>タプルリテラル<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">TupleLiteral:
+	TuplePair (,",", TuplePair)*
+
+TuplePair:
+	Identifier, ":", NakedRangeLiteral
+	NakedRangeLiteral</code></pre>
+		<p>
+			タプルリテラルは、異なる型の要素で構成された静的配列のような集積体であるタプルを生成するリテラルです。
+			それぞれの要素には識別タグを付けることができ、各要素へのアクセスに識別タグを使った方法を使用することができます。
+		</p>
+<pre><code class="dreit">123, "abc", [0..10] //Tuple(Int32, String, Range!Int32)型のタプルを生成
+a:123, b:"abc", c:[0..10] //識別タグ付きのタプルを生成。</code></pre>
+		<h3>ラムダリテラル<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">Lambda:
+	"$" RoutineSignature, "::", DirectContext
+	"$" DirectContext</code></pre>
+		<p>
+			ラムダリテラルは、無名のルーチンであるラムダを生成する簡潔な構文です。
+			単体の式を記述した場合は、式を評価して返すラムダを生成します。
+			2つのコロン::で区切った構文は、引数を取るラムダを生成します。
+		</p>
+<pre><code class="dreit">$123 + 456 //123 + 456を計算して返すラムダを生成
+$a, b :: a + b //aとbを引数に取りa + bを計算して返すラムダを生成</code></pre>
+			<h4>カリー化<span class="not-inp">未実装</span></h4>
+			<p>
+				
+			</p>
+	</div>
+	<!-- #EndEditable -->
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	Copyright © 2014 by B_head, All Rights Reserved.
+</div>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>

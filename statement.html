@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+
+<!-- #BeginTemplate "master.dwt" -->
+
+<head>
+<meta charset="utf-8" />
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href="normalize.css" rel="stylesheet" type="text/css" />
+<link href="layout.css" rel="stylesheet" type="text/css" />
+<link href="base.css" rel="stylesheet" type="text/css" />
+<!-- #BeginEditable "doctitle" -->
+<title>プログラミング言語 Dreit</title>
+<style type="text/css">
+
+
+.auto-style1 {
+	font-family: monospace;
+}
+</style>
+<!-- #EndEditable -->
+</head>
+
+<body>
+<div class="header">
+	<h1>プログラミング言語 Dreit</h1>
+</div>
+<div class="main_container">
+	<div class="left-nav-back"></div>
+	<div class="page-content-back"></div>
+	<div class="left-nav">
+		<ul>
+			<li><a href="index.html">ホーム</a></li>
+			<li>
+				<a href="lang-spec.html">言語仕様</a>
+				<ul>
+					<li><a href="lang-struct.html">言語構造</a></li>
+					<li><a href="literal.html">リテラル</a></li>
+					<li><a href="expression.html">式</a></li>
+					<li><a href="statement.html">制御文</a></li>
+					<li><a href="declaration.html">宣言</a></li>
+					<li><a href="routine.html">ルーチン</a></li>
+					<li><a href="class.html">クラス</a></li>
+					<li><a href="template.html">テンプレート</a></li>
+				</ul>
+			</li>
+			<li><a href="https://github.com/B-head/Dreit-prototype">GitHub</a></li>
+		</ul>
+	</div>
+	<!-- #BeginEditable "content" -->
+	<div class="page-content">
+		<h2>制御文</h2>
+<pre><code class="ebnf">Statement:
+	IfStatement
+	PatternMatchStatement
+	LoopStatement
+	LaterloopStatement
+	ForStatement
+	UnStatement
+	LabelStatement
+	GotoStatement
+	ContinueStatement
+	BreakStatement
+	GiveStatement
+	ReturnStatement
+	YieldStatement
+	ThrowStatement
+	CatchStatement
+	ScopeGuardStatement</code></pre>
+		<p>
+			
+		</p>
+		<h3>条件分岐</h3>
+<pre><code class="ebnf">IfStatement:
+	"if", Expression, ThenContext (,"else", DirectContext)?
+
+ThenContext:
+	(ThenSeparator,)? ";"
+	ThenSeparator, Expression (,";")?
+	(ThenSeparator,)? BlockContext
+
+ThenSeparator:
+	"::"
+	"then""</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">if a &lt; 10 :: 50
+if a &lt; 10 :: 50 else 60
+
+if a &lt; 10 {
+	give 50
+} else {
+	give 60
+}
+
+if a &lt; 10 {
+	give 50
+} else if b &lt; 20 {
+	give 60
+} else {
+	give 70
+}</code></pre>
+		<h3>パターンマッチ<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">PatternMatchStatement:
+	"diverge", Expression, PatternMatchContext
+
+PatternMatchContext:
+	"::", PatternMatchCase (,";")?
+	("::",)? ";"
+	("::",)? "{", PatternMatchList, "}"
+
+PatternMatchList:
+	;? PatternMatchCase (; PatternMatchCase)* ;?
+	;
+
+PatternMatchCase:
+	PatternMatchCondition, InlineContext
+
+PatternMatchCondition:
+	Expression</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">diverge a {
+	1 :: "foo"
+	2 :: "bar"
+	3 :: "baz"
+	_ :: "qux"
+}</code></pre>
+		<h3>単純ループ<span class="partial-inp">部分的実装</span></h3>
+<pre><code class="ebnf">LoopStatement:
+	LoopParts, InlineContext
+
+LaterloopStatement:
+	"later", DirectContext, LoopPart
+
+LoopPart:
+	"loop" (,Expression)? (,UsePart)? (,ByPart)? (.LabelStatement)?
+
+UsePart:
+	"use", Argument
+
+ByPart:
+	"by", Expression</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">loop a &lt;&gt; null :: a := a.next
+
+loop a &lt; 10 use a := 0 by a += 1 {
+	//dosomething
+}</code></pre>
+		<h3>範囲ループ<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">ForStatement:
+	"for", Expression (,OfPart)? (,AtPart)? (.LabelStatement)? InlineContext
+
+OfPart:
+	"of", ArgumentPart
+
+AtPart:
+	"at", ArgumentPart</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">for [0..10) {
+	//dosomething
+}
+
+for list of v at i {
+	//dosomething
+}</code></pre>
+		<h3>Un文</h3>
+<pre><code class="ebnf">UnStatement:
+	"un", Expression</code></pre>
+		<p>
+			
+		</p>
+<pre><span class="auto-style1">un a &lt; 10</span></pre>
+		<h3>ジャンプ文</h3>
+		<h4>Label文<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">LabelStatement:
+	"label", Identifier</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">label end</code></pre>
+		<h4>Goto文<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">GotoStatement:
+	"goto", Identifier</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">goto end</code></pre>
+		<h4>Continue文<span class="partial-inp">部分的実装</span></h4>
+<pre><code class="ebnf">ContinueStatement:
+	"continue" (,Expression)? (.LabelStatement)?</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">continue</code></pre>
+		<h4>Break文<span class="partial-inp">部分的実装</span></h4>
+<pre><code class="ebnf">BreakStatement:
+	"break" (,Expression)? (.LabelStatement)?</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">break</code></pre>
+		<h4>Give文<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">GiveStatement:
+	"give", Expression</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">give "foo"</code></pre>
+		<h4>Return文</h4>
+<pre><code class="ebnf">ReturnStatement:
+	"return", Expression?</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">return "foo"</code></pre>
+		<h4>Yield文<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">YieldStatement:
+	"yield", Expression?</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">yield "foo"</code></pre>
+		<h3>例外処理機構</h3>
+		<h4>Throw文<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">ThrowStatement:
+	"throw", Expression</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">throw Exception</code></pre>
+		<h4>Catch文<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">CatchStatement:
+	"catch", ArgumentPart, InlineContext</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">catch e:Exception {
+	//dosomething
+}</code></pre>
+		<h3>スコープガード<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">ScopeGuardStatement:
+	"exit", DirectContext
+	"success", DirectContext
+	"failure", DirectContext</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">exit a.free</code></pre>
+		<h3>契約</h3>
+<pre><code class="ebnf">ContractStatement:
+	RequireStatement
+	EnsureStatement</code></pre>
+		<p>
+			
+		</p>
+		<h4>事前条件<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">RequireStatement:
+	"require", DirectContext</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">require assert(a &gt; 0)</code></pre>
+		<h4>事後条件<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">EnsureStatement:
+	"ensure", DirectContext
+	"ensure", ArgumentPart InlineContext</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">ensure r :: assert(r &gt; 0)</code></pre>
+		<h3>演算フラグの制御<span class="not-inp">未実装</span></h3>
+		<p>
+			TBD
+		</p>
+		</div>
+	<!-- #EndEditable -->
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	Copyright © 2014 by B_head, All Rights Reserved.
+</div>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>

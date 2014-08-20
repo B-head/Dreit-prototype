@@ -1,0 +1,536 @@
+﻿<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+
+<!-- #BeginTemplate "master.dwt" -->
+
+<head>
+<meta charset="utf-8" />
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href="normalize.css" rel="stylesheet" type="text/css" />
+<link href="layout.css" rel="stylesheet" type="text/css" />
+<link href="base.css" rel="stylesheet" type="text/css" />
+<!-- #BeginEditable "doctitle" -->
+<title>プログラミング言語 Dreit</title>
+<!-- #EndEditable -->
+</head>
+
+<body>
+<div class="header">
+	<h1>プログラミング言語 Dreit</h1>
+</div>
+<div class="main_container">
+	<div class="left-nav-back"></div>
+	<div class="page-content-back"></div>
+	<div class="left-nav">
+		<ul>
+			<li><a href="index.html">ホーム</a></li>
+			<li>
+				<a href="lang-spec.html">言語仕様</a>
+				<ul>
+					<li><a href="lang-struct.html">言語構造</a></li>
+					<li><a href="literal.html">リテラル</a></li>
+					<li><a href="expression.html">式</a></li>
+					<li><a href="statement.html">制御文</a></li>
+					<li><a href="declaration.html">宣言</a></li>
+					<li><a href="routine.html">ルーチン</a></li>
+					<li><a href="class.html">クラス</a></li>
+					<li><a href="template.html">テンプレート</a></li>
+				</ul>
+			</li>
+			<li><a href="https://github.com/B-head/Dreit-prototype">GitHub</a></li>
+		</ul>
+	</div>
+	<!-- #BeginEditable "content" -->
+	<div class="page-content">
+		<h2>式</h2>
+<pre><code class="ebnf">Expression:
+	LeftPipelineExpression
+	RightPipelineExpression
+	SwapExpression
+	TupleLiteral</code></pre>
+		<p>
+			式は、コンピューターへの命令を抽象化した、一連の文字列です。
+			Dreitでは、値・演算・制御・宣言などの要素は全て式として表現されます。
+		</p>
+		<h3>基本式</h3>
+<pre><code class="ebnf">PrimaryExpression:
+	Declaration
+	Statement
+	Literal
+	GroupingExpression
+	ModifierIdentifier</code></pre>
+		<p>
+			基本式は、識別子・リテラル・制御文・宣言・グループ化式で構成された、式の中で最も早く評価される式です。
+		</p>
+		<h4>識別子</h4>
+<pre><code class="ebnf">ModifierIdentifier:
+	Pragma
+	Macro
+	OptionalType
+	Identifier
+
+Identifier:
+	NonDigitIdentifierCharacter IdentifierCharacter*
+
+IdentifierCharacter:
+	[0-9]
+	NonDigitIdentifierCharacter
+
+NonDigitIdentifierCharacter:
+	EscapeSequence
+	[a-z]
+	[A-Z]
+	"_"</code></pre>
+		<p>
+			識別子は、プログラムで宣言された要素を参照する文字列です。
+			メンバアクセス以外の後置式の子ではなく、パイプライン式の適用先でなく、宣言の名前でない単体で出現した識別子は、引数なしの呼び出し式と同等の動作をします。
+		</p>
+		<p>
+			識別子に使用できる文字は、最初の文字は英大文字・英小文字・アンダーバー_のいずれかで、
+			続く文字列には英大文字・英小文字・アンダーバー_に加えて数字を使用することができます。
+			以下は、識別子として可能な文字列の例です。
+		</p>
+<pre>foo
+bar123
+_baz_</pre>
+		<h5>プラグマ</h5>
+<pre><code class="ebnf">Pragma:
+	"@@", Identifier</code></pre>
+		<p>
+			プラグマは、Dreitコンパイラが独自に実装した言語仕様外の拡張機能です。
+			コンパイラは、プラグマを呼び出す識別子として、直前に2つの単価記号@@を付けた識別子を使用できます。
+		</p>
+		<h5>マクロ<span class="not-inp">未実装</span></h5>
+<pre><code class="ebnf">Macro:
+	"##", Identifier</code></pre>
+		<p>
+			TBD
+		</p>
+		<h5>Optional型<span class="not-inp">未実装</span></h5>
+<pre><code class="ebnf">OptionalType:
+	"??", Identifier</code></pre>
+		<p>
+			Optional型は、基になる型とnull値を格納できる代数型です。
+			Optional型は、基になる型の識別子に2つの疑問符??を付けて表記できます。
+			これは、<code>Optional!T</code>の糖衣構文となっています。
+		</p>
+		<h4>グループ化式</h4>
+<pre><code class="ebnf">GroupingExpression:
+	"(", Expression ^ NakedRangeLiteral, ")"</code></pre>
+		<p>
+			グループ化式は、任意の式の評価順序の変更や式の区切りに使用する構文です。
+			任意の式を丸括弧()で囲むことで、式を他の式よりも早く評価されるように変更することができます。
+		</p>
+<pre><code class="dreit">1 * (2 + 3)</code></pre>
+		<h3>後置式</h3>
+<pre><code class="ebnf">PostfixExpression:
+	ReferExpression
+	TypeofExpression
+	RejectExpression
+	MemberAccessExpression
+	WithExpression
+	CallExpression
+	TemplateInstanceExpression
+	PrimaryExpression</code></pre>
+		<p>
+			後置式は、基本式の直後に追記していく形態の式です。
+		</p>
+		<h4>参照式<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">ReferExpression:
+	PostfixExpression, "&amp;"</code></pre>
+		<p>
+			参照式は、値が格納された領域を指す参照を取得する式です。
+		</p>
+<pre><code class="dreit">foo&amp;</code></pre>
+		<h4>型参照式<span class="partial-inp">部分的実装</span></h4>
+<pre><code class="ebnf">TypeofExpression:
+	PostfixExpression, "|"</code></pre>
+		<p>
+			型参照式は、型の情報と静的メンバへの参照を持つ特別な型を取得する式です。
+			クラスなどの静的メンバにアクセスする場合は、型参照式に続けてメンバアクセス式を記述します。
+		</p>
+<pre><code class="dreit">Foo|.x //Fooクラスの静的メンバxにアクセスする。</code></pre>
+
+		<h4>除外式<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">RejectExpression:
+	PostfixExpression, "?"</code></pre>
+		<p>
+			TBD
+		</p>
+<pre><code class="dreit">foo?</code></pre>
+		<h4>メンバアクセス式</h4>
+<pre><code class="ebnf">MemberAccessExpression:
+	PostfixExpression, ".", ModifierIdentifier</code></pre>
+		<p>
+			メンバアクセス式は、クラス・列挙型・モジュールなどのメンバにアクセスするための式です。
+			メンバアクセス以外の後置式の子ではなく、パイプライン式の適用先でないメンバアクセス式は、メンバの要素を引数なしで呼び出す動作をします。
+		</p>
+<pre><code class="dreit">foo.x //fooのメンバxにアクセスする。</code></pre>
+		<h4>With式<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">WithExpression:
+	PostfixExpression, ".", BlockContext</code></pre>
+		<p>
+			With式は、単一のオブジェクトの複数のメンバに連続してアクセスする場合に利用できる糖衣構文です。
+		</p>
+<pre><code class="dreit">foo.{
+	x := 10
+	y := 20
+}</code></pre>
+		<h4>呼び出し式</h4>
+<pre><code class="ebnf">CallExpression:
+	PostfixExpression. NakedArgument
+	PostfixExpression. "(", TupleLiteral ^ NakedRangeLiteral, ")"
+	PostfixExpression. "[", TupleLiteral ^ NakedRangeLiteral, "]"
+
+NakedArgument:
+	StringLiteral
+	HereDocument
+	RangeLiteral
+	LambdaLiteral</code></pre>
+		<p>
+			呼び出し式は、ルーチンやデリゲートを呼び出すための構文です。
+			識別子・メンバアクセス式・テンプレートインスタンス化式に直接後置された場合は、それらの式の引数なしでの呼び出しの動作を、指定した引数での呼び出しの動作に上書きします。
+		</p>
+<pre><code class="dreit">foo() //fooを引数なしで呼び出す。
+foo(10, 20) //fooを2つの引数で呼び出す。</code></pre>
+		<h3>前置式</h3>
+<pre><code class="ebnf">PrefixExpression:
+	PlusSignExpression
+	MinusSignExpression
+	NotExpression
+	PostfixExpression
+
+PlusSignExpression:
+	"++", PrefixExpression
+
+MinusSignExpression:
+	"--", PrefixExpression
+
+NotExpression:
+	"!!", PrefixExpression</code></pre>
+		<p>
+			前置式は、後置式の直前に演算子を追加する形態の式です。
+		</p>
+		<div>
+			<table>
+				<tr>
+					<th>演算子</th>
+					<th>名称</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>++</td>
+					<td>正符号</td>
+					<td>特に何もしません。</td>
+				</tr>
+				<tr>
+					<td>--</td>
+					<td>負符号</td>
+					<td>数値の符号を反転させます。</td>
+				</tr>
+				<tr>
+					<td>!!</td>
+					<td>論理否定</td>
+					<td>値をBoolean型に変換してから、論理値を反転させます。</td>
+				</tr>
+			</table>
+		</div>
+<pre><code class="dreit">++foo //正符号
+--foo //負符号
+!!foo //論理否定</code></pre>
+		<h3>乗除式</h3>
+<pre><code class="ebnf">MultiplicativeExpression:
+	MultiplyExpression
+	DivideExpression
+	ModuloExpression
+	PrefixExpression
+
+MultiplyExpression:
+	MultiplicativeExpression, "*", PrefixExpression
+
+DivideExpression:
+	MultiplicativeExpression, "/", PrefixExpression
+
+ModuloExpression:
+	MultiplicativeExpression, "%", PrefixExpression</code></pre>
+		<p>
+			乗除式は、数値の乗算除算を行う式です。
+		</p>
+		<div>
+			<table>
+				<tr>
+					<th>演算子</th>
+					<th>名称</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>*</td>
+					<td>乗算</td>
+					<td>数値を乗算します。</td>
+				</tr>
+				<tr>
+					<td>/</td>
+					<td>除算</td>
+					<td>数値を除算します。</td>
+				</tr>
+				<tr>
+					<td>%</td>
+					<td>剰余</td>
+					<td>数値を除算した余りを求めます。</td>
+				</tr>
+			</table>
+		</div>
+<pre><code class="dreit">a * b //乗算
+a / b //除算
+a % b //剰余</code></pre>
+		<h3>加減式<span class="partial-inp">部分的実装</span></h3>
+<pre><code class="ebnf">AdditiveExpression:
+	AddExpression
+	SubtractExpression
+	CombineExpression
+	MultiplicativeExpression
+
+AddExpression:
+	AdditiveExpression, "+", MultiplicativeExpression
+
+SubtractExpression:
+	AdditiveExpression, "-", MultiplicativeExpression
+
+CombineExpression:
+	AdditiveExpression, "~", MultiplicativeExpression</code></pre>
+		<p>
+			加減式は、数値の加算減算や配列の結合を行う式です。
+		</p>
+		<div>
+			<table>
+				<tr>
+					<th>演算子</th>
+					<th>名称</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>+</td>
+					<td>加算</td>
+					<td>数値を加算します。</td>
+				</tr>
+				<tr>
+					<td>-</td>
+					<td>減算</td>
+					<td>数値を減産します。</td>
+				</tr>
+				<tr>
+					<td>~</td>
+					<td>結合</td>
+					<td>配列や文字列を結合します。</td>
+				</tr>
+			</table>
+		</div>
+<pre><code class="dreit">a + b //加算
+a - b //減算
+a ~ b //結合</code></pre>
+		<h3>比較式<span class="partial-inp">部分的実装</span></h3>
+<pre><code class="ebnf">CompareExpression:
+	CompareExpression, CompareOperator, AdditiveExpression
+	AdditiveExpression
+
+CompareOperator:
+	EqualOperator
+	NotEqualOperator
+	LessThanOperator
+	LessThanOrEqualOperator
+	GreaterThanOperator
+	GreaterThanOrEqualOperator
+	IncomparableOperator
+
+EqualOperator:
+	"="
+	"=="
+
+NotEqualOperator:
+	"&lt;&gt;"
+	"&gt;&lt;"
+
+LessThanOperator:
+	"&lt;"
+
+LessThanOrEqualOperator:
+	"&lt;="
+	"=&lt;"
+
+GreaterThanOperator:
+	"&gt;"
+
+GreaterThanOrEqualOperator:
+	"&gt;="
+	"=&gt;"
+
+IncomparableOperator:
+	"=&lt;&gt;"
+	"=&gt;&lt;"
+	"&lt;=&gt;"
+	"&gt;=&lt;"
+	"&lt;&gt;="
+	"&gt;&lt;="</code></pre>
+		<p>
+			比較式は2つ以上の値の順序関係を調べるための式です。
+		</p>
+		<div>
+			<table>
+				<tr>
+					<th>演算子</th>
+					<th>名称</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>= ==</td>
+					<td>等値</td>
+					<td>値が等しいかを調べます。</td>
+				</tr>
+				<tr>
+					<td>&lt;&gt; &gt;&lt;</td>
+					<td>非等値</td>
+					<td>値が等しくないかを調べます。</td>
+				</tr>
+				<tr>
+					<td>&lt;</td>
+					<td>小なり</td>
+					<td>値がより小さいかを調べます。</td>
+				</tr>
+				<tr>
+					<td>&lt;= =&lt;</td>
+					<td>小なり等値</td>
+					<td>値がそれ以下かを調べます。</td>
+				</tr>
+				<tr>
+					<td>&gt;</td>
+					<td>大なり</td>
+					<td>値がより大きいかを調べます。</td>
+				</tr>
+				<tr>
+					<td>&gt;= =&gt;</td>
+					<td>大なり等値</td>
+					<td>値がそれ以上かを調べます。</td>
+				</tr>
+				<tr>
+					<td>=&lt;&gt; =&gt;&lt;<br>&lt;=&gt; &gt;=&lt;<br>&lt;&gt;= &gt;&lt;= </td>
+					<td>比較不能</td>
+					<td>値が順序付け不可能かを調べます。</td>
+				</tr>
+			</table>
+		</div>
+<pre><code class="dreit">a = b //等値
+a &lt;&gt; b //非等値
+a &lt; b //小なり
+a &lt;= b //小なり等値
+a &gt; b //大なり
+a &gt;= b //大なり等値
+a =&lt;&gt; b //比較不能</code></pre>
+		<h3>論理式</h3>
+<pre><code class="ebnf">LogicalExpression:
+	AndExpression
+	OrExpression
+	CompareExpression
+
+AndExpression:
+	LogicalExpression, "&amp;&amp;", CompareExpression
+
+OrExpression:
+	LogicalExpression, "||", CompareExpression</code></pre>
+		<p>
+		論理式は、論理和や論理積を行う式です。
+		</p>
+		<div>
+			<table>
+				<tr>
+					<th>演算子</th>
+					<th>名称</th>
+					<th>説明</th>
+				</tr>
+				<tr>
+					<td>&amp;&amp;</td>
+					<td>論理積</td>
+					<td>論理積を行います。</td>
+				</tr>
+				<tr>
+					<td>||</td>
+					<td>論理和</td>
+					<td>論理和を行います。</td>
+				</tr>
+			</table>
+		</div>
+<pre><code class="dreit">a &amp;&amp; b //論理積
+a || b //論理和</code></pre>
+		<h3>合成式<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">ComposeExpression:
+	LeftComposeExpression
+	RightComposeExpression
+	LogicalExpression
+
+LeftComposeExpression:
+	LogicalExpression, "&lt;&lt;", LeftComposeExpression 
+
+RightComposeExpression:
+	RightComposeExpression, "&gt;&gt;", LogicalExpression</code></pre>
+		<p>
+		
+		TBD</p>
+<pre><code class="dreit">a &lt;&lt; b
+a &gt;&gt; b</code></pre>
+		<h3>パイプライン式<span class="partial-inp">部分的実装</span></h3>
+<pre><code class="ebnf">LeftPipelineExpression:
+	TupleLiteral, PipelineOperatorParts "=", LeftPipelineExpression
+
+RightPipelineExpression:
+	RightPipelineExpression, "=" PipelineOperatorParts, TupleLiteral
+
+PipelineOperatorParts:
+	":"
+	"::"
+	"+"
+	"-"
+	"~"
+	"*"
+	"/"
+	"%"
+	"&lt;&lt;"
+	"&gt;&gt;"</code></pre>
+		<p>
+			パイプライン式は、引数側の式を対象の式に適用して呼び出しを行う式です。
+			これは、呼び出し式と同等の動作であり、パイプライン式の一部と呼び出し式は相互に置き換えが可能です。
+		</p>
+		<p>
+			パイプライン式には左右の向きがあり、プログラムの流れに応じて使い分けることで、コードの見通しを良くすることができます。
+			また、いくつかの演算子と合成したようなパイプライン演算子は、変数への値適用と演算を同時に行うことができる糖衣構文になっています。
+			以下は、パイプライン式の使用例です。
+		</p>
+<pre><code class="dreit">a := b //aを引数bで呼び出す。
+a =: b //bを引数aで呼び出す。
+
+a ::= b //a&amp; := b&amp; の糖衣構文。
+a += b //a := a + b の糖衣構文。
+a ~= b //a := a ~ b の糖衣構文。
+a &lt;&lt;= b //a := a &lt;&lt; b の糖衣構文。
+a &gt;&gt;= b //a := a &gt;&gt; b の糖衣構文。</code></pre>
+		<h3>スワップ式<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">SwapExpression:
+	TupleLiteral, ":=:", TupleLiteral
+	TupleLiteral, "::=::", TupleLiteral</code></pre>
+		<p>
+			スワップ式は、左右の値を入れ替えるための糖衣構文です。
+		</p>
+<pre><code class="dreit">a :=: b
+a ::=:: b</code></pre>
+	</div>
+	<!-- #EndEditable -->
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	Copyright © 2014 by B_head, All Rights Reserved.
+</div>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>

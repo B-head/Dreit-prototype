@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+
+<!-- #BeginTemplate "master.dwt" -->
+
+<head>
+<meta charset="utf-8" />
+<!--[if IE]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link href="normalize.css" rel="stylesheet" type="text/css" />
+<link href="layout.css" rel="stylesheet" type="text/css" />
+<link href="base.css" rel="stylesheet" type="text/css" />
+<!-- #BeginEditable "doctitle" -->
+<title>プログラミング言語 Dreit</title>
+<!-- #EndEditable -->
+</head>
+
+<body>
+<div class="header">
+	<h1>プログラミング言語 Dreit</h1>
+</div>
+<div class="main_container">
+	<div class="left-nav-back"></div>
+	<div class="page-content-back"></div>
+	<div class="left-nav">
+		<ul>
+			<li><a href="index.html">ホーム</a></li>
+			<li>
+				<a href="lang-spec.html">言語仕様</a>
+				<ul>
+					<li><a href="lang-struct.html">言語構造</a></li>
+					<li><a href="literal.html">リテラル</a></li>
+					<li><a href="expression.html">式</a></li>
+					<li><a href="statement.html">制御文</a></li>
+					<li><a href="declaration.html">宣言</a></li>
+					<li><a href="routine.html">ルーチン</a></li>
+					<li><a href="class.html">クラス</a></li>
+					<li><a href="template.html">テンプレート</a></li>
+				</ul>
+			</li>
+			<li><a href="https://github.com/B-head/Dreit-prototype">GitHub</a></li>
+		</ul>
+	</div>
+	<!-- #BeginEditable "content" -->
+	<div class="page-content">
+		<h2>宣言</h2>
+<pre><code class="ebnf">Declaration:
+	ImportDeclaration
+	AliasDeclaration
+	VariantDeclaration
+	RoutineDeclaration
+	OperatorDeclaration
+	ClassDeclaration
+	EnumDeclaration
+	AlgebraDeclaration
+	AttributeScope
+	AttributeDelaration</code></pre>
+		<p>
+			
+		</p>
+		<h3>インポート<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">ImportDeclaration:
+	"import", ImportList
+
+ImportList:
+	PrefixExpression (,",", PrefixExpression)*</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">import math, xml </code></pre>
+		<h3>エイリアス<span class="partial-inp">部分的実装</span></h3>
+<pre><code class="ebnf">AliasDeclaration:
+	"alias", AliasList, PrefixExpression
+
+AliasList:
+	Identifier (,",", Identifier)*</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">alias after before</code></pre>
+		<h3>変数</h3>
+<pre><code class="ebnf">VariantDeclaration:
+	(AttributeSignature,)? VariantPrefix, Identifier (,":", PrefixExpression)?
+
+VariantPrefix:
+	"var"
+	"let"
+	"const"</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">var a
+let b
+const c</code></pre>
+		<h3>列挙型<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">EnumDeclaration:
+	(AttributeSignature,)? "enum" (,Identifier)? (,":", PrefixExpression)? (,EnumContext)?
+
+EnumContext:
+	("::",)? ";"
+	"::", EnumField, (";")?
+	("::",)? "{", EnumList, "}"
+
+EnumList:
+	;? EnumField (; EnumField)* ;?
+	;
+
+EnumField:
+	EnumFieldPart, ":=", NakedRangeLiteral
+	NakedRangeLiteral, "=:", EnumFieldPart
+	ArgumentPart
+
+EnumFieldPart:
+	(AttributeSignature,)? Identifier</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">enum : Int32 {
+	foo := 0
+	bar
+	baz
+	qux := 99
+}</code></pre>
+		<h3>代数型<span class="not-inp">未実装</span></h3>
+<pre><code class="ebnf">AlgebraDeclaration:
+	(AttributeSignature,)? "algebra" (,Identifier)? (,":", PrefixExpression)? (,AlgebraContext)?
+
+AlgebraContext:
+	("::",)? ";"
+	"::", AlgebraField (,";")?
+	("::",)? "{", AlgebraList, "}"
+
+AlgebraList:
+	;? AlgebraField (; AlgebraField)* ;?
+	;
+
+AlgebraField:
+	//TBD</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">algebra {
+	Int32
+	String
+}</code></pre>
+		<h3>属性</h3>
+<pre><code class="ebnf">AttributeSignature:
+	StartAttribute, FollowAttribute*
+
+StartAttribute:
+	("@",)? EmbedAttribute
+	"@", NakedRangeLiteral
+
+FollowAttribute:
+	",", Attribute
+	StartAttribute
+
+Attribute:
+	StartAttribute
+	NakedRangeLiteral
+
+EmbedAttribute:
+	"static"
+	"override"
+	"final"
+	"variadic"
+	"private"
+	"protected"
+	"internal"
+	"public"</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">public static var a</code></pre>
+		<h4>属性スコープ<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">AttributeScope:
+	"#", Attribute, FollowAttributeScope*
+
+FollowAttributeScope:
+	",", Attribute
+	"#", Attribute</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit">#private</code></pre>
+		<h4>カスタム属性<span class="not-inp">未実装</span></h4>
+<pre><code class="ebnf">AttributeDelaration:
+	//TBD</code></pre>
+		<p>
+			
+		</p>
+<pre><code class="dreit"></code></pre>
+	</div>
+	<!-- #EndEditable -->
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	Copyright © 2014 by B_head, All Rights Reserved.
+</div>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>
