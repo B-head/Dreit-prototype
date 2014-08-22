@@ -9,6 +9,13 @@ h1 {
 	font-size: 2em;
 	font-weight: bolder;
 }
+h1 a {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-family: serif;
+	font-weight: bold;
+}
+
 h2 {
 	border-color: #0000FF;
 	border-width: medium;
@@ -72,8 +79,6 @@ td {
 
 .header {
 	text-align: center;
-	color: #FFFFFF;
-	font-family: serif;
 }
 .main_container{
 	background-color: #FFFFFF;
@@ -121,3 +126,19 @@ td {
 	margin: 1px 6px 1px 6px;
 }
 
+.button {
+	color: #FFFFFF;
+	text-align: center;
+	font-weight: bold;
+	background-color: #0066FF;
+	border-radius: 1ex;
+	padding: 1ex;
+	margin: 1ex 4ex 1ex 4ex;
+	display: block;
+	font-size: 1em;
+	font-family: sans-serif;
+	text-decoration: none;
+}
+.icon {
+	margin: 0ex 0.5ex 0ex 0ex;
+}
