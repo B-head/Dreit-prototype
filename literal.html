@@ -101,6 +101,11 @@ DigitCharacter:
 			浮動小数点数表記でこの表記を使用する場合は、小数点の後にもプレフィックスを付ける必要があります。
 			以下に、プレフィックスの一覧と使用例を示します。
 		</p>
+<pre><code class="dreit">0b1100 //2進表記
+0o7654 //8進表記
+0xFFFF //16進表記
+
+0x12ab.0x34cd //16進浮動小数点数表記 </code></pre>
 		<div>
 			<table>
 				<tr>
@@ -125,12 +130,7 @@ DigitCharacter:
 				</tr>
 			</table>
 		</div>
-<pre><code class="dreit">0b1100 //2進表記
-0o7654 //8進表記
-0xFFFF //16進表記
-
-0x12ab.0x34cd //16進浮動小数点数表記 </code></pre>
-		<h3>文字列リテラル</h3>
+		<h3>文字列リテラル<span class="partial-inp">部分的実装</span></h3>
 <pre><code class="ebnf">StringLiteral:
 	#22 NonDoubleQuoteCharacter* #22
 	#27 NonSingleQuoteCharacter* #27
@@ -182,6 +182,8 @@ BuiltInExpression:
 			これは、\記号自体を表現したい場合や、リテラルを囲んでいるクォートを文字列に含めたい場合、左波括弧{を式の埋め込みの始まりとして認識させたくない場合にも利用できます。
 			以下に、エスケープシーケンスの一覧表と、式の埋め込みを含めた使用例を示します。
 		</p>
+<pre>#"<code class="dreit">123 + 456 = { 123 + 456 }" //123 + 456 = 579
+#"123 + 456 = \{ 123 + 456 }" //123 + 456 = { 123 + 456 }</code></pre>
 		<div>
 			<table>
 				<tr>
@@ -194,8 +196,6 @@ BuiltInExpression:
 				</tr>
 			</table>
 		</div>
-<pre>#"<code class="dreit">123 + 456 = { 123 + 456 }" //123 + 456 = 579
-#"123 + 456 = \{ 123 + 456 }" //123 + 456 = { 123 + 456 }</code></pre>
 		<h3>ヒアドキュメント<span class="not-inp">未実装</span></h3>
 			<p>StartDelimiterとEndDelimiterは特別な方法で定義されます</p>
 <pre><code class="ebnf">HereDocument:

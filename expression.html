@@ -215,6 +215,9 @@ NotExpression:
 		<p>
 			前置式は、後置式の直前に演算子を追加する形態の式です。
 		</p>
+<pre><code class="dreit">++foo //正符号
+--foo //負符号
+!!foo //論理否定</code></pre>
 		<div>
 			<table>
 				<tr>
@@ -239,9 +242,6 @@ NotExpression:
 				</tr>
 			</table>
 		</div>
-<pre><code class="dreit">++foo //正符号
---foo //負符号
-!!foo //論理否定</code></pre>
 		<h3>乗除式</h3>
 <pre><code class="ebnf">MultiplicativeExpression:
 	MultiplyExpression
@@ -260,6 +260,9 @@ ModuloExpression:
 		<p>
 			乗除式は、数値の乗算除算を行う式です。
 		</p>
+<pre><code class="dreit">a * b //乗算
+a / b //除算
+a % b //剰余</code></pre>
 		<div>
 			<table>
 				<tr>
@@ -284,9 +287,6 @@ ModuloExpression:
 				</tr>
 			</table>
 		</div>
-<pre><code class="dreit">a * b //乗算
-a / b //除算
-a % b //剰余</code></pre>
 		<h3>加減式<span class="partial-inp">部分的実装</span></h3>
 <pre><code class="ebnf">AdditiveExpression:
 	AddExpression
@@ -305,6 +305,9 @@ CombineExpression:
 		<p>
 			加減式は、数値の加算減算や配列の結合を行う式です。
 		</p>
+<pre><code class="dreit">a + b //加算
+a - b //減算
+a ~ b //結合</code></pre>
 		<div>
 			<table>
 				<tr>
@@ -329,9 +332,6 @@ CombineExpression:
 				</tr>
 			</table>
 		</div>
-<pre><code class="dreit">a + b //加算
-a - b //減算
-a ~ b //結合</code></pre>
 		<h3>比較式<span class="partial-inp">部分的実装</span></h3>
 <pre><code class="ebnf">CompareExpression:
 	CompareExpression, CompareOperator, AdditiveExpression
@@ -377,7 +377,18 @@ IncomparableOperator:
 	"&gt;&lt;="</code></pre>
 		<p>
 			比較式は2つ以上の値の順序関係を調べるための式です。
+			比較式が連結された場合は他の式と異なる動作になり、重複した式の評価をするような動きをします。
+			例えば、<code>0 &lt; a &lt; 10</code>と記述した場合、まず0とaの組み合わせで比較した後、aと10の組み合わせで比較を行います。
 		</p>
+<pre><code class="dreit">a = b //等値
+a &lt;&gt; b //非等値
+a &lt; b //小なり
+a &lt;= b //小なり等値
+a &gt; b //大なり
+a &gt;= b //大なり等値
+a =&lt;&gt; b //比較不能
+
+0 &lt; a &lt; 10 //aが0より大きく10より小さければtrue。</code></pre>
 		<div>
 			<table>
 				<tr>
@@ -422,13 +433,6 @@ IncomparableOperator:
 				</tr>
 			</table>
 		</div>
-<pre><code class="dreit">a = b //等値
-a &lt;&gt; b //非等値
-a &lt; b //小なり
-a &lt;= b //小なり等値
-a &gt; b //大なり
-a &gt;= b //大なり等値
-a =&lt;&gt; b //比較不能</code></pre>
 		<h3>論理式</h3>
 <pre><code class="ebnf">LogicalExpression:
 	AndExpression
@@ -443,6 +447,8 @@ OrExpression:
 		<p>
 		論理式は、論理和や論理積を行う式です。
 		</p>
+<pre><code class="dreit">a &amp;&amp; b //論理積
+a || b //論理和</code></pre>
 		<div>
 			<table>
 				<tr>
@@ -462,8 +468,6 @@ OrExpression:
 				</tr>
 			</table>
 		</div>
-<pre><code class="dreit">a &amp;&amp; b //論理積
-a || b //論理和</code></pre>
 		<h3>合成式<span class="not-inp">未実装</span></h3>
 <pre><code class="ebnf">ComposeExpression:
 	LeftComposeExpression

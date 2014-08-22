@@ -14,23 +14,6 @@
 <link href="base.css" rel="stylesheet" type="text/css" />
 <!-- #BeginEditable "doctitle" -->
 <title>プログラミング言語 Dreit</title>
-<style type="text/css">
-
-
-
-
-
-
-
-
-
-
-
-
-.auto-style1 {
-	font-family: monospace;
-}
-</style>
 <!-- #EndEditable -->
 </head>
 
@@ -84,7 +67,7 @@
 		<p>
 			
 		</p>
-		<h3>条件分岐</h3>
+		<h3>条件分岐文</h3>
 <pre><code class="ebnf">IfStatement:
 	"if", Expression, ThenContext (,"else", DirectContext)?
 
@@ -97,16 +80,11 @@ ThenSeparator:
 	"::"
 	"then""</code></pre>
 		<p>
-			
+			条件分岐文は、条件式を評価した値に応じて、次に実行する式を選択します。
+			::で始まるインライン形式で記述した場合、分岐先の評価値が条件分岐文の評価値として返ります。
 		</p>
 <pre><code class="dreit">if a &lt; 10 :: 50
-if a &lt; 10 :: 50 else 60
-
-if a &lt; 10 {
-	give 50
-} else {
-	give 60
-}
+if a &lt; 10 :: 50 else 60 //aが10以下なら50を返し、そうでなければ60を返す。
 
 if a &lt; 10 {
 	give 50
@@ -115,7 +93,7 @@ if a &lt; 10 {
 } else {
 	give 70
 }</code></pre>
-		<h3>パターンマッチ<span class="not-inp">未実装</span></h3>
+		<h3>パターンマッチ文<span class="not-inp">未実装</span></h3>
 <pre><code class="ebnf">PatternMatchStatement:
 	"diverge", Expression, PatternMatchContext
 
@@ -142,7 +120,7 @@ PatternMatchCondition:
 	3 :: "baz"
 	_ :: "qux"
 }</code></pre>
-		<h3>単純ループ<span class="partial-inp">部分的実装</span></h3>
+		<h3>単純ループ文<span class="partial-inp">部分的実装</span></h3>
 <pre><code class="ebnf">LoopStatement:
 	LoopParts, InlineContext
 
@@ -158,14 +136,18 @@ UsePart:
 ByPart:
 	"by", Expression</code></pre>
 		<p>
-			
+			単純ループは、条件式の条件を満たしている間、同じ式を繰り返し実行する文です。
+			単純ループの構文は条件式と2つの句で構成されています。
+			use句は、単純ループ文内で使用する変数を宣言します。
+			by句は、ループのブロックが終わる時に実行される文を記述します。
 		</p>
-<pre><code class="dreit">loop a &lt;&gt; null :: a := a.next
+<pre><code class="dreit">loop a &lt;&gt; null :: a := a.next //aがnullの間ループを実行する。
 
+//aの値を0から9まで値を1ずつ増やしながらループを実行する。
 loop a &lt; 10 use a := 0 by a += 1 {
 	//dosomething
 }</code></pre>
-		<h3>範囲ループ<span class="not-inp">未実装</span></h3>
+		<h3>範囲ループ文<span class="not-inp">未実装</span></h3>
 <pre><code class="ebnf">ForStatement:
 	"for", Expression (,OfPart)? (,AtPart)? (.LabelStatement)? InlineContext
 
@@ -188,9 +170,12 @@ for list of v at i {
 <pre><code class="ebnf">UnStatement:
 	"un", Expression</code></pre>
 		<p>
-			
+			Un文は、式を論理値として評価した値を反転するための文です。
+			この文は前置式の!!演算子と同じ働きをしますが、優先順位や評価範囲などが違っています。
+			これは、複合的な条件を記述した式全体の評価値を反転するのに便利です。
 		</p>
-<pre><span class="auto-style1">un a &lt; 10</span></pre>
+<pre><code class="dreit">//「aが10より小さいかつbが10より小さい」の結果がfalseなら式を実行する。
+if un a &lt; 10 && b &lt; 10 :: return</code></pre>
 		<h3>ジャンプ文</h3>
 		<h4>Label文<span class="not-inp">未実装</span></h4>
 <pre><code class="ebnf">LabelStatement:
@@ -210,14 +195,14 @@ for list of v at i {
 <pre><code class="ebnf">ContinueStatement:
 	"continue" (,Expression)? (.LabelStatement)?</code></pre>
 		<p>
-			
+			continue文は、ループの実行を状態を保持したまま中断して、新たにループの先頭から実行を始めます。
 		</p>
 <pre><code class="dreit">continue</code></pre>
 		<h4>Break文<span class="partial-inp">部分的実装</span></h4>
 <pre><code class="ebnf">BreakStatement:
 	"break" (,Expression)? (.LabelStatement)?</code></pre>
 		<p>
-			
+			break文は、ループの実行を終了して脱出します。
 		</p>
 <pre><code class="dreit">break</code></pre>
 		<h4>Give文<span class="not-inp">未実装</span></h4>
