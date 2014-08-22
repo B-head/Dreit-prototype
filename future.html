@@ -13,7 +13,7 @@
 <link href="layout.css" rel="stylesheet" type="text/css" />
 <link href="base.css" rel="stylesheet" type="text/css" />
 <!-- #BeginEditable "doctitle" -->
-<title>テンプレート - プログラミング言語 Dreit</title>
+<title>今後の予定 - プログラミング言語 Dreit</title>
 <!-- #EndEditable -->
 </head>
 
@@ -47,40 +47,54 @@
 	</div>
 	<!-- #BeginEditable "content" -->
 	<div class="page-content">
-		<h2>テンプレート<span class="not-inp">未実装</span></h2>
-<pre><code class="ebnf">TemplateSignature：
-	"!", "(", (ArgumentList,)? ")"
-	"!", "[", (ArgumentList,)? "]"
-	"!", ArgumentList</code></pre>
-		<h3>テンプレートのインスタンス化<span class="partial-inp">部分的実装</span></h3>
-<pre><code class="ebnf">TemplateInstanceExpression:
-	PostfixExpression, "!", "(", TupleLiteral ^ NakedRangeLiteral, ")"
-	PostfixExpression, "!", "[", TupleLiteral ^ NakedRangeLiteral, "]"
-	PostfixExpression, "!", ModifierIdentifier</code></pre>
-		<h3>関数テンプレート<span class="not-inp">未実装</span></h3>
+		<h2>今後の予定</h2>
+		<h3>prototype2で実装予定</h3>
+		<ul>
+			<li>ヒアドキュメント</li>
+			<li>範囲リテラル</li>
+			<li>連想配列リテラル</li>
+			<li>ラムダ式</li>
+			<li>参照</li>
+			<li>型参照</li>
+			<li>With式</li>
+			<li>合成式</li>
+			<li>スワップ式</li>
+			<li>パターンマッチ文</li>
+			<li>範囲ループ文</li>
+			<li>各種ジャンプ文</li>
+			<li>例外処理</li>
+			<li>インポート</li>
+			<li>定数宣言</li>
+			<li>列挙型</li>
+			<li>属性スコープ</li>
+			<li>デフォルト引数</li>
+			<li>拡張メソッド</li>
+			<li>クロージャ</li>
+			<li>コルーチン</li>
+			<li>トレイト</li>
+			<li>インターフェース拡張</li>
+		</ul>
+		<h3>prototype3で実装予定</h3>
+		<ul>
+			<li>タプルリテラル</li>
+			<li>除外式</li>
+			<li>代数型</li>
+			<li>関数テンプレート</li>
+			<li>クラステンプレート</li>
+			<li>可変長引数テンプレート</li>
+			<li>型制約と特殊化</li>
+			<li>共変性と反変性</li>
+			<li>完全な型推論</li>
+		</ul>
+		<h3>実装予定が無い機能</h3>
+		<h4>ユーザー定義演算子</h4>
 		<p>
-			
+			ユーザー定義演算子は今のところ以下の理由により実装する予定はありません。
 		</p>
-		<h3>クラステンプレート<span class="not-inp">未実装</span></h3>
-		<p>
-			
-		</p>
-		<h3>可変長引数テンプレート<span class="not-inp">未実装</span></h3>
-		<p>
-			
-		</p>
-		<h3>型制約と特殊化<span class="not-inp">未実装</span></h3>
-		<p>
-			
-		</p>
-		<h3>共変性と反変性<span class="not-inp">未実装</span></h3>
-		<p>
-			
-		</p>
-		<h3>SFINAE(Substitution Failure Is Not An Error)<span class="not-inp">未実装</span></h3>
-		<p>
-			
-		</p>
+		<ul>
+			<li>演算子の記号自体は、識別子名のように機能を語ることが無い。</li>
+			<li>複数の無関係な演算子ライブラリを使用する時に、定義されている演算子の優先順位をどう解決するかが決まらない。</li>
+		</ul>
 	</div>
 	<!-- #EndEditable -->
 	<div class="clear"></div>
