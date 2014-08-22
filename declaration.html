@@ -79,7 +79,7 @@ ImportList:
 AliasList:
 	Identifier (,",", Identifier)*</code></pre>
 		<p>
-			
+			エイリアスは、識別子の別名を宣言します。
 		</p>
 <pre><code class="dreit">alias after before</code></pre>
 		<h3>変数</h3>
@@ -91,7 +91,11 @@ VariantPrefix:
 	"let"
 	"const"</code></pre>
 		<p>
-			
+			変数は、値を記録しておく領域です。
+			変数は、宣言で使用したプレフィクスによって、値を割り当てる事のできるタイミングに違いがあります。
+			varは、いつでも再割当て可能な変数です。
+			letは、宣言された場所と、変数が所属するクラスのコンストラクタでのみ値を割り当てることができます。
+			constは、コンパイル時にのみ値の割り当てが可能な定数で、定数に値を割り当てる式は定数式である必要があります。
 		</p>
 <pre><code class="dreit">var a
 let b
@@ -170,7 +174,6 @@ EmbedAttribute:
 	"variadic"
 	"private"
 	"protected"
-	"internal"
 	"public"</code></pre>
 		<p>
 			
@@ -194,6 +197,13 @@ FollowAttributeScope:
 			
 		</p>
 <pre><code class="dreit"></code></pre>
+		<h3>アクセシビリティ属性</h3>
+		<p>
+			各宣言には、外部から参照可能な範囲を制限するためのアクセシビリティ属性を付けることができます。
+			publicは、参照可能な範囲を制限しません。
+			protectedは、その宣言が定義された子と孫を含むスコープと、クラスを継承しているクラスからのみ参照することができます。
+			privateは、その宣言が定義された子と孫を含むスコープからのみ参照することができます。
+		</p>
 	</div>
 	<!-- #EndEditable -->
 	<div class="clear"></div>
