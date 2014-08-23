@@ -25,14 +25,6 @@ limitations under the License.
 
   <case>
     <code>
-      routine foo() :: 100
-      stdout := foo()
-    </code>
-    <output>100</output>
-  </case>
-
-  <case>
-    <code>
       routine foo :: 10
       stdout := foo
     </code>
@@ -55,12 +47,101 @@ limitations under the License.
     <output>30</output>
   </case>
 
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo a:String :: a =: stdout
+      
+      foo := "hello"
+      ]]>
+    </code>
+    <output>hello</output>
+  </case>
+  
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:Int32) { 
+	      return a + 20
+      }
+      
+      10.foo =: stdout
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
   <case>
     <code>
-      routine foo(a:Double) :: a + 10.5
-      stdout := foo := 20
+      <![CDATA[
+      stdout := foo(23, 5)
+      routine foo(a:Int32, b:Int32) {
+        return a % b
+      }
+      ]]>
     </code>
-    <output>30.5</output>
+    <output>3</output>
+  </case>
+  
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:Int32, b:Int32) :: return a + b
+      
+      stdout := foo := 10, 20
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+	      a =: stdout
+      }
+      
+      foo"hello world"
+      ]]>
+    </code>
+    <output>hello world</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+	      a =: stdout
+	      return "world"
+      }
+      
+      foo"hello" =: stdout
+      ]]>
+    </code>
+    <output>hello world</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32, b:Int32) :: a + b =: stdout
+      
+      foo[10] := 20
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
+      
+      stdout := foo(10)
+      ]]>
+    </code>
+    <error key="require-type"/>
   </case>
 
   <case>
@@ -78,63 +159,6 @@ limitations under the License.
       stdout := foo := 20
     </code>
     <error key="forbit-side-effect"/>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Int32, b:Int32) :: a % b
-      stdout := foo(23, 5)
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Double, b:Double) :: a % b
-      stdout := foo(23, 5)
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Int32, b:Double) :: a % b
-      stdout := foo(23, 5)
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Int32, b:Int32) :: a % b
-      23, 5 =: foo =: stdout
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      stdout := foo(23, 5)
-      routine foo(a:Int32, b:Int32) {
-        return a % b
-      }
-      ]]>
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      rout foo(a:String) { 
-	      a =: stdout
-      }
-      
-      foo"hello world"
-      ]]>
-    </code>
-    <output>hello world</output>
   </case>
 
   <case>

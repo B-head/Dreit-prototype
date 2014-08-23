@@ -18,6 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntaxTest", "Abstr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B546CAA-8AE1-4B62-855B-4C1051260CEC}"
 	ProjectSection(SolutionItems) = preProject
+		CompileTest.snippet = CompileTest.snippet
 		License.txt = License.txt
 		Readme.md = Readme.md
 	EndProjectSection

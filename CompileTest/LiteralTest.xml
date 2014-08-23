@@ -44,16 +44,10 @@ limitations under the License.
   <case>
     <code>
       stdout := "Hello world!"
-    </code>
-    <output>Hello world!</output>
-  </case>
-
-  <case>
-    <code>
       stdout := 'Hello world!'
       stdout := `Hello world!`
     </code>
-    <output>Hello world! Hello world!</output>
+    <output>Hello world! Hello world! Hello world!</output>
   </case>
   
   <case>
@@ -106,12 +100,5 @@ limitations under the License.
       stdout := "a { "= { a }" };"
     </code>
     <output>a = 100;</output>
-  </case>
-
-  <case>
-    <code>
-      10, "hello" =: stdout
-    </code>
-    <output>10 hello</output>
   </case>
 </compile-test>

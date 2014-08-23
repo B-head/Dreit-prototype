@@ -17,10 +17,38 @@ limitations under the License.
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
+      stdout := 10 + 10
+    </code>
+    <output>20</output>
+  </case>
+
+  <case>
+    <code>
+      stdout := 1 + 2 * 3
+    </code>
+    <output>7</output>
+  </case>
+
+  <case>
+    <code>
+      stdout := (1 + 2) * 3
+    </code>
+    <output>9</output>
+  </case>
+
+  <case>
+    <code>
+      stdout := 1 + 2.5
+    </code>
+    <output>3.5</output>
+  </case>
+
+  <case>
+    <code>
       <![CDATA[
-      Console|.WriteLine("\{0}", "Hello, World!")
+      (10 + 20).ToString =: stdout
       ]]>
     </code>
-    <output>Hello, World!</output>
+    <output>30</output>
   </case>
 </compile-test>

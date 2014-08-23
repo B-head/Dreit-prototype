@@ -17,127 +17,72 @@ limitations under the License.
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
-      if true :: stdout := 10
+      stdout := un false
+      stdout := un true
     </code>
-    <output>10</output>
-  </case>
-
-  <case>
-    <code>
-      if un false then stdout := 10
-      stdout := 20
-    </code>
-    <output>10 20</output>
+    <output>True False</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
-      routine foo(a:Boolean){
-        if a {
-          stdout := 10
-        } else {
-          stdout := 20
-        }
-      }
-      foo(true)
-      foo(false)
+        stdout := 2 < 5
+        stdout := 5 < 2
       ]]>
     </code>
-    <output>10 20</output>
+    <output>True False</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
-      routine foo(a:Boolean) :: if a :: 10 else 20
-      
-      stdout := foo(true)
-      stdout := foo(false)
+        stdout := 5 < 10.55
       ]]>
     </code>
-    <output>10 20</output>
+    <output>True</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
-      routine foo(a:Boolean, b:Boolean){
-        return if a :: if b :: 10 else 40 else if b :: 20 else 30
-      }
-      stdout := foo(true, true)
-      stdout := foo(true, false)
-      stdout := foo(false, true)
-      stdout := foo(false, false)
+        stdout := 2 <= 5 <= 8
+        stdout := 2 <= 5 <= 2
+        stdout := 8 <= 5 <= 8
       ]]>
     </code>
-    <output>10 40 20 30</output>
+    <output>True False False</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
-        if 2 < 5 :: stdout := 10
-        if un 2 > 5 :: stdout := 20
+      stdout := 3 <> 6 <> 9
+      stdout := 3 <> 3 <> 9
+      stdout := 3 <> 9 <> 9
       ]]>
     </code>
-    <output>10 20</output>
+    <output>True False False</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
-        if 5 < 10.55 :: 25 =: stdout
+        stdout := 22 > 6 && 33 >= 9
+        stdout := 22 > 6 && 33 <= 9
+        stdout := 22 < 6 && 33 >= 9
       ]]>
     </code>
-    <output>25</output>
+    <output>True False False</output>
   </case>
 
   <case>
     <code>
       <![CDATA[
-        if 2 <= 5 <= 8 :: stdout := 10
-        if un 8 <= 5 <= 2 :: stdout := 20
+      stdout := 5 = 5 || 0 = 10
+      stdout := 0 = 5 || 10 = 10
+      stdout := 0 = 5 || 0 = 10
       ]]>
     </code>
-    <output>10 20</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-        if 22 > 6 && 33 >= 9 :: stdout := 10
-        if un 22 < 6 && 33 <= 9 :: stdout := 20
-      ]]>
-    </code>
-    <output>10 20</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-        routine foo(a:Int32){
-          if a = 5 || a = 10 :: stdout := 10 else stdout := 20
-        }
-        foo(5)
-        foo(10)
-        foo(15)
-      ]]>
-    </code>
-    <output>10 10 20</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-        routine foo(a:Int32){
-          if 3 <> a <> 6 :: stdout := 10 else stdout := 20
-        }
-        foo(1)
-        foo(3)
-        foo(6)
-      ]]>
-    </code>
-    <output>10 20 20</output>
+    <output>True True False</output>
   </case>
 </compile-test>

@@ -35,47 +35,6 @@ limitations under the License.
     </code>
     <output>10 35</output>
   </case>
-  
-  <case>
-    <code>
-      <![CDATA[
-      class A
-      {
-        protected routine foo :: 10
-      }
-      
-      class B : A
-      {
-        public routine bar :: foo + 25
-      }
-      
-      B =: var o
-      stdout := o.bar
-      ]]>
-    </code>
-    <output>35</output>
-  </case>
-  
-  <case>
-    <code>
-      <![CDATA[
-      class A
-      {
-        protected routine foo :: 10
-      }
-      
-      class B : A
-      {
-        public routine bar :: foo + 25
-      }
-      
-      B =: var o
-      stdout := o.foo
-      stdout := o.bar
-      ]]>
-    </code>
-    <error key="not-accessable"/>
-  </case>
 
   <case>
     <code>

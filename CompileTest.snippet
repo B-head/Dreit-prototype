@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Copyright 2014 B_head
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Compile test</Title>
+      <Author>B_head</Author>
+      <Shortcut>ctroot</Shortcut>
+      <Description>コンパイルテストXMLのテンプレート</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Code Language="XML">
+        <![CDATA[<!--
+        Copyright 2014 B_head
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+        -->
+        <compile-test xmlns="CompileTestSchema.xsd">
+        </compile-test>]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Execution case</Title>
+      <Author>B_head</Author>
+      <Shortcut>execase</Shortcut>
+      <Description>実行可能コードのテストケース。</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Code Language="XML">
+        <![CDATA[<case>
+          <code>
+          <![CDATA[$end$]]>]]&gt;<![CDATA[
+          </code>
+          <output></output>
+        </case>]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Error case</Title>
+      <Author>B_head</Author>
+      <Shortcut>errcase</Shortcut>
+      <Description>コンパイルエラーのテストケース。</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Code Language="XML">
+        <![CDATA[<case>
+          <code>
+          <![CDATA[$end$]]>]]&gt;<![CDATA[
+          </code>
+          <error key="_"/>
+        </case>]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

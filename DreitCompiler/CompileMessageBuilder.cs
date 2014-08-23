@@ -31,7 +31,17 @@ namespace Dlight
 
         static CompileMessageBuilder()
         {
-            var directory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            string directory;
+            var assembly = Assembly.GetEntryAssembly();
+            if(assembly == null)
+            {
+                directory = Directory.GetCurrentDirectory();
+            }
+            else
+            {
+                directory = Path.GetDirectoryName(assembly.Location);
+            }
+            Console.WriteLine(directory);
             messageBase = new Dictionary<string, string>();
             foreach (var file in Directory.EnumerateFiles(directory, "*.xml"))
             {

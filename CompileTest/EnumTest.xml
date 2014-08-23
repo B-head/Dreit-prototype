@@ -18,9 +18,10 @@ limitations under the License.
   <case>
     <code>
       <![CDATA[
-      Console|.WriteLine("\{0}", "Hello, World!")
+      var a := ConsoleColor|.Red
+      stdout := a
       ]]>
     </code>
-    <output>Hello, World!</output>
+    <output>Red</output>
   </case>
 </compile-test>

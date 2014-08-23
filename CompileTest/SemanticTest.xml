@@ -17,10 +17,20 @@ limitations under the License.
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
+      stdout := abc
+    </code>
+    <error key="undefined-identifier"/>
+  </case>
+
+  <case ignore="true">
+    <code>
       <![CDATA[
-      Console|.WriteLine("\{0}", "Hello, World!")
+      var a:Int32
+      a = 10
+      stdout := a
       ]]>
     </code>
-    <output>Hello, World!</output>
+    <warning key="_"/>
   </case>
 </compile-test>
+

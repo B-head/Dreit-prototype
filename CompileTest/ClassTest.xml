@@ -53,7 +53,7 @@ limitations under the License.
       class Counter
       {
         var value:Int32
-        routine next() :: value += 1
+        routine next :: value += 1
       }
 
       Counter =: var counter
@@ -81,6 +81,25 @@ limitations under the License.
       ]]>
     </code>
     <output>6 7 8</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      class Counter
+      {
+        var a:Int32
+        var value := a
+        routine next :: value += 1
+      }
+
+      Counter =: var counter
+      stdout := counter.next
+      stdout := counter.next
+      stdout := counter.next
+      ]]>
+    </code>
+    <error key="not-constant-expression"/>
   </case>
 
   <case>
@@ -183,127 +202,11 @@ limitations under the License.
       <![CDATA[
       class A
       {
-        private var a := 10
-        private var b := 20
-        
-        public routine foo :: a + 30
-        public routine bar :: b + 40
-      }
-
-      A =: var o
-      stdout := o.foo
-      stdout := o.bar
-      ]]>
-    </code>
-    <output>40 60</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      class A
-      {
-        public var a := 10
-        private var b := 20
-        
-        public routine foo :: a + 30
-        private routine bar :: b + 40
-      }
-
-      A =: var o
-      stdout := o.a
-      stdout := o.b
-      stdout := o.foo
-      stdout := o.bar
-      ]]>
-    </code>
-    <error key="not-accessable"/>
-    <error key="not-accessable"/>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      class A
-      {
-        @public var a := 10
-        @private var b := 20
-        
-        @public routine foo :: a + 30
-        @private routine bar :: b + 40
-      }
-
-      A =: var o
-      stdout := o.a
-      stdout := o.b
-      stdout := o.foo
-      stdout := o.bar
-      ]]>
-    </code>
-    <error key="not-accessable"/>
-    <error key="not-accessable"/>
-  </case>
-
-  <case ignore="true">
-    <code>
-      <![CDATA[
-      class A
-      {
-        #private
         var a := 10
-        var b := 20
+        static var b := 20
         
         routine foo :: a + 30
-        routine bar :: b + 40
-      }
-
-      A =: var o
-      stdout := o.a
-      stdout := o.b
-      stdout := o.foo
-      stdout := o.bar
-      ]]>
-    </code>
-    <error key="not-accessable"/>
-    <error key="not-accessable"/>
-    <error key="not-accessable"/>
-    <error key="not-accessable"/>
-  </case>
-
-  <case ignore="true">
-    <code>
-      <![CDATA[
-      class A
-      {
-        #private
-        public var a := 10
-        var b := 20
-        
-        public routine foo :: a + 30
-        routine bar :: b + 40
-      }
-
-      A =: var o
-      stdout := o.a
-      stdout := o.b
-      stdout := o.foo
-      stdout := o.bar
-      ]]>
-    </code>
-    <error key="not-accessable"/>
-    <error key="not-accessable"/>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      class A
-      {
-        public var a := 10
-        public static var b := 20
-        
-        public routine foo :: a + 30
-        public static routine bar :: b + 40
+        static routine bar :: b + 40
       }
 
       A =: var o
@@ -321,11 +224,11 @@ limitations under the License.
       <![CDATA[
       class A
       {
-        public var a := 10
-        public static var b := 20
+        var a := 10
+        static var b := 20
         
-        public routine foo :: a + 30
-        public static routine bar :: b + 40
+        routine foo :: a + 30
+        static routine bar :: b + 40
       }
 
       A =: var o
@@ -346,11 +249,11 @@ limitations under the License.
       <![CDATA[
       class A
       {
-        public var a := 10
-        public static var b := 20
+        var a := 10
+        static var b := 20
         
-        public routine foo :: a + 30
-        public static routine bar :: a + 40
+        routine foo :: a + 30
+        static routine bar :: a + 40
       }
 
       A =: var o
@@ -368,11 +271,11 @@ limitations under the License.
       <![CDATA[
       class A
       {
-        public var a := 10
-        public static var b := 20
+        var a := 10
+        static var b := 20
         
-        public routine foo :: b + 30
-        public static routine bar :: b + 40
+        routine foo :: b + 30
+        static routine bar :: b + 40
       }
 
       A =: var o

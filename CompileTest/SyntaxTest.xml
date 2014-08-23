@@ -18,9 +18,28 @@ limitations under the License.
   <case>
     <code>
       <![CDATA[
-      Console|.WriteLine("\{0}", "Hello, World!")
+      rout foo(a:Int32) { 
+	      return 20
+      }
+      
+      foo
+      (10) =: stdout
       ]]>
     </code>
-    <output>Hello, World!</output>
+    <output>10</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32) { 
+	      return 20
+      }
+      
+      foo\
+      (10) =: stdout
+      ]]>
+    </code>
+    <output>20</output>
   </case>
 </compile-test>

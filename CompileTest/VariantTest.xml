@@ -18,41 +18,8 @@ limitations under the License.
   <case>
     <code>
       var a:Int32
-      stdout := a
-    </code>
-    <output>0</output>
-  </case>
-
-  <case>
-    <code>
-      stdout := abc
-    </code>
-    <error key="undefined-identifier"/>
-  </case>
-
-  <case>
-    <code>
-      var a:Int32
       a := 10
       stdout := a
-    </code>
-    <output>10</output>
-  </case>
-
-  <case>
-    <code>
-      var a:Int32
-      a(10)
-      stdout := a
-    </code>
-    <output>10</output>
-  </case>
-
-  <case>
-    <code>
-      var a:Int32
-      a(10)
-      stdout := a()
     </code>
     <output>10</output>
   </case>
@@ -68,18 +35,20 @@ limitations under the License.
 
   <case>
     <code>
-      var a:Int32 := 70
+      var a:Integ45
+      a := 10
       stdout := a
     </code>
-    <output>70</output>
+    <error key="undefined-identifier"/>
   </case>
 
   <case>
     <code>
-      var a:Integ45 := 40
-      stdout := a
+      var a:Int32
+      a(10)
+      stdout := a()
     </code>
-    <error key="undefined-identifier"/>
+    <output>10</output>
   </case>
 
   <case>
@@ -92,25 +61,17 @@ limitations under the License.
 
   <case>
     <code>
-      var a(10)
+      50 =: var a =: var b
+      stdout := a * b
+    </code>
+    <output>2500</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      var a := a + 10
       stdout := a
-    </code>
-    <output>10</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      var arr = 10
-      ]]>
-    </code>
-    <error key="require-type"/>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      var arr = List!Int32
       ]]>
     </code>
     <error key="require-type"/>
@@ -132,23 +93,6 @@ limitations under the License.
     </code>
     <error key="not-mutable"/>
   </case>
-
-  <case>
-    <code>
-      50 =: var a =: var b
-      stdout := a * b
-    </code>
-    <output>2500</output>
-  </case>
-
-  <case>
-    <code>
-      50 =: var a := var b
-      stdout := a * b
-    </code>
-    <error key="not-collide-assign"/>
-    <error key="require-type"/>
-  </case>
   
   <case>
     <code>
@@ -163,6 +107,16 @@ limitations under the License.
     <code>
       var e:Double := 25.5
       stdout := Int32(e)
+    </code>
+    <output>25</output>
+  </case>
+  
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      var e:Double := 25.5
+      stdout := e.Int32
+      ]]>
     </code>
     <output>25</output>
   </case>
