@@ -46,6 +46,7 @@ namespace AbstractSyntax
         BlockComment,
         LineCommnet,
         QuoteSeparator,
+        EfficientQuoteSeparator,
         PlainText,
         LetterStartString,
         DigitStartString,

@@ -27,12 +27,14 @@ namespace AbstractSyntax.Literal
     public class PlainText : Element
     {
         public string Value { get; private set; }
+        public bool IsEfficient { get; private set; }
         private TypeSymbol _ReturnType;
 
-        public PlainText(TextPosition tp, string value)
+        public PlainText(TextPosition tp, string value, bool isEff)
             :base(tp)
         {
             Value = value;
+            IsEfficient = isEff;
         }
 
         public override TypeSymbol ReturnType
@@ -59,7 +61,7 @@ namespace AbstractSyntax.Literal
 
         public string ShowValue
         {
-            get { return Regex.Replace(Value, @"\\.", TrimEscape); }
+            get { return IsEfficient ? Regex.Replace(Value, @"\\.", TrimEscape) : Value; }
         }
 
         private string TrimEscape(Match m)

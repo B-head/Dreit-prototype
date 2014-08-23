@@ -26,12 +26,14 @@ namespace AbstractSyntax.Literal
     public class StringLiteral : Element
     {
         public IReadOnlyList<Element> Texts { get; private set; }
+        public bool IsEfficient { get; private set; }
         private TypeSymbol _ReturnType;
 
-        public StringLiteral(TextPosition tp, IReadOnlyList<Element> texts)
+        public StringLiteral(TextPosition tp, IReadOnlyList<Element> texts, bool isEff)
             :base(tp)
         {
             Texts = texts;
+            IsEfficient = isEff;
             AppendChild(Texts);
         }
 

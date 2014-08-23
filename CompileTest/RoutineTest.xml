@@ -133,7 +133,7 @@ limitations under the License.
     <output>30</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1

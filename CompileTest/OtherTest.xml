@@ -18,7 +18,7 @@ limitations under the License.
   <case>
     <code>
       <![CDATA[
-      Console|.WriteLine("\{0}", "Hello, World!")
+      Console|.WriteLine("{0}", "Hello, World!")
       ]]>
     </code>
     <output>Hello, World!</output>

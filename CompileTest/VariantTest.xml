@@ -67,7 +67,7 @@ limitations under the License.
     <output>2500</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       var a := a + 10

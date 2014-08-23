@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <compile-test xmlns="CompileTestSchema.xsd">
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       rout foo(a:Int32) { 
@@ -29,7 +29,7 @@ limitations under the License.
     <output>10</output>
   </case>
 
-  <case>
+  <case ignore="true">
     <code>
       <![CDATA[
       rout foo(a:Int32) { 

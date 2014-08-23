@@ -101,12 +101,12 @@ namespace AbstractSyntaxTest
         [TestCase("\"abc\"def", new string[] { "\"", "abc", "\"" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
         [TestCase("`abc`def", new string[] { "`", "abc", "`" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
         [TestCase("'abcdef", new string[] { "'", "abcdef" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText })]
-        [TestCase(@"'ab\'cd\'ef'", new string[] { "'", @"ab\'cd\'ef", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
-        [TestCase(@"'ab\\cd\\ef'", new string[] { "'", @"ab\\cd\\ef", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
-        [TestCase("'abc{ def }ghi'", new string[] { "'", "abc", "{", "def", "}", "ghi", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.PlainText, TokenType.QuoteSeparator })]
-        [TestCase(@"'abc\{ def }ghi'", new string[] { "'", @"abc\{ def }ghi", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
-        [TestCase("'{ abc }'", new string[] { "'", "{", "abc", "}", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.QuoteSeparator })]
-        [TestCase("'{ '{ abc }' }' }'", new string[] { "'", "{", "'", "{", "abc", "}", "'", "}", "'" }, new TokenType[] { TokenType.QuoteSeparator, TokenType.LeftBrace, TokenType.QuoteSeparator, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.QuoteSeparator, TokenType.RightBrace, TokenType.QuoteSeparator })]
+        [TestCase(@"#'ab\'cd\'ef'", new string[] { "#'", @"ab\'cd\'ef", "'" }, new TokenType[] { TokenType.EfficientQuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase(@"#'ab\\cd\\ef'", new string[] { "#'", @"ab\\cd\\ef", "'" }, new TokenType[] { TokenType.EfficientQuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase("#'abc{ def }ghi'", new string[] { "#'", "abc", "{", "def", "}", "ghi", "'" }, new TokenType[] { TokenType.EfficientQuoteSeparator, TokenType.PlainText, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase(@"#'abc\{ def }ghi'", new string[] { "#'", @"abc\{ def }ghi", "'" }, new TokenType[] { TokenType.EfficientQuoteSeparator, TokenType.PlainText, TokenType.QuoteSeparator })]
+        [TestCase("#'{ abc }'", new string[] { "#'", "{", "abc", "}", "'" }, new TokenType[] { TokenType.EfficientQuoteSeparator, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.QuoteSeparator })]
+        [TestCase("#'{ #'{ abc }' }' }'", new string[] { "#'", "{", "#'", "{", "abc", "}", "'", "}", "'" }, new TokenType[] { TokenType.EfficientQuoteSeparator, TokenType.LeftBrace, TokenType.EfficientQuoteSeparator, TokenType.LeftBrace, TokenType.LetterStartString, TokenType.RightBrace, TokenType.QuoteSeparator, TokenType.RightBrace, TokenType.QuoteSeparator })]
         [TestCase("abc'def'", new string[] { }, new TokenType[] { } )]
         public void StringLiteral(string text, string[] eTexts, TokenType[] eTypes)
         {

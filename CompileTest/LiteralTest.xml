@@ -66,15 +66,22 @@ limitations under the License.
 
   <case>
     <code>
-      stdout := "string\"output\""
+      stdout := #"string\"output\""
     </code>
     <output>string"output"</output>
   </case>
 
   <case>
     <code>
+      stdout := "string\"
+    </code>
+    <output>string\</output>
+  </case>
+
+  <case>
+    <code>
       var a := 100
-      stdout := "{ a }"
+      stdout := #"{ a }"
     </code>
     <output>100</output>
   </case>
@@ -82,14 +89,14 @@ limitations under the License.
   <case>
     <code>
       var a := 100
-      stdout := "a = { a };"
+      stdout := #"a = { a };"
     </code>
     <output>a = 100;</output>
   </case>
 
   <case>
     <code>
-      stdout := "{ "こんばんは" }"
+      stdout := #"{ "こんばんは" }"
     </code>
     <output>こんばんは</output>
   </case>
@@ -97,7 +104,7 @@ limitations under the License.
   <case>
     <code>
       var a := 100
-      stdout := "a { "= { a }" };"
+      stdout := #"a { #"= { a }" };"
     </code>
     <output>a = 100;</output>
   </case>
