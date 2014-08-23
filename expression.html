@@ -195,9 +195,17 @@ NakedArgument:
 		<p>
 			呼び出し式は、ルーチンやデリゲートを呼び出すための構文です。
 			識別子・メンバアクセス式・テンプレートインスタンス化式に直接後置された場合は、それらの式の引数なしでの呼び出しの動作を、指定した引数での呼び出しの動作に上書きします。
+			
 		</p>
 <pre><code class="dreit">foo() //fooを引数なしで呼び出す。
 foo(10, 20) //fooを2つの引数で呼び出す。</code></pre>
+		<p>
+			呼び出し式がパイプライン式の呼び出し側の式に直接現れる場合は、呼び出し式とパイプライン式の引数を連結して一回だけ呼び出しを行います。
+			引数の連結は、パイプライン式の向きに関係なく、呼び出し式の引数が前にあるものとして連結されます。
+		</p>
+<pre><code class="dreit">//どちらもfooを引数 10, "hello" で呼び出す。
+foo[10] := "hello"
+"hello" =: foo[10]</code></pre>
 		<h3>前置式</h3>
 <pre><code class="ebnf">PrefixExpression:
 	PlusSignExpression
@@ -304,11 +312,11 @@ SubtractExpression:
 CombineExpression:
 	AdditiveExpression, "~", MultiplicativeExpression</code></pre>
 		<p>
-			加減式は、数値の加算減算や配列の結合を行う式です。
+			加減式は、数値の加算減算や配列の連結を行う式です。
 		</p>
 <pre><code class="dreit">a + b //加算
 a - b //減算
-a ~ b //結合</code></pre>
+a ~ b //連結</code></pre>
 		<div>
 			<table>
 				<tr>
@@ -328,8 +336,8 @@ a ~ b //結合</code></pre>
 				</tr>
 				<tr>
 					<td>~</td>
-					<td>結合</td>
-					<td>配列や文字列を結合します。</td>
+					<td>連結</td>
+					<td>配列や文字列を連結します。</td>
 				</tr>
 			</table>
 		</div>

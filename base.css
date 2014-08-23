@@ -142,3 +142,10 @@ td {
 .icon {
 	margin: 0ex 0.5ex 0ex 0ex;
 }
+.note{
+	background-color: #CCFFCC;
+	border: thin solid #C0C0C0;
+	border-radius: 1ex;
+	margin: 1ex;
+	padding: 1ex;
+}
