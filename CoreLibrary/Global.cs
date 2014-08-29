@@ -16,25 +16,30 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreLibrary
 {
-    [GlobalScope]
+    [CompilerGlobalScope]
     public static class Global
     {
         public static void stdout(params object[] puts)
         {
-            for(var i = 0; i < puts.Length; ++i)
-            {
-                if(i > 0)
-                {
-                    Console.Write(" ");
-                }
-                Console.Write(puts[i]);
-            }
-            Console.WriteLine();
+            Console.WriteLine(string.Join(" ", puts));
+        }
+
+        [OperatorExtension(OperatorExtensionType.Join)]
+        public static List<T> Combine<T>(List<T> left, List<T> right)
+        {
+            return left.Concat(right).ToList();
+        }
+
+        [OperatorExtension(OperatorExtensionType.Join)]
+        public static string Combine(string left, string right)
+        {
+            return string.Concat(left, right);
         }
     }
 }

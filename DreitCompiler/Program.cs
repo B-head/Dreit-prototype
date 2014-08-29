@@ -53,5 +53,17 @@ namespace Dlight
             string name = fileName.Replace(".dr", "").Split('/').Last();
             return Parser.Parse(collection);
         }
+
+        public static void CopyLibrary(string name)
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            var assdir = Path.GetDirectoryName(assembly.Location);
+            var curdir = Directory.GetCurrentDirectory();
+            if (assdir == curdir) 
+            {
+                return;
+            }
+            File.Copy(assdir + name, curdir + name, true);
+        }
     }
 }

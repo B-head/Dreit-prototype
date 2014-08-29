@@ -22,9 +22,40 @@ using System.Threading.Tasks;
 namespace CoreLibrary
 {
     [Serializable]
-    [AttributeUsage(AttributeTargets.Class)]
-    public class GlobalScopeAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method)]
+    public class OperatorExtensionAttribute : Attribute
     {
+        public OperatorExtensionType Type { get; set; }
 
+        public OperatorExtensionAttribute(OperatorExtensionType type)
+        {
+            Type = type;
+        }
+    }
+
+    [Serializable]
+    public enum OperatorExtensionType
+    {
+        Unknown,
+        Implicit,
+        Explicit,
+        Not,
+        Plus,
+        Minus,
+        Equal,
+        NotEqual,
+        LessThan,
+        LessThanOrEqual,
+        GreaterThan,
+        GreaterThanOrEqual,
+        Incomparable,
+        Add,
+        Subtract,
+        Join,
+        Multiply,
+        Divide,
+        Modulo,
+        LeftCompose,
+        RightCompose,
     }
 }

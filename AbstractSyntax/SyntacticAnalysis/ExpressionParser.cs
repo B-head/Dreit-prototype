@@ -66,7 +66,7 @@ namespace AbstractSyntax.SyntacticAnalysis
 
         private static Element Addtive(SlimChainParser cp)
         {
-            return LeftAssociative(cp, (tp, op, l, r) => new Calculate(tp, op, l, r), Multiplicative, TokenType.Combine, TokenType.Add, TokenType.Subtract);
+            return LeftAssociative(cp, (tp, op, l, r) => new Calculate(tp, op, l, r), Multiplicative, TokenType.Join, TokenType.Add, TokenType.Subtract);
         }
 
         private static Element Multiplicative(SlimChainParser cp)

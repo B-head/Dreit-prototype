@@ -41,7 +41,6 @@ namespace Dlight
             {
                 directory = Path.GetDirectoryName(assembly.Location);
             }
-            Console.WriteLine(directory);
             messageBase = new Dictionary<string, string>();
             foreach (var file in Directory.EnumerateFiles(directory, "*.xml"))
             {

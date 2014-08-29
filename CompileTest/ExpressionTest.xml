@@ -46,6 +46,15 @@ limitations under the License.
   <case>
     <code>
       <![CDATA[
+      stdout := [10, 20] ~ [30, 40]
+      ]]>
+    </code>
+    <output></output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
       (10 + 20).ToString =: stdout
       ]]>
     </code>

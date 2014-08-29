@@ -335,7 +335,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 case "=": type = TokenType.Equal; break;
                 case "<": type = TokenType.LessThan; break;
                 case ">": type = TokenType.GreaterThan; break;
-                case "~": type = TokenType.Combine; break;
+                case "~": type = TokenType.Join; break;
                 case "+": type = TokenType.Add; break;
                 case "-": type = TokenType.Subtract; break;
                 case "*": type = TokenType.Multiply; break;

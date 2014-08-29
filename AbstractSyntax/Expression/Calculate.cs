@@ -63,7 +63,7 @@ namespace AbstractSyntax.Expression
             {
                 case TokenType.Add: return l + r;
                 case TokenType.Subtract: return l - r;
-                case TokenType.Combine: return l + r;
+                case TokenType.Join: return l + r;
                 case TokenType.Multiply: return l * r;
                 case TokenType.Divide: return l / r;
                 case TokenType.Modulo: return l % r;

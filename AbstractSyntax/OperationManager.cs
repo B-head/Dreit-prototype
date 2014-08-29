@@ -40,6 +40,7 @@ namespace AbstractSyntax
         {
             OpList.Add(TokenType.Add, new List<RoutineSymbol>());
             OpList.Add(TokenType.Subtract, new List<RoutineSymbol>());
+            OpList.Add(TokenType.Join, new List<RoutineSymbol>());
             OpList.Add(TokenType.Multiply, new List<RoutineSymbol>());
             OpList.Add(TokenType.Divide, new List<RoutineSymbol>());
             OpList.Add(TokenType.Modulo, new List<RoutineSymbol>());
@@ -50,6 +51,8 @@ namespace AbstractSyntax
             OpList.Add(TokenType.GreaterThan, new List<RoutineSymbol>());
             OpList.Add(TokenType.GreaterThanOrEqual, new List<RoutineSymbol>());
             OpList.Add(TokenType.Incomparable, new List<RoutineSymbol>());
+            OpList.Add(TokenType.LeftCompose, new List<RoutineSymbol>());
+            OpList.Add(TokenType.RightCompose, new List<RoutineSymbol>());
             OpList.Add(TokenType.Plus, new List<RoutineSymbol>());
             OpList.Add(TokenType.Minus, new List<RoutineSymbol>());
             OpList.Add(TokenType.Not, new List<RoutineSymbol>());
