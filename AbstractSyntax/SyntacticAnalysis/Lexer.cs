@@ -1,4 +1,19 @@
-﻿using AbstractSyntax;
+﻿/*
+Copyright 2014 B_head
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+using AbstractSyntax;
 using System.Collections.Generic;
 
 namespace AbstractSyntax.SyntacticAnalysis
@@ -158,13 +173,28 @@ namespace AbstractSyntax.SyntacticAnalysis
 
         private static bool StringLiteral(Tokenizer t, List<Token> tokenList, List<Token> errorToken)
         {
-            if (!t.IsReadable(0) || !t.MatchAny(0, "\'\"`"))
+            if (!t.IsReadable(0) || !t.MatchAny(0, "\'\"`#"))
             {
                 return false;
             }
             string quote = t.Read(0, 1);
+            bool isEfficient = false;
+            if (quote == "#")
+            {
+                if (!t.IsReadable(1) || !t.MatchAny(1, "\'\"`"))
+                {
+                    return false;
+                }
+                quote = t.Read(1, 1);
+                tokenList.Add(t.TakeToken(2, TokenType.EfficientQuoteSeparator));
+                isEfficient = true;
+            }
+            else
+            {
+                tokenList.Add(t.TakeToken(1, TokenType.QuoteSeparator));
+                isEfficient = false;
+            }
             bool escape = false;
-            tokenList.Add(t.TakeToken(1, TokenType.QuoteSeparator));
             int i;
             for (i = 0; t.IsReadable(i); i++)
             {
@@ -177,7 +207,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                     tokenList.Add(t.TakeToken(1, TokenType.QuoteSeparator));
                     return true;
                 }
-                if (!escape && t.MatchAny(i, "{"))
+                if (!escape && isEfficient && t.MatchAny(i, "{"))
                 {
                     if (i > 0)
                     {
@@ -186,7 +216,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                     BuiltInExpression(t, tokenList, errorToken);
                     i = -1;
                 }
-                else if (t.MatchAny(i, "\\"))
+                else if (isEfficient && t.MatchAny(i, "\\"))
                 {
                     escape = !escape;
                     continue;
@@ -305,7 +335,7 @@ namespace AbstractSyntax.SyntacticAnalysis
                 case "=": type = TokenType.Equal; break;
                 case "<": type = TokenType.LessThan; break;
                 case ">": type = TokenType.GreaterThan; break;
-                case "~": type = TokenType.Combine; break;
+                case "~": type = TokenType.Join; break;
                 case "+": type = TokenType.Add; break;
                 case "-": type = TokenType.Subtract; break;
                 case "*": type = TokenType.Multiply; break;

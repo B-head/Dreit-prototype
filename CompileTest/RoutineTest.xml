@@ -1,4 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Copyright 2014 B_head
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 <compile-test xmlns="CompileTestSchema.xsd">
   <case>
     <code>
@@ -6,14 +21,6 @@
       stdout := foo()
     </code>
     <output>10</output>
-  </case>
-
-  <case>
-    <code>
-      routine foo() :: 100
-      stdout := foo()
-    </code>
-    <output>100</output>
   </case>
 
   <case>
@@ -40,12 +47,101 @@
     <output>30</output>
   </case>
 
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo a:String :: a =: stdout
+      
+      foo := "hello"
+      ]]>
+    </code>
+    <output>hello</output>
+  </case>
+  
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:Int32) { 
+	      return a + 20
+      }
+      
+      10.foo =: stdout
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
   <case>
     <code>
-      routine foo(a:Double) :: a + 10.5
-      stdout := foo := 20
+      <![CDATA[
+      stdout := foo(23, 5)
+      routine foo(a:Int32, b:Int32) {
+        return a % b
+      }
+      ]]>
     </code>
-    <output>30.5</output>
+    <output>3</output>
+  </case>
+  
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:Int32, b:Int32) :: return a + b
+      
+      stdout := foo := 10, 20
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+	      a =: stdout
+      }
+      
+      foo"hello world"
+      ]]>
+    </code>
+    <output>hello world</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      rout foo(a:String) { 
+	      a =: stdout
+	      return "world"
+      }
+      
+      foo"hello" =: stdout
+      ]]>
+    </code>
+    <output>hello world</output>
+  </case>
+
+  <case>
+    <code>
+      <![CDATA[
+      rout foo(a:Int32, b:Int32) :: a + b =: stdout
+      
+      foo[10] := 20
+      ]]>
+    </code>
+    <output>30</output>
+  </case>
+
+  <case ignore="true">
+    <code>
+      <![CDATA[
+      routine foo(a:Int32) :: if a > 0 :: foo(a - 1) + 5 else 1
+      
+      stdout := foo(10)
+      ]]>
+    </code>
+    <error key="require-type"/>
   </case>
 
   <case>
@@ -63,63 +159,6 @@
       stdout := foo := 20
     </code>
     <error key="forbit-side-effect"/>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Int32, b:Int32) :: a % b
-      stdout := foo(23, 5)
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Double, b:Double) :: a % b
-      stdout := foo(23, 5)
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Int32, b:Double) :: a % b
-      stdout := foo(23, 5)
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      routine foo(a:Int32, b:Int32) :: a % b
-      23, 5 =: foo =: stdout
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      stdout := foo(23, 5)
-      routine foo(a:Int32, b:Int32) {
-        return a % b
-      }
-      ]]>
-    </code>
-    <output>3</output>
-  </case>
-
-  <case>
-    <code>
-      <![CDATA[
-      rout foo(a:String) { 
-	      a =: stdout
-      }
-      
-      foo"hello world"
-      ]]>
-    </code>
-    <output>hello world</output>
   </case>
 
   <case>

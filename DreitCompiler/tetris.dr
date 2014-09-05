@@ -1,4 +1,214 @@
-﻿class BlockField {
+﻿var tetris := Tetris
+later {
+	Thread|.Sleep(16)
+	if Console|.KeyAvailable { 
+		Console|.ReadKey(true) =: ki
+		if ki.Key = ConsoleKey|.UpArrow :: tetris.move_earth_fix
+		if ki.Key = ConsoleKey|.DownArrow :: tetris.move_fall
+		if ki.Key = ConsoleKey|.LeftArrow :: tetris.move_left
+		if ki.Key = ConsoleKey|.RightArrow :: tetris.move_right
+		if ki.Key = ConsoleKey|.Z :: tetris.rotation_left
+		if ki.Key = ConsoleKey|.X :: tetris.rotation_right
+	}
+	tetris.forward_game
+} loop ki.Key <> ConsoleKey|.Escape use ki:ConsoleKeyInfo
+Console|.ResetColor
+
+rout clear_view {
+	Console|.BackgroundColor := ConsoleColor|.Black
+	Console|.ForegroundColor := ConsoleColor|.White
+	Console|.Clear
+}
+
+class Tetris {
+	private var random:Random
+	private var field_view:FieldView
+	private var field:BlockField
+	private var embed_mino:List!BlockField
+	private var next_mino:List!BlockField
+	private var play_mino:BlockField
+	private var play_x:Int32
+	private var play_y:Int32
+	private var last_mino:BlockField
+	private var last_x:Int32
+	private var last_y:Int32
+	private var fall_time:Int32
+	private var fall_limit:Int32
+	const width := play_width + 2
+	const height := play_height + mino_size + 1
+	const play_width := 10
+	const play_height := 20
+	const mino_size := 4
+	const next_max := 6
+	const earth_limit := 60
+	const move_fail_limit := 15
+	const sentinel := ConsoleColor|.DarkGray
+	const empty := ConsoleColor|.Black
+
+	rout new {
+		next_mino := List!BlockField
+		random := Random := DateTime|.Now.Ticks
+		field_view := FieldView
+		fall_limit := 30
+		field_init
+		embed_mino_init
+		fill_next
+		write
+	}
+
+	rout embed_mino_init {
+		embed_mino := List!BlockField
+		embed_mino.Add := create_mino := ConsoleColor|.Cyan, [0b1111, 0b0000, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Yellow, [0b1100, 0b1100, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Magenta, [0b0100, 0b1110, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Green, [0b0110, 0b1100, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Red, [0b1100, 0b0110, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.Blue, [0b1000, 0b1110, 0b0000, 0b0000]
+		embed_mino.Add := create_mino := ConsoleColor|.White, [0b0010, 0b1110, 0b0000, 0b0000]
+	}
+
+	rout create_mino :: BlockField(mino_size, mino_size)
+
+	rout create_mino(color:ConsoleColor, pos:List!Int32) {
+		var bf := create_mino
+		loop y < mino_size use y := 0 by y += 1 {
+			var v := pos[y]
+			loop x < mino_size use x := 0 by x += 1 {
+				if v % 2 = 1 :: bf[mino_size - x - 1, y] := color
+				v /= 2
+			}
+		}
+		return bf
+	}
+
+	rout field_init {
+		field := BlockField(width, height)
+		loop x < width use x := 0 by x += 1 {
+			field[x, height - 1] := sentinel
+		}
+		loop y < height use y := 0 by y += 1 {
+			field[0, y] := sentinel
+			field[width - 1, y] := sentinel
+		}
+	}
+
+	rout forward_game {
+		fall_time += 1
+		if fall_time >= fall_limit {
+			if !!fall && fall_time >= earth_limit {
+				fix_play_mino
+				break_line
+				fill_next
+				write
+			}
+		}
+		write_play_mino
+	}
+
+	rout random_take_embed :: embed_mino[random.Next(7)]
+	rout fix_play_mino :: field.copy(play_mino, play_x, play_y)
+
+	rout fill_next {
+		if next_mino.Count = 0 {
+			random_take_embed =: BlockField =: play_mino
+		} else {
+			next_mino[0] =: BlockField =: play_mino
+			next_mino.RemoveAt[0]
+		}
+		let r := play_mino.rect_size
+		play_x := (width + r.width) / 2 - r.right - 1
+		play_y := mino_size - r.bottom - 1
+		last_mino := play_mino
+		last_x := play_x
+		last_y := play_y
+		loop next_mino.Count < next_max :: next_mino.Add := random_take_embed
+	}
+
+	rout break_line {
+		loop y < height - 1 use y := 0 by y += 1 {
+			if field.is_buried_line(y) :: field.delete_line(y)
+		}
+	}
+
+	rout fall {
+		field.has_overlap(play_mino, play_x, play_y + 1) =: var ret
+		if un ret {
+			play_y += 1
+			fall_time := 0
+		}
+		return un ret
+	}
+
+	rout move_fall {
+		if un fall {
+			fall_time := Math|.Max(fall_time, earth_limit - move_fail_limit)
+		} 
+	}
+
+	rout move_earth_fix {
+		loop fall ::;
+		fall_time := earth_limit
+	}
+
+	rout move_left {
+		field.has_overlap(play_mino, play_x - 1, play_y) =: var ret
+		if un ret :: play_x -= 1
+		return un ret
+	}
+
+	rout move_right {
+		field.has_overlap(play_mino, play_x + 1, play_y) =: var ret
+		if un ret :: play_x += 1
+		return un ret
+	}
+
+	rout rotation_left {
+		var alter := play_mino.rotation_left
+		var pr := play_mino.rect_size
+		var ar := alter.rect_size
+		var ax := play_x + (pr.right - ar.right + pr.left - ar.left) / 2;
+		var ay := play_y + pr.bottom - ar.bottom;
+		field.has_overlap(alter, ax, ay) =: var ret
+		if un ret {
+			play_mino := alter
+			play_x := ax
+			play_y := ay
+		}
+		return un ret
+	}
+
+	rout rotation_right {
+		var alter := play_mino.rotation_right
+		var pr := play_mino.rect_size
+		var ar := alter.rect_size
+		var ax := play_x + (pr.right - ar.right + pr.left - ar.left) / 2;
+		var ay := play_y + pr.bottom - ar.bottom;
+		field.has_overlap(alter, ax, ay) =: var ret
+		if un ret {
+			play_mino := alter
+			play_x := ax
+			play_y := ay
+		}
+		return un ret
+	}
+
+	rout write {
+		clear_view
+		field_view.offset(28, 0).write(field) 
+		loop i < next_max use i := 0 by i += 1 
+			:: field_view.offset(54, i * 3 + 4).write(next_mino[i])
+	}
+
+	rout write_play_mino {
+		field_view.offset(28 + last_x * 2, last_y).write_clear(last_mino)
+		field_view.offset(28 + play_x * 2, play_y).write(play_mino)
+		last_mino := play_mino
+		last_x := play_x
+		last_y := play_y
+	}
+}
+
+class BlockField {
 	private var field:List!ConsoleColor
 	let width:Int32
 	let height:Int32
@@ -10,66 +220,133 @@
 		height := h
 	}
 
+	rout new(other:BlockField) {
+		field := other.field.GetRange(0, other.field.Count)
+		width := other.width
+		height := other.height
+	}
+
 	rout call(x:Int32, y:Int32) :: field[x + y * width]
 	rout call(x:Int32, y:Int32, value:ConsoleColor) :: field[x + y * width] := value
+
+	rout rect_size {
+		var ret := rect
+		ret.top := height; ret.left := width
+		loop x < width use x := 0 by x += 1 {
+			loop y < height use y := 0 by y += 1 {
+				if this[x, y] <> Tetris|.empty {
+					ret.top := Math|.Min(ret.top, y)
+					ret.bottom := Math|.Max(ret.bottom, y)
+					ret.left := Math|.Min(ret.left, x)
+					ret.right := Math|.Max(ret.right, x)
+				}
+			}
+		}
+		return ret
+	}
+
+	rout has_in_range(x:Int32, y:Int32) :: 0 <= x < width && 0 <= y < height
+
+	rout copy(other:BlockField, offset_x:Int32, offset_y:Int32) {
+		loop x < other.width use x := 0 by x += 1 {
+			loop y < other.height use y := 0 by y += 1 {
+				if other[x, y] = Tetris|.empty :: continue
+				var ox := x + offset_x
+				var oy := y + offset_y
+				if un has_in_range(ox, oy) :: continue
+				this[ox, oy] := other[x, y]
+			}
+		}
+	}
+
+	rout has_overlap(other:BlockField, offset_x:Int32, offset_y:Int32) {
+		loop x < other.width use x := 0 by x += 1 {
+			loop y < other.height use y := 0 by y += 1 {
+				if other[x, y] = Tetris|.empty :: continue
+				var ox := x + offset_x
+				var oy := y + offset_y
+				if un has_in_range(ox, oy) :: continue
+				if this[ox, oy] <> Tetris|.empty :: return true 
+			}
+		}
+		return false
+	}
+
+	rout is_buried_line(y:Int32) {
+		loop x < width use x := 0 by x += 1 {
+			if this[x, y] = Tetris|.empty :: return false
+		}
+		return true
+	}
+
+	rout delete_line(y:Int32) {
+		y -= 1
+		loop y >= 0 by y -= 1 {
+			loop x < width use x := 0 by x += 1 {
+				this[x, y + 1] := this[x, y]
+			}
+		}
+	}
+
+	rout rotation_left {
+		var ret := BlockField(height, width)
+		loop x < width use x := 0 by x += 1 {
+			loop y < height use y := 0 by y += 1 {
+				ret[y, height - 1 - x] := this[x, y]
+			}
+		}
+		return ret
+	}
+
+	rout rotation_right {
+		var ret := BlockField(height, width)
+		loop x < width use x := 0 by x += 1 {
+			loop y < height use y := 0 by y += 1 {
+				ret[width - 1 - y, x] := this[x, y]
+			}
+		}
+		return ret
+	}
+}
+
+class rect {
+	var top:Int32
+	var bottom:Int32
+	var left:Int32
+	var right:Int32
+
+	func width :: right - left + 1
+	func height :: bottom - top + 1
 }
 
 class FieldView {
 	var offset_x:Int32
 	var offset_y:Int32
 	
-	rout new(x:Int32, y:Int32) {
+	rout offset(x:Int32, y:Int32) {
 		offset_x := x
 		offset_y := y
 	}
 
 	rout write(field:BlockField) {
-		Console|.BackgroundColor := ConsoleColor|.Black
-		Console|.ForegroundColor := ConsoleColor|.White
-		Console|.Clear
 		loop x < field.width use x := 0 by x += 1 {
 			loop y < field.height use y := 0 by y += 1 {
-				Console|.SetCursorPosition(x * 2 + offset_x, y + offset_y)
+				if field[x, y] = Tetris|.empty :: continue
 				Console|.BackgroundColor := field[x, y]
+				Console|.SetCursorPosition(x * 2 + offset_x, y + offset_y)
+				Console|.Write("  ")
+			}
+		}
+	}
+
+	rout write_clear(field:BlockField) {
+		loop x < field.width use x := 0 by x += 1 {
+			loop y < field.height use y := 0 by y += 1 {
+				if field[x, y] = Tetris|.empty :: continue
+				Console|.BackgroundColor := Tetris|.empty
+				Console|.SetCursorPosition(x * 2 + offset_x, y + offset_y)
 				Console|.Write("  ")
 			}
 		}
 	}
 }
-
-class Tetris {
-	private var field:BlockField
-	private var mino:BlockField
-	const play_width := 10
-	const play_height := 20
-	const mino_size := 4
-	const sentinel := ConsoleColor|.DarkGray
-	const empty := ConsoleColor|.Black
-
-	rout new {
-		let w := play_width + 2
-		let h := play_height + mino_size + 1
-		field := BlockField(w, h)
-		mino := BlockField(mino_size, mino_size)
-		field_init(w, h)
-	}
-
-	rout field_init(w:Int32, h:Int32) {
-		loop x < w use x := 0 by x += 1 {
-			field[x, h - 1] := sentinel
-		}
-		loop y < h use y := 0 by y += 1 {
-			field[0, y] := sentinel
-			field[w - 1, y] := sentinel
-		}
-	}
-
-	rout write(field_view:FieldView) {
-		field_view.write := field
-	}
-}
-
-var tetris := Tetris
-var fv := FieldView(26, 0)
-tetris.write := fv
-Console|.ResetColor

@@ -1,4 +1,19 @@
-﻿using AbstractSyntax;
+﻿/*
+Copyright 2014 B_head
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+using AbstractSyntax;
 using AbstractSyntax.Expression;
 using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
@@ -7,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -269,7 +285,10 @@ namespace CliTranslate
             var generic = CreateGenericList(method.GetGenericArguments());
             var arguments = CreateArgumentList(method);
             var rt = ImportType(method.ReturnType);
-            elem.Initialize(method.Name, RoutineType.Routine, TokenType.Unknoun, attribute, generic, arguments, rt);
+            RoutineType routt;
+            TokenType tokt;
+            HasRoutineType(method, out routt, out tokt);
+            elem.Initialize(method.Name, routt, tokt, attribute, generic, arguments, rt);
             return elem;
         }
 
@@ -348,6 +367,42 @@ namespace CliTranslate
             return name.Substring(0, i);
         }
 
+        private void HasRoutineType(MethodInfo method, out RoutineType routt, out TokenType tokt)
+        {
+            routt = RoutineType.Routine;
+            tokt = TokenType.Unknoun;
+            var opattr = method.GetCustomAttribute<OperatorExtensionAttribute>();
+            if(opattr == null)
+            {
+                return;
+            }
+            switch (opattr.Type)
+            {
+                case OperatorExtensionType.Unknown: routt = RoutineType.Unknown; tokt = TokenType.Unknoun; break;
+                case OperatorExtensionType.Implicit: routt = RoutineType.RoutineConverter; tokt = TokenType.Unknoun; break;
+                case OperatorExtensionType.Explicit: routt = RoutineType.RoutineConverter; tokt = TokenType.Unknoun; break;
+                case OperatorExtensionType.Not: routt = RoutineType.RoutineOperator; tokt = TokenType.Not; break;
+                case OperatorExtensionType.Plus: routt = RoutineType.RoutineOperator; tokt = TokenType.Plus; break;
+                case OperatorExtensionType.Minus: routt = RoutineType.RoutineOperator; tokt = TokenType.Minus; break;
+                case OperatorExtensionType.Equal: routt = RoutineType.RoutineOperator; tokt = TokenType.Equal; break;
+                case OperatorExtensionType.NotEqual: routt = RoutineType.RoutineOperator; tokt = TokenType.NotEqual; break;
+                case OperatorExtensionType.LessThan: routt = RoutineType.RoutineOperator; tokt = TokenType.LessThan; break;
+                case OperatorExtensionType.LessThanOrEqual: routt = RoutineType.RoutineOperator; tokt = TokenType.LessThanOrEqual; break;
+                case OperatorExtensionType.GreaterThan: routt = RoutineType.RoutineOperator; tokt = TokenType.GreaterThan; break;
+                case OperatorExtensionType.GreaterThanOrEqual: routt = RoutineType.RoutineOperator; tokt = TokenType.GreaterThanOrEqual; break;
+                case OperatorExtensionType.Incomparable: routt = RoutineType.RoutineOperator; tokt = TokenType.Incomparable; break;
+                case OperatorExtensionType.Add: routt = RoutineType.RoutineOperator; tokt = TokenType.Add; break;
+                case OperatorExtensionType.Subtract: routt = RoutineType.RoutineOperator; tokt = TokenType.Subtract; break;
+                case OperatorExtensionType.Join: routt = RoutineType.RoutineOperator; tokt = TokenType.Join; break;
+                case OperatorExtensionType.Multiply: routt = RoutineType.RoutineOperator; tokt = TokenType.Multiply; break;
+                case OperatorExtensionType.Divide: routt = RoutineType.RoutineOperator; tokt = TokenType.Divide; break;
+                case OperatorExtensionType.Modulo: routt = RoutineType.RoutineOperator; tokt = TokenType.Modulo; break;
+                case OperatorExtensionType.LeftCompose: routt = RoutineType.RoutineOperator; tokt = TokenType.LeftCompose; break;
+                case OperatorExtensionType.RightCompose: routt = RoutineType.RoutineOperator; tokt = TokenType.RightCompose; break;
+                default: throw new ArgumentException("optype");
+            }
+        }
+
         private void AppendEmbededAttribute(List<AttributeSymbol> list, Type type)
         {
             ClassType classType;
@@ -357,7 +412,7 @@ namespace CliTranslate
         private void AppendEmbededAttribute(List<AttributeSymbol> list, Type type, out ClassType classType)
         {
             classType = ClassType.Class;
-            if (type.GetCustomAttribute<GlobalScopeAttribute>() != null) list.Add(Root.GlobalScope);
+            if (type.GetCustomAttribute<CompilerGlobalScopeAttribute>() != null) list.Add(Root.GlobalScope);
             if (type.IsAbstract) list.Add(Root.Abstract);
             if (type.IsClass) classType = ClassType.Class;
             if (type.IsInterface) classType = ClassType.Trait;

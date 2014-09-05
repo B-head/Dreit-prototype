@@ -5,8 +5,6 @@
 *.suo
 *.user
 *.sln.docstates
-*.sln.VisualState.xml
-TestResult.xml
 
 # Build results
 
@@ -98,7 +96,6 @@ publish/
 *.Publish.xml
 
 # NuGet Packages Directory
-## TODO: If you have NuGet Package Restore enabled, uncomment the next line
 packages/
 
 # Windows Azure Build Output
@@ -157,3 +154,7 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 
+*.nunit
+TestResult.xml
+*.VisualState.xml
+*.sin.VisualState.xml

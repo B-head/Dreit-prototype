@@ -1,4 +1,19 @@
-﻿using AbstractSyntax.Expression;
+﻿/*
+Copyright 2014 B_head
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+using AbstractSyntax.Expression;
 using AbstractSyntax.Literal;
 using System;
 using System.Collections.Generic;
@@ -24,24 +39,28 @@ namespace AbstractSyntax.SyntacticAnalysis
         private static StringLiteral StringLiteral(SlimChainParser cp)
         {
             var texts = new List<Element>();
+            var isEfficient = false;
             return cp.Begin
-                .Type(TokenType.QuoteSeparator)
+                .Any(
+                    icp => icp.Type(TokenType.EfficientQuoteSeparator).Self(() => isEfficient = true),
+                    icp => icp.Type(TokenType.QuoteSeparator).Self(() => isEfficient = false)
+                )
                 .Loop(icp => icp.Not.Type(TokenType.QuoteSeparator), icp =>
                 {
                     icp
                     .If(iicp => iicp.Type(TokenType.LeftBrace))
                     .Then(iicp => iicp.Transfer(e => texts.Add(e), Expression).Type(TokenType.RightBrace))
-                    .Else(iicp => iicp.Transfer(e => texts.Add(e), PlainText));
+                    .Else(iicp => iicp.Transfer(e => texts.Add(e), iiicp => PlainText(iiicp, isEfficient)));
                 })
-                .End(tp => new StringLiteral(tp, texts));
+                .End(tp => new StringLiteral(tp, texts, isEfficient));
         }
 
-        private static PlainText PlainText(SlimChainParser cp)
+        private static PlainText PlainText(SlimChainParser cp, bool isEfficient)
         {
             var value = string.Empty;
             return cp.Begin
                 .Type(t => value = t.Text, TokenType.PlainText)
-                .End(tp => new PlainText(tp, value));
+                .End(tp => new PlainText(tp, value, isEfficient));
         }
 
         private static HereDocument HereDocument(SlimChainParser cp)

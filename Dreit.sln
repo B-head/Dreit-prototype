@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio Express 2013 for Windows Desktop
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntax", "AbstractSyntax\AbstractSyntax.csproj", "{C1681D7B-C0FA-4C9C-8D4A-2A432B2CE764}"
@@ -18,8 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractSyntaxTest", "Abstr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B546CAA-8AE1-4B62-855B-4C1051260CEC}"
 	ProjectSection(SolutionItems) = preProject
+		CompileTest.snippet = CompileTest.snippet
 		License.txt = License.txt
-		Notice.txt = Notice.txt
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject

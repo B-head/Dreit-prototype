@@ -1,4 +1,19 @@
-﻿using AbstractSyntax.SpecialSymbol;
+﻿/*
+Copyright 2014 B_head
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+using AbstractSyntax.SpecialSymbol;
 using AbstractSyntax.Symbol;
 using System;
 using System.Collections.Generic;
@@ -25,6 +40,7 @@ namespace AbstractSyntax
         {
             OpList.Add(TokenType.Add, new List<RoutineSymbol>());
             OpList.Add(TokenType.Subtract, new List<RoutineSymbol>());
+            OpList.Add(TokenType.Join, new List<RoutineSymbol>());
             OpList.Add(TokenType.Multiply, new List<RoutineSymbol>());
             OpList.Add(TokenType.Divide, new List<RoutineSymbol>());
             OpList.Add(TokenType.Modulo, new List<RoutineSymbol>());
@@ -35,6 +51,8 @@ namespace AbstractSyntax
             OpList.Add(TokenType.GreaterThan, new List<RoutineSymbol>());
             OpList.Add(TokenType.GreaterThanOrEqual, new List<RoutineSymbol>());
             OpList.Add(TokenType.Incomparable, new List<RoutineSymbol>());
+            OpList.Add(TokenType.LeftCompose, new List<RoutineSymbol>());
+            OpList.Add(TokenType.RightCompose, new List<RoutineSymbol>());
             OpList.Add(TokenType.Plus, new List<RoutineSymbol>());
             OpList.Add(TokenType.Minus, new List<RoutineSymbol>());
             OpList.Add(TokenType.Not, new List<RoutineSymbol>());
